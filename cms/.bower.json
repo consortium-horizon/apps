@@ -1,0 +1,14 @@
+{
+  "name": "cms",
+  "homepage": "https://github.com/WordPress/WordPress",
+  "version": "3.7.8",
+  "_release": "3.7.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.7.8",
+    "commit": "e816bc84d0b6135f151f7acdd5cf7d7e22dc373b"
+  },
+  "_source": "git://github.com/WordPress/WordPress.git",
+  "_target": "3.7.8",
+  "_originalSource": "WordPress/WordPress"
+}
