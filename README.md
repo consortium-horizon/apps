@@ -52,3 +52,12 @@ $ bower install
 # Run the local server
 $ caddy
 ```
+
+Les identifiants MySQL sont, en local, les suivants :
+
+```
+database: <nom de l'outil> (exemple : wordpress)
+username: <nom de l'outil>
+password: <nom de l'outil>
+host: localhost
+```
