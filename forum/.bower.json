@@ -1,0 +1,13 @@
+{
+  "name": "forum",
+  "homepage": "https://github.com/vanilla/vanilla",
+  "_release": "Vanilla_2.1.11",
+  "_resolution": {
+    "type": "tag",
+    "tag": "Vanilla_2.1.11",
+    "commit": "f02fd44d2db2c4d0b849fb39c1fcf05c16908d9c"
+  },
+  "_source": "git://github.com/vanilla/vanilla.git",
+  "_target": "Vanilla_2.1.11",
+  "_originalSource": "vanilla/vanilla"
+}
