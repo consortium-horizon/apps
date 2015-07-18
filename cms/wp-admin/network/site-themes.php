@@ -29,8 +29,8 @@ get_current_screen()->add_help_tab( array(
 
 get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __('For more information:') . '</strong></p>' .
-	'<p>' . __('<a href="http://codex.wordpress.org/Network_Admin_Sites_Screen" target="_blank">Documentation on Site Management</a>') . '</p>' .
-	'<p>' . __('<a href="http://wordpress.org/support/forum/multisite/" target="_blank">Support Forums</a>') . '</p>'
+	'<p>' . __('<a href="https://codex.wordpress.org/Network_Admin_Sites_Screen" target="_blank">Documentation on Site Management</a>') . '</p>' .
+	'<p>' . __('<a href="https://wordpress.org/support/forum/multisite/" target="_blank">Support Forums</a>') . '</p>'
 );
 
 $wp_list_table = _get_list_table('WP_MS_Themes_List_Table');
@@ -44,6 +44,10 @@ $temp_args = array( 'enabled', 'disabled', 'error' );
 $_SERVER['REQUEST_URI'] = remove_query_arg( $temp_args, $_SERVER['REQUEST_URI'] );
 $referer = remove_query_arg( $temp_args, wp_get_referer() );
 
+if ( ! empty( $_REQUEST['paged'] ) ) {
+	$referer = add_query_arg( 'paged', (int) $_REQUEST['paged'], $referer );
+}
+
 $id = isset( $_REQUEST['id'] ) ? intval( $_REQUEST['id'] ) : 0;
 
 if ( ! $id )
@@ -53,7 +57,7 @@ $wp_list_table->prepare_items();
 
 $details = get_blog_details( $id );
 if ( !can_edit_network( $details->site_id ) )
-	wp_die( __( 'You do not have permission to access this page.' ) );
+	wp_die( __( 'You do not have permission to access this page.' ), 403 );
 
 $is_main_site = is_main_site( $id );
 
@@ -123,11 +127,11 @@ if ( isset( $_GET['action'] ) && 'update-site' == $_GET['action'] ) {
 }
 
 add_thickbox();
-add_screen_option( 'per_page', array( 'label' => _x( 'Themes', 'themes per page (screen options)' ) ) );
+add_screen_option( 'per_page' );
 
 $site_url_no_http = preg_replace( '#^http(s)?://#', '', get_blogaddress_by_id( $id ) );
-$title_site_url_linked = sprintf( __('Edit Site: <a href="%1$s">%2$s</a>'), get_blogaddress_by_id( $id ), $site_url_no_http );
-$title = sprintf( __('Edit Site: %s'), $site_url_no_http );
+$title_site_url_linked = sprintf( __( 'Edit Site: %s' ), '<a href="' . get_blogaddress_by_id( $id ) . '">' . $site_url_no_http . '</a>' );
+$title = sprintf( __( 'Edit Site: %s' ), $site_url_no_http );
 
 $parent_file = 'sites.php';
 $submenu_file = 'sites.php';
@@ -135,7 +139,6 @@ $submenu_file = 'sites.php';
 require( ABSPATH . 'wp-admin/admin-header.php' ); ?>
 
 <div class="wrap">
-<?php screen_icon('ms-admin'); ?>
 <h2 id="edit-site"><?php echo $title_site_url_linked ?></h2>
 <h3 class="nav-tab-wrapper">
 <?php
@@ -153,18 +156,28 @@ foreach ( $tabs as $tab_id => $tab ) {
 </h3><?php
 
 if ( isset( $_GET['enabled'] ) ) {
-	$_GET['enabled'] = absint( $_GET['enabled'] );
-	echo '<div id="message" class="updated"><p>' . sprintf( _n( 'Theme enabled.', '%s themes enabled.', $_GET['enabled'] ), number_format_i18n( $_GET['enabled'] ) ) . '</p></div>';
+	$enabled = absint( $_GET['enabled'] );
+	if ( 1 == $enabled ) {
+		$message = __( 'Theme enabled.' );
+	} else {
+		$message = _n( '%s theme enabled.', '%s themes enabled.', $enabled );
+	}
+	echo '<div id="message" class="updated notice is-dismissible"><p>' . sprintf( $message, number_format_i18n( $enabled ) ) . '</p></div>';
 } elseif ( isset( $_GET['disabled'] ) ) {
-	$_GET['disabled'] = absint( $_GET['disabled'] );
-	echo '<div id="message" class="updated"><p>' . sprintf( _n( 'Theme disabled.', '%s themes disabled.', $_GET['disabled'] ), number_format_i18n( $_GET['disabled'] ) ) . '</p></div>';
+	$disabled = absint( $_GET['disabled'] );
+	if ( 1 == $disabled ) {
+		$message = __( 'Theme disabled.' );
+	} else {
+		$message = _n( '%s theme disabled.', '%s themes disabled.', $disabled );
+	}
+	echo '<div id="message" class="updated notice is-dismissible"><p>' . sprintf( $message, number_format_i18n( $disabled ) ) . '</p></div>';
 } elseif ( isset( $_GET['error'] ) && 'none' == $_GET['error'] ) {
-	echo '<div id="message" class="error"><p>' . __( 'No theme selected.' ) . '</p></div>';
+	echo '<div id="message" class="error notice is-dismissible"><p>' . __( 'No theme selected.' ) . '</p></div>';
 } ?>
 
 <p><?php _e( 'Network enabled themes are not shown on this screen.' ) ?></p>
 
-<form method="get" action="">
+<form method="get">
 <?php $wp_list_table->search_box( __( 'Search Installed Themes' ), 'theme' ); ?>
 <input type="hidden" name="id" value="<?php echo esc_attr( $id ) ?>" />
 </form>

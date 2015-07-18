@@ -7,9 +7,9 @@
  */
 
 /**
- * Selects the first update version from the update_core option
+ * Selects the first update version from the update_core option.
  *
- * @return object the response from the API
+ * @return bool|object The response from the API on success, false on failure.
  */
 function get_preferred_from_update_core() {
 	$updates = get_core_updates();
@@ -21,11 +21,11 @@ function get_preferred_from_update_core() {
 }
 
 /**
- * Get available core updates
+ * Get available core updates.
  *
  * @param array $options Set $options['dismissed'] to true to show dismissed upgrades too,
  * 	set $options['available'] to false to skip not-dismissed updates.
- * @return array Array of the update objects
+ * @return bool|array Array of the update objects on success, false on failure.
  */
 function get_core_updates( $options = array() ) {
 	$options = array_merge( array( 'available' => true, 'dismissed' => false ), $options );
@@ -74,7 +74,7 @@ function find_core_auto_update() {
 	if ( ! $updates || empty( $updates->updates ) )
 		return false;
 
-	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+	include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
 
 	$auto_update = false;
 	$upgrader = new WP_Automatic_Updater;
@@ -101,8 +101,6 @@ function find_core_auto_update() {
  * @return bool|array False on failure. An array of checksums on success.
  */
 function get_core_checksums( $version, $locale ) {
-	$return = array();
-
 	$url = $http_url = 'http://api.wordpress.org/core/checksums/1.0/?' . http_build_query( compact( 'version', 'locale' ), null, '&' );
 
 	if ( $ssl = wp_http_supports( array( 'ssl' ) ) )
@@ -114,7 +112,7 @@ function get_core_checksums( $version, $locale ) {
 
 	$response = wp_remote_get( $url, $options );
 	if ( $ssl && is_wp_error( $response ) ) {
-		trigger_error( __( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="http://wordpress.org/support/">support forums</a>.' ) . ' ' . '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)', headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE );
+		trigger_error( __( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/">support forums</a>.' ) . ' ' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ), headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE );
 		$response = wp_remote_get( $http_url, $options );
 	}
 
@@ -181,16 +179,13 @@ function core_update_footer( $msg = '' ) {
 	switch ( $cur->response ) {
 	case 'development' :
 		return sprintf( __( 'You are using a development version (%1$s). Cool! Please <a href="%2$s">stay updated</a>.' ), get_bloginfo( 'version', 'display' ), network_admin_url( 'update-core.php' ) );
-	break;
 
 	case 'upgrade' :
 		return sprintf( '<strong>'.__( '<a href="%1$s">Get Version %2$s</a>' ).'</strong>', network_admin_url( 'update-core.php' ), $cur->current);
-	break;
 
 	case 'latest' :
 	default :
 		return sprintf( __( 'Version %s' ), get_bloginfo( 'version', 'display' ) );
-	break;
 	}
 }
 add_filter( 'update_footer', 'core_update_footer' );
@@ -210,9 +205,9 @@ function update_nag() {
 		return false;
 
 	if ( current_user_can('update_core') ) {
-		$msg = sprintf( __('<a href="http://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> is available! <a href="%2$s">Please update now</a>.'), $cur->current, network_admin_url( 'update-core.php' ) );
+		$msg = sprintf( __('<a href="https://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> is available! <a href="%2$s">Please update now</a>.'), $cur->current, network_admin_url( 'update-core.php' ) );
 	} else {
-		$msg = sprintf( __('<a href="http://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> is available! Please notify the site administrator.'), $cur->current );
+		$msg = sprintf( __('<a href="https://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> is available! Please notify the site administrator.'), $cur->current );
 	}
 	echo "<div class='update-nag'>$msg</div>";
 }
@@ -221,16 +216,23 @@ add_action( 'network_admin_notices', 'update_nag', 3 );
 
 // Called directly from dashboard
 function update_right_now_message() {
-	$msg = sprintf( __( 'You are using <span class="b">WordPress %s</span>.' ), get_bloginfo( 'version', 'display' ) );
+	$theme_name = wp_get_theme();
+	if ( current_user_can( 'switch_themes' ) ) {
+		$theme_name = sprintf( '<a href="themes.php">%1$s</a>', $theme_name );
+	}
+
+	$msg = '';
 
 	if ( current_user_can('update_core') ) {
 		$cur = get_preferred_from_update_core();
 
 		if ( isset( $cur->response ) && $cur->response == 'upgrade' )
-			$msg .= " <a href='" . network_admin_url( 'update-core.php' ) . "' class='button'>" . sprintf( __('Update to %s'), $cur->current ? $cur->current : __( 'Latest' ) ) . '</a>';
+			$msg .= '<a href="' . network_admin_url( 'update-core.php' ) . '" class="button" aria-describedby="wp-version">' . sprintf( __( 'Update to %s' ), $cur->current ? $cur->current : __( 'Latest' ) ) . '</a> ';
 	}
 
-	echo "<span id='wp-version-message'>$msg</span>";
+	$msg .= sprintf( '<span id="wp-version">' . __( 'WordPress %1$s running %2$s theme.' ) . '</span>', get_bloginfo( 'version', 'display' ), $theme_name );
+
+	echo "<p id='wp-version-message'>$msg</p>";
 }
 
 function get_plugin_updates() {
@@ -276,23 +278,58 @@ function wp_plugin_update_row( $file, $plugin_data ) {
 	$wp_list_table = _get_list_table('WP_Plugins_List_Table');
 
 	if ( is_network_admin() || !is_multisite() ) {
-		echo '<tr class="plugin-update-tr"><td colspan="' . $wp_list_table->get_column_count() . '" class="plugin-update colspanchange"><div class="update-message">';
+		$active_class = ( is_plugin_active( $plugin_data['plugin'] ) ) ? ' active' : '';
+		echo '<tr class="plugin-update-tr' . $active_class . '" id="' . esc_attr( $r->slug . '-update' ) . '" data-slug="' . esc_attr( $r->slug ) . '" data-plugin="' . esc_attr( $file ) . '"><td colspan="' . esc_attr( $wp_list_table->get_column_count() ) . '" class="plugin-update colspanchange"><div class="update-message">';
 
-		if ( ! current_user_can('update_plugins') )
+		if ( ! current_user_can( 'update_plugins' ) ) {
 			printf( __('There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a>.'), $plugin_name, esc_url($details_url), esc_attr($plugin_name), $r->new_version );
-		else if ( empty($r->package) )
+		} elseif ( empty($r->package) ) {
 			printf( __('There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a>. <em>Automatic update is unavailable for this plugin.</em>'), $plugin_name, esc_url($details_url), esc_attr($plugin_name), $r->new_version );
-		else
-			printf( __('There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a> or <a href="%5$s">update now</a>.'), $plugin_name, esc_url($details_url), esc_attr($plugin_name), $r->new_version, wp_nonce_url( self_admin_url('update.php?action=upgrade-plugin&plugin=') . $file, 'upgrade-plugin_' . $file) );
-
-		do_action( "in_plugin_update_message-$file", $plugin_data, $r );
+		} else {
+			printf( __( 'There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a> or <a href="%5$s" class="update-link">update now</a>.' ), $plugin_name, esc_url( $details_url ), esc_attr( $plugin_name ), $r->new_version, wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $file, 'upgrade-plugin_' . $file ) );
+		}
+		/**
+		 * Fires at the end of the update message container in each
+		 * row of the plugins list table.
+		 *
+		 * The dynamic portion of the hook name, `$file`, refers to the path
+		 * of the plugin's primary file relative to the plugins directory.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $plugin_data {
+		 *     An array of plugin metadata.
+		 *
+		 *     @type string $name         The human-readable name of the plugin.
+		 *     @type string $plugin_uri   Plugin URI.
+		 *     @type string $version      Plugin version.
+		 *     @type string $description  Plugin description.
+		 *     @type string $author       Plugin author.
+		 *     @type string $author_uri   Plugin author URI.
+		 *     @type string $text_domain  Plugin text domain.
+		 *     @type string $domain_path  Relative path to the plugin's .mo file(s).
+		 *     @type bool   $network      Whether the plugin can only be activated network wide.
+		 *     @type string $title        The human-readable title of the plugin.
+		 *     @type string $author_name  Plugin author's name.
+		 *     @type bool   $update       Whether there's an available update. Default null.
+	 	 * }
+	 	 * @param array $r {
+	 	 *     An array of metadata about the available plugin update.
+	 	 *
+	 	 *     @type int    $id           Plugin ID.
+	 	 *     @type string $slug         Plugin slug.
+	 	 *     @type string $new_version  New plugin version.
+	 	 *     @type string $url          Plugin URL.
+	 	 *     @type string $package      Plugin update package URL.
+	 	 * }
+		 */
+		do_action( "in_plugin_update_message-{$file}", $plugin_data, $r );
 
 		echo '</div></td></tr>';
 	}
 }
 
 function get_theme_updates() {
-	$themes = wp_get_themes();
 	$current = get_site_transient('update_themes');
 
 	if ( ! isset( $current->response ) )
@@ -327,28 +364,44 @@ function wp_theme_update_row( $theme_key, $theme ) {
 	if ( !isset( $current->response[ $theme_key ] ) )
 		return false;
 	$r = $current->response[ $theme_key ];
-	$themes_allowedtags = array('a' => array('href' => array(),'title' => array()),'abbr' => array('title' => array()),'acronym' => array('title' => array()),'code' => array(),'em' => array(),'strong' => array());
-	$theme_name = wp_kses( $theme['Name'], $themes_allowedtags );
 
 	$details_url = add_query_arg( array( 'TB_iframe' => 'true', 'width' => 1024, 'height' => 800 ), $current->response[ $theme_key ]['url'] );
 
 	$wp_list_table = _get_list_table('WP_MS_Themes_List_Table');
 
 	echo '<tr class="plugin-update-tr"><td colspan="' . $wp_list_table->get_column_count() . '" class="plugin-update colspanchange"><div class="update-message">';
-	if ( ! current_user_can('update_themes') )
+	if ( ! current_user_can('update_themes') ) {
 		printf( __('There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a>.'), $theme['Name'], esc_url($details_url), esc_attr($theme['Name']), $r->new_version );
-	else if ( empty( $r['package'] ) )
+	} elseif ( empty( $r['package'] ) ) {
 		printf( __('There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a>. <em>Automatic update is unavailable for this theme.</em>'), $theme['Name'], esc_url($details_url), esc_attr($theme['Name']), $r['new_version'] );
-	else
+	} else {
 		printf( __('There is a new version of %1$s available. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a> or <a href="%5$s">update now</a>.'), $theme['Name'], esc_url($details_url), esc_attr($theme['Name']), $r['new_version'], wp_nonce_url( self_admin_url('update.php?action=upgrade-theme&theme=') . $theme_key, 'upgrade-theme_' . $theme_key) );
-
-	do_action( "in_theme_update_message-$theme_key", $theme, $r );
+	}
+	/**
+	 * Fires at the end of the update message container in each
+	 * row of the themes list table.
+	 *
+	 * The dynamic portion of the hook name, `$theme_key`, refers to
+	 * the theme slug as found in the WordPress.org themes repository.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param WP_Theme $theme The WP_Theme object.
+	 * @param array    $r {
+	 *     An array of metadata about the available theme update.
+	 *
+	 *     @type string $new_version New theme version.
+	 *     @type string $url         Theme URL.
+	 *     @type string $package     Theme update package URL.
+	 * }
+	 */
+	do_action( "in_theme_update_message-{$theme_key}", $theme, $r );
 
 	echo '</div></td></tr>';
 }
 
 function maintenance_nag() {
-	include ABSPATH . WPINC . '/version.php'; // include an unmodified $wp_version
+	include( ABSPATH . WPINC . '/version.php' ); // include an unmodified $wp_version
 	global $upgrading;
 	$nag = isset( $upgrading );
 	if ( ! $nag ) {

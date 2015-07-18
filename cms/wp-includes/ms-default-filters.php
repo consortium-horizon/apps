@@ -13,6 +13,11 @@
  * @since 3.0.0
  */
 
+// Functions
+add_action( 'update_option_blog_public', 'update_blog_public', 10, 2 );
+add_filter( 'option_users_can_register', 'users_can_register_signup_filter' );
+add_filter( 'site_option_welcome_user_email', 'welcome_user_msg_filter' );
+
 // Users
 add_filter( 'wpmu_validate_user_signup', 'signup_nonce_check' );
 add_action( 'init', 'maybe_add_existing_user_to_blog' );
@@ -34,9 +39,10 @@ add_filter( 'allowed_redirect_hosts', 'redirect_this_site' );
 
 // Administration
 add_filter( 'term_id_filter', 'global_terms', 10, 2 );
-add_action( 'publish_post', 'update_posts_count' );
+add_action( 'delete_post', '_update_posts_count_on_delete' );
 add_action( 'delete_post', '_update_blog_date_on_post_delete' );
 add_action( 'transition_post_status', '_update_blog_date_on_post_publish', 10, 3 );
+add_action( 'transition_post_status', '_update_posts_count_on_transition_post_status', 10, 2 );
 
 // Counts
 add_action( 'admin_init', 'wp_schedule_update_network_counts');
@@ -68,6 +74,11 @@ add_filter( 'force_filtered_html_on_import', '__return_true' );
 // WP_HOME and WP_SITEURL should not have any effect in MS
 remove_filter( 'option_siteurl', '_config_wp_siteurl' );
 remove_filter( 'option_home',    '_config_wp_home'    );
+
+// Some options changes should trigger blog details refresh.
+add_action( 'update_option_blogname',   'refresh_blog_details', 10, 0 );
+add_action( 'update_option_siteurl',    'refresh_blog_details', 10, 0 );
+add_action( 'update_option_post_count', 'refresh_blog_details', 10, 0 );
 
 // If the network upgrade hasn't run yet, assume ms-files.php rewriting is used.
 add_filter( 'default_site_option_ms_files_rewriting', '__return_true' );

@@ -5,7 +5,7 @@
  * @package WordPress
  * @subpackage Administration
  *
- * @link http://codex.wordpress.org/AJAX_in_Plugins
+ * @link https://codex.wordpress.org/AJAX_in_Plugins
  */
 
 /**
@@ -14,7 +14,9 @@
  * @since 2.1.0
  */
 define( 'DOING_AJAX', true );
-define( 'WP_ADMIN', true );
+if ( ! defined( 'WP_ADMIN' ) ) {
+	define( 'WP_ADMIN', true );
+}
 
 /** Load WordPress Bootstrap */
 require_once( dirname( dirname( __FILE__ ) ) . '/wp-load.php' );
@@ -50,7 +52,7 @@ $core_actions_post = array(
 	'oembed-cache', 'image-editor', 'delete-comment', 'delete-tag', 'delete-link',
 	'delete-meta', 'delete-post', 'trash-post', 'untrash-post', 'delete-page', 'dim-comment',
 	'add-link-category', 'add-tag', 'get-tagcloud', 'get-comments', 'replyto-comment',
-	'edit-comment', 'add-menu-item', 'add-meta', 'add-user', 'autosave', 'closed-postboxes',
+	'edit-comment', 'add-menu-item', 'add-meta', 'add-user', 'closed-postboxes',
 	'hidden-columns', 'update-welcome-panel', 'menu-get-metabox', 'wp-link-ajax',
 	'menu-locations-save', 'menu-quick-search', 'meta-box-order', 'get-permalink',
 	'sample-permalink', 'inline-save', 'inline-save-tax', 'find_posts', 'widgets-order',
@@ -58,6 +60,9 @@ $core_actions_post = array(
 	'wp-remove-post-lock', 'dismiss-wp-pointer', 'upload-attachment', 'get-attachment',
 	'query-attachments', 'save-attachment', 'save-attachment-compat', 'send-link-to-editor',
 	'send-attachment-to-editor', 'save-attachment-order', 'heartbeat', 'get-revision-diffs',
+	'save-user-color-scheme', 'update-widget', 'query-themes', 'parse-embed', 'set-attachment-thumbnail',
+	'parse-media-shortcode', 'destroy-sessions', 'install-plugin', 'update-plugin', 'press-this-save-post',
+	'press-this-add-category',
 );
 
 // Register core Ajax calls.
@@ -73,7 +78,7 @@ if ( is_user_logged_in() ) {
 	/**
 	 * Fires authenticated AJAX actions for logged-in users.
 	 *
-	 * The dynamic portion of the hook name, $_REQUEST['action'],
+	 * The dynamic portion of the hook name, `$_REQUEST['action']`,
 	 * refers to the name of the AJAX action callback being fired.
 	 *
 	 * @since 2.1.0
@@ -83,7 +88,7 @@ if ( is_user_logged_in() ) {
 	/**
 	 * Fires non-authenticated AJAX actions for logged-out users.
 	 *
-	 * The dynamic portion of the hook name, $_REQUEST['action'],
+	 * The dynamic portion of the hook name, `$_REQUEST['action']`,
 	 * refers to the name of the AJAX action callback being fired.
 	 *
 	 * @since 2.8.0

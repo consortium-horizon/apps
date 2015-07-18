@@ -13,12 +13,12 @@ if ( !defined('ABSPATH') )
 if ( ! empty($link_id) ) {
 	$heading = sprintf( __( '<a href="%s">Links</a> / Edit Link' ), 'link-manager.php' );
 	$submit_text = __('Update Link');
-	$form = '<form name="editlink" id="editlink" method="post" action="link.php">';
+	$form_name = 'editlink';
 	$nonce_action = 'update-bookmark_' . $link_id;
 } else {
 	$heading = sprintf( __( '<a href="%s">Links</a> / Add New Link' ), 'link-manager.php' );
 	$submit_text = __('Add Link');
-	$form = '<form name="addlink" id="addlink" method="post" action="link.php">';
+	$form_name = 'addlink';
 	$nonce_action = 'add-bookmark';
 }
 
@@ -30,15 +30,24 @@ add_meta_box('linktargetdiv', __('Target'), 'link_target_meta_box', null, 'norma
 add_meta_box('linkxfndiv', __('Link Relationship (XFN)'), 'link_xfn_meta_box', null, 'normal', 'core');
 add_meta_box('linkadvanceddiv', __('Advanced'), 'link_advanced_meta_box', null, 'normal', 'core');
 
-do_action('add_meta_boxes', 'link', $link);
-do_action('add_meta_boxes_link', $link);
+/** This action is documented in wp-admin/edit-form-advanced.php */
+do_action( 'add_meta_boxes', 'link', $link );
+
+/**
+ * Fires when link-specific meta boxes are added.
+ *
+ * @since 3.0.0
+ *
+ * @param object $link Link object.
+ */
+do_action( 'add_meta_boxes_link', $link );
 
 /** This action is documented in wp-admin/edit-form-advanced.php */
-do_action('do_meta_boxes', 'link', 'normal', $link);
+do_action( 'do_meta_boxes', 'link', 'normal', $link );
 /** This action is documented in wp-admin/edit-form-advanced.php */
-do_action('do_meta_boxes', 'link', 'advanced', $link);
+do_action( 'do_meta_boxes', 'link', 'advanced', $link );
 /** This action is documented in wp-admin/edit-form-advanced.php */
-do_action('do_meta_boxes', 'link', 'side', $link);
+do_action( 'do_meta_boxes', 'link', 'side', $link );
 
 add_screen_option('layout_columns', array('max' => 2, 'default' => 2) );
 
@@ -53,26 +62,25 @@ get_current_screen()->add_help_tab( array(
 
 get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __( 'For more information:' ) . '</strong></p>' .
-	'<p>' . __( '<a href="http://codex.wordpress.org/Links_Add_New_Screen" target="_blank">Documentation on Creating Links</a>' ) . '</p>' .
-	'<p>' . __( '<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>' ) . '</p>'
+	'<p>' . __( '<a href="https://codex.wordpress.org/Links_Add_New_Screen" target="_blank">Documentation on Creating Links</a>' ) . '</p>' .
+	'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>' ) . '</p>'
 );
 
 require_once( ABSPATH . 'wp-admin/admin-header.php' );
 ?>
 
 <div class="wrap">
-<?php screen_icon(); ?>
 <h2><?php echo esc_html( $title ); ?>  <a href="link-add.php" class="add-new-h2"><?php echo esc_html_x('Add New', 'link'); ?></a></h2>
 
 <?php if ( isset( $_GET['added'] ) ) : ?>
-<div id="message" class="updated"><p><?php _e('Link added.'); ?></p></div>
+<div id="message" class="updated notice is-dismissible"><p><?php _e('Link added.'); ?></p></div>
 <?php endif; ?>
 
+<form name="<?php echo esc_attr( $form_name ); ?>" id="<?php echo esc_attr( $form_name ); ?>" method="post" action="link.php">
 <?php
-if ( !empty($form) )
-	echo $form;
-if ( !empty($link_added) )
+if ( ! empty( $link_added ) ) {
 	echo $link_added;
+}
 
 wp_nonce_field( $nonce_action );
 wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
@@ -86,7 +94,7 @@ wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 <h3><label for="link_name"><?php _ex('Name', 'link name') ?></label></h3>
 <div class="inside">
 	<input type="text" name="link_name" size="30" maxlength="255" value="<?php echo esc_attr($link->link_name); ?>" id="link_name" />
-    <p><?php _e('Example: Nifty blogging software'); ?></p>
+	<p><?php _e('Example: Nifty blogging software'); ?></p>
 </div>
 </div>
 
@@ -94,7 +102,7 @@ wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 <h3><label for="link_url"><?php _e('Web Address') ?></label></h3>
 <div class="inside">
 	<input type="text" name="link_url" size="30" maxlength="255" class="code" value="<?php echo esc_attr($link->link_url); ?>" id="link_url" />
-    <p><?php _e('Example: <code>http://wordpress.org/</code> &#8212; don&#8217;t forget the <code>http://</code>'); ?></p>
+	<p><?php _e('Example: <code>http://wordpress.org/</code> &#8212; don&#8217;t forget the <code>http://</code>'); ?></p>
 </div>
 </div>
 
@@ -102,7 +110,7 @@ wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 <h3><label for="link_description"><?php _e('Description') ?></label></h3>
 <div class="inside">
 	<input type="text" name="link_description" size="30" maxlength="255" value="<?php echo isset($link->link_description) ? esc_attr($link->link_description) : ''; ?>" id="link_description" />
-    <p><?php _e('This will be shown when someone hovers over the link in the blogroll, or optionally below the link.'); ?></p>
+	<p><?php _e('This will be shown when someone hovers over the link in the blogroll, or optionally below the link.'); ?></p>
 </div>
 </div>
 </div><!-- /post-body-content -->
@@ -110,7 +118,8 @@ wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 <div id="postbox-container-1" class="postbox-container">
 <?php
 
-do_action('submitlink_box');
+/** This action is documented in wp-admin/includes/meta-boxes.php */
+do_action( 'submitlink_box' );
 $side_meta_boxes = do_meta_boxes( 'link', 'side', $link );
 
 ?>

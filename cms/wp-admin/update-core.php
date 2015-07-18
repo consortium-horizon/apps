@@ -11,6 +11,7 @@ require_once( dirname( __FILE__ ) . '/admin.php' );
 
 wp_enqueue_style( 'plugin-install' );
 wp_enqueue_script( 'plugin-install' );
+wp_enqueue_script( 'updates' );
 add_thickbox();
 
 if ( is_multisite() && ! is_network_admin() ) {
@@ -57,13 +58,13 @@ function list_core_update( $update ) {
 				$mysql_compat = version_compare( $mysql_version, $update->mysql_version, '>=' );
 
 			if ( !$mysql_compat && !$php_compat )
-				$message = sprintf( __('You cannot update because <a href="http://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> requires PHP version %2$s or higher and MySQL version %3$s or higher. You are running PHP version %4$s and MySQL version %5$s.'), $update->current, $update->php_version, $update->mysql_version, $php_version, $mysql_version );
+				$message = sprintf( __('You cannot update because <a href="https://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> requires PHP version %2$s or higher and MySQL version %3$s or higher. You are running PHP version %4$s and MySQL version %5$s.'), $update->current, $update->php_version, $update->mysql_version, $php_version, $mysql_version );
 			elseif ( !$php_compat )
-				$message = sprintf( __('You cannot update because <a href="http://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> requires PHP version %2$s or higher. You are running version %3$s.'), $update->current, $update->php_version, $php_version );
+				$message = sprintf( __('You cannot update because <a href="https://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> requires PHP version %2$s or higher. You are running version %3$s.'), $update->current, $update->php_version, $php_version );
 			elseif ( !$mysql_compat )
-				$message = sprintf( __('You cannot update because <a href="http://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> requires MySQL version %2$s or higher. You are running version %3$s.'), $update->current, $update->mysql_version, $mysql_version );
+				$message = sprintf( __('You cannot update because <a href="https://codex.wordpress.org/Version_%1$s">WordPress %1$s</a> requires MySQL version %2$s or higher. You are running version %3$s.'), $update->current, $update->mysql_version, $mysql_version );
 			else
-				$message = 	sprintf(__('You can update to <a href="http://codex.wordpress.org/Version_%1$s">WordPress %2$s</a> automatically or download the package and install it manually:'), $update->current, $version_string);
+				$message = 	sprintf(__('You can update to <a href="https://codex.wordpress.org/Version_%1$s">WordPress %2$s</a> automatically or download the package and install it manually:'), $update->current, $version_string);
 			if ( !$mysql_compat || !$php_compat )
 				$show_buttons = false;
 		}
@@ -133,7 +134,7 @@ function dismissed_updates() {
 /**
  * Display upgrade WordPress for downloading latest or upgrading automatically form.
  *
- * @since 2.7
+ * @since 2.7.0
  *
  * @return null
  */
@@ -162,7 +163,7 @@ function core_upgrade_preamble() {
 		echo '</h3>';
 	} else {
 		echo '<div class="updated inline"><p>';
-		_e('<strong>Important:</strong> before updating, please <a href="http://codex.wordpress.org/WordPress_Backups">back up your database and files</a>. For help with updates, visit the <a href="http://codex.wordpress.org/Updating_WordPress">Updating WordPress</a> Codex page.');
+		_e('<strong>Important:</strong> before updating, please <a href="https://codex.wordpress.org/WordPress_Backups">back up your database and files</a>. For help with updates, visit the <a href="https://codex.wordpress.org/Updating_WordPress">Updating WordPress</a> Codex page.');
 		echo '</p></div>';
 
 		echo '<h3 class="response">';
@@ -173,12 +174,14 @@ function core_upgrade_preamble() {
 	if ( isset( $updates[0] ) && $updates[0]->response == 'development' ) {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		$upgrader = new WP_Automatic_Updater;
-		if ( wp_http_supports( 'ssl' ) && $upgrader->should_update( 'core', $updates[0], ABSPATH ) )
-			echo '<div class="updated inline"><p><strong>BETA TESTERS:</strong> This site is set up to install updates of future beta versions automatically.</p></div>';
+		if ( wp_http_supports( 'ssl' ) && $upgrader->should_update( 'core', $updates[0], ABSPATH ) ) {
+			echo '<div class="updated inline"><p>';
+			echo '<strong>' . __( 'BETA TESTERS:' ) . '</strong> ' . __( 'This site is set up to install updates of future beta versions automatically.' );
+			echo '</p></div>';
+		}
 	}
 
 	echo '<ul class="core-updates">';
-	$alternate = true;
 	foreach( (array) $updates as $update ) {
 		echo '<li>';
 		list_core_update( $update );
@@ -220,7 +223,7 @@ function list_plugin_updates() {
 <form method="post" action="<?php echo esc_url( $form_action ); ?>" name="upgrade-plugins" class="upgrade">
 <?php wp_nonce_field('upgrade-core'); ?>
 <p><input id="upgrade-plugins" class="button" type="submit" value="<?php esc_attr_e('Update Plugins'); ?>" name="upgrade" /></p>
-<table class="widefat" cellspacing="0" id="update-plugins-table">
+<table class="widefat" id="update-plugins-table">
 	<thead>
 	<tr>
 		<th scope="col" class="manage-column check-column"><input type="checkbox" id="plugins-select-all" /></th>
@@ -228,16 +231,14 @@ function list_plugin_updates() {
 	</tr>
 	</thead>
 
-	<tfoot>
-	<tr>
-		<th scope="col" class="manage-column check-column"><input type="checkbox" id="plugins-select-all-2" /></th>
-		<th scope="col" class="manage-column"><label for="plugins-select-all-2"><?php _e('Select All'); ?></label></th>
-	</tr>
-	</tfoot>
 	<tbody class="plugins">
 <?php
 	foreach ( (array) $plugins as $plugin_file => $plugin_data) {
 		$info = plugins_api('plugin_information', array('slug' => $plugin_data->update->slug ));
+		if ( is_wp_error( $info ) ) {
+			$info = false;
+		}
+
 		// Get plugin compat for running version of WordPress.
 		if ( isset($info->tested) && version_compare($info->tested, $cur_wp_version, '>=') ) {
 			$compat = '<br />' . sprintf(__('Compatibility with WordPress %1$s: 100%% (according to its author)'), $cur_wp_version);
@@ -268,13 +269,20 @@ function list_plugin_updates() {
 		$details = sprintf('<a href="%1$s" class="thickbox" title="%2$s">%3$s</a>.', esc_url($details_url), esc_attr($plugin_data->Name), $details_text);
 
 		echo "
-	<tr class='active'>
+	<tr>
 		<th scope='row' class='check-column'><input type='checkbox' name='checked[]' value='" . esc_attr($plugin_file) . "' /></th>
 		<td><p><strong>{$plugin_data->Name}</strong><br />" . sprintf(__('You have version %1$s installed. Update to %2$s.'), $plugin_data->Version, $plugin_data->update->new_version) . ' ' . $details . $compat . $upgrade_notice . "</p></td>
 	</tr>";
 	}
 ?>
 	</tbody>
+
+	<tfoot>
+	<tr>
+		<th scope="col" class="manage-column check-column"><input type="checkbox" id="plugins-select-all-2" /></th>
+		<th scope="col" class="manage-column"><label for="plugins-select-all-2"><?php _e( 'Select All' ); ?></label></th>
+	</tr>
+	</tfoot>
 </table>
 <p><input id="upgrade-plugins-2" class="button" type="submit" value="<?php esc_attr_e('Update Plugins'); ?>" name="upgrade" /></p>
 </form>
@@ -294,11 +302,11 @@ function list_theme_updates() {
 ?>
 <h3><?php _e( 'Themes' ); ?></h3>
 <p><?php _e( 'The following themes have new versions available. Check the ones you want to update and then click &#8220;Update Themes&#8221;.' ); ?></p>
-<p><?php printf( __( '<strong>Please Note:</strong> Any customizations you have made to theme files will be lost. Please consider using <a href="%s">child themes</a> for modifications.' ), __( 'http://codex.wordpress.org/Child_Themes' ) ); ?></p>
+<p><?php printf( __( '<strong>Please Note:</strong> Any customizations you have made to theme files will be lost. Please consider using <a href="%s">child themes</a> for modifications.' ), __( 'https://codex.wordpress.org/Child_Themes' ) ); ?></p>
 <form method="post" action="<?php echo esc_url( $form_action ); ?>" name="upgrade-themes" class="upgrade">
 <?php wp_nonce_field('upgrade-core'); ?>
 <p><input id="upgrade-themes" class="button" type="submit" value="<?php esc_attr_e('Update Themes'); ?>" name="upgrade" /></p>
-<table class="widefat" cellspacing="0" id="update-themes-table">
+<table class="widefat" id="update-themes-table">
 	<thead>
 	<tr>
 		<th scope="col" class="manage-column check-column"><input type="checkbox" id="themes-select-all" /></th>
@@ -306,23 +314,24 @@ function list_theme_updates() {
 	</tr>
 	</thead>
 
-	<tfoot>
-	<tr>
-		<th scope="col" class="manage-column check-column"><input type="checkbox" id="themes-select-all-2" /></th>
-		<th scope="col" class="manage-column"><label for="themes-select-all-2"><?php _e('Select All'); ?></label></th>
-	</tr>
-	</tfoot>
 	<tbody class="plugins">
 <?php
 	foreach ( $themes as $stylesheet => $theme ) {
 		echo "
-	<tr class='active'>
+	<tr>
 		<th scope='row' class='check-column'><input type='checkbox' name='checked[]' value='" . esc_attr( $stylesheet ) . "' /></th>
 		<td class='plugin-title'><img src='" . esc_url( $theme->get_screenshot() ) . "' width='85' height='64' style='float:left; padding: 0 5px 5px' /><strong>" . $theme->display('Name') . '</strong> ' . sprintf( __( 'You have version %1$s installed. Update to %2$s.' ), $theme->display('Version'), $theme->update['new_version'] ) . "</td>
 	</tr>";
 	}
 ?>
 	</tbody>
+
+	<tfoot>
+	<tr>
+		<th scope="col" class="manage-column check-column"><input type="checkbox" id="themes-select-all-2" /></th>
+		<th scope="col" class="manage-column"><label for="themes-select-all-2"><?php _e( 'Select All' ); ?></label></th>
+	</tr>
+	</tfoot>
 </table>
 <p><input id="upgrade-themes-2" class="button" type="submit" value="<?php esc_attr_e('Update Themes'); ?>" name="upgrade" /></p>
 </form>
@@ -342,9 +351,9 @@ function list_translation_updates() {
 	$form_action = 'update-core.php?action=do-translation-upgrade';
 	?>
 	<h3><?php _e( 'Translations' ); ?></h3>
-	<form method="post" action="<?php echo esc_url( $form_action ); ?>" name="upgrade-themes" class="upgrade">
-		<p><?php _e( 'Some of your translations are out of date.' ); ?></p>
-		<?php wp_nonce_field('upgrade-translations'); ?>
+	<form method="post" action="<?php echo esc_url( $form_action ); ?>" name="upgrade-translations" class="upgrade">
+		<p><?php _e( 'New translations are available.' ); ?></p>
+		<?php wp_nonce_field( 'upgrade-translations' ); ?>
 		<p><input class="button" type="submit" value="<?php esc_attr_e( 'Update Translations' ); ?>" name="upgrade" /></p>
 	</form>
 	<?php
@@ -353,14 +362,14 @@ function list_translation_updates() {
 /**
  * Upgrade WordPress core display.
  *
- * @since 2.7
+ * @since 2.7.0
  *
  * @return null
  */
 function do_core_upgrade( $reinstall = false ) {
 	global $wp_filesystem;
 
-	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+	include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
 
 	if ( $reinstall )
 		$url = 'update-core.php?action=do-core-reinstall';
@@ -374,20 +383,23 @@ function do_core_upgrade( $reinstall = false ) {
 	if ( !$update )
 		return;
 
+	// Allow relaxed file ownership writes for User-initiated upgrades when the API specifies
+	// that it's safe to do so. This only happens when there are no new files to create.
+	$allow_relaxed_file_ownership = ! $reinstall && isset( $update->new_files ) && ! $update->new_files;
+
 ?>
 	<div class="wrap">
-	<?php screen_icon('tools'); ?>
 	<h2><?php _e('Update WordPress'); ?></h2>
 <?php
 
-	if ( false === ( $credentials = request_filesystem_credentials( $url, '', false, ABSPATH ) ) ) {
+	if ( false === ( $credentials = request_filesystem_credentials( $url, '', false, ABSPATH, array( 'version', 'locale' ), $allow_relaxed_file_ownership ) ) ) {
 		echo '</div>';
 		return;
 	}
 
-	if ( ! WP_Filesystem( $credentials, ABSPATH ) ) {
+	if ( ! WP_Filesystem( $credentials, ABSPATH, $allow_relaxed_file_ownership ) ) {
 		// Failed to connect, Error and request again
-		request_filesystem_credentials( $url, '', true, ABSPATH );
+		request_filesystem_credentials( $url, '', true, ABSPATH, array( 'version', 'locale' ), $allow_relaxed_file_ownership );
 		echo '</div>';
 		return;
 	}
@@ -405,7 +417,9 @@ function do_core_upgrade( $reinstall = false ) {
 	add_filter( 'update_feedback', 'show_message' );
 
 	$upgrader = new Core_Upgrader();
-	$result = $upgrader->upgrade( $update );
+	$result = $upgrader->upgrade( $update, array(
+		'allow_relaxed_file_ownership' => $allow_relaxed_file_ownership
+	) );
 
 	if ( is_wp_error($result) ) {
 		show_message($result);
@@ -448,10 +462,6 @@ function do_undismiss_core_update() {
 	exit;
 }
 
-function no_update_actions($actions) {
-	return '';
-}
-
 $action = isset($_GET['action']) ? $_GET['action'] : 'upgrade-core';
 
 $upgrade_error = false;
@@ -462,37 +472,44 @@ if ( ( 'do-theme-upgrade' == $action || ( 'do-plugin-upgrade' == $action && ! is
 }
 
 $title = __('WordPress Updates');
-$parent_file = 'tools.php';
+$parent_file = 'index.php';
+
+$updates_overview  = '<p>' . __( 'On this screen, you can update to the latest version of WordPress, as well as update your themes and plugins from the WordPress.org repositories.' ) . '</p>';
+$updates_overview .= '<p>' . __( 'If an update is available, you&#8127;ll see a notification appear in the Toolbar and navigation menu.' ) . ' ' . __( 'Keeping your site updated is important for security. It also makes the internet a safer place for you and your readers.' ) . '</p>';
 
 get_current_screen()->add_help_tab( array(
-'id'		=> 'overview',
-'title'		=> __('Overview'),
-'content'	=>
-	'<p>' . __('This screen lets you update to the latest version of WordPress as well as update your themes and plugins from the WordPress.org repository. When updates are available, the number of available updates will appear in a bubble on the left hand menu as a notification.') . '</p>' .
-	'<p>' . __('It is very important to keep your WordPress installation up to date for security reasons, so when you see a number appear, make sure you take the time to update, which is an easy process.') . '</p>'
+	'id'      => 'overview',
+	'title'   => __( 'Overview' ),
+	'content' => $updates_overview
 ) );
 
+$updates_howto  = '<p>' . __( '<strong>WordPress</strong> &mdash; Updating your WordPress installation is a simple one-click procedure: just <strong>click on the &#8220;Update Now&#8221; button</strong> when you are notified that a new version is available.' ) . ' ' . __( 'In most cases, WordPress will automatically apply maintenance and security updates in the background for you.' ) . '</p>';
+$updates_howto .= '<p>' . __( '<strong>Themes and Plugins</strong> &mdash; To update individual themes or plugins from this screen, use the checkboxes to make your selection, then <strong>click on the appropriate &#8220;Update&#8221; button</strong>. To update all of your themes or plugins at once, you can check the box at the top of the section to select all before clicking the update button.' ) . '</p>';
+
+if ( 'en_US' != get_locale() ) {
+	$updates_howto .= '<p>' . __( '<strong>Translations</strong> &mdash; The files translating WordPress into your language are updated for you whenever any other updates occur. But if these files are out of date, you can <strong>click the &#8220;Update Translations&#8221;</strong> button.' ) . '</p>';
+}
+
 get_current_screen()->add_help_tab( array(
-'id'		=> 'how-to-update',
-'title'		=> __('How to Update'),
-'content'	=>
-	'<p>' . __('Updating your WordPress installation is a simple one-click procedure; just click on the Update button when it says a new version is available.') . '</p>' .
-	'<p>' . __('To update themes or plugins from this screen, use the checkboxes to make your selection and click on the appropriate Update button. Check the box at the top of the Themes or Plugins section to select all and update them all at once.') . '</p>'
+	'id'      => 'how-to-update',
+	'title'   => __( 'How to Update' ),
+	'content' => $updates_howto
 ) );
 
 get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __('For more information:') . '</strong></p>' .
-	'<p>' . __('<a href="http://codex.wordpress.org/Dashboard_Updates_Screen" target="_blank">Documentation on Updating WordPress</a>') . '</p>' .
-	'<p>' . __('<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
+	'<p>' . __( '<a href="https://codex.wordpress.org/Dashboard_Updates_Screen" target="_blank">Documentation on Updating WordPress</a>' ) . '</p>' .
+	'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>' ) . '</p>'
 );
 
 if ( 'upgrade-core' == $action ) {
+	// Force a update check when requested
+	$force_check = ! empty( $_GET['force-check'] );
+	wp_version_check( array(), $force_check );
 
-	wp_version_check();
 	require_once(ABSPATH . 'wp-admin/admin-header.php');
 	?>
 	<div class="wrap">
-	<?php screen_icon('tools'); ?>
 	<h2><?php _e('WordPress Updates'); ?></h2>
 	<?php
 	if ( $upgrade_error ) {
@@ -507,7 +524,7 @@ if ( 'upgrade-core' == $action ) {
 	echo '<p>';
 	/* translators: %1 date, %2 time. */
 	printf( __('Last checked on %1$s at %2$s.'), date_i18n( get_option( 'date_format' ) ), date_i18n( get_option( 'time_format' ) ) );
-	echo ' &nbsp; <a class="button" href="' . esc_url( self_admin_url('update-core.php') ) . '">' . __( 'Check Again' ) . '</a>';
+	echo ' &nbsp; <a class="button" href="' . esc_url( self_admin_url('update-core.php?force-check=1') ) . '">' . __( 'Check Again' ) . '</a>';
 	echo '</p>';
 
 	if ( $core = current_user_can( 'update_core' ) )
@@ -519,7 +536,12 @@ if ( 'upgrade-core' == $action ) {
 	if ( $core || $plugins || $themes )
 		list_translation_updates();
 	unset( $core, $plugins, $themes );
-	do_action('core_upgrade_preamble');
+	/**
+	 * Fires after the core, plugin, and theme update tables.
+	 *
+	 * @since 2.9.0
+	 */
+	do_action( 'core_upgrade_preamble' );
 	echo '</div>';
 	include(ABSPATH . 'wp-admin/admin-footer.php');
 
@@ -530,8 +552,7 @@ if ( 'upgrade-core' == $action ) {
 
 	check_admin_referer('upgrade-core');
 
-	// do the (un)dismiss actions before headers,
-	// so that they can redirect
+	// Do the (un)dismiss actions before headers, so that they can redirect.
 	if ( isset( $_POST['dismiss'] ) )
 		do_dismiss_core_update();
 	elseif ( isset( $_POST['undismiss'] ) )
@@ -571,9 +592,8 @@ if ( 'upgrade-core' == $action ) {
 
 	require_once(ABSPATH . 'wp-admin/admin-header.php');
 	echo '<div class="wrap">';
-	screen_icon('plugins');
 	echo '<h2>' . esc_html__('Update Plugins') . '</h2>';
-	echo "<iframe src='$url' style='width: 100%; height: 100%; min-height: 750px;' frameborder='0'></iframe>";
+	echo '<iframe src="', $url, '" style="width: 100%; height: 100%; min-height: 750px;" frameborder="0"></iframe>';
 	echo '</div>';
 	include(ABSPATH . 'wp-admin/admin-footer.php');
 
@@ -599,11 +619,12 @@ if ( 'upgrade-core' == $action ) {
 	$title = __('Update Themes');
 
 	require_once(ABSPATH . 'wp-admin/admin-header.php');
-	echo '<div class="wrap">';
-	screen_icon('themes');
-	echo '<h2>' . esc_html__('Update Themes') . '</h2>';
-	echo "<iframe src='$url' style='width: 100%; height: 100%; min-height: 750px;' frameborder='0'></iframe>";
-	echo '</div>';
+	?>
+	<div class="wrap">
+		<h2><?php echo esc_html__('Update Themes') ?></h2>
+		<iframe src="<?php echo $url ?>" style="width: 100%; height: 100%; min-height: 750px;" frameborder="0"></iframe>
+	</div>
+	<?php
 	include(ABSPATH . 'wp-admin/admin-footer.php');
 
 } elseif ( 'do-translation-upgrade' == $action ) {
@@ -627,5 +648,14 @@ if ( 'upgrade-core' == $action ) {
 	require_once( ABSPATH . 'wp-admin/admin-footer.php' );
 
 } else {
-	do_action('update-core-custom_' . $action);
+	/**
+	 * Fires for each custom update action on the WordPress Updates screen.
+	 *
+	 * The dynamic portion of the hook name, `$action`, refers to the
+	 * passed update action. The hook fires in lieu of all available
+	 * default update actions.
+	 *
+	 * @since 3.2.0
+	 */
+	do_action( "update-core-custom_{$action}" );
 }

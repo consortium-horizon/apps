@@ -240,16 +240,17 @@
 			if ($currentResult) {
 				if ( options.multiple ) {
 					if ( $input.val().indexOf(options.multipleSep) != -1 ) {
-						$currentVal = $input.val().substr( 0, ( $input.val().lastIndexOf(options.multipleSep) + options.multipleSep.length ) );
+						$currentVal = $input.val().substr( 0, ( $input.val().lastIndexOf(options.multipleSep) + options.multipleSep.length ) ) + ' ';
 					} else {
 						$currentVal = "";
 					}
-					$input.val( $currentVal + $currentResult.text() + options.multipleSep);
+					$input.val( $currentVal + $currentResult.text() + options.multipleSep + ' ' );
 					$input.focus();
 				} else {
 					$input.val($currentResult.text());
 				}
 				$results.hide();
+				$input.trigger('change');
 
 				if (options.onSelect)
 					options.onSelect.apply($input[0]);
@@ -293,7 +294,7 @@
 
 		options = options || {};
 		options.multiple = options.multiple || false;
-		options.multipleSep = options.multipleSep || ", ";
+		options.multipleSep = options.multipleSep || ",";
 		options.source = source;
 		options.delay = options.delay || 100;
 		options.resultsClass = options.resultsClass || 'ac_results';
