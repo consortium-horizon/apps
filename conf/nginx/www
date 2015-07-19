@@ -21,11 +21,11 @@ server {
 
   server_name www.consortium-horizon.com;
 
-  root /var/www/horizon/current;
+  root /var/www/webapps/current/forum;
   index index.html index.htm index.php;
 
-  access_log /var/www/horizon/shared/log/nginx.access.log main;
-  error_log /var/www/horizon/shared/log/nginx.error.log;
+  access_log /var/www/webapps/shared/log/nginx.access.log main;
+  error_log /var/www/webapps/shared/log/nginx.error.log;
   rewrite_log on;
 
   location /http-bind/ {
@@ -58,19 +58,8 @@ server {
   # signature generator
   rewrite ^/sig/(\d+)([aA])?(t(\d+))?.png?$ /sig/?id=$1&avatar=$2&theme=$4 last;
 
-        # profiles
-        rewrite ^/profile/([^/]+)/?$ /index.php?pretty&action=profile&user=$1 last;
-
-        # actions
-        rewrite ^/(activate|admin|announce|ban|boardrecount|buddy|calendar|cleanperms|collapse|convertentities|convertutf8|coppa|deletemsg|detailedversion|display|dlattach|dumpdb|editpoll|editpoll2|emailuser|featuresettings|featuresettings2|findmember|forum|groups|help|helpadmin|im|jsoption|jsmodify|lock|lockVoting|login|login2|logout|maintain|manageattachments|manageboards|managecalendar|managesearch|markasread|membergroups|mergetopics|mlist|moderate|modifycat|modifykarma|modlog|movetopic|movetopic2|news|notify|notifyboard|oasl_callback|optimizetables|packageget|packages|permissions|pgdownload|pm|post|post2|postsettings|printpage|profile|profile2|quotefast|quickmod|quickmod2|recent|regcenter|register|register2|reminder|removetopic2|removeoldtopics2|removepoll|repairboards|reporttm|reports|requestmembers|search|search2|sendtopic|serversettings|serversettings2|shoutbox|smileys|smstats|spellcheck|splittopics|stats|sticky|theme|trackip|treasury|about:mozilla|about:unknown|unread|unreadreplies|viewErrorLog|viewmembers|viewprofile|verificationcode|vote|viewquery|who|\.xml)/?$ "/index.php?pretty;action=$1" last;
-
-        # boards + topics
-        rewrite ^/([-_!~*'()$\w]+)/\d?/?$ /index.php?pretty&board=$1.0 last;
-        rewrite ^/([-_!~*'()$\w]+)/(\d*)/\d?/?$ /index.php?pretty&board=$1.$2 last;
-        rewrite ^/([-_!~*'()$\w]+)/([-_!~*'()$\w]+)/\d?/?$ /index.php?pretty&board=$1&topic=$2.0 last;
-        rewrite ^/([-_!~*'()$\w]+)/([-_!~*'()$\w]+)/(\d*|msg\d*|new)/\d?/?$ /index.php?pretty&board=$1&topic=$2.$3 last;
-    }
-  }
+  # profiles
+  rewrite ^/profile/([^/]+)/?$ /index.php?pretty&action=profile&user=$1 last;
 
   location ~ \.php$ {
     fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -79,18 +68,6 @@ server {
     include fastcgi_params;
     fastcgi_param SESSION_USE_TRANS_SID 0;
   }
-
-  # handle static resources
-  #location ~ \.(jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|pdf|txt|tar|wav|bmp|rtf|js|flv|swf|html|htm)$ {
-  #  #root /var/www/horizon/current/public;
-  #  gzip_static on; # to serve pre-gzipped version
-  #  gzip_vary on;
-  #  expires max;
-  #  add_header Cache-Control public;
-  #  access_log off;
-  #  error_log off;
-  #  break;
-  #}
 
   location @mediawiki {
     rewrite ^/wiki/([^?]*)(?:\?(.*))? /wiki/index.php?title=$1&$2 last;
