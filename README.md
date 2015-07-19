@@ -1,5 +1,7 @@
 # Le Consortium Horizon - web apps
 
+[![Deployment status from DeployBot](https://lch.deploybot.com/badge/77558059972600/38585.svg)](http://deploybot.com)
+
 Le consortium horizon propose un ensemble d'applications web dont les sources sont centralisées dans ce repository :
 
 - CMS : [Wordpress](https://github.com/WordPress/WordPress)
