@@ -44,6 +44,7 @@ $ brew install caddy
 
 ```
 $ bower install
+$ (cd wiki && composer update --no-dev)
 ```
 
 ## Développement
