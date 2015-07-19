@@ -15,6 +15,7 @@ Sont nécessaires les éléments suivants :
 
 - PHP 5.x
 - MySQL 5.x
+- Nginx
 
 ### Mac
 
