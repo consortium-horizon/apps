@@ -1,0 +1,25 @@
+<html>
+<head>
+</head>
+<body>
+{* 内嵌于模板的错误信息 *}
+{if $hasErr}    {* 错误信息 *}
+<div style="border:1px #ff0000 solid;padding:4px">
+    {foreach from=$errInfoList item=oErrorInfo}
+    {if !$oErrorInfo->isErrInfo()}
+    <div>{$oErrorInfo->errValue|escape:html}</div>
+    {/if}
+    {/foreach}
+</div>
+<br>
+{else}  {* 正常消息 *}
+    {if $errInfoList}
+    <div style="border:1px #00ff00 solid;padding:4px">
+        {foreach from=$errInfoList item=oErrorInfo}
+        <div>{$oErrorInfo->errValue|escape:html}</div>
+        {/foreach}
+    </div>
+    {/if}
+{/if}
+</body>
+</html>

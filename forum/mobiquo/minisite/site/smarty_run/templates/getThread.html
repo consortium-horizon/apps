@@ -1,0 +1,90 @@
+{* get thread *}
+{* 页首 *}
+{include file="public_header.html"}
+<body id="vanilla_discussion_index" class="Vanilla Discussion Index ">
+  <div id="Frame">
+	 <div class="Banner">
+		<ul>
+		  <li>
+		    <a href="{tplEchoUrl mainName='MainForum.php' cmd='forumList'}" style="display:inline-block;font-size:16px;">All Forums</a>{if $data.navi}{foreach from=$data.navi item=oNaviMnEtForum}<a href="#" style="display:inline-block;">&gt;</a><a href="{$oNaviMnEtForum->getForumUrl()}" style="display:inline-block;" title="{$oNaviMnEtForum->getForumUrlTitle()|escape:"html"}">{$oNaviMnEtForum->forumName->oriValue|escape:"html"}</a>{/foreach}{/if}
+		  </li>
+		</ul>
+	 </div>
+	 <div id="Body">
+		<div id="Content">
+		  <div class="Tabs HeadingTabs DiscussionTabs FirstPage">
+   <div class="SubTab" style="font-size:16px;word-break:break-all;word-wrap:break-word;">{$data.topic->topicTitle->oriValue|escape:html}</div>
+</div>
+<ul class="DataList MessageList Discussion FirstPage">
+{foreach from=$data.posts item=oMnEtForumPost}
+<li class="Item Comment" id="Comment_{$oMnEtForumPost->postId->oriValue}">
+   <div class="Comment">
+      <div class="Meta">
+        {if $oMnEtForumPost->oAuthorMnEtUser}
+                  <span class="Author">
+            {if $oMnEtForumPost->oAuthorMnEtUser->iconUrl->hasSetOriValue()}
+            <a title="admin" href="#"><img src="{$oMnEtForumPost->oAuthorMnEtUser->iconUrl->oriValue}" alt="admin" class="ProfilePhotoMedium" /></a>
+            {/if}
+            <a href="#">{$oMnEtForumPost->oAuthorMnEtUser->userName->oriValue|escape:html}</a>         </span>
+        {/if}
+         <span class="DateCreated">
+            {$oMnEtForumPost->postTime->oriValue|date_format}
+         </span>
+                  <div class="CommentInfo">
+                     </div>
+               </div>
+      <div class="Message" id="mnMsg_{$oMnEtForumPost->postId->oriValue}">
+        {$oMnEtForumPost->postContent->mnDisplayValue}
+        {if $oMnEtForumPost->objsNotInContentMbqEtAtt}
+        <br /><br />
+        <div><b>Attachments</b></div>
+        {foreach from=$oMnEtForumPost->objsNotInContentMbqEtAtt item=oNotInContentMbqEtAtt}
+            {if $oNotInContentMbqEtAtt->isImage()}
+                <a href="{$oNotInContentMbqEtAtt->url->oriValue}" target="_blank"><img src="{$oNotInContentMbqEtAtt->thumbnailUrl->oriValue}" style="height:100px;width:100px;" /></a>
+            {else}
+            <div>
+                <a href="{$oNotInContentMbqEtAtt->url->oriValue}" target="_blank">{$oNotInContentMbqEtAtt->uploadFileName->oriValue|escape:html}</a>
+            </div>
+            {/if}
+        {/foreach}
+        {/if}
+      </div>
+   </div>
+</li>
+{/foreach}
+</ul>
+{$data.oMnDataPage->echoPage()}
+   <div class="Foot">
+    <!--
+      <a href="http://192.168.0.101/vanilla_2-0-18-8/entry/signin?Target=discussion%2F11%2Ftest-topic%3Fpost%23Form_Body" class="TabLink">Add a Comment</a> 
+      -->
+   </div>
+   
+		</div>
+	 </div>
+	 <div id="Foot">
+		<div class="FootMenu">
+        <span>{if $tapatalkPluginApiConfig.nativeSitePcModeUrl}<a href="{$tapatalkPluginApiConfig.nativeSitePcModeUrl}" class="">Full Site</a>{/if}</span>
+		</div>
+		<div>
+		  <a href="http://tapatalk.com/"><span>Powered by Tapatalk</span></a>
+		</div>
+	 </div>
+  </div>
+
+<script>
+{literal}
+function exttResizeImage() {
+    var tempDivs = document.getElementsByTagName('div');
+    for (var i = 0;i < tempDivs.length;i ++) {
+        var tempDiv = tempDivs[i];
+        if (tempDiv.id.indexOf('mnMsg_') == 0) {
+        }
+    }
+}
+{/literal}
+</script>
+
+</body>
+{* 页尾 *}
+{include file="public_footer.html"}

@@ -1,0 +1,59 @@
+{* forum list *}
+{* 页首 *}
+{include file="public_header.html"}
+<body id="vanilla_discussions_index" class="Vanilla Discussions index">
+<div id="Frame">
+    <div class="Banner">
+		<ul>
+		  <li><a href="{tplEchoUrl mainName='MainForum.php' cmd='forumList'}" class="" style="font-size:16px;">All Forums</a></li>
+		</ul>
+	 </div>
+	 <div id="Body">
+		<div id="Content">
+<ul class="DataList CategoryList">
+    {foreach from=$objsMnEtForum item=oMnEtForum}
+    <li class="Item Depth1 Unread">
+               <div class="ItemContent Category Unread"><a href="{$oMnEtForum->getForumUrl()}" class="Title" style="font-size:16px;word-break:break-all;word-wrap:break-word;" title="{$oMnEtForum->getForumUrlTitle()|escape:"html"}">{$oMnEtForum->forumName->oriValue|escape:"html"}</a><div class="CategoryDescription">{$oMnEtForum->description->oriValue|escape:"html"}</div><div class="Meta">
+                     <span class="DiscussionCount">{$oMnEtForum->totalTopicNum->oriValue} discussions</span>
+                     </div>
+               </div>
+    </li>
+               {foreach from=$oMnEtForum->objsSubMnEtForum item=oLv2MnEtForum}
+    <li class="Item Depth2 Read">
+               <div class="ItemContent Category Read"><a href="{$oLv2MnEtForum->getForumUrl()}" class="Title" style="font-size:16px;word-break:break-all;word-wrap:break-word;" title="{$oLv2MnEtForum->getForumUrlTitle()|escape:"html"}">{$oLv2MnEtForum->forumName->oriValue|escape:"html"}</a><div class="CategoryDescription">{$oLv2MnEtForum->description->oriValue|escape:"html"}</div><div class="Meta">
+                     <span class="DiscussionCount">{$oLv2MnEtForum->totalTopicNum->oriValue} discussions</span>
+                     {if $oLv2MnEtForum->objsSubMnEtForum}
+                     <span class="ChildCategories"><b>Child Categories:</b> 
+                        {foreach from=$oLv2MnEtForum->objsSubMnEtForum item=oLv3MnEtForum}
+                        <a href="{$oLv3MnEtForum->getForumUrl()}" title="{$oLv3MnEtForum->getForumUrlTitle()|escape:"html"}">{$oLv3MnEtForum->forumName->oriValue|escape:"html"}</a>, 
+                            {foreach from=$oLv3MnEtForum->objsSubMnEtForum item=oLv4MnEtForum}
+                        <a href="{$oLv4MnEtForum->getForumUrl()}" title="{$oLv4MnEtForum->getForumUrlTitle()|escape:"html"}">{$oLv4MnEtForum->forumName->oriValue|escape:"html"}</a>, 
+                                {foreach from=$oLv4MnEtForum->objsSubMnEtForum item=oLv5MnEtForum}
+                        <a href="{$oLv5MnEtForum->getForumUrl()}" title="{$oLv5MnEtForum->getForumUrlTitle()|escape:"html"}">{$oLv5MnEtForum->forumName->oriValue|escape:"html"}</a>, 
+                                {/foreach}
+                            {/foreach}
+                        {/foreach}
+                     </span>
+                     {/if}
+                     </div>
+               </div>
+    </li>
+               {/foreach}
+    {/foreach}
+</ul>
+		</div>
+	 </div>
+	 <div id="Foot">
+		<div class="FootMenu">
+        <span>{if $tapatalkPluginApiConfig.nativeSitePcModeUrl}<a href="{$tapatalkPluginApiConfig.nativeSitePcModeUrl}" class="">Full Site</a>{/if}</span>
+		</div>
+		<div>
+		  <a href="http://tapatalk.com/"><span>Powered by Tapatalk</span></a>
+		</div>
+	 </div>
+  </div>
+
+
+</body>
+{* 页尾 *}
+{include file="public_footer.html"}

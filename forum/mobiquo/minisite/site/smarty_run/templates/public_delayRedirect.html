@@ -1,0 +1,26 @@
+{* 延迟跳转 *}
+{* 页首 *}
+{include file="public_header.html"}
+<script language="javascript">
+    var delaySec = '{$dfvDelayRedirectData.delaySec}' * 1000;
+    var redirectUrl = '{$dfvDelayRedirectData.redirectUrl}';
+    var redirectTarget = '{$dfvDelayRedirectData.redirectTarget}';
+</script>
+<body>
+    <div style="font-color:{if $dfvDelayRedirectData.status == $smarty.const.ERR_INFO}green{else}red{/if}">{$dfvDelayRedirectData.info}</div>
+</body>
+{literal}
+<script language="javascript">
+    window.setTimeout( function() {
+        if (redirectTarget == '_self') {
+            self.location.href = redirectUrl;
+        } else if (redirectTarget == '_top') {
+            top.location.href = redirectUrl;
+        } else if (redirectTarget == '_parent') {
+            parent.location.href = redirectUrl;
+        }
+    },delaySec);
+</script>
+{/literal}
+{* 页尾 *}
+{include file="public_footer.html"}

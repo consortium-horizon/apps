@@ -1,0 +1,61 @@
+{* thread list *}
+{* 页首 *}
+{include file="public_header.html"}
+<body id="vanilla_discussions_index" class="Vanilla Discussions index">
+<div id="Frame">
+    <div class="Banner">
+		<ul>
+		  <li>
+		    <a href="{tplEchoUrl mainName='MainForum.php' cmd='forumList'}" class="" style="display:inline-block;font-size:16px;">All Forums</a>{if $data.forum}<a href="#" style="display:inline-block;">&gt;</a><a href="{$data.forum->getForumUrl()}" style="display:inline-block;" title="{$data.forum->getForumUrlTitle()|escape:"html"}">{$data.forum->forumName->oriValue|escape:"html"}</a>{/if}
+		  </li>
+		</ul>
+	 </div>
+	 <div id="Body">
+		<div id="Content">
+		  <ul class="DataList Discussions">
+		  {if $data.forums}
+<li class="Item">
+		  <div class="ItemContent Discussion">
+		    <b>Sub Forums&nbsp;:&nbsp;</b>
+		    {foreach from=$data.forums item=oSubMnEtForum}
+		    <a href="{$oSubMnEtForum->getForumUrl()}" title="{$oSubMnEtForum->getForumUrlTitle()|escape:"html"}">{$oSubMnEtForum->forumName->oriValue|escape:"html"}</a>,&nbsp;
+		    {/foreach}
+		  </div>
+</li>
+		  {/if}
+		    {foreach from=$data.topics item=oMnEtForumTopic}
+<li class="Item">
+      {if $oMnEtForumTopic->oAuthorMnEtUser && $oMnEtForumTopic->oAuthorMnEtUser->iconUrl->hasSetOriValue()}
+      <a title="{$oMnEtForumTopic->oAuthorMnEtUser->getDisplayName()}" href="#" class="ProfileLink"><img src="{$oMnEtForumTopic->oAuthorMnEtUser->iconUrl->oriValue}" alt="{$oMnEtForumTopic->oAuthorMnEtUser->getDisplayName()}" class="ProfilePhotoMedium" style="overflow:hidden" /></a>
+      {/if}
+      <div class="ItemContent Discussion" style="word-break:break-all;word-wrap:break-word;">
+      <a href="{tplEchoUrl mainName='MainTopic.php' cmd='getThread' vName='tid' vValue=$oMnEtForumTopic->topicId->oriValue}" class="Title" style="font-size:15px;">{$oMnEtForumTopic->topicTitle->oriValue|escape:html}</a>            <div class="Meta">
+        {if $oMnEtForumTopic->isSticky->oriValue}
+        <span class="Announcement">Sticky</span>
+        {/if}
+        {if $oMnEtForumTopic->oAuthorMnEtUser}
+         <span class="Author">{$oMnEtForumTopic->oAuthorMnEtUser->userName->oriValue|escape:html}</span>
+        {/if} 
+         <span class="Counts">{$oMnEtForumTopic->totalPostNum->oriValue}</span><span class="LastCommentDate">{$oMnEtForumTopic->postTime->oriValue|date_format}</span>
+      </div>
+   </div>
+</li>
+		    {/foreach}
+</ul>
+		</div>
+{$data.oMnDataPage->echoPage()}
+	 </div>
+	 <div id="Foot">
+		<div class="FootMenu">
+        <span>{if $tapatalkPluginApiConfig.nativeSitePcModeUrl}<a href="{$tapatalkPluginApiConfig.nativeSitePcModeUrl}" class="">Full Site</a>{/if}</span>
+		</div>
+		<div>
+		  <a href="http://tapatalk.com/"><span>Powered by Tapatalk</span></a>
+		</div>
+	 </div>
+  </div>
+
+
+</body>
+{* 页尾 *}
+{include file="public_footer.html"}

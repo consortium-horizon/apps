@@ -1,0 +1,27 @@
+{* 公共js头 *}
+    <script language="Javascript" src="{$smarty.const.MPF_C_JS_PUBLIC_URL}common.js"></script>
+    <script>
+        /* 初始化错误信息常量到jCv */
+        jCv.ERR_TOP = {$smarty.const.ERR_TOP};
+        jCv.ERR_HIGH = {$smarty.const.ERR_HIGH};
+        jCv.ERR_APP = {$smarty.const.ERR_APP};
+        jCv.ERR_INFO = {$smarty.const.ERR_INFO};
+        
+        jCv.jsLibUrl = '{$smarty.const.MPF_C_JS_PUBLIC_URL}';       /* 公共js目录 */
+        jCv.cssLibUrl = '{$smarty.const.MPF_C_CSS_PUBLIC_URL}';       /* 公共css目录 */
+        jCv.imgLibUrl = '{$smarty.const.MPF_C_IMG_PUBLIC_URL}';       /* 公共img目录 */
+        jCv.flashLibUrl = '{$smarty.const.MPF_C_FLASH_PUBLIC_URL}';       /* 公共flash目录 */
+        
+        jCv.appJsLibUrl = '{$smarty.const.MPF_C_APP_JS_URL}';       /* 模块js目录 */
+        jCv.appCssLibUrl = '{$smarty.const.MPF_C_APP_CSS_URL}';       /* 模块css目录 */
+        jCv.appImgLibUrl = '{$smarty.const.MPF_C_APP_IMG_URL}';       /* 模块img目录 */
+        jCv.appFlashLibUrl = '{$smarty.const.MPF_C_APP_FLASH_URL}';       /* 模块flash目录 */
+        
+        jCv.rewriteMethod = null;  /* rewrite方式 */
+        jCv.mainHomeDomain = '{$smarty.const.MPF_C_MAIN_HOMEDOMAIN}';   /* 主站域名 */
+        jCv.homeDomain = '{$smarty.const.MPF_C_HOMEDOMAIN}';   /* 模块域名 */
+        jCv.theme = '{$smarty.const.MPF_C_THEME}';  /* 项目皮肤名 */
+        
+        /* 默认公共信息 */
+        jCv.info['cm_program_error'] = '{$mpfLangCm.cm_program_error|escape:html|escape:javascript}';
+    </script>
