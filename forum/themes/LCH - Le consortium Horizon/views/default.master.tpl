@@ -37,9 +37,7 @@
         <li class="dropdown">
           Média
           <ul>
-            <li><a>Le wiki</a></li>
-            <li><a>La chaine youtube</a></li>
-            <li><a>La charte</a></li>
+            <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ">La chaine youtube</a></li>
           </ul>
         </li>
         {discussions_link}
