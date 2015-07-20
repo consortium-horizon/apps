@@ -1,12 +1,12 @@
 server {
   listen 80;
-  server_name wiki.consortium-horizon.com;
+  server_name wiki.test.consortium-horizon.com;
 
-  root /var/www/wiki/current;
+  root /var/www/webapps/current/wiki;
   index index.html index.htm index.php;
 
-  access_log /var/www/wiki/shared/log/nginx.access.log main;
-  error_log /var/www/wiki/shared/log/nginx.error.log;
+  access_log /var/www/webapps/shared/log/wiki/nginx.access.log main;
+  error_log /var/www/webapps/shared/log/wiki/nginx.error.log;
   rewrite_log on;
 
   location ~ \.php$ {

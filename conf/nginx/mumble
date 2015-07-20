@@ -1,0 +1,5 @@
+server {
+  listen       80;
+  server_name  mumble.consortium-horizon.com;
+  return       302 https://www.consortium-horizon.com/wiki/Mumble;
+}

@@ -1,0 +1,9 @@
+server {
+  listen       80;
+  listen 443 ssl spdy;
+  server_name  146.185.164.241
+               consortium-horizon.fr
+               www.consortium-horizon.fr
+               consortium-horizon.com;
+  return       301 http://www.consortium-horizon.com$request_uri;
+}
