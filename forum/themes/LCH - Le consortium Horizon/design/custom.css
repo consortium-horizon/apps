@@ -294,11 +294,11 @@ body {
   width: 100%;
 }
 
-#CategoryGroup-nos-jeux-principaux, #CategoryGroup-le-conseil {
+#CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires {
   position: relative;
   margin-top: 150px;
 }
-#CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-le-conseil::after {
+#CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after {
   position: absolute;
   left: 0;
   right: 0;
