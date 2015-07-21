@@ -6,8 +6,7 @@ Copyright 2010 Luc Brouard
 // Define the plugin:
 $PluginInfo['UnreadDiscussion'] = array(
    'Description' => 'Add an option to unread discussion.',
-   'Version' => '1.0',
-   'RequiredApplications' => array('Vanilla' => '2.0.17.8'), 
+   'Version' => '1.1',
    'PluginUrl' => 'http://vanillaforums.org/addon/503/unreaddiscussion',
    'Author' => "Luc Brouard",
    'AuthorEmail' => 'bean@subtitles.toh.info',
@@ -16,20 +15,20 @@ $PluginInfo['UnreadDiscussion'] = array(
 
 class UnreadDiscussionPlugin extends Gdn_Plugin {
     // To add in http://vanilla2/discussions
-    public function DiscussionsController_Render_Before(&$Sender) {
+    public function DiscussionsController_Render_Before($Sender) {
         $Sender->AddJsFile('/plugins/UnreadDiscussion/unreaddiscussion.js');
     }
 
     // To have unread links in http://vanilla2/discussions
-    public function DiscussionsController_DiscussionOptions_Handler(&$Sender) {
-	$Session = Gdn::Session();
-	$Discussion = $Sender->EventArguments['Discussion'];
+    public function DiscussionsController_DiscussionOptions_Handler($Sender) {
+        $Session = Gdn::Session();
+        $Discussion = $Sender->EventArguments['Discussion'];
         $Sender->Options .= '<li>'.Anchor(T('Unread'), 'vanilla/discussion/unread/'.$Discussion->DiscussionID.'/'.$Session->TransientKey().'?Target='.urlencode($Sender->SelfUrl), 'UnreadDiscussion') . '</li>';
-       	$Sender->StatusMessage = &$Sender->EventArguments[0];
+        $Sender->StatusMessage = $Sender->EventArguments[0];
     }
 
     // Action to mark as unread after click the unread link in option
-    public function DiscussionController_Unread_Create(&$Sender, $Args) {
+    public function DiscussionController_Unread_Create($Sender, $Args) {
         $DiscussionID = $Args[0];
         $TransientKey = $Args[1];
         $Session = Gdn::Session();
