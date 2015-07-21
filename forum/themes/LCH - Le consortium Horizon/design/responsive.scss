@@ -1,0 +1,51 @@
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+
+/* ----------------------------------- */
+/* Let's make this B... aby responsive */
+/* ----------------------------------- */
+
+// For the Ipad and other tablets
+@media all and (max-width: 1026px) {
+   
+   // Adjust Rows 
+   .Row {
+      width: 960px;
+      width: 90vw;
+   }
+
+   // Main categories headers
+   #Content .CategoryGroup .H::after {
+      width: 50%;
+   }
+
+   // Search bar
+   #Head .SiteSearch {
+      #Form_Search {
+         display: none;
+      }
+   }
+
+   // Remove the pannel
+   #Panel {
+      display: none;
+   }
+
+   // Adjust content
+   #Content {
+      margin: 0 !important; // yeah I know it's ugly
+      padding: 10px
+   }
+
+   // Remove banners
+   #CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires {
+      margin-top: 10px;
+      &::after {
+         display: none;
+      }
+   }
+}
+

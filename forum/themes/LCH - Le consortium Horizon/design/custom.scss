@@ -312,6 +312,32 @@ body {
    }
 }
 
+// Banners for main categories
+#CategoryGroup-nos-jeux-principaux, #CategoryGroup-le-conseil {
+   position: relative;
+   margin-top: 150px;
+   &::after {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 150px;
+      top: -150px;
+      content: "";
+   }
+}
+
+#CategoryGroup-nos-jeux-principaux::after {
+   background: url('img/gamesBanner.jpg');
+   background-position: bottom center;
+   background-repeat: no-repeat;
+}
+
+#CategoryGroup-nos-jeux-secondaires::after {
+   background: url('img/otherGamesBanner.jpg');
+   background-position: bottom center;
+   background-repeat: no-repeat;
+}
+
 /* ----------- */
 /* Discussions */
 /* ----------- */
@@ -348,3 +374,5 @@ body {
 
    }
 }
+
+@import "responsive";

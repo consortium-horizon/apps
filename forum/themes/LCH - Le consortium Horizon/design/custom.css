@@ -294,6 +294,31 @@ body {
   width: 100%;
 }
 
+#CategoryGroup-nos-jeux-principaux, #CategoryGroup-le-conseil {
+  position: relative;
+  margin-top: 150px;
+}
+#CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-le-conseil::after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 150px;
+  top: -150px;
+  content: "";
+}
+
+#CategoryGroup-nos-jeux-principaux::after {
+  background: url("img/gamesBanner.jpg");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
+#CategoryGroup-nos-jeux-secondaires::after {
+  background: url("img/otherGamesBanner.jpg");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
 /* ----------- */
 /* Discussions */
 /* ----------- */
@@ -321,4 +346,43 @@ body {
   background: -webkit-gradient(linear, left top, left bottom, from(#32333b), to(#1f1f22));
   background: -moz-linear-gradient(center top, #32333b 0%, #1f1f22 100%);
   background: -moz-gradient(center top, #32333b 0%, #1f1f22 100%);
+}
+
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+/* ----------------------------------- */
+/* Let's make this B... aby responsive */
+/* ----------------------------------- */
+@media all and (max-width: 1026px) {
+  .Row {
+    width: 960px;
+    width: 90vw;
+  }
+
+  #Content .CategoryGroup .H::after {
+    width: 50%;
+  }
+
+  #Head .SiteSearch #Form_Search {
+    display: none;
+  }
+
+  #Panel {
+    display: none;
+  }
+
+  #Content {
+    margin: 0 !important;
+    padding: 10px;
+  }
+
+  #CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires {
+    margin-top: 10px;
+  }
+  #CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after {
+    display: none;
+  }
 }
