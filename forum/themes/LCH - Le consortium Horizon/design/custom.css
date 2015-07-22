@@ -9,39 +9,8 @@
 /*        SCSS file         */
 /* ------------------------ */
 /* ------------------------ */
-/* LCH Custom Vanilla Theme */
-/* By Vladvonvidden -- 2015 */
-/* SCSS file for threads    */
-/* ------------------------ */
-/* This files is used to customize topic & answers on the forum */
-/* ---------- */
-/* First post */
-/* ---------- */
-.MessageList.Discussion {
-  background: white;
-  margin-top: 5px;
-  padding: 10px;
-  -webkit-box-shadow: 0 0 3px #d5d5d5;
-  -moz-box-shadow: 0 0 3px #d5d5d5;
-  box-shadow: 0 0 3px #d5d5d5;
-}
-
-/* -------- */
-/* Comments */
-/* -------- */
-.ItemComment:hover {
-  background: white;
-}
-
-/* ------------------------ */
 /* Colors ... such colors ! */
 /* ------------------------ */
-/*@font-face {
-  font-family: 'Bitter';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Bitter-Regular'), url('http://themes.googleusercontent.com/static/fonts/bitter/v3/2PcBT6-VmYhQCus-O11S5-vvDin1pK8aKteLpeZ5c0A.woff') format('woff');
-}*/
 /* ----------- */
 /* Small fixes */
 /* ----------- */
@@ -319,6 +288,21 @@ body {
   background-repeat: no-repeat;
 }
 
+.Unread h3 a::after {
+  content: "nouveau";
+  margin-left: 9px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  background: #FF0;
+  color: #000;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 3px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 /* ----------- */
 /* Discussions */
 /* ----------- */
@@ -385,4 +369,45 @@ body {
   #CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after {
     display: none;
   }
+}
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for threads    */
+/* ------------------------ */
+/* This files is used to customize topic & answers on the forum */
+/* ---------- */
+/* First post */
+/* ---------- */
+.MessageList.Discussion, .MessageList.Comments {
+  background: white;
+  margin-top: 5px;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+/* ----------- */
+/* Discussions */
+/* ----------- */
+.ItemDiscussion td {
+  padding: 15px 4px !important;
+}
+
+/* -------- */
+/* Comments */
+/* -------- */
+.CommentHeading, .CommentForm .H {
+  margin: 25px 0;
+}
+
+.ItemComment {
+  padding: 30px 8px !important;
+}
+.ItemComment:hover {
+  background: #FFFCF3;
+}
+.ItemComment:last-child {
+  border-bottom: none;
 }

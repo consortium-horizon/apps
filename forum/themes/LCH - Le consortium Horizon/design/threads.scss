@@ -10,20 +10,35 @@
 /* First post */
 /* ---------- */
 
-.MessageList.Discussion {
+.MessageList.Discussion, .MessageList.Comments {
    background: white;
    margin-top: 5px;
    padding: 10px;
    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
 }
 
+/* ----------- */
+/* Discussions */
+/* ----------- */
+
+.ItemDiscussion td {
+	padding: 15px 4px !important; // Once again I tried other things before that
+}
+
 /* -------- */
 /* Comments */
 /* -------- */
 
-.ItemComment {
+.CommentHeading, .CommentForm .H {
+	margin: 25px 0;
+}
 
-   &:hover {
-      background: white;
-   }
+.ItemComment {
+	padding: 30px 8px !important; //please forgive me father for I have sinned
+   	&:hover {
+      	background: #FFFCF3;
+   	}
+   	&:last-child {
+   		border-bottom: none;
+   	}
 }

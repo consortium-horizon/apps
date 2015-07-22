@@ -5,7 +5,6 @@
 /* ------------------------ */
 
 @import "mixins";
-@import "threads";
 
 /* ------------------------ */
 /* Colors ... such colors ! */
@@ -20,15 +19,6 @@ $primaryHL : #00baff;
 // Alert
 $alert : rgb(221, 0, 0);
 
-// Fonts, fonts everywhere ! 
-
-/*@font-face {
-  font-family: 'Bitter';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Bitter-Regular'), url('http://themes.googleusercontent.com/static/fonts/bitter/v3/2PcBT6-VmYhQCus-O11S5-vvDin1pK8aKteLpeZ5c0A.woff') format('woff');
-}*/
-
 /* ----------- */
 /* Small fixes */
 /* ----------- */
@@ -38,8 +28,6 @@ $alert : rgb(221, 0, 0);
    width: 960px;
    width: 75vw;
 }
-
-
 
 // Center our most beautiful logo
 .Banner {
@@ -199,6 +187,7 @@ body {
 /* --------------- */
 /* Navigation tree */
 /* --------------- */
+
 .BreadcrumbsWrapper {
    .Row {
       padding: 10px;
@@ -212,6 +201,7 @@ body {
 /* ---------------------- */
 /* Main container (#Body) */
 /* ---------------------- */
+
 #Body {
    .Row {
       padding: 10px;
@@ -338,6 +328,22 @@ body {
    background-repeat: no-repeat;
 }
 
+// Unread messages 
+.Unread h3 a::after {
+   content: "nouveau";
+   margin-left: 9px;
+   border-radius: 2px;
+   -moz-border-radius: 2px;
+   -webkit-border-radius: 2px;
+   background: #FF0;
+   color: #000;
+   font-size: 9px;
+   font-weight: bold;
+   padding: 3px;
+   line-height: 1;
+   white-space: nowrap;
+}
+
 /* ----------- */
 /* Discussions */
 /* ----------- */
@@ -376,3 +382,4 @@ body {
 }
 
 @import "responsive";
+@import "threads";
