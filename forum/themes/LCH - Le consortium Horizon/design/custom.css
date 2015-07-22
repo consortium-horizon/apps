@@ -263,11 +263,11 @@ body {
   width: 100%;
 }
 
-#CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires, #CategoryGroup-le-conseil-de-guilde {
+#CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires, #CategoryGroup-le-salon-ouvert-au-public {
   position: relative;
   margin-top: 150px;
 }
-#CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after, #CategoryGroup-le-conseil-de-guilde::after {
+#CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after, #CategoryGroup-le-salon-ouvert-au-public::after {
   position: absolute;
   left: 0;
   right: 0;
@@ -288,7 +288,7 @@ body {
   background-repeat: no-repeat;
 }
 
-#CategoryGroup-le-conseil-de-guilde::after {
+#CategoryGroup-le-salon-ouvert-au-public::after {
   background: url("img/publicBanner.jpg");
   background-position: bottom center;
   background-repeat: no-repeat;
