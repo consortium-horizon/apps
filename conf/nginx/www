@@ -30,6 +30,11 @@ server {
     expires 1y;
   }
 
+  # RSS feeds
+  location ~* \.rss$ {
+    add_header Access-Control-Allow-Origin *;
+  }
+
   # XMPP server
   location /http-bind {
     proxy_pass         http://127.0.0.1:5280/http-bind;
