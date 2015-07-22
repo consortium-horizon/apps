@@ -23,6 +23,9 @@ $PluginInfo['xmppprebind'] = array(
  */
 class XMPPPrebindPlugin extends Gdn_Plugin
 {
+   public function Setup() {
+   }
+
 
     public function Base_AuthSuccess_Handler($Sender, $Args){
         
