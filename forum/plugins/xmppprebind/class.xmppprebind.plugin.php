@@ -27,11 +27,24 @@ class XMPPPrebindPlugin extends Gdn_Plugin
    }
 
 
-    public function Base_AuthSuccess_Handler($Sender, $Args){
+    public function Base_AfterSignIn_Handler($Sender, $Args){
         
-        $Sender->InformMessage(implode($Args));
+        $Sender->InformMessage(implode("|",$Args));
 
         $Session = Gdn::Session();
 
+        //Connect xmpp
     }
+
+
+    public function HomeController_BeforeRender_Handler($Sender, $Args){
+        
+        $Sender->InformMessage(implode("|",$Args));
+
+        $Session = Gdn::Session();
+
+        //auth xmpp
+    }    
+
+
 }
