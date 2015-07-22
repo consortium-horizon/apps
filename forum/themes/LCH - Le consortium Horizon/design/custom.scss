@@ -277,7 +277,6 @@ body {
 .CategoryTable {
 
    .Item {
-
       td {
          padding: 10px 5px;
       }
@@ -291,7 +290,6 @@ body {
 }
 
 // Child-Categories
-
 .ChildCategoryList {
    background: white;
    padding: 0 10px 15px 10px;
@@ -303,7 +301,7 @@ body {
 }
 
 // Banners for main categories
-#CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires{
+#CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires, #CategoryGroup-le-conseil-de-guilde{
    position: relative;
    margin-top: 150px;
    &::after {
@@ -324,6 +322,12 @@ body {
 
 #CategoryGroup-nos-jeux-secondaires::after {
    background: url('img/otherGamesBanner.jpg');
+   background-position: bottom center;
+   background-repeat: no-repeat;
+}
+
+#CategoryGroup-le-conseil-de-guilde::after {
+   background: url('img/publicBanner.jpg');
    background-position: bottom center;
    background-repeat: no-repeat;
 }
