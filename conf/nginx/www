@@ -12,6 +12,16 @@ server {
   error_log /var/www/webapps/shared/log/forum/nginx.error.log;
   rewrite_log on;
 
+  # RSS feeds
+  location ~* \.rss$ {
+    add_header Access-Control-Allow-Origin *;
+  }
+
+  # Assets
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico)(\?ver=[0-9.]+)?$ {
+    expires 1y;
+  }
+
   # Pretty URLs
   location ^~ /discussion/download/ { rewrite ^/(.+)$ /index.php?p=$1 last; }
   location ^~ /utility/thumbnail/ { rewrite ^/(.+)$ /index.php?p=$1 last; }
@@ -23,16 +33,6 @@ server {
     fastcgi_pass unix:/var/run/php5-fpm.sock;
     fastcgi_index index.php;
     include fastcgi_params;
-  }
-
-  # Assets
-  location ~* \.(js|css|png|jpg|jpeg|gif|ico)(\?ver=[0-9.]+)?$ {
-    expires 1y;
-  }
-
-  # RSS feeds
-  location ~* \.rss$ {
-    add_header Access-Control-Allow-Origin *;
   }
 
   # XMPP server
