@@ -9,7 +9,7 @@ $PluginInfo['xmppprebind'] = array(
     'AuthorEmail' => 'pkonecki@gmail.com',
     'AuthorUrl'   => 'https://github.com/pkonecki',
     'License'     => 'MIT',
-    'RequiredApplications' => array('Vanilla' => '2.2.x')
+    'RequiredApplications' => array('Vanilla' => '2.x.x')
 );
 
 /**
