@@ -94,7 +94,7 @@ require(['converse'], function (converse) {
     });
     function converseAutoJoinChatPlugin( converse ) {
     var jids = [ 'bar@chat.consortium-horizon.com' ];
-    converse.on('ready', function() {
+    converse.listen.on('ready', function() {
         var _transform = function (jid) {
             var chatbox = converse.rooms.get(jid);
             if (!chatbox) {
