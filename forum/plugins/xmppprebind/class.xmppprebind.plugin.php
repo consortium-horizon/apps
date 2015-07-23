@@ -120,7 +120,7 @@ require(['converse'], function (converse) {
                     });
                 }
             };
-            if (typeof jids === "string") {
+            if (typeof jids === \"string\") {
                 _transform(jids);
             }
             _.map(jids, _transform);
