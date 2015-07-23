@@ -67,6 +67,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $sid = $sessionInfo['sid'];
         $rid = $sessionInfo['rid'];
         $jid = $sessionInfo['jid'];
+        header('Content-Type: application/json');
         echo json_encode($sessionInfo);
     }
     public function Base_AfterBody_Handler($Sender, $Args) {
