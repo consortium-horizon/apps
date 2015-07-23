@@ -110,6 +110,7 @@ a[button] {
   section[background] {
     white-space: nowrap;
     background: rgba(14, 15, 31, 1);
+    overflow: hidden;
 
     .tile {
       white-space: normal;

@@ -74,7 +74,8 @@ a[button] {
       font-weight: bold; }
 #header section[background] {
   white-space: nowrap;
-  background: #0e0f1f; }
+  background: #0e0f1f;
+  overflow: hidden; }
   #header section[background] .tile {
     white-space: normal;
     padding: 0;
