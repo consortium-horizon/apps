@@ -68,17 +68,18 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $rid = $sessionInfo['rid'];
         $jid = $sessionInfo['jid'];
         echo
-"\{
+"{
     \"jid\": \"{$jid}\",
     \"sid\": \"{$sid}\",
     \"rid\": \"{$jid}\"
-\}
+}
 ";
     }
     public function Base_AfterBody_Handler($Sender, $Args) {
 
         return;
 
+        $UserName = Gdn::Session()->User->Name;
         echo "
 <script>
 require(['converse'], function (converse) {
@@ -88,7 +89,14 @@ require(['converse'], function (converse) {
         show_controlbox_by_default: true,
         roster_groups: true,
         authentication: 'prebind',
-
+        prebind_url: 'http://www.consortium-horizon.com/xmpp/',
+        jid: '{$UserName}@consortium-horizon.com',
+        keepalive: true,
+        show_only_online_users: true,
+        allow_registration: false,
+        auto_list_rooms: true,
+        message_carbons: true,
+        hide_offline_users: true,
     });
 });
 </script>";
