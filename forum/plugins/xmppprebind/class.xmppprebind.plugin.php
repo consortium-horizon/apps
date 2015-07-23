@@ -82,7 +82,7 @@ require(['converse'], function (converse) {
         roster_groups: true,
         authentication: 'prebind',
         prebind_url: 'http://www.consortium-horizon.com/xmpp',
-        jid: '{$UserName}@consortium-horizon.com',
+        jid: '{$UserName}@consortium-horizon.com/vanilla',
         keepalive: true,
         show_only_online_users: true,
         allow_registration: false,
