@@ -49,10 +49,10 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $UserID = Gdn::Session()->UserID;
 
         $SecretKey = $this->MakeMetaKey("Secret");
-        $Secret = Gdn::UserMetaModel()->GetUserMeta($UserID, $SecretKey);
-        if (!$Secret){
+        $Secret = $this->GetUserMeta($UserID, $SecretKey);
+        if (empty($Secret){
             $Secret = md5(uniqid(rand(), true));
-            Gdn::UserMetaModel()->SetUserMeta($UserID, $SecretKey, $Secret );
+            $this->SetUserMeta($UserID, $SecretKey, $Secret );
         }
         echo implode("|",$Secret)."\n";
 
