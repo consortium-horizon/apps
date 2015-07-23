@@ -67,13 +67,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $sid = $sessionInfo['sid'];
         $rid = $sessionInfo['rid'];
         $jid = $sessionInfo['jid'];
-        echo
-"{
-    \"jid\": \"{$jid}\",
-    \"sid\": \"{$sid}\",
-    \"rid\": \"{$jid}\"
-}
-";
+        echo json_encode($sessionInfo);
     }
     public function Base_AfterBody_Handler($Sender, $Args) {
 
@@ -87,7 +81,7 @@ require(['converse'], function (converse) {
         show_controlbox_by_default: true,
         roster_groups: true,
         authentication: 'prebind',
-        prebind_url: 'http://www.consortium-horizon.com/xmpp/',
+        prebind_url: 'http://www.consortium-horizon.com/xmpp',
         jid: '{$UserName}@consortium-horizon.com',
         keepalive: true,
         show_only_online_users: true,
