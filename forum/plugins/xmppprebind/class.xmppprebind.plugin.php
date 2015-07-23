@@ -69,9 +69,9 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $jid = $sessionInfo['jid'];
         echo
 "\{
-    "jid": "{$jid}",
-    "sid": "{$sid}",
-    "rid": "{$jid}"
+    \"jid\": \"{$jid}\",
+    \"sid\": \"{$sid}\",
+    \"rid\": \"{$jid}\"
 \}
 ";
     }
