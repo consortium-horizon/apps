@@ -31,19 +31,16 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     public function Setup() {
     }
 
-    // public function Base_AfterSignIn_Handler($Sender, $Args){
+    public function Base_Render_Before($Sender) {
+        //$Sender->AddJsFile('converse.min.js', 'plugins/xmppprebind');
+    }
 
-    //     $Sender->InformMessage(implode("|",$Args));
+    public function AssetModel_StyleCss_Handler($Sender) {
+        //$Sender->AddCssFile('converse.min.css', 'plugins/xmppprebind');
+    }
 
-    //     $Session = Gdn::Session();
-
-    //     //Connect xmpp
-    // }
-
-    //public function RootController_xmpp_Create($Sender, $Args) {
-    public function Base_AfterBody_Handler($Sender, $Args) {
-
-        if (!Gdn::Session()->IsValid())
+    public function RootController_xmpp_Create($Sender, $Args) {
+                if (!Gdn::Session()->IsValid())
             return;
 
         $UserName = Gdn::Session()->User->Name;
@@ -67,9 +64,34 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         }
 
         $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
-        $sessionInfo['sid'];
-        $sessionInfo['rid'];
-        $sessionInfo['jid'];
+        $sid = $sessionInfo['sid'];
+        $rid = $sessionInfo['rid'];
+        $jid = $sessionInfo['jid'];
+        echo
+"\{
+    "jid": "{$jid}",
+    "sid": "{$sid}",
+    "rid": "{$jid}"
+\}
+";
+    }
+    public function Base_AfterBody_Handler($Sender, $Args) {
+
+        return;
+
+        echo "
+<script>
+require(['converse'], function (converse) {
+    converse.initialize({
+        bosh_service_url: 'http://www.consortium-horizon.com/http-bind/',
+        i18n: locales.fr, // Refer to ./locale/locales.js to see which locales are supported
+        show_controlbox_by_default: true,
+        roster_groups: true,
+        authentication: 'prebind',
+
+    });
+});
+</script>";
 
         //$Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
     }
