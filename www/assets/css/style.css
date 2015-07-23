@@ -111,14 +111,18 @@ section[description] {
   text-align: center;
   padding: 40px;
   background: #eee; }
-  section[description] section[items] .tile, section[description] section[items] .icon, section[description] section[items] .content {
+  section[description] section[items] .tile, section[description] section[items] .icon {
     display: inline-block;
     vertical-align: top; }
   section[description] section[items] .icon {
     height: 140px;
     background: #999;
     width: 140px;
-    border-radius: 70px; }
+    border-radius: 70px;
+    border: 5px solid #3380CC;
+    transition: border-width 100ms ease; }
+    section[description] section[items] .icon:hover {
+      border-width: 2px; }
   section[description] section[items] .tile {
     width: 25%; }
     section[description] section[items] .tile p {
