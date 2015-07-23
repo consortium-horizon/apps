@@ -6,14 +6,18 @@ server {
   server_name www.consortium-horizon.com;
 
   root /var/www/webapps/current/www;
-  index index.html index.htm index.php;
+  index index.html;
+
+  access_log /var/www/webapps/shared/log/www/nginx.access.log main;
+  error_log /var/www/webapps/shared/log/www/nginx.error.log;
+  rewrite_log on;
 
   location /forum {
-    root /var/www/webapps/current/forum;
+    root /var/www/webapps/current;
+    index index.html index.htm index.php;
 
-    access_log /var/www/webapps/shared/log/forum/nginx.access.log main;
+    access_log /var/www/webapps/shared/log/forum/nginx.access.log;
     error_log /var/www/webapps/shared/log/forum/nginx.error.log;
-    rewrite_log on;
 
     # RSS feeds
     location ~* \.rss$ {
@@ -21,22 +25,22 @@ server {
     }
 
     # Pretty URLs
-    location ^~ /discussion/download/ { rewrite ^/(.+)$ /index.php?p=$1 last; }
-    location ^~ /utility/thumbnail/ { rewrite ^/(.+)$ /index.php?p=$1 last; }
-    location / { try_files $uri $uri/ @forum; }
-    location @forum { rewrite ^/(.+)$ /index.php?p=$1 last; }
+    location ^~ /forum/discussion/download/ { rewrite ^/forum/(.+)$ /index.php?p=$1 last; }
+    location ^~ /forum/utility/thumbnail/ { rewrite ^/forum/(.+)$ /index.php?p=$1 last; }
+    location /forum { try_files $uri $uri/ @forum; }
+
+    location ~ \.php$ {
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+      fastcgi_pass unix:/var/run/php5-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+    }
   }
+  location @forum { rewrite ^/forum/(.+)$ /forum/index.php?p=$1 last; }
 
   # Assets
   location ~* \.(js|css|png|jpg|jpeg|gif|ico)(\?ver=[0-9.]+)?$ {
     expires 1y;
-  }
-
-  location ~ \.php$ {
-    fastcgi_split_path_info ^(.+\.php)(/.+)$;
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
-    fastcgi_index index.php;
-    include fastcgi_params;
   }
 
   # XMPP server
@@ -70,7 +74,8 @@ server {
 
   location /wiki {
     root /var/www/wiki/current;
-    access_log /var/www/wiki/shared/log/nginx.access.log main;
+    index index.html index.htm index.php;
+    access_log /var/www/wiki/shared/log/nginx.access.log;
     error_log /var/www/wiki/shared/log/nginx.error.log;
     error_page 404 = @mediawiki;
 
