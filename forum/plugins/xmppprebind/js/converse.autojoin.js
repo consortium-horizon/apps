@@ -14,3 +14,24 @@
         });
     };
     converse.plugins.add('converseAutoJoinChatPlugin', converseAutoJoinChatPlugin);
+
+
+//OTher method
+
+converse.plugins.add('myplugin', {
+
+        overrides: {
+            onConnected: function () {
+                // Override the onConnected method in converse.js
+                this._super.onConnected();
+                var converse = this._super.converse;
+                var jid = 'bar@chat.consortium-horizon.com';
+                var chatbox = converse.rooms.get(jid);
+                if (!chatbox) {
+                    converse.rooms.open(jid);
+                }
+
+
+            },
+        }
+    });
