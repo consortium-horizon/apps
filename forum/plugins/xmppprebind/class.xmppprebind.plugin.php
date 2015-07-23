@@ -56,8 +56,13 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         }
 
         $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://www.consortium-horizon.com/http-bind/', 'vanilla'.rand(), false, false);
-        $xmppPrebind->connect($UserName, $Secret);
-        $xmppPrebind->auth();
+        try{
+            $xmppPrebind->connect($UserName, $Secret);
+            $xmppPrebind->auth();
+        } catch (XmppPrebindException $e) {
+            $Sender->InformMessage($e->getMessage());
+        }
+
         $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
         $Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
     }
