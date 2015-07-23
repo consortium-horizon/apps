@@ -54,7 +54,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
             $Secret = md5(uniqid(rand(), true));
             Gdn::UserMetaModel()->SetUserMeta($UserID, $SecretKey, $Secret );
         }
-        echo $Secret."\n";
+        echo implode("|",$Secret)."\n";
 
         $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://www.consortium-horizon.com/http-bind/', 'vanilla'.rand(), false, false);
         try{
