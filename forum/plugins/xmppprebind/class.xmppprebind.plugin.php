@@ -23,8 +23,9 @@ $PluginInfo['xmppprebind'] = array(
  */
 class XMPPPrebindPlugin extends Gdn_Plugin
 {
-    public function Setup() {
-    }
+   public function Setup() {
+   }
+
 
     public function Base_AfterSignIn_Handler($Sender, $Args){
         
@@ -36,26 +37,13 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     }
 
 
-    public function UserModel_AfterGetSession_Handler($Sender, $Args){
+    public function HomeController_BeforeRender_Handler($Sender, $Args){
         
-        //$Sender->InformMessage(implode("|",$Args));
-        if (!Gdn::Session()->IsValid())
-            return;
+        $Sender->InformMessage(implode("|",$Args));
 
-        $UserName = Gdn::Session()->User->Name;
-        $UserID = Gdn::Session()->UserID;
+        $Session = Gdn::Session();
 
-        $SecretKey = $this->MakeMetaKey("Secret");
-        $Secret = $this->GetUserMeta($UserID, $SecretKey);
-        if (!$Secret){
-            $Secret = md5(uniqid(rand(), true));
-            $this->SetUserMeta($UserID, $SecretKey, $Secret );
-        }
-
-        $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://www.consortium-horizon.com/http-bind/', 'vanilla'.rand(), false, false);
-        $xmppPrebind->connect($UserName, $Secret);
-        $xmppPrebind->auth();
-        $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
+        //auth xmpp
     }    
 
 
