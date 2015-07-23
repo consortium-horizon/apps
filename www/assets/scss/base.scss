@@ -1,0 +1,346 @@
+/*!
+ * Theme
+ **/
+
+
+// Variables
+
+$body-side-margin: 15px;
+$carousel-height: 240px;
+$main-color: #3380CC;
+$light-color: #99EBFF;
+$dark-color : rgba(14, 15, 31, 1);
+$tiles-number : 5;
+
+// Global
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+  color: $main-color;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+section > * {
+  padding-left: $body-side-margin;
+  padding-right: $body-side-margin;
+}
+
+#central-container {
+  min-height: 100vh;
+}
+
+h3 {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 160%;
+  font-weight: 500;
+}
+
+a[button] {
+  padding: 8px 12px;
+  background: $main-color;
+  color: #fff;
+  border-radius: 3px;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+
+// Global positionning
+
+#content-container {
+  display: -webkit-flex;
+  display: flex;
+  ul {
+    list-style: none;
+    li {
+      margin-top: 10px;
+    }
+  }
+}
+[left] {
+  min-width: 300px;
+  width: 300px;
+  max-width: 300px;
+  padding-top: 20px;
+  padding-bottom: 50px;
+  background: #eee;
+  border-right: 1px solid rgba(0,0,0,.05);
+  text-align: center;
+}
+[central] {
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+// Header
+
+#header {
+  #branding {
+    position: absolute;
+    top: 80px;
+    width: 100%;
+    z-index: 1;
+    text-align: center;
+    pointer-events: none;
+
+    img {
+      max-width: 300px;
+    }
+
+    .slogan {
+      color: white;
+      font-size: 1.3em;
+      span {font-weight: bold;}
+    }
+  }
+
+  section[background] {
+    white-space: nowrap;
+    background: rgba(14, 15, 31, 1);
+
+    .tile {
+      white-space: normal;
+      padding: 0;
+      position: relative;
+      display: inline-block;
+      width: percentage(1/$tiles-number);
+      height: 500px;
+
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        content: "";
+        opacity: 0.3;
+      }
+
+      &:hover::after {
+        opacity: 0.5;
+      }
+    }
+
+    .albion::after {
+      background: url("../img/home-albion.jpg");
+    }
+    .arma::after {
+      background: url("../img/home-arma.jpg");
+    }
+    .eve::after {
+      background: url("../img/home-eve.jpg");
+    }
+    .planetside::after {
+      background: url("../img/home-planetside.jpg");
+    }
+    .SC::after {
+      background: url("../img/home-SC.jpg");
+    }
+    .tile::after {
+      background-size: cover;
+      background-position: center;
+    }
+  }
+
+}
+
+section[description] {
+  text-align: center;
+  padding: 40px;
+  background: #eee;
+
+  section[items] {
+    .tile, .icon, .content {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .icon {
+      height: 140px;
+      background: #999;
+      width: 140px;
+      border-radius: 70px;
+    }
+
+    .tile {
+      width: 25%;
+      p {text-align: justify;}
+    }
+  }
+}
+
+// Carousel
+
+[carousel] {
+  height: $carousel-height;
+  overflow: hidden;
+  color: #fff;
+  .slick-arrow {
+    float: left;
+    position: absolute;
+    top: 0;
+    margin-top: 100px;
+    background: transparent;
+    border: 0;
+    width: 30px;
+    height: 30px;
+    color: transparent;
+    z-index: 1;
+  }
+  .slick-arrow:before {
+    font-size: 50px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    width: inherit;
+    position: absolute;
+    top: 0;
+    margin-left: -15px;
+    font-weight: 100;
+  }
+  .slick-prev {
+    left: 0;
+  }
+  .slick-next {
+    right: 0;
+  }
+  .slick-prev:before {
+    content: "‹";
+  }
+  .slick-next:before {
+    content: "›";
+  }
+  .carousel-item {
+    height: $carousel-height;
+    position: relative;
+    color: #fff;
+    background: #877;
+    overflow: hidden;
+    img {
+      width: inherit;
+      height: inherit;
+      object-fit: cover;
+      -webkit-filter: brightness(.7);
+      filter: brightness(.7);
+      transition: all 400ms ease;
+    }
+    &:hover img {
+      transform-origin: 50% 50%;
+      transform: scale(1.15);
+      -webkit-filter: brightness(1);
+      filter: brightness(1);
+    }
+    &:hover:after {
+      background: transparent;
+    }
+    .caption {
+      position: absolute;
+      bottom: 0;
+      padding: 20px;
+      text-shadow: rgba(0,0,0,.8) 0 0 6px;
+    }
+  }
+}
+
+.cat {
+  text-transform: uppercase;
+  font-size: 72.5%;
+}
+.date, .author {
+  text-transform: uppercase;
+  font-size: 72.5%;
+  color: $light-color;
+  font-weight: bold;
+}
+
+
+// News
+
+[news-header] {
+  padding: 5px;
+  text-align: center;
+  color: white;
+  background: $dark-color;
+}
+[news] {
+  padding: 0;
+}
+
+article {
+  border: solid #eee;
+  border-width: 0 0 1px 0;
+  padding: 0;
+  height: 125px;
+  
+  img {
+    display: inline-block;
+    width: 150px;
+    height: 125px;
+    object-fit: cover;
+  }
+
+  .pic, .content {
+    display: inline-block;
+    vertical-align:top;
+    height: 125px;
+    padding: 10px;
+  }
+
+  &:hover {
+    background: #eee;
+  }
+
+  &.grid {
+    display: inline-block;
+    width: 25vw;
+    min-width: 300px;
+    border-radius: 4px;
+    vertical-align: top;
+    border-width: 0 1px 1px 0;
+  }
+
+  .cat {
+    color: $main-color;
+  }
+
+  h3 {
+    font-weight: 200;
+    a {
+      color: inherit;
+      &:hover {
+        color: $main-color;
+      }
+    }
+  }
+
+  p {
+    font-size: 82.5%;
+  }
+
+}
+
+// Footer
+
+footer {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background: #333;
+  color: #fff;
+  text-align: center;
+  a {
+    color: #fff;
+  }
+}

@@ -1,0 +1,248 @@
+@charset "UTF-8";
+/*!
+ * Theme
+ **/
+* {
+  box-sizing: border-box; }
+
+html {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333; }
+
+a {
+  text-decoration: none;
+  color: #3380CC; }
+  a:hover {
+    text-decoration: underline; }
+
+section > * {
+  padding-left: 15px;
+  padding-right: 15px; }
+
+#central-container {
+  min-height: 100vh; }
+
+h3 {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 160%;
+  font-weight: 500; }
+
+a[button] {
+  padding: 8px 12px;
+  background: #3380CC;
+  color: #fff;
+  border-radius: 3px; }
+  a[button]:hover {
+    text-decoration: none; }
+
+#content-container {
+  display: -webkit-flex;
+  display: flex; }
+  #content-container ul {
+    list-style: none; }
+    #content-container ul li {
+      margin-top: 10px; }
+
+[left] {
+  min-width: 300px;
+  width: 300px;
+  max-width: 300px;
+  padding-top: 20px;
+  padding-bottom: 50px;
+  background: #eee;
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  text-align: center; }
+
+[central] {
+  width: 100%;
+  padding-bottom: 20px; }
+
+#header #branding {
+  position: absolute;
+  top: 80px;
+  width: 100%;
+  z-index: 1;
+  text-align: center;
+  pointer-events: none; }
+  #header #branding img {
+    max-width: 300px; }
+  #header #branding .slogan {
+    color: white;
+    font-size: 1.3em; }
+    #header #branding .slogan span {
+      font-weight: bold; }
+#header section[background] {
+  white-space: nowrap;
+  background: #0e0f1f; }
+  #header section[background] .tile {
+    white-space: normal;
+    padding: 0;
+    position: relative;
+    display: inline-block;
+    width: 20%;
+    height: 500px; }
+    #header section[background] .tile::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      content: "";
+      opacity: 0.3; }
+    #header section[background] .tile:hover::after {
+      opacity: 0.5; }
+  #header section[background] .albion::after {
+    background: url("../img/home-albion.jpg"); }
+  #header section[background] .arma::after {
+    background: url("../img/home-arma.jpg"); }
+  #header section[background] .eve::after {
+    background: url("../img/home-eve.jpg"); }
+  #header section[background] .planetside::after {
+    background: url("../img/home-planetside.jpg"); }
+  #header section[background] .SC::after {
+    background: url("../img/home-SC.jpg"); }
+  #header section[background] .tile::after {
+    background-size: cover;
+    background-position: center; }
+
+section[description] {
+  text-align: center;
+  padding: 40px;
+  background: #eee; }
+  section[description] section[items] .tile, section[description] section[items] .icon, section[description] section[items] .content {
+    display: inline-block;
+    vertical-align: top; }
+  section[description] section[items] .icon {
+    height: 140px;
+    background: #999;
+    width: 140px;
+    border-radius: 70px; }
+  section[description] section[items] .tile {
+    width: 25%; }
+    section[description] section[items] .tile p {
+      text-align: justify; }
+
+[carousel] {
+  height: 240px;
+  overflow: hidden;
+  color: #fff; }
+  [carousel] .slick-arrow {
+    float: left;
+    position: absolute;
+    top: 0;
+    margin-top: 100px;
+    background: transparent;
+    border: 0;
+    width: 30px;
+    height: 30px;
+    color: transparent;
+    z-index: 1; }
+  [carousel] .slick-arrow:before {
+    font-size: 50px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    width: inherit;
+    position: absolute;
+    top: 0;
+    margin-left: -15px;
+    font-weight: 100; }
+  [carousel] .slick-prev {
+    left: 0; }
+  [carousel] .slick-next {
+    right: 0; }
+  [carousel] .slick-prev:before {
+    content: "‹"; }
+  [carousel] .slick-next:before {
+    content: "›"; }
+  [carousel] .carousel-item {
+    height: 240px;
+    position: relative;
+    color: #fff;
+    background: #877;
+    overflow: hidden; }
+    [carousel] .carousel-item img {
+      width: inherit;
+      height: inherit;
+      object-fit: cover;
+      -webkit-filter: brightness(0.7);
+      filter: brightness(0.7);
+      transition: all 400ms ease; }
+    [carousel] .carousel-item:hover img {
+      transform-origin: 50% 50%;
+      transform: scale(1.15);
+      -webkit-filter: brightness(1);
+      filter: brightness(1); }
+    [carousel] .carousel-item:hover:after {
+      background: transparent; }
+    [carousel] .carousel-item .caption {
+      position: absolute;
+      bottom: 0;
+      padding: 20px;
+      text-shadow: rgba(0, 0, 0, 0.8) 0 0 6px; }
+
+.cat {
+  text-transform: uppercase;
+  font-size: 72.5%; }
+
+.date, .author {
+  text-transform: uppercase;
+  font-size: 72.5%;
+  color: #99EBFF;
+  font-weight: bold; }
+
+[news-header] {
+  padding: 5px;
+  text-align: center;
+  color: white;
+  background: #0e0f1f; }
+
+[news] {
+  padding: 0; }
+
+article {
+  border: solid #eee;
+  border-width: 0 0 1px 0;
+  padding: 0;
+  height: 125px; }
+  article img {
+    display: inline-block;
+    width: 150px;
+    height: 125px;
+    object-fit: cover; }
+  article .pic, article .content {
+    display: inline-block;
+    vertical-align: top;
+    height: 125px;
+    padding: 10px; }
+  article:hover {
+    background: #eee; }
+  article.grid {
+    display: inline-block;
+    width: 25vw;
+    min-width: 300px;
+    border-radius: 4px;
+    vertical-align: top;
+    border-width: 0 1px 1px 0; }
+  article .cat {
+    color: #3380CC; }
+  article h3 {
+    font-weight: 200; }
+    article h3 a {
+      color: inherit; }
+      article h3 a:hover {
+        color: #3380CC; }
+  article p {
+    font-size: 82.5%; }
+
+footer {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background: #333;
+  color: #fff;
+  text-align: center; }
+  footer a {
+    color: #fff; }
+
+/*# sourceMappingURL=style.css.map */
