@@ -33,6 +33,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
 
     public function Base_Render_Before($Sender) {
         $Sender->AddJsFile('converse.min.js', 'plugins/xmppprebind');
+        $Sender->AddJsFile('converse.autojoin.js', 'plugins/xmppprebind');
     }
 
     public function AssetModel_StyleCss_Handler($Sender) {
