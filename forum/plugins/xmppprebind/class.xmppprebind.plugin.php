@@ -40,8 +40,8 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     //     //Connect xmpp
     // }
 
-    public function RootController_xmpp_Create($Sender, $Args) {
-    //public function UserModel_AfterGetSession_Handler($Sender, $Args){
+    //public function RootController_xmpp_Create($Sender, $Args) {
+    public function UserModel_AfterGetSession_Handler($Sender, $Args){
         if (!Gdn::Session()->IsValid())
             return;
 
@@ -51,24 +51,22 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $SecretKey = "Secret";
         $Secret = $this->GetUserMeta($UserID, $SecretKey, NULL, true);
         if (!$Secret || empty($Secret)){
-            echo "LELELELEL<br>";
             $Secret = md5(uniqid(rand(), true));
             $this->SetUserMeta($UserID, $SecretKey, $Secret );
         }
-        echo implode("|",$Secret)."\n";
 
         $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://www.consortium-horizon.com/http-bind/', 'vanilla'.rand(), false, false);
         try{
             $xmppPrebind->connect($UserName, $Secret);
             $xmppPrebind->auth();
         } catch (XmppPrebindException $e) {
-            echo $e->getMessage()."<br>";
-            //$Sender->InformMessage($e->getMessage());
+            //echo $e->getMessage()."<br>";
+            $Sender->InformMessage($e->getMessage());
         }
 
         $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
         //$Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
-        echo "XMPP BINDING: ".implode($sessionInfo)."<br>";
+        $Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
     }
 
 
