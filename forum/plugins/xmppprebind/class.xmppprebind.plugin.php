@@ -103,7 +103,7 @@ require(['converse'], function (converse) {
         show_controlbox_by_default: true,
         roster_groups: true,
         authentication: 'prebind',
-        prebind_url: 'http://www.consortium-horizon.com/xmpp',
+        prebind_url: 'http://www.consortium-horizon.com/forum/xmpp',
         jid: '{$UserName}@consortium-horizon.com/vanilla',
         keepalive: true,
         show_only_online_users: true,
@@ -111,6 +111,9 @@ require(['converse'], function (converse) {
         auto_list_rooms: true,
         message_carbons: true,
         hide_offline_users: true,
+        debug: true,
+        hide_muc_server: true,
+        ping_interval: 60,
     });
 
 });
