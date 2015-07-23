@@ -49,24 +49,25 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $UserID = Gdn::Session()->UserID;
 
         $SecretKey = $this->MakeMetaKey("Secret");
-        $Secret = $this->GetUserMeta($UserID, $SecretKey);
+        $Secret = Gdn::UserMetaModel()->GetUserMeta($UserID, $SecretKey);
         if (!$Secret){
             $Secret = md5(uniqid(rand(), true));
-            $this->SetUserMeta($UserID, $SecretKey, $Secret );
+            Gdn::UserMetaModel()->SetUserMeta($UserID, $SecretKey, $Secret );
         }
+        echo $Secret."\n";
 
         $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://www.consortium-horizon.com/http-bind/', 'vanilla'.rand(), false, false);
         try{
             $xmppPrebind->connect($UserName, $Secret);
             $xmppPrebind->auth();
         } catch (XmppPrebindException $e) {
-            echo $e->getMessage();
+            echo $e->getMessage()."\n";
             //$Sender->InformMessage($e->getMessage());
         }
 
         $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
         //$Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
-        echo "XMPP BINDING: ".implode($sessionInfo);
+        echo "XMPP BINDING: ".implode($sessionInfo)."\n";
     }
 
 
