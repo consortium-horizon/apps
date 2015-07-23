@@ -50,7 +50,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
 
         $SecretKey = $this->MakeMetaKey("Secret");
         $Secret = $this->GetUserMeta($UserID, $SecretKey);
-        if (empty($Secret){
+        if (empty($Secret)){
             $Secret = md5(uniqid(rand(), true));
             $this->SetUserMeta($UserID, $SecretKey, $Secret );
         }
