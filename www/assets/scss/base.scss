@@ -10,7 +10,6 @@ $carousel-height: 240px;
 $main-color: #3380CC;
 $light-color: #99EBFF;
 $dark-color : rgba(14, 15, 31, 1);
-$tiles-number : 5;
 
 // Global
 
@@ -80,6 +79,11 @@ a[button] {
   border-right: 1px solid rgba(0,0,0,.05);
   text-align: center;
 }
+@media (max-width: 1024px) {
+  [left] {
+    display: none;
+  }
+}
 [central] {
   width: 100%;
   padding-bottom: 20px;
@@ -108,59 +112,77 @@ a[button] {
   }
 
   section[background] {
-    white-space: nowrap;
-    background: rgba(14, 15, 31, 1);
-    overflow: hidden;
+    background: rgb(14, 15, 31);
+    display: -webkit-flex;
+    display: flex;
+    height: 500px;
 
     .tile {
-      white-space: normal;
       padding: 0;
       position: relative;
-      display: inline-block;
-      width: percentage(1/$tiles-number);
-      height: 500px;
+      width: 100%;
+      height: inherit;
+      overflow: hidden;
+      transition: width 150ms ease;
+      &:hover {
+        width: 125%;
+      }
+
+      img {
+        width: inherit;
+        height: inherit;
+        object-fit: cover;
+        padding: 0 2px 4px;
+      }
 
       &::after {
+        content: attr(title);
         position: absolute;
-        top: 0;
+        background: rgba(14, 15, 31, .7);
+        left: 0;
         right: 0;
         bottom: 0;
-        left: 0;
-        content: "";
-        opacity: 0.3;
+        padding-top: 100%;
+        padding-bottom: 20%;
+        line-height: 100%;
+        text-align: center;
+        padding-top: 440px;
+        font-weight: 400;
+        font-size: 1.3em;
+        color: rgba(255,255,255,.15);
+        transition: all 150ms ease;
       }
 
       &:hover::after {
-        opacity: 0.5;
+        background: rgba(14, 15, 31, .5);
+        color: rgba(255,255,255,.5);
       }
     }
+  }
+}
 
-    .albion::after {
-      background: url("../img/home-albion.jpg");
-    }
-    .arma::after {
-      background: url("../img/home-arma.jpg");
-    }
-    .eve::after {
-      background: url("../img/home-eve.jpg");
-    }
-    .planetside::after {
-      background: url("../img/home-planetside.jpg");
-    }
-    .SC::after {
-      background: url("../img/home-SC.jpg");
-    }
-    .tile::after {
-      background-size: cover;
-      background-position: center;
+@media (max-width: 1024px) {
+  #header {
+    section[background] {
+      flex-direction: column;
+      .tile {
+        height: 100px;
+        &:hover {
+          width: 100%;
+          height: 150px;
+        }
+        img {
+          padding: 2px 0 2px;
+        }
+      }
     }
   }
-
 }
 
 section[description] {
   text-align: center;
-  padding: 40px;
+  padding-top: 40px;
+  padding-bottom: 40px;
   background: #eee;
 
   section[items] {
@@ -170,10 +192,10 @@ section[description] {
     }
 
     .icon {
-      height: 140px;
-      background: #999;
       width: 140px;
+      height: 140px;
       border-radius: 70px;
+      background: #999;
       border: 5px solid $main-color;
       transition: border-width 100ms ease;
       &:hover {
@@ -182,8 +204,26 @@ section[description] {
     }
 
     .tile {
-      width: 25%;
+      width: 28%;
       p {text-align: justify;}
+    }
+  }
+}
+@media (max-width: 1024px) {
+  section[description] {
+    section[items] {
+      display: block;
+      .tile {
+        width: initial;
+      }
+      .tile, .icon {
+        float: left;
+        text-align: left;
+      }
+      .icon {
+        margin-right: 20px;
+        zoom: .75;
+      }
     }
   }
 }
@@ -289,19 +329,20 @@ article {
   border: solid #eee;
   border-width: 0 0 1px 0;
   padding: 0;
-  height: 125px;
+  min-height: 125px;
   
   img {
     display: inline-block;
     width: 150px;
-    height: 125px;
+    min-height: inherit;
     object-fit: cover;
+    float: left;
+    margin-right: 10px;
   }
 
   .pic, .content {
-    display: inline-block;
     vertical-align:top;
-    height: 125px;
+    min-height: inherit;
     padding: 10px;
   }
 
