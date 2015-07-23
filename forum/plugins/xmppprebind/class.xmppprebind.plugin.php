@@ -77,8 +77,6 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     }
     public function Base_AfterBody_Handler($Sender, $Args) {
 
-        return;
-
         $UserName = Gdn::Session()->User->Name;
         echo "
 <script>
