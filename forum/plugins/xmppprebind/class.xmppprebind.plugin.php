@@ -60,11 +60,13 @@ class XMPPPrebindPlugin extends Gdn_Plugin
             $xmppPrebind->connect($UserName, $Secret);
             $xmppPrebind->auth();
         } catch (XmppPrebindException $e) {
-            $Sender->InformMessage($e->getMessage());
+            echo $e->getMessage();
+            //$Sender->InformMessage($e->getMessage());
         }
 
         $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
-        $Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
+        //$Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
+        echo "XMPP BINDING: ".implode($sessionInfo);
     }
 
 
