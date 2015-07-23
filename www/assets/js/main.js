@@ -49,7 +49,7 @@ function parseRSS (url, length, callback) {
 }
 
 function loadNews () {
-  parseRSS("http://www.consortium-horizon.com/forum/categories/actualites/feed.rss", 10, function (data) {
+  parseRSS("http://forum.consortium-horizon.com/forum/categories/actualites/feed.rss", 10, function (data) {
     data.entries.forEach(function (entry) {
       console.log(entry);
       var title = entry.title;
@@ -64,7 +64,7 @@ function loadNews () {
 }
 
 function loadDiscussions () {
-  parseRSS("http://www.consortium-horizon.com/forum/discussions.rss", 9, function (data) {
+  parseRSS("http://forum.consortium-horizon.com/forum/discussions.rss", 9, function (data) {
     data.entries.forEach(function (entry) {
       console.log(entry);
       var title = entry.title;
