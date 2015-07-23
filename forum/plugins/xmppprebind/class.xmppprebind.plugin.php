@@ -95,7 +95,7 @@ require(['converse'], function (converse) {
             },
         }
 
-        initialize: function(args) {}
+        initialize: function() {},
     });
     converse.initialize({
         bosh_service_url: 'http://www.consortium-horizon.com/http-bind/',
