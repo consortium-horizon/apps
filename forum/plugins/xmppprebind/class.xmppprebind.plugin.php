@@ -93,7 +93,7 @@ require(['converse'], function (converse) {
 
 
             },
-        }
+        },
 
         initialize: function() {},
     });
