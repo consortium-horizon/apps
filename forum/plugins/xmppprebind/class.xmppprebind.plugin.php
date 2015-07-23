@@ -40,7 +40,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     //     //Connect xmpp
     // }
 
-    public function RootController_xmpp_create($Sender) {
+    public function RootController_xmpp_Create($Sender, $Args) {
     //public function UserModel_AfterGetSession_Handler($Sender, $Args){
         if (!Gdn::Session()->IsValid())
             return;
