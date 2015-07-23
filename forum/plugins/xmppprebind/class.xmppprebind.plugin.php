@@ -40,8 +40,9 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     //     //Connect xmpp
     // }
 
-    public function RootController_xmpp_Create($Sender, $Args) {
-    //public function UserModel_AfterGetSession_Handler($Sender, $Args){
+    //public function RootController_xmpp_Create($Sender, $Args) {
+    public function Base_AfterBody_Handler($Sender, $Args) {
+
         if (!Gdn::Session()->IsValid())
             return;
 
@@ -61,12 +62,16 @@ class XMPPPrebindPlugin extends Gdn_Plugin
             $xmppPrebind->auth();
         } catch (XmppPrebindException $e) {
             //echo $e->getMessage()."<br>";
-            $Sender->InformMessage($e->getMessage());
+            //$Sender->InformMessage($e->getMessage());
+            return;
         }
 
         $sessionInfo = $xmppPrebind->getSessionInfo(); // array containing sid, rid and jid
+        $sessionInfo['sid'];
+        $sessionInfo['rid'];
+        $sessionInfo['jid'];
+
         //$Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
-        $Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
     }
 
 
