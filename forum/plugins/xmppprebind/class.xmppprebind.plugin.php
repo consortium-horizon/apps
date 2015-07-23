@@ -77,21 +77,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         echo "
 <script>
 require(['converse'], function (converse) {
-    converse.initialize({
-        bosh_service_url: 'http://www.consortium-horizon.com/http-bind/',
-        i18n: locales.fr, // Refer to ./locale/locales.js to see which locales are supported
-        show_controlbox_by_default: true,
-        roster_groups: true,
-        authentication: 'prebind',
-        prebind_url: 'http://www.consortium-horizon.com/xmpp',
-        jid: '{$UserName}@consortium-horizon.com/vanilla',
-        keepalive: true,
-        show_only_online_users: true,
-        allow_registration: false,
-        auto_list_rooms: true,
-        message_carbons: true,
-        hide_offline_users: true,
-    });
+
     function converseAutoJoinChatPlugin( converse ) {
     var jids = [ 'bar@chat.consortium-horizon.com' ];
     converse.listen.on('ready', function() {
@@ -108,6 +94,22 @@ require(['converse'], function (converse) {
     });
     };
     converse.plugins.add('converseAutoJoinChatPlugin', converseAutoJoinChatPlugin);
+    converse.initialize({
+        bosh_service_url: 'http://www.consortium-horizon.com/http-bind/',
+        i18n: locales.fr, // Refer to ./locale/locales.js to see which locales are supported
+        show_controlbox_by_default: true,
+        roster_groups: true,
+        authentication: 'prebind',
+        prebind_url: 'http://www.consortium-horizon.com/xmpp',
+        jid: '{$UserName}@consortium-horizon.com/vanilla',
+        keepalive: true,
+        show_only_online_users: true,
+        allow_registration: false,
+        auto_list_rooms: true,
+        message_carbons: true,
+        hide_offline_users: true,
+    });
+
 });
 </script>";
 
