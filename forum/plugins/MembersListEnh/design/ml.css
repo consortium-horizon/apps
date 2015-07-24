@@ -1,0 +1,19 @@
+.Alt {
+    background-color:#ddd;
+    }
+    
+td  {
+    padding:1px 6px 1px 6px;
+    white-space: nowrap;
+    }
+
+th  {
+    padding:3px 6px 3px 6px;
+    border: solid black 2px;
+    color: black;
+    font-size: 110%;
+    }
+    
+ table {
+    border:  solid black 3px;
+    }   
