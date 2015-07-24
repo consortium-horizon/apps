@@ -79,7 +79,6 @@ class XMPPPrebindPlugin extends Gdn_Plugin
 require(['converse'], function (converse) {
 
     converse.plugins.add('myplugin', {
-
         overrides: {
             onConnected: function () {
                 // Override the onConnected method in converse.js
@@ -90,8 +89,6 @@ require(['converse'], function (converse) {
                 if (!chatbox) {
                     converse.rooms.open(jid);
                 }
-
-
             },
         },
 
@@ -116,7 +113,7 @@ require(['converse'], function (converse) {
         ping_interval: 60,
         allow_otr: false,
     });
-
+    converse.rooms.open('bar@chat.consortium-horizon.com');
 });
 </script>";
 
