@@ -1,0 +1,76 @@
+ v0.8:Sat Feb 11 11:52:44 GMT 2012
+ - priamry key fix
+ v0.9.1b:Sat Feb 11 14:33:21 GMT 2012
+ - easier locale of transaction type
+ v0.9.2b:Sat Feb 11 20:43:01 GMT 2012
+ - RuleID validation
+ v0.9.3b:Sat Feb 11 20:43:01 GMT 2012
+ - locale of transaction type correction
+ v0.9.4b:Sat Feb 11 21:44:30 GMT 2012
+ - more primary key madness
+ v0.9.5b:Sun Feb 12 09:59:37 GMT 2012
+ - Vanilla version limit
+ v0.9.5.1b:Thu Feb 16 09:47:11 GMT 2012
+ - Option to display Balance on Comment Meta (thanks to "VS")
+ v0.9.5.2b:Sun Mar  4 10:36:33 GMT 2012
+ - Reward / Tax Reason (pending)
+ - Plugins.KarmaBank.ReasonMaxLength config option
+ v0.9.5.3b:Sat Mar 17 21:58:06 GMT 2012
+ - number_format fix, remove commas 
+ - decimal(20,2)
+ v0.9.5.4b:Wed Mar 21 10:39:35 GMT 2012
+ - Reward / Tax Reason (thanks to mattlynch)
+ v0.9.5.5b:Mon Apr  2 17:56:35 BST 2012
+ - Not Found on karma profile when logged out
+ - supply GetUserInfo with user 
+ v0.9.5.6b:Tue Apr  3 11:57:52 BST 2012
+ - allow zero starting balance.
+ v0.9.5.7b:Sun Apr  8 11:07:16 BST 2012
+ - remove <? stort tags for <?php in settings
+ v0.9.6.0b:Sun Apr 15 01:02:58 BST 2012
+ - better operations map to add custom operations
+ - $User, and $LastTrans parameters
+ - relative operations now possible.  
+ - signed factor to negate multiply result
+ - Extend API AddMeta, AddOpperation
+ - Extended Meta to include UserMeta table
+ v0.9.6.1b:Thu Apr 19 16:29:52 BST 2012
+ - $User->Meta key/value correction. 
+ v0.9.6.2b:Thu Apr 19 16:29:52 BST 2012
+ - Extend API correction
+ - Trans lock that works
+ - Make sure init trans
+ v0.9.6.3b:Mon May  7 12:09:06 BST 2012
+ - Magic Meta (MetaName%) wildcard
+ - Meta map ending in % will match
+ - Meta starting with those letters
+ - Generating rule checks for them
+ - Don't Tally Option to Add Meta
+ - Inject Extra meta directly bypassing tables
+ - Using new API method AddMetaValues
+ - Rule targets can be decimal
+ - Operations Options to use in rules/operation 
+ - Operations Options Dropdown where applicable
+ - Option added before operation in transaction
+ - TransCount fix (default value)
+ - special thanks to sponsor oboyledk 
+ v0.9.6.5b:Wed Apr  3 12:18:54 BST 2013
+ - use numberformat for starting balance 
+ - %01.2f locale friendly
+ v0.9.6.6b:Wed Apr  3 15:03:15 BST 2013
+ - Profile tab style removed. 
+ v0.9.6.7b:Wed Jul 17 13:42:40 BST 2013
+ - Namespaced locale
+ v0.9.6.9b:Sat Jul 20 11:16:15 BST 2013
+ - Partial 2.1 compatibility
+ - discussion comment display
+ v0.9.7.0b:Thu Nov 13 07:32:30 GMT 2014
+ - profile undefined index error
+ - fix caching issue
+v0.9.7.1b:
+ - Condition options show/hide of Meta Description to save space
+v0.9.7.2b
+ - reformatting
+v0.9.7.3b
+ - get rid of annoying utility/structure error messages
+

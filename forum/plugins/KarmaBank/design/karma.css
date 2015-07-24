@@ -1,0 +1,60 @@
+/*div.ProfileTabs ul{
+	text-align:right;
+}*/
+
+ul.KarmaBank li.KarmaTitles{
+	font-weight:900;
+}
+ul.KarmaBank li.KarmaTrans{
+	font-style:oblique;
+}
+ul.KarmaBank li.KarmaBal{
+	font-weight:500;
+}
+
+
+ul.KarmaBank li.Item div.ItemContent div{
+	float:left;
+	margin: 0;
+    padding: 0;
+}
+ul.KarmaBank li.Item div.ItemContent div.Amount{
+	float:right;
+}
+ul.KarmaBank li.Item div.ItemContent div.Item{
+	width:50%;
+	word-break:break-all;
+	word-wrap: break-word;
+}
+
+ul.KarmaBank li.Item div.ItemContent div.Clear{
+	float:none;
+	clear:both;
+}
+
+ul.KarmaBank li.Item div.ItemContent div.Amount span.Karma{
+	float:right;
+	display:block;
+	width:60px;
+	text-align:center;
+	font-weight:bold;
+	margin-top:2px;
+}
+
+.P{
+	margin-top:10px;
+}
+
+
+div.ConfigurationForm input.Button{
+	margin-left:5px; 
+}
+
+div.ConfigurationForm input.SmallInput{
+	width:100px;
+}
+
+div.ConfigurationForm{
+	margin-top:10px;
+	float:right;
+}
