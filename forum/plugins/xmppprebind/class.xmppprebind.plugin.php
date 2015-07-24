@@ -100,7 +100,7 @@ require(['converse'], function (converse) {
     converse.initialize({
         bosh_service_url: 'http://www.consortium-horizon.com/http-bind/',
         i18n: locales.fr, // Refer to ./locale/locales.js to see which locales are supported
-        show_controlbox_by_default: true,
+        show_controlbox_by_default: false,
         roster_groups: true,
         authentication: 'prebind',
         prebind_url: 'http://www.consortium-horizon.com/forum/xmpp',
@@ -114,6 +114,7 @@ require(['converse'], function (converse) {
         debug: true,
         hide_muc_server: true,
         ping_interval: 60,
+        allow_otr: false,
     });
 
 });
