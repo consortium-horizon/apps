@@ -105,7 +105,8 @@ a[button] {
   display: -webkit-flex;
   display: flex;
   height: 500px;
-  animation: backgroundAppearance 3s ease-in; }
+  animation: backgroundAppearance 3s ease-in;
+  overflow-y: hidden; }
   #header section[background] .tile {
     padding: 0;
     position: relative;

@@ -139,6 +139,7 @@ a[button] {
     display: flex;
     height: 500px;
     animation: backgroundAppearance 3s ease-in;
+    overflow-y: hidden;
 
     .tile {
       padding: 0;
