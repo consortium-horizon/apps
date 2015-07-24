@@ -1,0 +1,55 @@
+.ProductPayButton{
+    margin-top:10px;
+}
+
+.ProductPayButton td{
+    text-align:center;
+    padding:5px;
+}
+
+.ProductPayButton p{
+    margin-bottom:12px;
+    font-weight:bold;
+}
+
+.ProductPayButton .Button{
+    height:48px;
+    padding:0 10px;
+    margin: 0 5px;
+}
+.ProductListings .ProductListing .label{
+    
+}
+
+.ProductListings{
+    border-top: 1px solid #BEC8CC;
+    
+    
+}
+
+.ProductListing{
+    border-bottom: 1px solid #BEC8CC;
+    padding:5px;
+}
+
+.ProductName{
+    margin-top:5px;
+
+}
+
+.ProductName, .ProductData{
+    margin-left:2px;
+}
+
+
+
+.ProductListingClear{
+    clear:both;
+    
+}
+
+input.EditMeta{
+    padding:1px;
+    width:100px;
+}
+

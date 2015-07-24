@@ -1,0 +1,44 @@
+ changelog:
+ 0.1.2b
+ - 2.1 support 
+ 0.1.3b
+ - Currency add, unique & sort
+ - Currency smart selection on listing
+ 0.1.4b
+ - views portable to theme
+ 0.1.5b
+ - Separate out Gateway callback and
+   code in their own directory with
+   auto detect of callback file
+ - Limited stripe subscription service 
+   + 1 month recurring only. Only one
+   subscription product allowed.  
+ - Subscription info in profile,
+   after purchase subscription
+   go to /profile/subscriptions
+ - Webhooks callback to handle  missing
+   subscription events.
+ - Subscription call back to handle
+   management of subscription such as
+   cancel/renewal.
+ - ProductType search, if only one
+   returned display product page.  
+ 0.1.7b
+ - EventArguments used over RequestArguments
+   for more resilience
+ 0.1.8b
+ - restructure UI/Settings with abstract classes
+ - stripe beta currencies GBP, CAD
+ - marketplace dispatcher, with pluggable magic methods
+   e.g. public function MarketPlaceController_Name_Create($Sender){}
+ - correction on theme views /yourtheme/plugins/MarketPlace/view.php
+  0.1.9b
+ - 2.1
+  0.2.0b
+ - MerchantID link fix 
+ - Paypal SSL fix
+  0.2.1b
+ - stripe folder missing
+  0.2.4b
+ - fix validation of PriceDenominations and Meta
+   

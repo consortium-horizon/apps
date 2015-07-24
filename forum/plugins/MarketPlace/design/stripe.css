@@ -1,0 +1,22 @@
+ul.Stripe li{
+    margin-top:5px;
+
+}
+
+ul.Stripe {
+    background: transparent url('cvc.png') no-repeat 85% top;
+    padding-bottom:10px;
+}
+
+ul.Stripe li .Button{
+    
+    float:right;
+    
+}
+
+ul.Stripe li.Submit{
+    margin-top:30px;
+}
+ul.Stripe div.Expl{
+    font-size:0.75em;
+}

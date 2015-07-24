@@ -1,0 +1,32 @@
+
+ul.Subscriptions li.SubscriptionTitles{
+    font-weight:900;
+}
+ul.Subscriptions li.Subscription{
+    font-style:oblique;
+}
+
+
+ul.Subscriptions li.Item div.ItemContent div{
+    float:left;
+    margin: 0;
+    padding: 0;
+    width:20%;
+}
+ul.Subscriptions li.Item div.ItemContent div.Ops{
+    text-align:right;
+}
+ul.Subscriptions li.Item div.ItemContent div.Item{
+    word-break:break-all;
+    word-wrap: break-word;
+}
+
+ul.Subscriptions li.Item div.ItemContent div.Clear{
+    float:none;
+    clear:both;
+    width:0;
+}
+
+.P{
+    margin-top:10px;
+}
