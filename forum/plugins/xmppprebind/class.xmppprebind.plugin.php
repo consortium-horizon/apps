@@ -95,15 +95,15 @@ require(['converse'], function (converse) {
         initialize: function() {},
     });
     converse.initialize({
-        bosh_service_url: 'http://www.consortium-horizon.com/http-bind/',
+        bosh_service_url: '/http-bind/',
+        prebind_url: '/forum/xmpp',
+        keepalive: true,
         i18n: locales.fr, // Refer to ./locale/locales.js to see which locales are supported
         show_controlbox_by_default: false,
         roster_groups: true,
         authentication: 'prebind',
-        prebind_url: 'http://www.consortium-horizon.com/forum/xmpp',
         jid: '{$UserName}@consortium-horizon.com/vanilla',
         fullname: '{$UserName}',
-        keepalive: true,
         show_only_online_users: true,
         allow_registration: false,
         auto_list_rooms: true,
