@@ -32,7 +32,8 @@ a[button] {
   padding: 8px 12px;
   background: #3380CC;
   color: #fff;
-  border-radius: 3px; }
+  border-radius: 3px;
+  display: inline-block; }
   a[button]:hover {
     text-decoration: none; }
 
@@ -63,49 +64,73 @@ a[button] {
 
 #header #branding {
   position: absolute;
+  left: 0;
+  right: 0;
   top: 80px;
-  width: 100%;
   z-index: 1;
   text-align: center;
-  pointer-events: none; }
+  pointer-events: none;
+  color: #fff; }
+  #header #branding h1 {
+    margin: 0; }
+@keyframes logoAppearance {
+  0% {
+    width: 600px; }
+  50% {
+    width: 600px; }
+  100% {
+    width: 300px; } }
   #header #branding img {
-    max-width: 300px; }
+    width: 300px;
+    max-width: 90vw;
+    animation: logoAppearance 3s ease-in; }
   #header #branding .slogan {
-    color: white;
     font-size: 1.3em; }
-    #header #branding .slogan span {
-      font-weight: bold; }
+@keyframes backgroundAppearance {
+  0% {
+    height: 100vh; }
+  50% {
+    height: 100vh; }
+  100% {
+    height: 500px; } }
+@keyframes backgroundTileAppearance {
+  0% {
+    opacity: 0; }
+  50% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
 #header section[background] {
   background: #0e0f1f;
   display: -webkit-flex;
   display: flex;
-  height: 500px; }
+  height: 500px;
+  animation: backgroundAppearance 3s ease-in; }
   #header section[background] .tile {
     padding: 0;
     position: relative;
     width: 100%;
     height: inherit;
     overflow: hidden;
-    transition: width 150ms ease; }
+    transition: width 150ms ease;
+    animation: backgroundTileAppearance 3s ease-in; }
     #header section[background] .tile:hover {
       width: 125%; }
     #header section[background] .tile img {
-      width: inherit;
-      height: inherit;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       padding: 0 2px 4px; }
     #header section[background] .tile::after {
       content: attr(title);
       position: absolute;
       background: rgba(14, 15, 31, 0.7);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      padding-top: 100%;
-      padding-bottom: 20%;
-      line-height: 100%;
-      text-align: center;
       padding-top: 440px;
+      text-align: center;
       font-weight: 400;
       font-size: 1.3em;
       color: rgba(255, 255, 255, 0.15);
