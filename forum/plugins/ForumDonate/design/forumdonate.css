@@ -1,0 +1,41 @@
+
+div .DonateBox h4 {
+        color: red;
+	}
+
+div .DonateBox a {
+        color: red;
+         text-decoration: underline;
+	}
+
+/*
+div .DonateBox {
+         border-top:solid black 2px;
+	     border-bottom:solid black 2px;
+	     padding-left:25px;
+	}
+
+
+
+	div .DonateBox h4 {
+        margin-left:20px;
+	}
+	div .DonateBox form{
+        margin-left:30px;
+	}
+		div .DonateBox h3{
+        margin-left:45px;
+	}
+	
+	div .DonateBox a{
+        margin-left:15px;
+	    padding-botton:0px;
+	}
+	
+	div .DonateBox p{
+        color:black;
+        padding-top:0px;
+        margin-left:15px;
+	    margin-right:15px;
+	}
+*/
