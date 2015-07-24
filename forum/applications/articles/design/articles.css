@@ -1,0 +1,137 @@
+.Article {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #DDD;
+    margin-bottom: 14px;
+}
+
+.Article.ClearFix {
+    display: inline-table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+body.Articles.index .ArticleBody,
+body.Articles.category .ArticleBody,
+#dashboard_profile_articles .ArticleBody {
+    word-wrap: break-word;
+}
+
+body.Articles.index .Article,
+body.Articles.category .Article,
+#dashboard_profile_articles .Article {
+    position: relative;
+}
+
+body.Articles.index .Options,
+body.Articles.category .Options,
+#dashboard_profile_articles .Options {
+    position: absolute;
+    right: 0;
+}
+
+.Article:last-of-type {
+    border-bottom: 0;
+    margin-bottom: 0;
+}
+
+.ArticleThumbnail {
+    float: left;
+    margin-right: 15px;
+}
+
+.ArticleInner {
+    display: block;
+    overflow: hidden;
+}
+
+.Meta-Article {
+    color: #666;
+    font-size: 11px;
+}
+
+.Meta-Article > span {
+    display: inline-block;
+}
+
+.ArticleBody p {
+    margin-bottom: 15px;
+}
+
+.ArticleBody .VideoWrap {
+    display: block;
+    text-align: center;
+}
+
+body.Articles.index .Article .Options > .ToggleFlyout,
+body.Articles.category .Article .Options > .ToggleFlyout,
+#dashboard_profile_articles .Article .Options > .ToggleFlyout {
+    display: none;
+}
+
+body.Articles.index .Article:hover .Options > .ToggleFlyout,
+body.Articles.index .Article .Options > .ToggleFlyout.Open,
+body.Articles.category .Article:hover .Options > .ToggleFlyout,
+body.Articles.category .Article .Options > .ToggleFlyout.Open,
+#dashboard_profile_articles .Article:hover .Options > .ToggleFlyout,
+#dashboard_profile_articles .Article .Options > .ToggleFlyout.Open {
+    display: block;
+}
+
+.ReactReply {
+    background-position: -293px -6px;
+}
+
+.DataList .ItemCommentReply {
+    margin-left: 30px;
+}
+
+.CommentForm.Guest .FormWrapper {
+    padding-left: 10px;
+}
+
+.Item .Author .GuestName {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.Item .Options {
+    position: relative;
+    z-index: 500;
+}
+
+.ArticleBody img,
+.ArticleThumbnail img {
+    max-width: 100%;
+    height: auto;
+}
+
+#AuthorInfo > h2.H {
+    margin-top: 0;
+}
+
+#AuthorPhoto {
+    float: left;
+    margin-right: 15px;
+}
+
+.BoxAfterArticle {
+    margin: 10px 0 20px 0;
+    border: 1px solid #DDD;
+    border-left: none;
+    border-right: none;
+}
+
+#AuthorInfo #AboutTheAuthor {
+    float: right;
+    font-weight: bold;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.28);
+    text-transform: uppercase;
+}
+
+#SimilarArticles li {
+    display: inline-block;
+    width: 46%;
+    border-bottom: 0;
+    margin-right: 20px;
+}
