@@ -102,6 +102,7 @@ require(['converse'], function (converse) {
         authentication: 'prebind',
         prebind_url: 'http://www.consortium-horizon.com/forum/xmpp',
         jid: '{$UserName}@consortium-horizon.com/vanilla',
+        fullname: '{$UserName}',
         keepalive: true,
         show_only_online_users: true,
         allow_registration: false,
