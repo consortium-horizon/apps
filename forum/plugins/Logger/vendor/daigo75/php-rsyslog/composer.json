@@ -1,0 +1,22 @@
+{
+	"name": "daigo75/php-rsyslog",
+	"type": "library",
+	"description": "A PHP library to send messages to a Remote SysLog server",
+	"keywords": ["syslog", "rsyslog", "remote syslog", "log","logging"],
+	"homepage": "https://github.com/daigo75/PHP-RemoteSysLog",
+	"license": "GPLv3",
+	"authors": [
+		{
+			"name": "Diego Zanella",
+			"email": "diego@aelia.co",
+			"homepage": "http://aelia.co",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"classmap": ["lib"]
+	}
+}

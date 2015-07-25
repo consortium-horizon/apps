@@ -1,0 +1,11 @@
+{
+	"require": {
+		"psr/log": "dev-master",
+		"graylog2/gelf-php": "dev-master",
+		"apache/log4php": "2.3.0",
+		"daigo75/php-rsyslog": "dev-master"
+	},
+	"autoload" : {
+		"classmap": ["lib/classes/"]
+	}
+}

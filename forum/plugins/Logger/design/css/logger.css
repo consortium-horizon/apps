@@ -1,0 +1,30 @@
+
+
+/* General CSS for configuration pages sections */
+.LoggerPlugin legend {
+	width: 100% !important;
+}
+
+.LoggerPlugin fieldset p {
+	padding-left: 20px;
+}
+
+
+.SystemAppender {
+	background-color: whitesmoke;
+	color: gray;
+}
+
+.AppenderEdit #Form_AppenderName {
+	width: 25em;
+}
+
+.AppenderEdit #Form_AppenderDescription {
+	width: 50em;
+}
+
+.AppenderEdit #Form_Port,
+.AppenderEdit #Form_Timeout {
+	width: 5em;
+	text-align: right;
+}

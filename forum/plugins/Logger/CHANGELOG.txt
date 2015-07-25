@@ -1,0 +1,41 @@
+Logger for Vanilla Forums - Change Log
+
+13.12.18.001
+- Refactored entire logger.
+- Dropped GUI entirely.
+- Extended documentation.
+
+13.11.19.001
+- Added loading of required files in PSRLogger class file
+
+13.11.15
+- Added required "use" entries in PSRLogger class file
+
+13.10.31
+- Fixed bug in PSR Log interface, which caused calls to encapsulated logger to fail
+
+13.10.08
+- Implemented PSR Log interface (see https://github.com/php-fig/log)
+
+13.04.02
+- Corrected issue with permissions. Previous versions allowed only SuperAdmin to access Plugin's settings
+
+13.02.01
+- Fixed bug in VanillaDB Model, which could sporadically generate an error when the module checked for the existence of the destination Log table.
+
+13.01.04
+- Modified Log4php Autoloader to work around a bug in the autoloading mechanism on PHP 5.2.
+- Added setting of pages "CurrentPath" before checking permissions, to prevent rendering error when user is not authorised to view a page
+
+12.11.23
+- Modified Log4php AutoLoader so that it raises a fatal error when a class cannot be loaded
+
+12.11.22
+- Updated readme.html
+- Removed some "calls by reference" that were still left from previous cleanup
+
+12.11.09
+- Removed all "calls by reference" for compatibility with PHP 5.4+
+
+12.11.04
+- Initial release

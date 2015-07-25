@@ -1,0 +1,185 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "59a13eabf816306afbf3712591289a5c",
+    "packages": [
+        {
+            "name": "apache/log4php",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://git-wip-us.apache.org/repos/asf/logging-log4php.git",
+                "reference": "8c6df2481cd68d0d211d38f700406c5f0a9de0c2"
+            },
+            "require": {
+                "php": ">=5.2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/main/php/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A versatile logging framework for PHP",
+            "homepage": "http://logging.apache.org/log4php/",
+            "keywords": [
+                "log",
+                "logging",
+                "php"
+            ],
+            "time": "2012-10-26 09:13:25"
+        },
+        {
+            "name": "daigo75/php-rsyslog",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/daigo75/PHP-RemoteSysLog.git",
+                "reference": "439fbaeb74beefda8eea526e464204b33e176b26"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/daigo75/PHP-RemoteSysLog/zipball/439fbaeb74beefda8eea526e464204b33e176b26",
+                "reference": "439fbaeb74beefda8eea526e464204b33e176b26",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Diego Zanella",
+                    "email": "diego@aelia.co",
+                    "homepage": "http://aelia.co",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP library to send messages to a Remote SysLog server",
+            "homepage": "https://github.com/daigo75/PHP-RemoteSysLog",
+            "keywords": [
+                "log",
+                "logging",
+                "remote syslog",
+                "rsyslog",
+                "syslog"
+            ],
+            "time": "2013-12-17 20:09:40"
+        },
+        {
+            "name": "graylog2/gelf-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Graylog2/gelf-php.git",
+                "reference": "6e47c56f0913124f29811e21f4facd69e732a919"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Graylog2/gelf-php/zipball/6e47c56f0913124f29811e21f4facd69e732a919",
+                "reference": "6e47c56f0913124f29811e21f4facd69e732a919",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    ""
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lennart Koopmann",
+                    "email": "lennart@socketfeed.com",
+                    "homepage": "http://www.lennartkoopmann.net/"
+                }
+            ],
+            "description": "PHP classes to send GELF (Graylog extended log format) messages",
+            "homepage": "http://github.com/Graylog2/gelf-php",
+            "keywords": [
+                "log",
+                "logging"
+            ],
+            "time": "2013-02-14 22:27:44"
+        },
+        {
+            "name": "psr/log",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "5144da9525d24346bf009ff28f10cbaa1f0f166e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/5144da9525d24346bf009ff28f10cbaa1f0f166e",
+                "reference": "5144da9525d24346bf009ff28f10cbaa1f0f166e",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2013-12-05 15:25:07"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "psr/log": 20,
+        "graylog2/gelf-php": 20,
+        "daigo75/php-rsyslog": 20
+    },
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}
