@@ -52,7 +52,8 @@ function parseRSS (url, length, callback) {
 function parseRSSEntry (entry, category) {
   var o = {};
   o.title = entry.title;
-  o.date = new Date(entry.publishedDate).toLocaleDateString();
+  o.date = entry.publishedDate;
+  o.localDate = new Date(o.date).toLocaleFormat("%d %b");
   o.link = entry.link;
   o.author = entry.author;
   o.img = /<img[^>]+src=['"]?([^"\s]+)['"]/.exec( entry.content );
@@ -67,7 +68,8 @@ function parseRSSEntry (entry, category) {
 function parseYoutubeEntry (entry) {
   var o = {};
   o.title = entry.title;
-  o.date = new Date(entry.publishedAt).toLocaleDateString();
+  o.date = entry.publishedAt;
+  o.localDate = new Date(o.date).toLocaleFormat("%d %b");
   o.link = "https://www.youtube.com/watch?v=" + entry.resourceId.videoId;
   o.author = entry.channelTitle;
   o.img = entry.thumbnails.high.url;
@@ -102,7 +104,7 @@ function loadVideos () {
     success: function(data) {
       data.items.forEach(function (entry) {
         var o = parseYoutubeEntry(entry.snippet);
-        $('[carousel]').slick('slickAdd', "<a class='carousel-item' href='"+o.link+"' target='_blank'><img src='"+o.img+"'><div class='caption'><div class='cat'>"+o.cat+"</div><span class='date'>"+o.date+"</span> <span class='author'>par "+o.author+"</span><h3>"+o.title+"</h3></div></a>");
+        $('[carousel]').slick('slickAdd', "<a class='carousel-item' href='"+o.link+"' target='_blank'><img src='"+o.img+"'><div class='caption'><div class='cat'>"+o.cat+"</div><time datetime='"+o.date+"'>"+o.localDate+"</time><span class='author'> <small>par </small>"+o.author+"</span><h3>"+o.title+"</h3></div></a>");
       });
     }
   });
