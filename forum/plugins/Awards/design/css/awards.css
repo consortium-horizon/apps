@@ -1,0 +1,862 @@
+
+
+.xdebug-var-dump {
+	text-align: left !important;
+}
+
+/* General styles */
+.AwardsPlugin textarea.TextBox {
+	width: 30em;
+}
+
+/* ClearFix */
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+#dashboard_plugin_awards .AwardsPlugin .clearfix,
+.clearfix {
+	display: inline-block;
+}
+
+html[xmlns] .clearfix {
+	display: block;
+}
+
+* html .clearfix {
+	height: 1%;
+}
+
+/* General CSS for configuration pages sections */
+.Hidden {
+	display: none !important;
+}
+
+.AwardsPlugin {
+}
+
+#Content .AwardsPlugin a.Help {
+	border-bottom: 1px dotted gray !important;
+}
+
+#Content .AwardsPlugin h1 {
+	text-align: center;
+}
+
+#Content .AwardsPlugin h4 {
+	padding: 0;
+}
+
+#Content .AwardsPlugin .Info {
+	padding-top: 0;
+	margin: 0 0 10px;
+	font-size: small;
+}
+
+#Content .AwardsPlugin .Buttons {
+	padding: 1em;
+}
+
+#Content .AwardsPlugin .Buttons.Top {
+	padding: 0;
+	position: absolute;
+	top: 0;
+	left: 1em;
+	padding-top: 0.5em;
+}
+
+
+.AwardsPlugin .Buttons .Button {
+	margin: 0 0.5em !important;
+}
+
+.AwardsPlugin .Numeric {
+	width: 7em;
+	text-align: right;
+}
+
+.AwardsPlugin legend {
+	width: 100% !important;
+}
+
+.AwardsPlugin fieldset p {
+	font-size: 100%;
+	padding-left: 20px;
+}
+
+.AwardsPlugin .Disabled {
+	background: #eee;
+	color: gray;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 0.5em 0;
+}
+
+.AwardsPlugin fieldset .Error {
+	padding-left: 0;
+	color: red;
+	font-weight: bold;
+}
+
+.AwardsPlugin fieldset li label {
+	margin-top: 1em;
+}
+
+.Credits {
+	padding: 20px;
+	text-align: right;
+	color: silver;
+	font-size: small;
+}
+
+.Credits .Author {
+	padding-left: 16px;
+}
+
+/* Awards Menu Style */
+.AwardsMenu {
+	position: relative;
+}
+
+.AwardsMenu > ul {
+	position: absolute;
+	z-index: 99999;
+	left: 0;
+}
+
+.AwardsMenu > ul {
+	display: none;
+}
+
+.AwardsMenu:hover > ul {
+	display: block;
+}
+
+/* General styles for modules */
+.Plugin.awards .PanelInfo ul {
+	padding-top: 0.5em;
+}
+
+.Plugin.awards .PanelInfo li {
+	text-align: left;
+	margin-right: 0.5em;
+	background: none;
+	border: none;
+}
+
+
+/* Award Info page */
+#dashboard_plugin_awards.AwardInfo #Panel {
+  float: left;
+  width: 250px;
+}
+
+#dashboard_plugin_awards.AwardInfo #Content {
+  float: right;
+  margin: 0 0 40px 20px;
+  width: 690px;
+}
+#dashboard_plugin_awards.AwardInfo .AwardDetails .AwardImageWrapper,
+#dashboard_plugin_awards.AwardInfo .AwardDetails .TextWrapper {
+	float: left;
+}
+
+#dashboard_plugin_awards.AwardInfo .AwardDetails .TextWrapper {
+	margin-left: 1em;
+}
+
+#dashboard_plugin_awards.AwardInfo .AwardDetails .AwardName {
+	font-size: x-large;
+	margin-top: 0.5em;
+}
+
+#dashboard_plugin_awards.AwardInfo .AwardDetails .AwardDescription {
+	font-size: large;
+}
+
+#dashboard_plugin_awards.AwardInfo .TotalTimesAwarded {
+	font-size: 110%;
+	margin-top: 0.5em;
+}
+
+
+#dashboard_plugin_awards.AwardInfo .UserPhoto img {
+	vertical-align: middle;
+	margin-right: 0.5em;
+}
+
+#dashboard_plugin_awards.AwardInfo .YouEarned {
+	margin-top: 1.5em;
+}
+
+/* List of last recipients of an Award */
+#dashboard_plugin_awards.AwardInfo #RecentAwardRecipients {
+	margin-top: 1.5em;
+}
+
+#dashboard_plugin_awards.AwardInfo #RecentAwardRecipients h4 {
+	color: black;
+	font-size: large;
+	margin: 0.5em 0 ;
+	padding-bottom: 0.3em;
+	border-bottom: 1px dashed gray;
+}
+
+#dashboard_plugin_awards.AwardInfo #UserList {
+	border: none;
+}
+
+#dashboard_plugin_awards.AwardInfo #UserList .AwardRecipient {
+	width: 31%;
+	float: left;
+}
+
+/* Warning message */
+.AwardsPlugin .Warning {
+	font-size: 100%;
+	color: maroon;
+	border: 1px solid maroon;
+}
+
+.AwardsPlugin .Warning h5 {
+	font-weight: bold;
+}
+
+.AwardsPlugin.AssignAward .Name,
+.AwardsPlugin.ConfirmationDialog .Name {
+	font-weight: bold;
+	border-bottom: 1px dotted gray;
+}
+
+
+#AwardClassesList th,
+#AwardsList th,
+#AwardClassesList td,
+#AwardsList td {
+	vertical-align: middle;
+	padding: 0.5em;
+}
+
+#AwardClassesList th,
+#AwardsList th {
+	text-align: center;
+}
+
+.Activities .AwardActivity a.Photo img,
+.AwardImage {
+	background: none;
+	text-align: center;
+	background-size: contain !important;
+	display: inline-block;
+}
+
+img.Large {
+	width: 100px;
+	height: 100px;
+}
+
+img.Medium {
+	width: 50px;
+	height: 50px;
+	vertical-align: middle;
+}
+
+/* Wrapper for images in Award/Award class edit page */
+.AwardsPlugin.AwardClassEdit legend.Title,
+.AwardsPlugin.AwardEdit legend.Title {
+	position: relative;
+}
+
+#Form_AwardClasses .AwardClassImageWrapper .AwardClassImage,
+#Form_Awards .AwardImageWrapper .AwardImage {
+	padding: 8px;
+	border: 1px dashed silver;
+}
+
+#ImagePreviewIE {
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale);
+	position: absolute;
+	top: 9px;
+	left: 9px;
+	height: 100px;
+	width: 100px;
+	background: white;
+}
+
+/* Award/Award Class edit page */
+.ImageColumn {
+	float: left;
+	text-align: center;
+}
+
+.ImageColumn h5,
+.ImageSelector h5 {
+	font-weight: bold;
+	padding: 0.5em 0;
+}
+
+.ImageSelector {
+	min-height: 14em;
+	width:40%;
+	float: left;
+	margin-left: 1em;
+	padding: 0 1em;
+	border-left: 1px solid silver;
+}
+
+.ImageSelector p {
+	padding-left: 0 !important;
+}
+
+.AwardsPlugin .CloningNotice .ClassInfo {
+	font-weight: bold;
+}
+
+/* Filters section */
+.AwardsPlugin .Filters a {
+	display: inline-block;
+	padding: 0.1em 0.5em;
+	color: rgb(30, 121, 167);
+	border: 1px solid rgb(30, 121, 167);
+	border-radius: 4px;
+}
+
+.AwardsPlugin .Filters li.Active a {
+	background: rgb(30, 121, 167);
+	color: white;
+}
+
+.AwardsPlugin .Filters a:hover {
+	background: rgb(243, 252, 255);
+}
+
+.AwardsPlugin .Filters .FilterItem {
+	margin: 0 0.3em;
+}
+
+.AwardsPlugin .Filters {
+	text-align: right;
+	background: none;
+	border: none;
+}
+
+/* Awards Frontend Page */
+#AwardsPage .Header {
+	border-bottom: 1px solid #8bc1de;
+}
+
+#AwardsPage #AwardsList {
+	width: 100%;
+	margin-top: 1em;
+	padding: 0.5em;
+	border-collapse: collapse;
+}
+
+#AwardsPage #AwardsList td {
+	vertical-align: top;
+	padding: 0.5em;
+}
+
+#AwardsPage #AwardsList .Name {
+	white-space: nowrap;
+}
+
+#AwardsPage #AwardsList .AwardName {
+	display: inline-block;
+}
+
+#AwardsPage #AwardsList .AwardImage {
+	float: left;
+	margin-right: 1em;
+}
+
+#AwardsPage #AwardsList .UserAwardInfo {
+	width: 40px;
+	vertical-align: middle;
+}
+
+#AwardsPage #AwardsList .Tick {
+	font-weight: bold;
+	text-indent: -999999px;
+	background: url("../images/ui/tick-icon.png") center center no-repeat;
+	padding: 10px;
+	display: block
+}
+
+/* Awards Leaderboard Page */
+#AwardsLeaderboard .Header {
+	border-bottom: 1px solid #8bc1de;
+}
+
+#AwardsLeaderboard #TopUsers {
+	width: 100%;
+	margin-top: 1em;
+	padding: 0.5em;
+	border-collapse: collapse;
+}
+
+#AwardsLeaderboard #TopUsers tbody tr {
+	border-top: 1px dashed silver;
+	border-bottom: 1px dashed silver;
+}
+
+#AwardsLeaderboard #TopUsers td {
+	vertical-align: middle;
+	padding: 0.5em;
+}
+
+#AwardsLeaderboard .UserInfo {
+	width: 15%;
+	text-align: center;
+}
+
+#AwardsLeaderboard .UserAwardsScore {
+	border-top: 1px dotted gray;
+	text-align: center;
+	margin-top: 0.5em;
+	font-size: 110%;
+}
+
+#AwardsLeaderboard .UserAwardsScore .Total {
+	font-weight: bold;
+}
+
+#AwardsLeaderboard .UserAwardsScore .ClassTotal {
+	margin-left: 0.5em;
+}
+
+#AwardsLeaderboard .AwardImageWrapper {
+	margin-left: 0.5em;
+}
+
+
+
+/* Awards and Award Classes List page */
+.AwardsPlugin .Enabled,
+.AwardsPlugin .Enabled {
+	width: 4em;
+	text-align: center;
+}
+
+.AwardsPlugin .TotalAwardsUsingClass {
+	width: 10em;
+	text-align: center;
+}
+
+.AwardsPlugin .Image {
+	width: 50px;
+	text-align: center;
+}
+
+.AwardsPlugin .Name {
+	/*width: auto;*/
+}
+
+.AwardsPlugin .ClassUsage {
+	padding-left: 0;
+	font-size: small;
+	font-weight: bold;
+}
+
+.AwardsPlugin #AwardsList td .Name,
+.AwardsPlugin #AwardClassesList td .Name {
+	font-size: large;
+}
+
+.AwardsPlugin #AwardsList td .Description,
+.AwardsPlugin #AwardClassesList td .Description {
+	width: 25em;
+	padding: 0;
+	margin-top: 4px;
+	padding-top: 4px;
+	border-top: 1px dashed gray;
+}
+
+.AwardsPlugin #AwardsList .RankPoints {
+	width: 10em;
+}
+
+.AwardsPlugin #AwardClassesList .RankPoints {
+	width: 4em;
+	text-align: center;
+}
+
+.AwardsPlugin .RankPoints .Total {
+	text-align: center;
+	font-weight: bold;
+	font-size: 120%;
+	border-bottom: 1px dotted gray;
+	padding-bottom: 4px;
+	margin-bottom: 4px;
+}
+
+.AwardsPlugin #AwardsList .RankPoints ul {
+	padding: 0;
+}
+
+.AwardsPlugin #AwardsList .RankPoints li {
+	margin: 0;
+	font-size: 100%;
+}
+
+.AwardsPlugin #AwardsList .RankPoints span {
+	display: inline;
+}
+
+.AwardsPlugin #AwardsList .RankPoints .Amount {
+	font-weight: bold;
+}
+
+.AwardsPlugin .RankPoints .Detail {
+	text-align: left;
+}
+
+.AwardsPlugin .TimesAwarded {
+	text-align: center;
+}
+
+.AwardsPlugin tbody .TimesAwarded {
+	font-size: 120%;
+	font-weight: bold;
+}
+
+/* Rule Settings Pages */
+.AwardsPlugin #AwardRules {
+	padding-left: 20px;
+	border: 1px solid gray;
+}
+
+.AwardsPlugin  #Form_Awards h2 {
+	margin: 0 20px;
+	border-bottom: 1px dashed gray;
+}
+
+.AwardsPlugin .Column {
+	float: left;
+	margin-right: 1em;
+}
+
+.AwardsPlugin .FieldLabel,
+.AwardsPlugin .FieldValue {
+	float: left;
+	margin-right: 1em;
+}
+
+.AwardsPlugin .CheckBoxList {
+	border: 1px solid silver;
+	border-radius: 4px;
+}
+
+.AwardsPlugin .CheckBoxList li {
+	display: block;
+	padding: 0;
+}
+
+#Content .AwardsPlugin form ul {
+	padding-top: 1px;
+}
+
+#Content .AwardsPlugin .RuleGroup h4 {
+	font-size: 120%;
+	font-weight: bold;
+	padding: 0;
+}
+
+#Content .AwardsPlugin .RuleGroup .Rule {
+	position: relative;
+	border-bottom: 1px dotted silver;
+}
+
+#Content .AwardsPlugin .RuleGroup .Rule ul {
+	padding: 0;
+}
+
+#Content .AwardsPlugin .RuleGroup .Rule li {
+	display: block;
+	margin: 0.5em 0;
+}
+
+#Content #UserRolesRule .CheckBoxList {
+	min-width: 20em;
+}
+
+#Content #UserRolesRule .CheckBoxList li {
+	margin: 0;
+}
+
+/* Tabs links */
+.AwardsPlugin .Tabs {
+	padding: 0;
+	border-bottom: 1px solid #8bc1de;
+}
+
+.AwardsPlugin .Tabs.Filters {
+	border-bottom: none;
+}
+
+#dashboard_plugin_awards .Tabs > ul {
+	padding-left: 0.5em;
+}
+
+.AwardsPlugin .ui-tabs-nav {
+	padding: 0.5em 1em 0 !important;
+}
+
+.AwardsPlugin .ui-tabs-nav li {
+	margin-right: 0.5em;
+}
+
+.AwardsPlugin .ui-tabs-anchor {
+	font-size: 110%;
+}
+
+.AwardsPlugin .ui-tabs-nav .ui-tabs-active a {
+	background: #DBF3FC;
+	border-bottom: 1px solid #DBF3FC;
+}
+
+/* Rule settings snippets */
+.AwardsPlugin .Rule .Fields {
+	float: left;
+}
+
+.AwardsPlugin .Rule .MissingRequirements {
+	float: left;
+	margin-left: 2em;
+	margin-right: 1em;
+}
+
+.AwardsPlugin .Rule .MissingRequirements h5 {
+	border-bottom: 1px dotted gray;
+}
+
+.AwardsPlugin .Rule label {
+	min-width: 25em;
+	display: inline-block;
+}
+
+#Content .AwardsPlugin ul.Rules {
+}
+
+.AwardsPlugin .Rule ul li span {
+	display: inline;
+	margin-left: 1em;
+}
+
+.AwardsPlugin .Rule ul li input,
+.AwardsPlugin .Rule ul li select {
+	margin-left: 1em;
+}
+
+/* User Awards Widget */
+#UserAwards {
+
+}
+
+#UserAwards #AwardsList {
+	padding-top: 0.5em;
+}
+
+#UserAwards #AwardsList li {
+	border: none;
+}
+
+#UserAwards #AwardsList .Award {
+	float: left;
+	background: none;
+}
+
+/* Styles for Award Classes Module */
+#AwardClassesList li {
+	margin-top: 0.5em;
+	text-align: left;
+}
+
+#AwardClassesList .AwardClassInfo .Name {
+	margin-left: 1em;
+	font-size: 120%;
+	font-weight: bold;
+}
+
+
+/* Special Styles for "Assign Award" page */
+#Content .AwardsPlugin.AssignAward .Title,
+#Content .AwardsPlugin.AssignAward p {
+	padding-left: 0;
+}
+
+#Content .AwardsPlugin.AssignAward .Fields {
+	padding: 0;
+}
+
+#Content .AwardsPlugin.AssignAward fieldset > div {
+	padding-left: 20px;
+}
+
+#Content .AwardsPlugin.AssignAward #SelectedUsers {
+	width: 50em;
+	height: 20em;
+	border: 1px solid silver;
+	margin-top: 0.5em;
+	border-radius: 4px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#Content .AwardsPlugin.AssignAward #SelectedUsers span {
+	display: inline;
+	margin: 0 1em 0 0.5em;
+}
+
+#Content .AwardsPlugin.AssignAward #SelectedUsers .SelectedUser {
+	border: 1px solid silver;
+	margin: 2px;
+	background-color: whitesmoke;
+	border-radius: 4px;
+}
+
+#Content .AwardsPlugin.AssignAward #SelectedUsers .EarnedAward {
+	color: white;
+	background: silver;
+}
+
+#Content .AwardsPlugin.AssignAward #SelectedUsers .Remove.Icon {
+	width: 18px;
+	height: 18px;
+	background: url("../images/ui/remove-user-icon.png") center center no-repeat;
+	display: block;
+	float: left;
+	text-indent: -99999px;
+	margin: 2px 0 0 0.5em;
+}
+
+/* Import Export pages */
+#Content .AwardsPlugin.Import .Column,
+#Content .AwardsPlugin.Export .Column {
+	width: 33%;
+}
+
+#Content .AwardsPlugin.Export #Form_ExportLabel,
+#Content .AwardsPlugin.Export #Form_ExportDescription {
+	width: 100%;
+}
+
+#Content .AwardsPlugin #Output {
+	width: 95%;
+	margin-top: 1em;
+	padding-left: 20px;
+	border-top: 1px dashed silver;
+}
+
+#Content .AwardsPlugin #Output .Header {
+	margin-bottom: 0.5em;
+}
+
+#Content .AwardsPlugin #Output h2 {
+	font-size: x-large;
+}
+
+#Content .AwardsPlugin #Output #Messages {
+	border: 1px solid silver;
+	width: 50em;
+	height: 30em;
+	color: lime;
+	background: black;
+	overflow-y: auto;
+}
+
+#Content .AwardsPlugin #Output #DownloadInfo {
+}
+
+#Content .AwardsPlugin #Output .Title {
+	font-weight: bold;
+}
+
+input[type=file] {
+	width: 100%;
+}
+
+/* Award Add/Edit */
+.AwardClassImageWrapper,
+.AwardImageWrapper {
+	position: relative;
+}
+
+.AwardClassImageWrapper #ImageOverlay,
+.AwardImageWrapper #ImageOverlay {
+	width: 100%;
+	position: absolute;
+	top: 45px;
+	left: 0;
+	background: whitesmoke;
+	opacity: 0.7;
+	font-size: large;
+	display: none;
+	z-index: 999999;
+}
+
+.AwardClassImageWrapper.Preview:hover #ImageOverlay,
+.AwardImageWrapper.Preview:hover #ImageOverlay {
+	opacity: 0.2;
+}
+
+.AwardClassImageWrapper #RestoreImage,
+.AwardImageWrapper #RestoreImage {
+	display: none;
+}
+
+.AwardClassImageWrapper.Preview #ImageOverlay,
+.AwardClassImageWrapper.Preview #RestoreImage,
+.AwardImageWrapper.Preview #ImageOverlay,
+.AwardImageWrapper.Preview #RestoreImage {
+	display: inline-block;
+}
+
+
+/* Server Side image browser */
+.AwardsPlugin .FileTreeContainer {
+	width: 80%;
+}
+
+
+/* Side help for Admin pages */
+#Content .AwardsPlugin .Aside {
+	width: 30em;
+}
+
+#Content .AwardsPlugin .Aside .Title {
+	padding: 0.5em 10px 0;
+}
+
+#Content .AwardsPlugin .Aside li {
+	font-size: 100%;
+}
+
+#Content .AwardsPlugin .Aside .Info {
+	margin: 0.5em 0 0 0;
+}
+
+/* Status page */
+.AwardsPlugin.StatusPage #Directories {
+	padding: 1em 20px;
+}
+
+.AwardsPlugin.StatusPage #Directories ul {
+	list-style-type: circle;
+	list-style-position: inside;
+}
+
+.AwardsPlugin .Writable {
+	color: green;
+	font-weight: bold;
+}
+
+.AwardsPlugin .NotWritable {
+	color: maroon;
+	font-weight: bold;
+}
