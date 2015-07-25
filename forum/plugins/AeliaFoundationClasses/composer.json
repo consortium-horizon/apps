@@ -1,0 +1,8 @@
+{
+	"require" : {
+		"thauex/simple-html-dom": "dev-master"
+	},
+	"autoload" : {
+		"classmap": ["lib/classes/"]
+	}
+}
