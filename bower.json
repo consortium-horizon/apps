@@ -3,7 +3,6 @@
   "dependencies": {
     "cms": "WordPress/WordPress#4.2.2",
     "forum": "vanilla/vanilla#Vanilla_2.1.11",
-    "wiki": "wikimedia/mediawiki#1.25.1",
-    "email": "phpList/phplist3#a8d2639489e209b8ba65cbb96e682b0510f234cf"
+    "wiki": "wikimedia/mediawiki#1.25.1"
   }
 }
