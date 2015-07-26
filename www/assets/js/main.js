@@ -36,7 +36,7 @@ function initCarousel () {
     autoplaySpeed: 3000,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1280,
         settings: {
           slidesToShow: 3,
           infinite: true,
@@ -44,13 +44,13 @@ function initCarousel () {
         }
       },
       {
-        breakpoint: 600,
+        breakpoint: 960,
         settings: {
           slidesToShow: 2
         }
       },
       {
-        breakpoint: 480,
+        breakpoint: 640,
         settings: {
           slidesToShow: 1
         }
@@ -82,7 +82,7 @@ function parseRSSEntry (entry, category) {
   o.snippet = entry.contentSnippet;
   o.cat = /^\[([^\]]+)\]/.exec( o.title );
   o.cat = o.cat ? o.cat[1] : "";
-  o.title = o.title.replace("["+o.cat+"] ", "");
+  o.title = o.title.replace("["+o.cat+"]", "").trim()
   return o;
 }
 
