@@ -3,3 +3,6 @@ forum/cache/
 tmp/
 
 **/__MACOSX/
+
+# email
+email/public_html/lists/config/config*

@@ -1,0 +1,12 @@
+{
+  "name": "marketing",
+  "homepage": "https://github.com/phpList/phplist3",
+  "_release": "a8d2639489",
+  "_resolution": {
+    "type": "commit",
+    "commit": "a8d2639489e209b8ba65cbb96e682b0510f234cf"
+  },
+  "_source": "git://github.com/phpList/phplist3.git",
+  "_target": "a8d2639489e209b8ba65cbb96e682b0510f234cf",
+  "_originalSource": "phpList/phplist3"
+}
