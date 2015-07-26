@@ -1,0 +1,8 @@
+--- fckeditor/editor/fckeditor.orig.html	2012-11-27 10:14:34.631508793 -0300
++++ fckeditor/editor/fckeditor.html	2012-11-27 10:15:00.939639247 -0300
+@@ -118,3 +118,4 @@
+ // Base configuration file.
+-LoadScript( '../fckconfig.js' ) ;
++//LoadScript( '../fckconfig.js' ) ;
++LoadScript( '../../../../?pi=fckphplist&page=config&action=js4' ) ;
+ 

@@ -1,0 +1,7 @@
+--- fckeditor/fckeditor_php5.php.orig	2010-02-15 08:13:02.000000000 -0300
++++ fckeditor/fckeditor_php5.php	2012-11-27 10:56:38.956026241 -0300
+@@ -57,3 +57,3 @@
+ 		$iVersion = (int)substr($sAgent, strpos($sAgent, 'Gecko/') + 6, 8) ;
+-		return ($iVersion >= 20030210) ;
++		return ($iVersion >= 20030210 || $iVersion >= 17) ;
+ 	}
