@@ -1,0 +1,24 @@
+server {
+  listen 80;
+  listen [::]:80 ipv6only=on;
+  listen 443 ssl spdy;
+
+  server_name email.consortium-horizon.com;
+
+  root /var/www/webapps/current/email/public_html/lists;
+  index index.php index.html index.htm;
+
+  access_log /var/www/webapps/shared/log/email/nginx.access.log main;
+  error_log /var/www/webapps/shared/log/email/nginx.error.log;
+  rewrite_log on;
+
+  location ~ \.php$ {
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+  }
+
+  location / {
+  }
+}
