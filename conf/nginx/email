@@ -1,11 +1,10 @@
 server {
   listen 80;
-  listen [::]:80 ipv6only=on;
   listen 443 ssl spdy;
 
   server_name email.consortium-horizon.com;
 
-  root /var/www/webapps/current/email/public_html/lists;
+  root /var/www/webapps/current/email/public_html;
   index index.php index.html index.htm;
 
   access_log /var/www/webapps/shared/log/email/nginx.access.log main;
