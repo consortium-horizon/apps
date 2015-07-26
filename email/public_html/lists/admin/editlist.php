@@ -64,22 +64,29 @@ if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
   }
 
   if ($id) {
-    $query = sprintf('update %s set name="%s",description="%s",category="%s",
-    active=%d,listorder=%d,prefix = "%s", owner = %d
-    where id=%d',$tables["list"],sql_escape($_POST["listname"]),
-    sql_escape($_POST["description"]),sql_escape($_POST['category']),$_POST["active"],$_POST["listorder"],
-    $_POST["prefix"],$_POST["owner"],$id);
+    $query
+    = ' update %s'
+    . ' set name = ?, description = ?, active = ?,'
+    . '     listorder = ?, prefix = ?, owner = ?, category = ?'
+    . ' where id = ?';
+    $query = sprintf($query, $GLOBALS['tables']['list']);
+    $result = Sql_Query_Params($query, array($_POST['listname'],
+       $_POST['description'], $_POST['active'], $_POST['listorder'],
+       $_POST['prefix'], $_POST['owner'], $category, $id));
   } else {
-    $query = sprintf('insert into %s
-      (name,description,entered,listorder,owner,prefix,active,category)
-      values("%s","%s",now(),%d,%d,"%s",%d,"%s")',
-      $tables["list"],sql_escape($_POST["listname"]),sql_escape($_POST["description"]),
-      $_POST["listorder"],$_POST["owner"],sql_escape($_POST["prefix"]),$_POST["active"],sql_escape($category));
-  }
+    $query
+    = ' insert into %s'
+    . '    (name, description, entered, listorder, owner, prefix, active, category)'
+    . ' values'
+    . '    (?, ?, current_timestamp, ?, ?, ?, ?, ?)';
+    $query = sprintf($query, $GLOBALS['tables']['list']);
 #  print $query;
-  $result = Sql_Query($query);
+    $result = Sql_Query_Params($query, array($_POST['listname'],
+       $_POST['description'], $_POST['listorder'], $_POST['owner'],
+       $_POST['prefix'], $_POST['active'], $category));
+  }
   if (!$id) {
-    $id = sql_insert_id();
+    $id = Sql_Insert_Id($GLOBALS['tables']['list'], 'id');
 
     $_SESSION['action_result'] = s('New list added') . ": $id";
     $_SESSION['newlistid'] = $id;
@@ -127,7 +134,7 @@ if (empty($list['category'])) {
 <div class="field"><input type="checkbox" name="active" value="1"
 <?php 
 
-echo empty($list["active"]) ? 'checked="checked"' : '';
+echo $list["active"] ? 'checked="checked"' : '';
 if (listUsedInSubscribePage($id)) print ' disabled="disabled" ';
 
  ?> /><label for="active"><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></label></div>

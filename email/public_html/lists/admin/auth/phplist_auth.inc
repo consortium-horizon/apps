@@ -5,8 +5,12 @@ require_once dirname(__FILE__).'/../accesscheck.php';
 class admin_auth {
 
   function validateLogin($login,$password) {
-    $query = sprintf('select password, disabled, id from %s where loginname = "%s"', $GLOBALS['tables']['admin'], sql_escape($login));
-    $req = Sql_Query($query);
+    $query
+    = ' select password, disabled, id'
+    . ' from %s'
+    . ' where loginname = ?';
+    $query = sprintf($query, $GLOBALS['tables']['admin']);
+    $req = Sql_Query_Params($query, array($login));
     $admindata = Sql_Fetch_Assoc($req);
     $encryptedPass = hash(ENCRYPTION_ALGO,$password);
     $passwordDB = $admindata['password'];    
@@ -14,9 +18,10 @@ class admin_auth {
     if(strlen($passwordDB)<$GLOBALS['hash_length']) { // Passwords are encrypted but the actual is not.
       #Encrypt the actual DB password before performing the validation below.
       $encryptedPassDB =  hash(ENCRYPTION_ALGO,$passwordDB);
-      $query = sprintf('update %s set password = "%s" where loginname = "%s"', $GLOBALS['tables']['admin'], $encryptedPassDB,sql_escape($login));
+      $query = "update %s set password = '%s' where loginname = ?";
+      $query = sprintf($query, $GLOBALS['tables']['admin'], $encryptedPassDB);
       $passwordDB = $encryptedPassDB;
-      $req = Sql_Query($query);
+      $req = Sql_Query_Params($query, array($login));
     } 
     if ($admindata["disabled"]) {
       return array(0,s("your account has been disabled"));
@@ -31,8 +36,9 @@ class admin_auth {
 
   function getPassword($email) {
     $email = preg_replace("/[;,\"\']/","",$email);
-    $req = Sql_Query('select email,password,loginname from '.$GLOBALS["tables"]["admin"].' where email = "'.sql_escape($email).'"');
-    if (Sql_Affected_Rows()) {
+    $query = sprintf('select email, password, loginname from %s where email = ?', $GLOBALS['tables']['admin']);
+    $req = Sql_Query_Params($query, array($email));
+    if (Sql_Num_Rows($req)) {
       $row = Sql_Fetch_Row($req);
       return $row[1];
     }
@@ -41,10 +47,20 @@ class admin_auth {
   function validateAccount($id) {
     /* can only do this after upgrade, which means
      * that the first login will always fail
+    $query
+    = ' select id, disabled,password,privileges'
+    . ' from %s'
+    . ' where id = ?';
     */
     
-    $query = sprintf('select id, disabled,password from %s where id = %d', $GLOBALS['tables']['admin'], $id);
-    $data = Sql_Fetch_Row_Query($query);
+    $query
+    = ' select id, disabled,password'
+    . ' from %s'
+    . ' where id = ?';
+
+    $query = sprintf($query, $GLOBALS['tables']['admin']);
+    $req = Sql_Query_Params($query, array($id));
+    $data = Sql_Fetch_Row($req);
     if (!$data[0]) {
       return array(0,s("No such account"));
     } elseif (!ENCRYPT_ADMIN_PASSWORDS && sha1($noaccess_req[2]) != $_SESSION["logindetails"]["passhash"]) {
@@ -55,8 +71,13 @@ class admin_auth {
     
     ## do this seperately from above, to avoid lock out when the DB hasn't been upgraded.
     ## so, ignore the error
-    $query = sprintf('select privileges from %s where id = %d', $GLOBALS['tables']['admin'],$id);
-    $req = Sql_Query($query);
+    $query
+    = ' select privileges'
+    . ' from %s'
+    . ' where id = ?';
+
+    $query = sprintf($query, $GLOBALS['tables']['admin']);
+    $req = Sql_Query_Params($query, array($id),1);
     if ($req) {
       $data = Sql_Fetch_Row($req);
     } else {

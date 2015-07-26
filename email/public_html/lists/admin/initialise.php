@@ -9,6 +9,9 @@ if (!isset($_REQUEST['adminname'])) $_REQUEST['adminname'] = '';
 if (!isset($_REQUEST['orgname'])) $_REQUEST['orgname'] = '';
 if (!isset($_REQUEST['adminpassword'])) $_REQUEST['adminpassword'] = '';
 if (!isset($_REQUEST['adminemail'])) $_REQUEST['adminemail'] = '';
+if (isset($_REQUEST['adminemail']) && !is_email($_REQUEST['adminemail'])) {
+  $_REQUEST['adminemail'] = '';
+}
 
 $force = !empty($_GET['force']) && $_GET['force'] == 'yes';
 
@@ -17,9 +20,9 @@ if ($force) {
     if ($table == "attribute") {
       $req = Sql_Query("select tablename from {$tables["attribute"]}");
       while ($row = Sql_Fetch_Row($req))
-        Sql_Query('drop table if exists '.$table_prefix . 'listattr_' . $row[0]);
+        Sql_Drop_Table($table_prefix . 'listattr_' . $row[0]);
     }
-    Sql_Query('drop table if exists '.$tables[$table]);
+    Sql_Drop_Table($tables[$table]);
   }
   session_destroy();
   Redirect('initialise&firstinstall=1');
@@ -66,9 +69,9 @@ while (list($table, $val) = each($DBstruct)) {
     if ($table == "attribute") {
       $req = Sql_Query("select tablename from {$tables["attribute"]}");
       while ($row = Sql_Fetch_Row($req))
-        Sql_Query("drop table if exists $table_prefix"."listattr_$row[0]",1);
-     }
-    Sql_query("drop table if exists $tables[$table]");
+        Sql_Drop_Table($table_prefix . 'listattr_' . $row[0]);
+    }
+    Sql_Drop_Table($tables[$table]);
   }
   $query = "CREATE TABLE $tables[$table] (\n";
   while (list($column, $struct) = each($DBstruct[$table])) {
@@ -110,7 +113,7 @@ while (list($table, $val) = each($DBstruct)) {
         }
         
         Sql_Query(sprintf('insert into %s (loginname,namelc,email,created,modified,password,passwordchanged,superuser,disabled)
-          values("%s","%s","%s",now(),now(),"%s",now(),%d,0)',
+          values("%s","%s","%s",current_timestamp,current_timestamp,"%s",current_timestamp,%d,0)',
           $tables["admin"],"admin","admin",$adminemail,encryptPass($adminpass),1));
 
         ## let's add them as a subscriber as well
@@ -152,7 +155,7 @@ if ($success) {
   # mark the database to be our current version
   SaveConfig('version',VERSION,0);
   # mark now to be the last time we checked for an update
-  SaveConfig('updatelastcheck',date("Y-m-d H:i:s",time()),0,true);
+  Sql_Replace($tables['config'], array('item' => "updatelastcheck", 'value' => 'current_timestamp', 'editable' => '0'), 'item', false);
   SaveConfig('admin_address',$adminemail,1);
   SaveConfig('message_from_name',strip_tags($_REQUEST['adminname']),1);
   SaveConfig('campaignfrom_default',"$adminemail ".strip_tags($_REQUEST['adminname']));
@@ -174,17 +177,29 @@ if ($success) {
   }
  
   # add a testlist
-  $info = $GLOBALS['I18N']->get("List for testing");
-  $result = Sql_query("insert into {$tables["list"]} (name,description,entered,active,owner) values(\"test\",\"$info\",now(),0,1)");
+  $info = $GLOBALS['I18N']->get("List for testing.");
+  $stmt
+  = ' insert into ' . $tables['list']
+  . '   (name, description, entered, active, owner)'
+  . ' values'
+  . '   (?, ?, current_timestamp, ?, ?)';
+  $result = Sql_Query_Params($stmt, array('test', $info, '0', '1'));
+  # add public newsletter list
   $info = s("Sign up to our newsletter");
-  $result = Sql_query("insert into {$tables["list"]} (name,description,entered,active,owner) values(\"newsletter\",\"$info\",now(),1,1)");
-    
+  $stmt
+  = ' insert into ' . $tables['list']
+  . '   (name, description, entered, active, owner)'
+  . ' values'
+  . '   (?, ?, current_timestamp, ?, ?)';
+  $result = Sql_Query_Params($stmt, array('newsletter', $info, '1', '1'));
+  
   ## add the admin to the lists
   Sql_Query(sprintf('insert into %s (listid, userid, entered) values(%d,%d,now())',$tables['listuser'],1,$userid));
   Sql_Query(sprintf('insert into %s (listid, userid, entered) values(%d,%d,now())',$tables['listuser'],2,$userid));
  
   $uri = $_SERVER['REQUEST_URI'];
   $uri = str_replace('?'.$_SERVER['QUERY_STRING'],'',$uri);
+ 
   $body = '
     Version: '.VERSION."\r\n"
     .' Url: '
@@ -204,8 +219,12 @@ if ($success) {
     print sendAdminPasswordToken($adminid);
   }
   # make sure the 0 template has the powered by image
-  $query = sprintf('insert into %s (template, mimetype, filename, data, width, height) values (0, "image/png", "powerphplist.png", "%s", 70, 30)', $GLOBALS["tables"]["templateimage"],$newpoweredimage);
-  Sql_Query($query);
+  $query
+  = ' insert into %s'
+  . '   (template, mimetype, filename, data, width, height)'
+  . ' values (0, ?, ?, ?, ?, ?)';
+  $query = sprintf($query, $GLOBALS["tables"]["templateimage"]);
+  Sql_Query_Params($query, array('image/png', 'powerphplist.png', $newpoweredimage, 70, 30));
   print '<div id="continuesetup" style="display:none;" class="fleft">'.$GLOBALS['I18N']->get("Continue with")." ".PageLinkButton("setup",$GLOBALS['I18N']->get("phpList Setup"))."</div>";
 
   unset($_SESSION['hasI18Ntable']);

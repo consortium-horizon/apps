@@ -199,17 +199,6 @@ $(document).ready(function() {
       return;
     }
   });
-  $("#campaigntitleinput").focus(function() {
-    if (this.value == '(no title)') {
-      this.value = "";
-    }
-  })
-  $("#campaigntitleinput").blur(function() {
-    if (this.value == "") {
-      this.value = "(no title)";
-      return;
-    }
-  });
   $("#remoteurlinput").focus(function() {
     if (this.value == 'e.g. http://www.phplist.com/testcampaign.html') {
       this.value = "";

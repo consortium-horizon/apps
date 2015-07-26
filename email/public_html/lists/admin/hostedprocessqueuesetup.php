@@ -1,36 +1,19 @@
 <?php
 
-$fopenAllowed = ini_get('allow_url_fopen');
-
 if (!empty($_POST['apikey'])) {
   if (!verifyToken()) { 
     print Error($GLOBALS['I18N']->get('No Access'));
     return;
   }
-  $streamContext = stream_context_create(array('http'=>  // even though we use https, this has to be http
-        array(
-            'timeout' => 10, // this should be fast, so let's not wait too long
-        )
-  ));
-  
-  $check = @file_get_contents(PQAPI_URL.'&cmd=verifykey&key='.trim($_POST['apikey']),false,$streamContext);
+  $check = file_get_contents(PQAPI_URL.'&cmd=verifykey&key='.trim($_POST['apikey']));
   $check = trim($check);
-  if (!empty($check) && strpos($check,'KEYPASS') !== false) {
+  if (strpos($check,'KEYPASS') !== false) {
     SaveConfig('PQAPIkey',trim(str_replace('"','',strip_tags($_POST['apikey']))),0);
     SaveConfig('pqchoice','phplistdotcom',0);
-    ## if we have active campaigns, start them now
     $_SESSION['action_result'] = s('Remote queue processing settings were saved successfully');
-    $count = Sql_Fetch_Row_Query(sprintf("select count(*) from %s where status not in ('draft', 'sent', 'prepared', 'suspended') and embargo <= now()", $tables['message']));
-    if ($count[0] > 0) {
-       $_SESSION['action_result'] .= '<br/>'.activateRemoteQueue();
-    }
     Redirect('messages&tab=active');
   } else {
-    if (!empty($http_response_header[0]) && strpos($http_response_header[0],'200 OK') !== false) {
-        $_SESSION['action_result'] = s('Error, the API key is incorrect');
-    } else {
-        $_SESSION['action_result'] = s('Error, unable to connect to the phpList.com server for checking. Please verify that your webserver is able to connect to https://pqapi.phplist.com'). '<br/><a href="./?page=processqueue&pqchoice=local" class="button">'.s('Use local processing instead').'</a>';
-    }
+    $_SESSION['action_result'] = s('Error, the API key is incorrect');
     Redirect('hostedprocessqueuesetup');
   }
 }
@@ -38,14 +21,7 @@ if (!empty($_POST['apikey'])) {
 $existingKey = getConfig('PQAPIkey');
 
 print '<h2>'.s('Process the queue using the service from phpList.com').'</h2>';
-
-if ($fopenAllowed) {
-    print '<p>'.s('This is only possible if your phpList installation is not behind a firewall').'</p>';
-} else {
-    print '<p>'.s('Your PHP settings do not allow this functionality. Please set "allow_url_fopen" in your php.ini to be "on" to continue.').'</p>';
-    print '  <a href="./?page=processqueue&pqchoice=local" class="button">'.s('Use local processing instead').'</a>';
-    return;
-}    
+print '<p>'.s('This is only possible if your phpList installation is not behind a firewall').'</p>';
 print formStart();
 
 print '<h3>Step 1. Create an account on phpList.com </h3>';

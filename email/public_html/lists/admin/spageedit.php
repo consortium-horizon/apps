@@ -35,8 +35,8 @@ if (isset($_POST["save"])) {
       $tables["subscribepage"],sql_escape($title),$owner,$id));
    } else {
     Sql_Query(sprintf('insert into %s (title,owner) values("%s",%d)',
-      $tables["subscribepage"],$title,$owner));
-     $id = Sql_Insert_id();
+      $tables["subscribepage"],sql_escape($title),$owner));
+     $id = Sql_Insert_Id($tables['subscribepage'], 'id');
   }
   Sql_Query(sprintf('delete from %s where id = %d',$tables["subscribepage_data"],$id));
   foreach (array("title","language_file","intro","header","footer","thankyoupage","button","htmlchoice","emaildoubleentry",'ajax_subscribeconfirmation') as $item) {
@@ -317,20 +317,10 @@ foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
 
 $listsHTML = '<h3><a name="lists">'.$GLOBALS['I18N']->get('Select the lists to offer').'</a></h3>';
 $listsHTML .= '<div>';
-$listsHTML .= '<p>'.s('You can only select "public" lists for subscribe pages.');
+$listsHTML .= '<p>'.s('You can only select "public" lists for subscribe pages.').'</p>';
 $req = Sql_query("SELECT * FROM {$tables["list"]} $subselect order by listorder");
-if (!Sql_Affected_Rows()) {
-  $listsHTML .= '<br/>'.s('No lists available, please create one first');
-} else {
-  $listsHTML .= '<br/>'.s('If you do not choose a list here, all public lists will be displayed.');
-  $hideSingle = getConfig('hide_single_list');
-  if ($hideSingle) {
-    $listsHTML .= '<br/>'.s('If you choose one list only, a checkbox for this list will not be displayed and the subscriber will automatically be added to this list.');
-#  } else {
-#    $listsHTML .= s('If you choose one list only, a checkbox for this list will be displayed');
-  }
-}
-$listsHTML .= '</p>';
+if (!Sql_Affected_Rows())
+  $listsHTML .= $GLOBALS['I18N']->get('No lists available, please create one first');
 while ($row = Sql_Fetch_Array($req)) {
   $listsHTML .= sprintf ('<label><input type="checkbox" name="list[%d]" value="%d" %s /> %s</label><div>%s</div>',
     $row["id"],$row["id"],in_array($row["id"],$selected_lists)?'checked="checked"':'',stripslashes($row["name"]),htmlspecialchars(stripslashes($row["description"])));

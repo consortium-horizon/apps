@@ -9,7 +9,6 @@ class phplistPlugin {
   public $version= "unknown";
   public $authors= "";
   public $description = 'No description';
-  public $documentationUrl = '';## link to documentation for this plugin (eg https://resources.phplist.com/plugin/pluginname
   public $enabled = 1; // use directly, can be privitsed later and calculated with __get and __set
   public $system_root = ''; ## root dir of the phpList admin directory
   #@@Some ideas to implement this:
@@ -76,21 +75,6 @@ class phplistPlugin {
     
   public $pageTitles = array();
   
-  /* dependency check
-   * 
-   * provides tests to determine whether this plugin can be used
-   * example:
-   *    array(
-   *        'description of dependency' => condition for plugin to be enabled
-   *    )
-   */
-  function dependencyCheck()
-  {
-      return array(
-        'phpList version' => version_compare(VERSION, '3.0.12') >= 0
-      );
-  }
-
   function name() {
     return $this->name;
   }
@@ -119,6 +103,12 @@ class phplistPlugin {
     }
     $this->importTabTitle = $this->name;
     $this->system_root = dirname(__FILE__);
+    if (isset($this->settings)) {
+      foreach ($this->settings as $item => $itemDetails) {
+        $GLOBALS['default_config'][$item] = $itemDetails;
+        $GLOBALS['default_config'][$item]['hidden'] = false;
+      }
+    }
     $this->version = $this->getVersion();
     ## map table names
     $me = new ReflectionObject($this);
@@ -179,12 +169,6 @@ class phplistPlugin {
   function activate() {
     # Startup code, all other objects are constructed 
     # returns success or failure, false means we cannot start
-    if (isset($this->settings)) {
-      foreach ($this->settings as $item => $itemDetails) {
-        $GLOBALS['default_config'][$item] = $itemDetails;
-        $GLOBALS['default_config'][$item]['hidden'] = false;
-      }
-    }
   }
     
   function displayAbout() {
@@ -380,22 +364,6 @@ class phplistPlugin {
     # this will be listed in the "Send As" list of radio buttons, so that an editor can choose the format
     # prefix the shorttag with _ to suppress it from the send page (for internal use)
     return array ();
-  }
-
-  /**
-   * 
-   * Called when viewing a message
-   * The plugin can return a caption and a value that will be displayed as an additional row.
-   * Each can include HTML and should be html encoded.
-   * 
-   * @param messageid integer: id of the campaign
-   * @param messagedata array: associative array of message data
-   * @return array 2-element array, [0] caption, [1] value.
-   *         or false if the plugin does not want to display a row.
-   */
-  function viewMessage($messageid, array $messagedata)
-  {
-    return false;
   }
   
   /*
@@ -735,30 +703,6 @@ class phplistPlugin {
   function logout() {
     return '';
   }
-    /**
-   * cronJobs
-   * @param null
-   * @return array of cronjobs to call for this plugin
-   * 
-   * eg
-   * array(
-   *    array( // cronJob1
-   *     'page' => 'pagetocall',
-   *     'frequency' => (int) minutes, // how often to call
-   *    ),
-   *    ...
-   *    ...
-   *    array( // cronJobN
-   *     'page' => 'anotherpagetocall',
-   *     'frequency' => (int) minutes, // how often to call
-   *    ),
-   * );
-   * 
-   */
-  
-  function cronJobs() {
-    return array();
-  }
 
   ############################################################
   # User
@@ -839,15 +783,6 @@ class phplistPlugin {
     # purpose: show content for this plugin on the import page
     return '';
   }
-  
-  /*
-   * validateEmailAddress
-   * @param string $emailaddress
-   * @return bool true if email address is correct
-   */
-   function validateEmailAddress($emailAddress) {
-      return true;
-   } 
 
   ######################################
   # Static functions to manage the collection of plugins

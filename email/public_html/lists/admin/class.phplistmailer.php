@@ -170,7 +170,7 @@ class PHPlistMailer extends PHPMailer {
       } else {
         $from = "[$ip_address]";
       }
-      $hostname = hostName();
+      $hostname = $_SERVER["HTTP_HOST"];
       $request_time = date('r',$_SERVER['REQUEST_TIME']);
       $sTimeStamp = "from $from by $hostname with HTTP; $request_time";
       $this->addTimeStamp($sTimeStamp);
@@ -388,8 +388,7 @@ class PHPlistMailer extends PHPMailer {
        * to phpMailer
        */
 
-      #$cid = md5(uniqid(time()));
-      $cid = md5(mt_rand().$name.uniqid(time(), TRUE)); ##17603 better random CID value on Windows
+      $cid = md5(uniqid(time()));
       if (method_exists($this,'AddEmbeddedImageString')) {
         $this->AddEmbeddedImageString(base64_decode($contents), $cid, $name, $this->encoding, $content_type);
       } elseif (method_exists($this,'AddStringEmbeddedImage')) {
@@ -482,15 +481,24 @@ class PHPlistMailer extends PHPMailer {
 
     function image_exists($templateid,$filename) {
       if (basename($filename) == 'powerphplist.png') $templateid = 0;
-      $req = Sql_Query(sprintf('select * from %s where template = %d and (filename = "%s" or filename = "%s")',
-        $GLOBALS["tables"]["templateimage"],$templateid,$filename,basename($filename)));
-      return Sql_Affected_Rows();
+      $query
+      = ' select *'
+      . ' from ' . $GLOBALS['tables']['templateimage']
+      . ' where template = ?'
+      . '   and (filename = ? or filename = ?)';
+      $rs = Sql_Query_Params($query, array($templateid, $filename, basename($filename)));
+      return Sql_Num_Rows($rs);
     }
 
      function get_template_image($templateid,$filename){
       if (basename($filename) == 'powerphplist.png') $templateid = 0;
-      $req = Sql_Fetch_Row_Query(sprintf('select data from %s where template = %d and (filename = "%s" or filename = "%s")',
-        $GLOBALS["tables"]["templateimage"],$templateid,$filename,basename($filename)));
+      $query
+      = ' select data'
+      . ' from ' . $GLOBALS['tables']['templateimage']
+      . ' where template = ?'
+      . '   and (filename = ? or filename= ?)';
+      $rs = Sql_Query_Params($query, array($templateid, $filename, basename($filename)));
+      $req = Sql_Fetch_Row($rs);
       return $req[0];
     }
 

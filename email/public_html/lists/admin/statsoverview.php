@@ -26,7 +26,9 @@ switch ($access) {
   case 'owner':
     $ownership = sprintf(' and owner = %d ', $_SESSION['logindetails']['id']);
     if ($id) {
-      $allow = Sql_Fetch_Row_query(sprintf('select owner from %s where id = %d %s',$GLOBALS['tables']['message'],$id,$ownership));
+      $query = sprintf('select owner from %s where id = ? and owner = ?', $GLOBALS['tables']['message']);
+      $rs = Sql_Query_Params($query, array($id, $_SESSION['logindetails']['id']));
+      $allow = Sql_Fetch_Row($rs);
       if ($allow[0] != $_SESSION["logindetails"]["id"]) {
         print $GLOBALS['I18N']->get('You do not have access to this page');
         return;
@@ -62,7 +64,7 @@ if (!$id) {
     print '<div class="actions">'.PageLinkButton('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</div>';
   }
 
-  $timerange = ' and msg.entered > date_sub(now(),interval 12 month)';
+  $timerange = ' and msg.entered > date_sub(current_timestamp,interval 12 month)';
   $timerange = '';
 
   $query = sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, 
@@ -80,7 +82,7 @@ if (!$id) {
   }
 
   if (!Sql_Affected_Rows()) {
-    print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no campaigns to view').'</p>';
+    print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
 
   $ls = new WebblerListing('');
@@ -99,8 +101,6 @@ if (!$id) {
     $ls->addColumn($element,$GLOBALS['I18N']->get('views'),$row['views'],$row['views'] ? PageURL2('mviews&amp;id='.$row['messageid']):'');
     $perc = sprintf('%0.2f',($row['views'] / ($row['total'] - $row['bounced']) * 100));
     
-    $totalclicked = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s where messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$row['messageid']));
-    $ls->addColumn($element,$GLOBALS['I18N']->get('clicks'),$totalclicked[0],$totalclicked[0] ? PageURL2('mclicks&id='.$row['messageid']):'');
     
     $ls->addRow($element,'',"<div class='content listingsmall fright gray'>".$GLOBALS['I18N']->get('rate').": ".$perc.' %'."</div>".
                             "<div class='content listingsmall fright gray'>".$GLOBALS['I18N']->get('date').": ".$row['sent']."</div>");

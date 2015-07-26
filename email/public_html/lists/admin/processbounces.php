@@ -32,6 +32,7 @@ if (!$GLOBALS["commandline"]) {
   ob_start();
 }
 
+print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
 flush();
 $outputdone =0;
 function prepareOutput() {
@@ -44,7 +45,7 @@ function prepareOutput() {
 
 $report = "";
 ## some general functions
-function finishBounceProcessing ($flag,$message) {
+function finish ($flag,$message) {
   if ($flag == "error") {
     $subject = $GLOBALS['I18N']->get("Bounce processing error");
   } elseif ($flag == "info") {
@@ -55,9 +56,9 @@ function finishBounceProcessing ($flag,$message) {
   }
 }
 
-function bounceProcessError ($message) {
-  outputProcessBounce( "$message");
-  finishBounceProcessing('error',$message);
+function ProcessError ($message) {
+  output( "$message");
+  finish('error',$message);
   exit;
 }
 
@@ -65,10 +66,10 @@ function processbounces_shutdown() {
   global $report,$process_id;
   releaseLock($process_id);
  # $report .= "Connection status:".connection_status();
-  finishBounceProcessing('info',$report);
+  finish('info',$report);
 }
 
-function outputProcessBounce ($message,$reset = 0) {
+function output ($message,$reset = 0) {
   $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
   #print "$infostring $message<br/>\n";
   $message = preg_replace("/\n/",'',$message);
@@ -184,7 +185,7 @@ function processImapBounce ($link,$num,$header) {
   $msgid = findMessageId($body);
   $userid = findUserID($body);
   if (VERBOSE) {
-    outputProcessBounce("UID".$userid." MSGID".$msgid);
+    output("UID".$userid." MSGID".$msgid);
   }
   
   ## @TODO add call to plugins to determine what to do.
@@ -201,7 +202,7 @@ function processImapBounce ($link,$num,$header) {
     addslashes($header),
     addslashes($body)));
 
-  $bounceid = Sql_Insert_Id();
+  $bounceid = Sql_Insert_Id($tables['bounce'], 'id');
   
   return processBounceData($bounceid,$msgid,$userid);
 }
@@ -330,7 +331,7 @@ function processPop ($server,$user,$password) {
   }
 
   if (!$link) {
-    outputProcessBounce($GLOBALS['I18N']->get("Cannot create POP3 connection to")." $server: ".imap_last_error());
+    output($GLOBALS['I18N']->get("Cannot create POP3 connection to")." $server: ".imap_last_error());
     return;
   }
   return processMessages($link,100000);
@@ -345,7 +346,7 @@ function processMbox ($file) {
     $link=imap_open($file,"","");
   }
   if (!$link) {
-    outputProcessBounce($GLOBALS['I18N']->get("Cannot open mailbox file")." ".imap_last_error());
+    output($GLOBALS['I18N']->get("Cannot open mailbox file")." ".imap_last_error());
     return;
   }
   return processMessages($link,100000);
@@ -354,8 +355,8 @@ function processMbox ($file) {
 function processMessages($link,$max = 3000) {
   global $bounce_mailbox_purge_unprocessed,$bounce_mailbox_purge;
   $num = imap_num_msg($link);
-  outputProcessBounce( $num . " ".$GLOBALS['I18N']->get("bounces to fetch from the mailbox")."\n");
-  outputProcessBounce( $GLOBALS['I18N']->get("Please do not interrupt this process")."\n");
+  output( $num . " ".$GLOBALS['I18N']->get("bounces to fetch from the mailbox")."\n");
+  output( $GLOBALS['I18N']->get("Please do not interrupt this process")."\n");
   $report = $num . " ".$GLOBALS['I18N']->get("bounces to process")."\n";
   if ($num > $max) {
     print $GLOBALS['I18N']->get("Processing first")." $max ".$GLOBALS['I18N']->get("bounces")."<br/>";
@@ -373,32 +374,33 @@ function processMessages($link,$max = 3000) {
     set_time_limit(60);
     $header = imap_fetchheader($link,$x);
     if ($x % 25 == 0)
-  #    outputProcessBounce( $x . " ". nl2br($header));
-      outputProcessBounce($x . " done",1);
+  #    output( $x . " ". nl2br($header));
+      output($x . " done",1);
     print "\n";
     flush();
     $processed = processImapBounce($link,$x,$header);
     if ($processed) {
       if (!TEST && $bounce_mailbox_purge) {
-        if (VERBOSE) outputProcessBounce( $GLOBALS['I18N']->get("Deleting message")." $x");
+        if (VERBOSE) output( $GLOBALS['I18N']->get("Deleting message")." $x");
         imap_delete($link,$x);
       } elseif (VERBOSE) {
-        outputProcessBounce(s("Not deleting processed message")." $x $bounce_mailbox_purge");
+        output(s("Not deleting processed message")." $x $bounce_mailbox_purge");
       }
     } else {
       if (!TEST && $bounce_mailbox_purge_unprocessed) {
-        if (VERBOSE) outputProcessBounce( $GLOBALS['I18N']->get("Deleting message")." $x");
+        if (VERBOSE) output( $GLOBALS['I18N']->get("Deleting message")." $x");
         imap_delete($link,$x);
       } elseif (VERBOSE) {
-        outputProcessBounce(s("Not deleting unprocessed message")." $x");
+        output(s("Not deleting unprocessed message")." $x");
       }
     }
     flush();
   }
   flush();
-  outputProcessBounce($GLOBALS['I18N']->get("Closing mailbox, and purging messages"));
+  output($GLOBALS['I18N']->get("Closing mailbox, and purging messages"));
   set_time_limit(60 * $num);
   imap_close($link);
+#  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
   if ($num)
     return $report;
 }
@@ -415,6 +417,7 @@ if (empty($bounce_mailbox) && (empty($bounce_mailbox_host) || empty($bounce_mail
   return;
 }
 
+print '<script language="Javascript" type="text/javascript"> yposition = 10;document.write(progressmeter); start();</script>';
 print prepareOutput();
 flushBrowser();
 
@@ -471,143 +474,134 @@ while ($bounce = Sql_Fetch_Assoc($req)) {
 }
 cl_output(s('%d out of %d processed',$count,$total));
 if (VERBOSE) {
-  outputProcessBounce(s('%d bounces were re-processed and %d bounces were re-identified',$reparsed,$reidentified));
+  output(s('%d bounces were re-processed and %d bounces were re-identified',$reparsed,$reidentified));
 }
 $advanced_report = '';
-$bouncerules = loadBounceRules();
-if (sizeof($bouncerules)) {
-  outputProcessBounce($GLOBALS['I18N']->get('Processing bounces based on active bounce rules'));
+if (USE_ADVANCED_BOUNCEHANDLING) {
+  output($GLOBALS['I18N']->get('Processing bounces based on active bounce rules'));
+  $bouncerules = loadBounceRules();
   $matched = 0;
   $notmatched = 0;
+  $limit =  ' limit 10';
   $limit =  ' limit 10000';
   $limit = '';
-  
-  ## run this in batches. With many bounces this query runs OOM
-  $bounceCount = Sql_Fetch_Row_Query(sprintf('select count(*) from %s',$GLOBALS['tables']['user_message_bounce']));
-  $total = $bounceCount[0];
-  $counter = 0;
-  $batchSize = 500; ## @TODO make a config, to allow tweaking on bigger systems
-  while ($counter < $total) {
-      $limit =  ' limit '.$counter.', '.$batchSize;
-      $counter += $batchSize;
-      cl_progress(s('processed %d out of %d bounces for advanced bounce rules',$counter,$total));
-      
-      $req = Sql_Query(sprintf('select * from %s as bounce, %s as umb where bounce.id = umb.bounce %s',
-        $GLOBALS['tables']['bounce'],$GLOBALS['tables']['user_message_bounce'],$limit));
-      while ($row = Sql_Fetch_Array($req)) {
-        $alive = checkLock($process_id);
-        if ($alive)
-          keepLock($process_id);
-        else
-          bounceProcessError($GLOBALS['I18N']->get("Process Killed by other process"));
-    #    cl_output(memory_get_usage());
-
-    #    outputProcessBounce('User '.$row['user']);
-        $rule = matchBounceRules($row['header']."\n\n".$row['data'],$bouncerules);
-    #    outputProcessBounce('Action '.$rule['action']);
-    #    outputProcessBounce('Rule'.$rule['id']);
-        $userdata = array();
-        if ($rule && is_array($rule)) {
-          if ($row['user']) {
-            $userdata = Sql_Fetch_Array_Query("select * from {$tables["user"]} where id = ".$row['user']);
-          }
-          $report_linkroot = $GLOBALS['admin_scheme'].'://'.$GLOBALS['website'].$GLOBALS['adminpages'];
-
-          Sql_Query(sprintf('update %s set count = count + 1 where id = %d',
-            $GLOBALS['tables']['bounceregex'],$rule['id']));
-          Sql_Query(sprintf('insert ignore into %s (regex,bounce) values(%d,%d)',
-            $GLOBALS['tables']['bounceregex_bounce'],$rule['id'],$row['bounce']));
-          
-          switch ($rule['action']) {
-            case 'deleteuser':
-              logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              deleteUser($row['user']);
-              break;
-            case 'unconfirmuser':
-              logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
-              $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              addUserHistory($userdata['email'],s('Auto Unconfirmed'),s('Subscriber auto unconfirmed for')." ".s('bounce rule').' '.$rule['id']);
-              addSubscriberStatistics('auto unsubscribe',1);
-              break;
-            case 'deleteuserandbounce':
-              logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              deleteUser($row['user']);
-              deleteBounce($row['bounce']);
-              break;
-            case 'unconfirmuseranddeletebounce':
-              logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
-              $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              addUserHistory($userdata['email'],s('Auto unconfirmed'),s('Subscriber auto unconfirmed for')." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
-              addSubscriberStatistics('auto unsubscribe',1);
-              deleteBounce($row['bounce']);
-              break;
-            case 'blacklistuser':
-              logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              addUserToBlacklist($userdata['email'],s('Subscriber auto blacklisted  by bounce rule',$rule['id']));
-              $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
-              addSubscriberStatistics('auto blacklist',1);
-              break;
-            case 'blacklistuseranddeletebounce':
-              logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              addUserToBlacklist($userdata['email'],s('Subscriber auto blacklisted by bounce rule %d',$rule['id']));
-              $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
-              addSubscriberStatistics('auto blacklist',1);
-              deleteBounce($row['bounce']);
-              break;
-            case 'blacklistemail':
-              logEvent('email '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              addEmailToBlackList($userdata['email'],s('Email address auto blacklisted by bounce rule %d', $rule['id']));
-              $advanced_report .= 'email '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("email auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
-              addSubscriberStatistics('auto blacklist',1);
-              break;
-            case 'blacklistemailanddeletebounce':
-              logEvent('email '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
-              addEmailToBlackList($userdata['email'],s('Email address auto blacklisted by bounce rule %d',$rule['id']));
-              $advanced_report .= 'email '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-              $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
-              $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
-              addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
-              addSubscriberStatistics('auto blacklist',1);
-              deleteBounce($row['bounce']);
-              break;
-            case 'deletebounce':
-              deleteBounce($row['bounce']);
-              break;
-          }
-
-          $matched++;
-        } else {
-          $notmatched++;
-        }
+# @@ not sure whether this one would make sense
+#  $req = Sql_Query(sprintf('select * from %s as bounce, %s as umb,%s as user where bounce.id = umb.bounce
+#    and user.id = umb.user and !user.confirmed and !user.blacklisted %s',
+#    $GLOBALS['tables']['bounce'],$GLOBALS['tables']['user_message_bounce'],$GLOBALS['tables']['user'],$limit));
+  $req = Sql_Query(sprintf('select * from %s as bounce, %s as umb where bounce.id = umb.bounce %s',
+    $GLOBALS['tables']['bounce'],$GLOBALS['tables']['user_message_bounce'],$limit));
+  while ($row = Sql_Fetch_Array($req)) {
+    $alive = checkLock($process_id);
+    if ($alive)
+      keepLock($process_id);
+    else
+      ProcessError($GLOBALS['I18N']->get("Process Killed by other process"));
+#    output('User '.$row['user']);
+    $rule = matchBounceRules($row['data'],$bouncerules);
+#    output('Action '.$rule['action']);
+#    output('Rule'.$rule['id']);
+    $userdata = array();
+    if ($rule && is_array($rule)) {
+      if ($row['user']) {
+        $userdata = Sql_Fetch_Array_Query("select * from {$tables["user"]} where id = ".$row['user']);
       }
+      $report_linkroot = $GLOBALS['admin_scheme'].'://'.$GLOBALS['website'].$GLOBALS['adminpages'];
+
+      Sql_Query(sprintf('update %s set count = count + 1 where id = %d',
+        $GLOBALS['tables']['bounceregex'],$rule['id']));
+      Sql_Query(sprintf('insert ignore into %s (regex,bounce) values(%d,%d)',
+        $GLOBALS['tables']['bounceregex_bounce'],$rule['id'],$row['bounce']));
+      
+      switch ($rule['action']) {
+        case 'deleteuser':
+          logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          deleteUser($row['user']);
+          break;
+        case 'unconfirmuser':
+          logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
+          $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          addUserHistory($userdata['email'],s('Auto Unconfirmed'),s('Subscriber auto unconfirmed for')." ".s('bounce rule').' '.$rule['id']);
+          addSubscriberStatistics('auto unsubscribe',1);
+          break;
+        case 'deleteuserandbounce':
+          logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          deleteUser($row['user']);
+          deleteBounce($row['bounce']);
+          break;
+        case 'unconfirmuseranddeletebounce':
+          logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
+          $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          addUserHistory($userdata['email'],s('Auto unconfirmed'),s('Subscriber auto unconfirmed for')." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          addSubscriberStatistics('auto unsubscribe',1);
+          deleteBounce($row['bounce']);
+          break;
+        case 'blacklistuser':
+          logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          addUserToBlacklist($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          addSubscriberStatistics('auto blacklist',1);
+          break;
+        case 'blacklistuseranddeletebounce':
+          logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          addUserToBlacklist($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          addSubscriberStatistics('auto blacklist',1);
+          deleteBounce($row['bounce']);
+          break;
+        case 'blacklistemail':
+          logEvent('email '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          addEmailToBlackList($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("email auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          $advanced_report .= 'email '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("email auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          addSubscriberStatistics('auto blacklist',1);
+          break;
+        case 'blacklistemailanddeletebounce':
+          logEvent('email '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
+          addEmailToBlackList($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          $advanced_report .= 'email '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
+          addSubscriberStatistics('auto blacklist',1);
+          deleteBounce($row['bounce']);
+          break;
+        case 'deletebounce':
+          deleteBounce($row['bounce']);
+          break;
+      }
+
+      $matched++;
+    } else {
+      $notmatched++;
+    }
   }
-  outputProcessBounce($matched.' '.$GLOBALS['I18N']->get('bounces processed by advanced processing'));
-  outputProcessBounce($notmatched.' '.$GLOBALS['I18N']->get('bounces were not matched by advanced processing rules'));
+  output($matched.' '.$GLOBALS['I18N']->get('bounces processed by advanced processing'));
+  output($notmatched.' '.$GLOBALS['I18N']->get('bounces were not matched by advanced processing rules'));
 }
 
 # have a look who should be flagged as unconfirmed
-outputProcessBounce($GLOBALS['I18N']->get("Identifying consecutive bounces"));
+output($GLOBALS['I18N']->get("Identifying consecutive bounces"));
 
 # we only need users who are confirmed at the moment
 $userid_req = Sql_query(sprintf('select distinct %s.user from %s,%s
@@ -621,7 +615,7 @@ $userid_req = Sql_query(sprintf('select distinct %s.user from %s,%s
 ));
 $total = Sql_Affected_Rows();
 if (!$total)
-  outputProcessBounce($GLOBALS['I18N']->get("Nothing to do"));
+  output($GLOBALS['I18N']->get("Nothing to do"));
 
 $usercnt = 0;
 $unsubscribed_users = "";
@@ -650,12 +644,12 @@ while ($user = Sql_Fetch_Row($userid_req)) {
     if ($alive)
       keepLock($process_id);
     else
-      bounceProcessError($GLOBALS['I18N']->get("Process Killed by other process"));
+      ProcessError($GLOBALS['I18N']->get("Process Killed by other process"));
     if (sprintf('%d',$bounce["bounce"]) == $bounce["bounce"]) {
       $cnt++;
       if ($cnt >= $bounce_unsubscribe_threshold) {
         $removed = 1;
-        outputProcessBounce(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
+        output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
         $userurl = PageLink2("user&amp;id=$user[0]",$user[0]);
         logEvent($GLOBALS['I18N']->get("User")." $userurl ".$GLOBALS['I18N']->get("has consecutive bounces")." ($cnt) ".$GLOBALS['I18N']->get("over threshold, user marked unconfirmed"));
         $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
@@ -680,7 +674,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
     if ($alive) {
       keepLock($process_id);
     } else {
-      bounceProcessError("Process Killed by other process");
+      ProcessError("Process Killed by other process");
     }
 
     if (stripos($bounce['status'],'duplicate') === false && stripos($bounce['comment'],'duplicate') === false) {
@@ -688,7 +682,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
         $cnt++;
         if ($cnt >= $bounce_unsubscribe_threshold) {
           if (!$unsubscribed) {
-            outputProcessBounce(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
+            output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
             $userurl = PageLink2("user&amp;id=$user[0]",$user[0]);
             logEvent(s('User (url:%s) has consecutive bounces (%d) over threshold (%d), user marked unconfirmed',$userurl,$cnt,$bounce_unsubscribe_threshold));
             $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
@@ -713,15 +707,18 @@ while ($user = Sql_Fetch_Row($userid_req)) {
     }
   }
   if ($usercnt % 5 == 0) {
-#    outputProcessBounce($GLOBALS['I18N']->get("Identifying consecutive bounces"));
+#    output($GLOBALS['I18N']->get("Identifying consecutive bounces"));
     cl_progress(s('processed %d out of %d subscribers',$usercnt, $total),1);
   }
   $usercnt++;
   flush();
 }
+if (!$GLOBALS["commandline"]) {
+  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+}
 
-#outputProcessBounce($GLOBALS['I18N']->get("Identifying consecutive bounces"));
-outputProcessBounce("\n".s('total of %d subscribers processed',$total). '                            ');
+#output($GLOBALS['I18N']->get("Identifying consecutive bounces"));
+output("\n".s('total of %d subscribers processed',$total). '                            ');
 
 $report = '';
 

@@ -253,7 +253,7 @@ $default_config = array (
 
   # the location of your subscribe script
 "subscribeurl" => array (
-  'value' => $GLOBALS['public_scheme'] . "://[WEBSITE]$pageroot/?p=subscribe",
+  'value' => $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=subscribe",
   'description' => s("URL where subscribers can sign up"),
   'type' => "url",
   'allowempty' => 0,
@@ -262,7 +262,7 @@ $default_config = array (
 
   # the location of your unsubscribe script:
 "unsubscribeurl" => array (
-  'value' => $GLOBALS['public_scheme'] . "://[WEBSITE]$pageroot/?p=unsubscribe",
+  'value' => $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=unsubscribe",
   'description' => s("URL where subscribers can unsubscribe"),
   'type' => "url",
   'allowempty' => 0,
@@ -272,7 +272,7 @@ $default_config = array (
   #0013076: Blacklisting posibility for unknown users
   # the location of your blacklist script:
 "blacklisturl" => array (
-  'value' => $GLOBALS['public_scheme'] . "://[WEBSITE]$pageroot/?p=donotsend",
+  'value' => $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=donotsend",
   'description' => s("URL where unknown users can unsubscribe (do-not-send-list)"),
   'type' => "url",
   'allowempty' => 0,
@@ -281,7 +281,7 @@ $default_config = array (
 
 # the location of your confirm script:
 "confirmationurl" => array (
-  'value' => $GLOBALS['public_scheme'] . "://[WEBSITE]$pageroot/?p=confirm",
+  'value' => $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=confirm",
   'description' => s("URL where subscribers have to confirm their subscription"),
   'type' => "text",
   'allowempty' => 0,
@@ -290,7 +290,7 @@ $default_config = array (
 
   # url to change their preferences
 "preferencesurl" => array (
-  'value' => $GLOBALS['public_scheme'] . "://[WEBSITE]$pageroot/?p=preferences",
+  'value' => $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=preferences",
   'description' => s("URL where subscribers can update their details"),
   'type' => "text",
   'allowempty' => 0,
@@ -299,7 +299,7 @@ $default_config = array (
 
   # url to change their preferences
 "forwardurl" => array (
-  'value' => $GLOBALS['public_scheme'] . "://[WEBSITE]$pageroot/?p=forward",
+  'value' => $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=forward",
   'description' => s("URL for forwarding messages"),
   'type' => "text",
   'allowempty' => 0,
@@ -687,26 +687,30 @@ if (!function_exists("getconfig")) {
       $hasconf = $_SESSION['hasconf'];
     }
 
-		$value = "";
-		if (!empty($hasconf)) {
-			$req = Sql_Query(sprintf('select value,editable from %s where item = "%s"', $tables['config'],sql_escape($item)));
-        if (!Sql_Affected_Rows() || !$hasconf) {
-          if (isset ($default_config[$item])) {
-            $value = $default_config[$item]['value'];
-          }
-          # save the default value to the database, so we can obtain
-          # the information when running from commandline
-          if (Sql_Table_Exists($tables["config"])) {
-            saveConfig($item, $value);
-          }
-          #    print "$item => $value<br/>";
-        } else {
-          $row = Sql_Fetch_Row($req);
-          $value = $row[0];
-          if (!empty($default_config[$item]['hidden'])) {
-            $GLOBALS['noteditableconfig'][] = $item;
-          }
+		$toget = $item;
+		$value = '';
+		if ($hasconf) {
+			$query
+			= ' select value,editable'
+			. ' from ' . $tables['config']
+			. ' where item = ?';
+			$req = Sql_Query_Params($query, array($toget));
+			if (!Sql_Num_Rows($req) || !$hasconf) {
+				if (isset ($default_config[$item])) {
+					$value = $default_config[$item]['value'];
+				}
+				# save the default value to the database, so we can obtain
+				# the information when running from commandline
+				if (Sql_Table_Exists($tables["config"]))
+					saveConfig($item, $value);
+				#    print "$item => $value<br/>";
+			} else {
+				$row = Sql_Fetch_Row($req);
+				$value = $row[0];
+        if (!empty($default_config[$item]['hidden'])) {
+          $GLOBALS['noteditableconfig'][] = $item;
         }
+			}
 		}
 		$value = str_replace('[WEBSITE]', $website, $value);
 		$value = str_replace('[DOMAIN]', $domain, $value);
@@ -759,7 +763,8 @@ function getUserConfig($item, $userid = 0) {
   $value = '';
 
   if ($hasconf) {
-    $req = Sql_Query(sprintf('select value,editable from %s where item = "%s"',$tables['config'],sql_escape($item)));
+    $query = 'select value,editable from ' . $tables['config'] . ' where item = ?';
+    $req = Sql_Query_Params($query, array($item));
 
     if (!Sql_Num_Rows($req)) {
       if ( array_key_exists($item, $default_config) ) { 
@@ -781,7 +786,8 @@ function getUserConfig($item, $userid = 0) {
   }
 
   if ($userid) {
-    $rs = Sql_Query(sprintf('select uniqid, email from ' . $tables['user'] . ' where id = %d',$userid));
+    $query = 'select uniqid, email from ' . $tables['user'] . ' where id = ?';
+    $rs = Sql_Query_Params($query, array($userid));
     $user_req = Sql_Fetch_Row($rs);
     $uniqid = $user_req[0];
     $email = $user_req[1];

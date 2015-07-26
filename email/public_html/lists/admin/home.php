@@ -40,10 +40,14 @@ $latestversion = getConfig('updateavailable');
 $showUpdateAvail = $showUpdateAvail || (!empty($latestversion) && !versionCompare($thisversion,$latestversion));
 
 if (!$showUpdateAvail && $checkinterval) {
-
+  $query
+  = ' select date_add(value, interval %d day) < current_timestamp as needscheck'
+  . ' from %s'
+  . ' where item = ?';
   ##https://mantis.phplist.com/view.php?id=16815
-  $query = sprintf( 'select date_add(value, interval %d day) < now() as needscheck from %s where item = "updatelastcheck"', $checkinterval, $tables["config"] );
-  $needscheck = Sql_Fetch_Row_Query($query);
+  $query = sprintf( $query, $checkinterval, $tables["config"] );
+  $req = Sql_Query_Params($query, array('updatelastcheck'));
+  $needscheck = Sql_Fetch_Row($req);
   if ($needscheck[0] != "0") {
     @ini_set("user_agent",NAME." (phplist version ".VERSION.")");
     @ini_set("default_socket_timeout",5);
@@ -53,12 +57,13 @@ if (!$showUpdateAvail && $checkinterval) {
       @fclose($fp);
       if (!versionCompare($thisversion,$latestversion)) {
         ## remember this, so we can remind about the update, without the need to check the phplist site
-        ## hmmm, this causes it to be "stuck" on the last version checked
-        SaveConfig("updateavailable",$latestversion,0,true);
+        $values = array('item'=>"updateavailable", 'value'=> $latestversion, 'editable'=>'0');
+        Sql_Replace($tables['config'], $values, 'item', false);
         $showUpdateAvail = true;
       }
     }
-    SaveConfig("updatelastcheck",date("Y-m-d H:i:s",time()),0,true);
+    $values = array('item'=>"updatelastcheck", 'value'=>'current_timestamp', 'editable'=>'0');
+    Sql_Replace($tables['config'], $values, 'item', false);
   }
 }
 

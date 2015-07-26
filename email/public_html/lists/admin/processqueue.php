@@ -2,6 +2,10 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 if (!$GLOBALS["commandline"]) {
+  if (!MANUALLY_PROCESS_QUEUE) {
+    print "This page can only be called from the commandline";
+    return;
+  }
   if (!empty($_GET['secret'])) {
     if (isset($_GET['ack']) && $_GET['ack'] == 1) {
       @ob_end_clean();
@@ -9,10 +13,6 @@ if (!$GLOBALS["commandline"]) {
       exit;
     }
     include dirname(__FILE__).'/actions/processqueue.php';
-    return;
-  }
-  if (!MANUALLY_PROCESS_QUEUE) {
-    print "This page can only be called from the commandline";
     return;
   }
     
@@ -47,13 +47,13 @@ if (SHOW_PQCHOICE) {
 }
 
 if (empty($pqChoice)) {
-  print '<h3>'.s('To send your queue, you can now use the phpList.com service').'</h3>';
+  print '<h3>'.s('To send your queue, you can now use the phpList Hosted service').'</h3>';
   
   print '<strong>The options are:</strong>';
   print '<h4>1. Use the service from phpList.com</h4>
       <p>The service has a free trial and low cost.</p>
       <p><strong>Advantage</strong>: No need to keep your computer switched on and your browser open. <strong>Sending will happen automatically</strong>.</p>
-      <p><strong>Disadvantage</strong>: We can\'t think of any.</p>
+      <p><strong>Disadvantage</strong>: We can\'t think of any <img src="../images/smiley/wink_smile.gif" />.</p>
       <a href="./?page=hostedprocessqueuesetup" class="button">'.s('Set up using the service').'</a>
       <p><i>You can change your mind at any time.</i></p>
       <p>OR</p>

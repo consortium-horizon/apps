@@ -1,5 +1,7 @@
 <?php
 
+#require_once dirname(__FILE__)."./../commonlib/lib/userlib.php";
+
 #testEmail();
 
 class test_is_email extends phplistTest {

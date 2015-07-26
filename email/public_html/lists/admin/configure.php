@@ -99,13 +99,6 @@ if (!empty($_REQUEST['save'])) {
   }
   $item = $_REQUEST['save'];
   $item = str_replace('item_','',$item);
-  
-  if (isset($_POST['ret']) && $_POST['ret'] == 'catlists') {
-      $_SESSION['action_result'] = s('Categories saved');
-      Redirect('catlists');
-  }
-  
-  
   if (in_array($item,array_keys($default_config))) {
     Redirect("configure#item_".$item);
     exit;

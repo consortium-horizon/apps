@@ -23,16 +23,10 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
-// taken from Joomla, prepare for PHP5.6 and up
-// see https://github.com/phpList/phplist3/pull/3
-if (function_exists('iconv') || ((!strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && dl('iconv.so')))) {
-  if (version_compare(PHP_VERSION, '5.6', '>='))	{
-	@ini_set('default_charset', 'UTF-8');
-  } elseif (function_exists('iconv_set_encoding')) {
-    iconv_set_encoding("input_encoding", "UTF-8");
-    iconv_set_encoding("internal_encoding", "UTF-8");
-    iconv_set_encoding("output_encoding", "UTF-8");
-  }
+if (function_exists('iconv_set_encoding')) {
+  iconv_set_encoding("input_encoding", "UTF-8");
+  iconv_set_encoding("internal_encoding", "UTF-8");
+  iconv_set_encoding("output_encoding", "UTF-8");
 }
 
 if (function_exists('mb_internal_encoding')) {
@@ -129,18 +123,11 @@ if (!isset($database_connection_ssl))
 ## set it on the fly, although that will probably only work with Apache
 ## we need to save this in the DB, so that it'll work on commandline
 $GLOBALS['scheme'] = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on')) ? 'https' : 'http';
-if (defined('ADMIN_PROTOCOL')) {
-   $GLOBALS['admin_scheme'] = ADMIN_PROTOCOL;
-} else {
-    $GLOBALS['admin_scheme'] = $GLOBALS['scheme'];
-}
+$GLOBALS['admin_scheme'] = $GLOBALS['scheme'];
 if (defined('PUBLIC_PROTOCOL')) {
   $GLOBALS['public_scheme'] = PUBLIC_PROTOCOL;
 } else {
   $GLOBALS['public_scheme'] = $GLOBALS['scheme'];
-}
-if (!defined('HTTP_HOST')) { // allow overriding of _SERVER['HTTP_HOST']
-    define('HTTP_HOST',false); // but default to not, and take that value
 }
 
 if (!isset($bounce_protocol)) {
@@ -166,7 +153,7 @@ if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("VERBOSE")) define("VERBOSE",0);
 if (!defined("TEST")) define("TEST",1);
 if (!defined("DEVSITE")) define("DEVSITE",0);
-define('TRANSLATIONS_XML','https://translate.phplist.org/translations.xml');
+define('TRANSLATIONS_XML','https://translate.phplist.com/translations.xml');
 
 //define('TLD_AUTH_LIST','http://data.iana.org/TLD/tlds-alpha-by-domain.txt');
 //define('TLD_AUTH_MD5','http://data.iana.org/TLD/tlds-alpha-by-domain.txt.md5');
@@ -174,7 +161,7 @@ define('TLD_AUTH_LIST','https://www.phplist.com/files/tlds-alpha-by-domain.txt')
 define('TLD_AUTH_MD5','https://www.phplist.com/files/tlds-alpha-by-domain.txt.md5');
 define('TLD_REFETCH_TIMEOUT',15552000); ## 180 days, about 6 months
 define('PQAPI_URL','https://pqapi.phplist.com/1/t/pqapi');
-if (!defined('SHOW_PQCHOICE')) define('SHOW_PQCHOICE',true);
+if (!defined('SHOW_PQCHOICE')) define('SHOW_PQCHOICE',false);
 
 // obsolete by rssmanager plugin
 // if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
@@ -228,7 +215,6 @@ if (!defined('PLUGIN_ROOTDIR')) define('PLUGIN_ROOTDIR','plugins'); ##17270 - th
 if (!defined('PLUGIN_ROOTDIRS')) define('PLUGIN_ROOTDIRS','');
 if (!defined('PHPMAILERHOST')) define("PHPMAILERHOST",'');
 if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
-if (!defined("PROCESSCAMPAIGNS_PARALLEL")) define("PROCESSCAMPAIGNS_PARALLEL",false);
 if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
 if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
 if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
@@ -252,7 +238,6 @@ if (!defined('TEXTEMAIL_ENCODING')) define('TEXTEMAIL_ENCODING','7bit');
 if (!defined("USE_LIST_EXCLUDE")) define("USE_LIST_EXCLUDE",0);
 if (!defined("WARN_SAVECHANGES")) define("WARN_SAVECHANGES",1);
 if (!defined("STACKED_ATTRIBUTE_SELECTION")) define("STACKED_ATTRIBUTE_SELECTION",0);
-if (!defined('ATTRIBUTEVALUE_REORDER_LIMIT')) define('ATTRIBUTEVALUE_REORDER_LIMIT',100);
 if (!defined("REMOTE_URL_REFETCH_TIMEOUT")) define('REMOTE_URL_REFETCH_TIMEOUT',3600);
 if (!defined('CLICKTRACK')) define('CLICKTRACK',1);
 if (!defined('CLICKTRACK_SHOWDETAIL')) define('CLICKTRACK_SHOWDETAIL',0);
@@ -265,7 +250,7 @@ if (!defined('DOMAIN_BATCH_SIZE')) define('DOMAIN_BATCH_SIZE',1);
 if (!defined('DOMAIN_BATCH_PERIOD')) define('DOMAIN_BATCH_PERIOD',120);
 if (!defined('DOMAIN_AUTO_THROTTLE')) define('DOMAIN_AUTO_THROTTLE',0);
 if (!defined('LANGUAGE_SWITCH')) define('LANGUAGE_SWITCH',1);
-#if (!defined('USE_ADVANCED_BOUNCEHANDLING')) define('USE_ADVANCED_BOUNCEHANDLING',1);
+if (!defined('USE_ADVANCED_BOUNCEHANDLING')) define('USE_ADVANCED_BOUNCEHANDLING',0);
 if (!defined('DATE_START_YEAR')) define('DATE_START_YEAR',1900);
 if (!defined('DATE_END_YEAR')) define('DATE_END_YEAR',0);
 if (!defined('ALLOW_IMPORT')) define('ALLOW_IMPORT',1);
@@ -396,9 +381,6 @@ $adminpages = preg_replace('~^//~','/',$adminpages);
 if (!isset($systemroot)) {
   $systemroot = dirname(__FILE__);
 }
-if (!isset($documentRoot)) {
-  $documentRoot = $_SERVER['DOCUMENT_ROOT'];
-}
 if (!defined('FORWARD_ALTERNATIVE_CONTENT')) define('FORWARD_ALTERNATIVE_CONTENT',0);
 if (!defined('KEEPFORWARDERATTRIBUTES')) define('KEEPFORWARDERATTRIBUTES',0);
 if (!defined('FORWARD_EMAIL_COUNT') ) define('FORWARD_EMAIL_COUNT',1);
@@ -474,18 +456,6 @@ $counters = array(
   'add attachment error' => 0,
   'sendemail returned false' => 0,
   'sentastest' => 0,
-  'invalid' => 0,
-  'failed_sent' => 0,
-  'sent'=> 0,
-  'num_per_batch' => 0,
-);
-
-$repetitionLabels = array (
-    60 => 'hour',  // can't use s() here yet
-    1440 => 'day',
-    10080 => 'week',
-    20160 => 'fortnight',
-    40320 => 'four weeks',
 );
 
 $GLOBALS['disallowpages'] = array();

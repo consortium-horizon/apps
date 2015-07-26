@@ -177,10 +177,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
    if (!Sql_affected_rows()) {
     # they do not exist, so add them
     $query = sprintf('insert into %s (email,entered,uniqid,confirmed,
-    htmlemail,subscribepage) values("%s",now(),"%s",0,%d,%d)',
+    htmlemail,subscribepage) values("%s",current_timestamp,"%s",0,%d,%d)',
     $GLOBALS["tables"]["user"],sql_escape($email),getUniqid(),$htmlemail,$id);
     $result = Sql_query($query);
-    $userid = Sql_Insert_Id();
+    $userid = Sql_Insert_Id($GLOBALS['tables']['user'], 'id');
     addSubscriberStatistics('total users',1);
   } else {
     # they do exist, so update the existing record
@@ -223,12 +223,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
     $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
     if ($newpassword != $curpwd[0]) {
       $storepassword = 'password = "'.$newpassword.'"';
-      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now(),$storepassword where id = $userid");
-    } else {
-      $storepassword = "";
-    }
-  } else {
-    $storepassword = "";
+      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = current_timestamp,$storepassword where id = $userid");
+   } else {
+     $storepassword = "";
+   }
   }
 
    # subscribe to the lists
@@ -470,7 +468,7 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
     $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
     if ($_POST["password"] != $curpwd[0]) {
       $storepassword = 'password = "'.$newpassword.'",';
-      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now() where id = $userid");
+      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = current_timestamp where id = $userid");
       $history_entry .= "\nUser has changed their password\n";
       addSubscriberStatistics('password change',1);
     } else {
@@ -510,7 +508,7 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
   if (is_array($_POST["list"])) {
     while(list($key,$val)= each($_POST["list"])) {
       if ($val == "signup") {
-        $result = Sql_query("replace into {$GLOBALS["tables"]["listuser"]} (userid,listid,entered) values($userid,$key,now())");
+        $result = Sql_query("replace into {$GLOBALS["tables"]["listuser"]} (userid,listid,entered) values($userid,$key,current_timestamp)");
 #        $lists .= "  * ".$_POST["listname"][$key]."\n";
       }
     }

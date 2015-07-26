@@ -277,6 +277,7 @@ if (!function_exists('imap_open')) {
   return;
 }
 
+//print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
 flush();
 $outputdone= 0;
 
@@ -332,3 +333,7 @@ if (!empty ($_REQUEST['email'])) {
   print ('</form>');
 }
 
+if (!$GLOBALS["commandline"]) {
+  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+}
+?>

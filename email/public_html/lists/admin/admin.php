@@ -45,8 +45,8 @@ if (!empty($_POST["change"])) {
         $totalres = Sql_fetch_Row($result);
         $total = $totalres[0]; 
         if (!$total) {
-          Sql_Query(sprintf('insert into %s (loginname,namelc,password,email,created) values("%s","%s","%s","%s",now())',
-            $tables["admin"],strtolower(normalize($_POST["loginname"])),strtolower(normalize($_POST["loginname"])),encryptPass(md5(rand(0,1000))),sql_escape($_POST["email"])));
+          Sql_Query(sprintf('insert into %s (loginname,namelc,password,created) values("%s","%s","%s",current_timestamp)',
+            $tables["admin"],strtolower(normalize($_POST["loginname"])),strtolower(normalize($_POST["loginname"])),encryptPass(md5(rand(0,1000)))));
           $id = Sql_Insert_Id($tables['admin'], 'id');
         } else {
           $id = 0;
@@ -220,14 +220,18 @@ while ($row = Sql_fetch_array($res)) {
     $row['value'] = '';
   }
 
-  if ($row["type"] == "checkbox") { // admins can only have hidden or textline
+  if ($row["type"] == "checkbox") {
     $checked_index_req = Sql_Fetch_Row_Query("select id from $table_prefix"."adminattr_".$row["tablename"]." where name = \"Checked\"");
     $checked_index = $checked_index_req[0];
     $checked = $checked_index == $row["value"]?'checked="checked"':'';
     printf('<tr><td>%s</td><td><input class="attributeinput" type="hidden" name="cbattribute[]" value="%d" />
 <input class="attributeinput" type="checkbox" name="attribute[%d]" value="Checked" %s /></td></tr>'."\n",$row["name"],$row["id"],$row["id"],$checked);
   } else {
-    printf('<tr><td>%s</td><td><input class="attributeinput" type="text" name="attribute[%d]" value="%s" size="30" /></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars(stripslashes($row["value"])));
+    if ($row["type"] != "textline" && $row["type"] != "hidden") {
+      printf ("<tr><td>%s</td><td>%s</td></tr>\n",$row["name"],AttributeValueSelect($row["id"],$row["tablename"],$row["value"],"adminattr"));
+    } else {
+      printf('<tr><td>%s</td><td><input class="attributeinput" type="text" name="attribute[%d]" value="%s" size="30" /></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars(stripslashes($row["value"])));
+    }
   }
 }
 

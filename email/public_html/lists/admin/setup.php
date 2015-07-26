@@ -35,7 +35,11 @@ $link = PageLink2("admin&amp;id=1",s('Go there'));
 if (!empty($link) && $GLOBALS["require_login"]) {
   $html .= '<tr><td>'.s('Change admin password').' </td>
   <td>'.$link.'</td><td>';
-  $curpwd = Sql_Fetch_Row_Query("select password from {$tables["admin"]} where loginname = \"admin\"");
+  $query
+  = " select password"
+  . " from ${tables['admin']}"
+  . " where loginname = 'admin'";
+  $curpwd = Sql_Fetch_Row_Query($query);
   if ($curpwd[0] != "phplist" && $curpwd[0] != encryptPass('phplist')) {
     $html .= $GLOBALS["img_tick"];
   } else {
@@ -50,7 +54,11 @@ $link = PageLink2("configure",$GLOBALS['I18N']->get('Go there'));
 if (!empty($link)) {
   $html .= '<tr><td>'.$GLOBALS['I18N']->get('Verify Settings').'</td>
     <td>'.$link.'</td><td>';
-  $data = Sql_Fetch_Row_Query("select value from {$tables["config"]} where item = \"admin_address\"");
+  $query
+  = " select value"
+  . " from ${tables['config']}"
+  . " where item = 'subscribeurl'";
+  $data = Sql_Fetch_Row_Query($query);
   if ($data[0]) {
     $html .= $GLOBALS["img_tick"];
   } else {
@@ -75,7 +83,7 @@ $html .= '</td></tr>';
 
 $html .= '<tr><td>'.s('Create public lists').'</td>
 <td>'.PageLink2("list",s('Go there')).'</td><td>';
-$req = Sql_Query(sprintf('select id from %s where active <> 0', $tables['list']));
+$req = Sql_Query("select * from ${tables['list']} where active <> 0");
 if (Sql_Affected_Rows()) {
   $html .= $GLOBALS["img_tick"];
 } else {

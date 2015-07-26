@@ -516,7 +516,7 @@ $lan = array(
     }
     if (sizeof($translations)) {
       foreach ($translations as $orig => $trans) {
-        Sql_Query('replace into '.$GLOBALS['tables']['i18n'].' (lan,original,translation) values("'.$language. '","'.sql_escape($orig).'","'. sql_escape($trans). '")');
+        Sql_Replace($GLOBALS['tables']['i18n'],array('lan' => $language,'original' => $orig,'translation' => $trans),'');
       }
     }
     $this->resetCache();
@@ -626,6 +626,7 @@ $I18N = new phplist_I18N();
 if (!empty($setlanguage)) {
   $I18N->resetCache();
 }
+
 /* add a shortcut that seems common in other apps 
  * function s($text)
  * @param $text string the text to find

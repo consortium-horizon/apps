@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$subselect = $whereClause = '';
+$subselect = $where = '';
 $action_result = '';
 $access = accessLevel('messages');
 
@@ -163,7 +163,7 @@ if (isset($_GET['resend'])) {
   $suc6 = Sql_Affected_Rows();
   # only send it again to users, if we are testing, otherwise only to new users
   if (TEST) {
-    $result = Sql_query(sprintf('delete from %s where messageid = %d',$tables['usermessage'],$resend));
+    $result = Sql_query("delete from ${tables['usermessage']} where messageid = $resend");
   }
   if ($suc6) {
     $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
@@ -205,7 +205,7 @@ if (isset($_GET['markSent'])) {
   verifyCsrfGetToken();
   $markSent = sprintf('%d',$_GET['markSent']);
   $action_result .=  $GLOBALS['I18N']->get('Marking as sent ')." $markSent ..";
-  $result = Sql_query(sprintf('update %s set status = "sent", repeatinterval = 0,requeueinterval = 0 where id = %d and (status = "suspended") %s',$tables["message"],$markSent,$ownerselect_and));
+  $result = Sql_query(sprintf('update %s set status = "sent" where id = %d and (status = "suspended") %s',$tables["message"],$markSent,$ownerselect_and));
   $suc6 = Sql_Affected_Rows();
   if ($suc6)
     $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
@@ -229,7 +229,7 @@ if (isset($_GET['action'])) {
       break;
     case 'markallsent':
       $action_result .=  $GLOBALS['I18N']->get('Marking all as sent ')."  ..";
-      $result = Sql_query(sprintf('update %s set status = "sent", repeatinterval = 0,requeueinterval = 0 where (status = "suspended") %s',$tables["message"],$markSent,$ownerselect_and));
+      $result = Sql_query(sprintf('update %s set status = "sent" where (status = "suspended") %s',$tables["message"],$markSent,$ownerselect_and));
       $suc6 = Sql_Affected_Rows();
       if ($suc6)
         $action_result .=  "... $suc6 ".$GLOBALS['I18N']->get("Done");
@@ -247,42 +247,46 @@ if (isset($_GET['action'])) {
     exit;
   }
 
-$where = array();
+$cond = array();
 ### Switch tab
 switch ($_GET["tab"]) {
   case "queued":
 #    $subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
-    $where[] = " status in ('submitted', 'suspended') ";
+    $cond[] = " status in ('submitted', 'suspended') ";
     $url_keep = '&amp;tab=queued';
     break;
   case "static":
-    $where[] = " status in ('prepared') ";
+    $cond[] = " status in ('prepared') ";
     $url_keep = '&amp;tab=static';
     break;
+#  case "rss":
+#    $subselect = ' rsstemplate != ""';
+#    $url_keep = '&amp;tab=sent';
+#    break;
   case "draft":
-    $where[] = " status in ('draft') ";
+    $cond[] = " status in ('draft') ";
     $url_keep = '&amp;tab=draft';
     break;
   case "active":
-    $where[] = " status in ('inprocess','submitted', 'suspended') ";
+    $cond[] = " status in ('inprocess','submitted', 'suspended') ";
     $url_keep = '&amp;tab=active';
     break;
   case "sent":
   default:
-    $where[] = " status in ('sent') ";
+    $cond[] = " status in ('sent') ";
     $url_keep = '&amp;tab=sent';
     break;
 }
 
 if (!empty($_SESSION['messagefilter'])) {
-  $where[] = ' subject like "%'.sql_escape($_SESSION['messagefilter']).'%" ';
+  $cond[] = ' subject like "%'.sql_escape($_SESSION['messagefilter']).'%" ';
 }
 
 ### Query messages from db
 if ($GLOBALS['require_login'] && !$_SESSION['logindetails']['superuser'] || $access != 'all') {
-  $where[] = ' owner = ' . $_SESSION['logindetails']['id'];
+  $cond[] = ' owner = ' . $_SESSION['logindetails']['id'];
 }
-$whereClause = ' where ' . join(' and ', $where);
+$where = ' where ' . join(' and ', $cond);
 
 $sortBySql = 'order by entered desc';
 switch ($_SESSION['messagesortby']) {
@@ -298,17 +302,17 @@ switch ($_SESSION['messagesortby']) {
     $sortBySql = 'order by embargo desc, entered desc';
 }
 
-$req = Sql_query('select count(*) from ' . $tables['message']. $whereClause .' '.$sortBySql);
+$req = Sql_query('select count(*) from ' . $tables['message']. $where .' '.$sortBySql);
 $total_req = Sql_Fetch_Row($req);
 $total = $total_req[0];
 
 ## Browse buttons table
 $limit = $_SESSION['messagenumpp'];
-$offset = 0 ;
+$offset = 0;
 if (isset($start) && $start > 0) {
-    $offset = $start;
+  $offset = $start;
 } else {
-    $start = 0;
+  $start = 0;
 }
 
 $paging = '';
@@ -321,18 +325,10 @@ $ls->usePanel($paging);
 
 ## messages table
 if ($total) {
-  $result = Sql_query("SELECT * FROM ".$tables["message"]." $whereClause $sortBySql limit $limit offset $offset");
+  $result = Sql_query("SELECT * FROM ".$tables["message"]." $where $sortBySql limit $limit offset $offset");
   while ($msg = Sql_fetch_array($result)) {
     $editlink = '';
-    $messagedata = loadMessageData($msg['id']);
-    if ($messagedata['subject'] != $messagedata['campaigntitle']) {
-        $listingelement = '<!--'.$msg['id'].'-->'.stripslashes($messagedata["campaigntitle"]). '<br/><strong>'.stripslashes($messagedata["subject"]).'</strong>';
-    } else {
-        $listingelement = '<!--'.$msg['id'].'-->'.stripslashes($messagedata["subject"]);
-    }
-    
-    
- #   $listingelement = '<!--'.$msg['id'].'-->'.stripslashes($messagedata["campaigntitle"]);
+    $listingelement = '<!--'.$msg['id'].'-->'.stripslashes($msg["subject"]);
     if ($msg['status'] == 'draft') {
       $editlink = PageUrl2("send&id=".$msg["id"]);
     }
@@ -344,6 +340,7 @@ if ($total) {
     $clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack_ml"]} where messageid = ".$msg["id"]);
 #    $clicks = array(0);
 
+    $messagedata = loadMessageData($msg['id']);
 
 /*
     foreach ($messagedata as $key => $val) {

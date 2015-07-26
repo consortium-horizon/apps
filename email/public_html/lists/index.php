@@ -2,8 +2,8 @@
 
 ob_start();
 //$er = error_reporting(0);
-require_once dirname(__FILE__) .'/admin/inc/unregister_globals.php';
-require_once dirname(__FILE__) .'/admin/inc/magic_quotes.php';
+require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
+require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
 ## none of our parameters can contain html for now
 $_GET = removeXss($_GET);
@@ -77,39 +77,45 @@ $userpassword = "";
 $emailcheck = "";
 
 if (isset($_GET['uid']) && $_GET["uid"]) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where uniqid = "%s"',
-    $tables["user"],$_GET["uid"]));
+  $query
+  = ' select subscribepage, id, password, email'
+  . ' from ' . $tables['user']
+  . ' where uniqid = ?';
+  $rs = Sql_Query_Params($query, array($_GET['uid']));
+  $req = Sql_Fetch_Row($rs);
   $id = $req[0];
   $userid = $req[1];
   $userpassword = $req[2];
   $emailcheck = $req[3];
-} elseif (isset($_GET["email"])) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where email = "%s"',
-    $tables["user"],$_GET["email"]));
-  $id = $req[0];
-  $userid = $req[1];
-  $userpassword = $req[2];
-  $emailcheck = $req[3];
-} elseif (isset($_REQUEST["unsubscribeemail"])) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where email = "%s"',
-    $tables["user"],sql_escape($_REQUEST["unsubscribeemail"])));
-  $id = $req[0];
-  $userid = $req[1];
-  $userpassword = $req[2];
-  $emailcheck = $req[3];
-/*
-} elseif ($_SESSION["userloggedin"] && $_SESSION["userid"]) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where id = %d',
-    $tables["user"],$_SESSION["userid"]));
-  $id = $req[0];
-  $userid = $req[1];
-  $userpassword = $req[2];
-  $emailcheck = $req[3];
-*/
-} else {
-  $userid = "";
-  $userpassword = "";
-  $emailcheck = "";
+} elseif (isset($_GET['p']) && ($_GET['p'] == 'subscribe' || $_GET['p'] == 'unsubscribe' || $_GET['p'] == 'blacklist' || $_GET['p'] == 'donotsend')) {
+  if (isset($_GET["email"])) {
+    $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where email = "%s"',
+      $tables["user"],$_GET["email"]));
+    $id = $req[0];
+    $userid = $req[1];
+    $userpassword = $req[2];
+    $emailcheck = $req[3];
+  } elseif (isset($_REQUEST["unsubscribeemail"])) {
+    $query
+    = ' select subscribepage, id, password, email'
+    . ' from ' . $tables['user']
+    . ' where email = ?';
+    $rs = Sql_Query_Params($query, array($_REQUEST['unsubscribeemail']));
+    $req = Sql_Fetch_Row($rs);
+    $id = $req[0];
+    $userid = $req[1];
+    $userpassword = $req[2];
+    $emailcheck = $req[3];
+  /*
+  } elseif ($_SESSION["userloggedin"] && $_SESSION["userid"]) {
+    $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where id = %d',
+      $tables["user"],$_SESSION["userid"]));
+    $id = $req[0];
+    $userid = $req[1];
+    $userpassword = $req[2];
+    $emailcheck = $req[3];
+  */
+  }
 }
 
 if (isset($_REQUEST['id']) && $_REQUEST["id"]) {
@@ -318,10 +324,14 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
 } else {
   print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
   print $pagedata["header"];
-  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
-  if (Sql_Affected_Rows()) {
+  $query = 'select * from ' . $tables['subscribepage'] . ' where active = 1';
+  $req = Sql_Query($query);
+  if (Sql_Num_Rows($req)) {
     while ($row = Sql_Fetch_Array($req)) {
-      $intro = Sql_Fetch_Row_Query(sprintf('select data from %s where id = %d and name = "intro"',$tables["subscribepage_data"],$row["id"]));
+      $query = 'select data from %s where id = ? and name = \'intro\'';
+      $query = sprintf($query, $tables['subscribepage_data']);
+      $rs = Sql_Query_Params($query, array($row['id']));
+      $intro = Sql_Fetch_Row($rs);
       print $intro[0];
       printf('<p><a href="./?p=subscribe&id=%d">%s</a></p>',$row["id"],stripslashes($row["title"]));
      }
@@ -437,13 +447,6 @@ $html .='
 }
 
 $html .='
-  if (! checkEmail()) {
-    alert("Email addresses you entered is not valid");
-
-    return false;
-  }';
-
-$html .='
 
   return true;
 }
@@ -459,11 +462,6 @@ function compareEmail()
   return (document.subscribeform.elements["email"].value == document.subscribeform.elements["emailconfirm"].value);
 }
 
-function checkEmail()
-{
-  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(document.subscribeform.elements["email"].value);
-}
 
 </script>';
   $html .= formStart('name="subscribeform"');
@@ -546,13 +544,6 @@ $html .='
 }
 
 $html .='
-  if (! checkEmail()) {
-    alert("'.str_replace('"','\"',$GLOBALS["strEmailNotValid"]).'");
-
-    return false;
-  }';
-
-$html .='
 
   return true;
 }
@@ -576,13 +567,6 @@ function compareEmail()
 {
   return (document.subscribeform.elements["email"].value == document.subscribeform.elements["emailconfirm"].value);
 }
-
-function checkEmail()
-{
-  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(document.subscribeform.elements["email"].value);
-}
-
 function checkGroup(name,value)
 {
   option = -1;
@@ -656,45 +640,50 @@ function confirmPage($id) {
     $html = '<ul>';
     $lists = '';
     $currently = Sql_Fetch_Assoc_Query("select confirmed from {$tables["user"]} where id = ".$userdata["id"]);
-    $blacklisted = isBlackListed($userdata["email"]);
-    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
-      $plugin->subscriberConfirmation($id,$userdata);
-    }
-    Sql_Query("update {$tables["user"]} set confirmed = 1,blacklisted = 0, optedin = 1 where id = ".$userdata["id"]);
-    $subscriptions = array();
-    $req = Sql_Query(sprintf('select list.id,name,description from %s list, %s listuser where listuser.userid = %d and listuser.listid = list.id and list.active',$tables['list'],$tables['listuser'],$userdata['id']));
-    if (!Sql_Affected_Rows()) {
-      $lists = "\n * ".$GLOBALS["strNoLists"];
-      $html .= '<li>'.$GLOBALS["strNoLists"].'</li>';
-    }
-    while ($row = Sql_fetch_array($req)) {
-      array_push($subscriptions,$row['id']);
-      $lists .= "\n *".stripslashes($row["name"]);
-      $html .= '<li class="list">'.stripslashes($row["name"]).'<div class="listdescription">'.stripslashes($row["description"]).'</div></li>';
-    }
-    $html .= '</ul>';
-    if ($blacklisted) {
-      unBlackList($userdata['id']);
-      addUserHistory($userdata["email"],"Confirmation",s("Subscriber removed from Blacklist for manual confirmation of subscription"));
-    }
-    
-    if (empty($_SESSION['subscriberConfirmed'])) {
-      $_SESSION['subscriberConfirmed'] = array();
-    }
     ## 17513 - don't process confirmation if the subscriber is already confirmed
-    if (empty($currently['confirmed']) && empty($_SESSION['subscriberConfirmed'][$userdata["email"]])) {
-      addUserHistory($userdata["email"],"Confirmation","Lists: $lists");
+    if (empty($currently['confirmed'])) {
+      $blacklisted = isBlackListed($userdata["email"]);
+      foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+        $plugin->subscriberConfirmation($id,$userdata);
+      }
+      Sql_Query("update {$tables["user"]} set confirmed = 1,blacklisted = 0 where id = ".$userdata["id"]);
+      # just in case the DB is not updated, should be merged with the above later
+      Sql_Query("update {$tables["user"]} set optedin = 1 where id = ".$userdata["id"],1);
 
-      $confirmationmessage = str_ireplace('[LISTS]', $lists, getUserConfig("confirmationmessage:$id",$userdata["id"]));
+      $subscriptions = array();
+      $req = Sql_Query(sprintf('select list.id,name,description from %s list, %s listuser where listuser.userid = %d and listuser.listid = list.id and list.active',$tables['list'],$tables['listuser'],$userdata['id']));
+      if (!Sql_Affected_Rows()) {
+        $lists = "\n * ".$GLOBALS["strNoLists"];
+        $html .= '<li>'.$GLOBALS["strNoLists"].'</li>';
+      }
+      while ($row = Sql_fetch_array($req)) {
+        array_push($subscriptions,$row['id']);
+        $lists .= "\n *".stripslashes($row["name"]);
+        $html .= '<li class="list">'.stripslashes($row["name"]).'<div class="listdescription">'.stripslashes($row["description"]).'</div></li>';
+      }
+      $html .= '</ul>';
+      if ($blacklisted) {
+        unBlackList($userdata['id']);
+        addUserHistory($userdata["email"],"Confirmation",s("Subscriber removed from Blacklist for manual confirmation of subscription"));
+      }
+      
+      if (empty($_SESSION['subscriberConfirmed'])) {
+        $_SESSION['subscriberConfirmed'] = array();
+      }
+      if (empty($_SESSION['subscriberConfirmed'][$userdata["email"]])) {
+        addUserHistory($userdata["email"],"Confirmation","Lists: $lists");
 
-      if (!TEST) {
-        sendMail($userdata["email"], getConfig("confirmationsubject:$id"), $confirmationmessage,system_messageheaders(),$envelope);
-        $adminmessage = $userdata["email"] . " has confirmed their subscription";
-        if ($blacklisted) {
-          $adminmessage .= "\n\n".s("Subscriber has been removed from blacklist");
+        $confirmationmessage = str_ireplace('[LISTS]', $lists, getUserConfig("confirmationmessage:$id",$userdata["id"]));
+
+        if (!TEST) {
+          sendMail($userdata["email"], getConfig("confirmationsubject:$id"), $confirmationmessage,system_messageheaders(),$envelope);
+          $adminmessage = $userdata["email"] . " has confirmed their subscription";
+          if ($blacklisted) {
+            $adminmessage .= "\n\n".s("Subscriber has been removed from blacklist");
+          }
+          sendAdminCopy("List confirmation",$adminmessage,$subscriptions);
+          addSubscriberStatistics('confirmation',1);
         }
-        sendAdminCopy("List confirmation",$adminmessage,$subscriptions);
-        addSubscriberStatistics('confirmation',1);
       }
     } else {
       $html = $GLOBALS['strAlreadyConfirmed'];
@@ -747,7 +736,8 @@ function subscribePage2($id)
 }
 */
 
-function unsubscribePage($id) {
+function unsubscribePage($id)
+{
   global $tables;
   $email = '';
   $userid = 0;
@@ -757,11 +747,13 @@ function unsubscribePage($id) {
   $res = '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>'."\n";
   $res .= $GLOBALS['pagedata']["header"];
   if (isset($_GET["uid"])) {
-    $userdata = Sql_Fetch_Array_Query(sprintf('select email,id,blacklisted from %s where uniqid = "%s"',$tables['user'],sql_escape($_GET["uid"])));
+    $query = sprintf('select id,email,blacklisted from %s where uniqid = ?', $tables['user']);
+    $req = Sql_Query_Params($query, array($_GET['uid']) );
+    $userdata = Sql_Fetch_Array($req);
     $email = $userdata["email"];
     $userid = $userdata['id'];
     $isBlackListed =  $userdata['blacklisted'] != "0";
-    $blacklistRequest = false; 
+    $blacklistRequest = false; //invariant
   } else {
     if (isset($_REQUEST['email'])) {
       $email = $_REQUEST['email'];
@@ -806,7 +798,13 @@ function unsubscribePage($id) {
       // It would be better to do this above, where the email is set for the other cases.
       // But to prevent vulnerabilities let's keep it here for now. [bas]
     if (!$blacklistRequest) {
-      $query = Sql_Fetch_Row_Query(sprintf('select id,email from %s where email = "%s"',$tables["user"],sql_escape($email)));
+
+      $query
+      = ' select id, email'
+      . ' from ' . $tables['user']
+      . ' where email = ?';
+      $rs = Sql_Query_Params($query, array($email));
+      $query = Sql_Fetch_Row($rs);
       $userid = $query[0];
       $email = $query[1];
     }
@@ -828,8 +826,8 @@ function unsubscribePage($id) {
         array_push($subscriptions,$row[0]);
       }
 
-      ## 17753 - do not actually remove the list-membership when unsubscribing
-   #   $result = Sql_query(sprintf('delete from %s where userid = %d',$tables["listuser"],$userid));
+      $query = 'delete from ' . $tables['listuser'] . ' where userid = ?';
+      $result = Sql_Query_Params($query, array($userid));
       $lists = "  * ".$GLOBALS["strAllMailinglists"]."\n";
       # add user to blacklist
       addUserToBlacklist($email,nl2br(strip_tags($_POST['unsubscribereason'])));
@@ -874,9 +872,15 @@ function unsubscribePage($id) {
     return $res;
   }
 
-  $current = Sql_Fetch_Array_query(sprintf('select list.id as listid,user.uniqid as userhash, user.password as password
-    from %s as list,%s as listuser,%s as user where list.id = listuser.listid and user.id = listuser.userid and user.email = "%s"',
-    $tables['list'],$tables['listuser'],$tables['user'],sql_escape($email)));
+  $query
+  = ' select l.id as listid, u.uniqid as userhash, u.password as password'
+  . ' from %s as l, %s as lu, %s as u'
+  . '  where l.id = lu.listid'
+  . '    and u.id = lu.userid'
+  . '    and u.email = ?';
+  $query = sprintf($query, $tables['list'], $tables['listuser'], $tables['user']);
+  $rs = Sql_Query_Params($query, array($email));
+  $current = Sql_Fetch_Array($rs);
   $some = $current["listid"];
   if (ASKFORPASSWORD && !empty($user['password'])) {
     # it is safe to link to the preferences page, because it will still ask for

@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
-verifyCsrfGetToken();
 
 $id = sprintf('%d',$_GET["id"]);
 if (!$id) {
@@ -28,19 +27,15 @@ switch ($access) {
 
 if (!empty($_POST['resend']) && is_array($_POST['list'])) {
   if (!empty($_POST['list']['all'])) {
-    $res = Sql_query(sprintf('select id from %s',$tables['list']));
-    while($list = Sql_fetch_array($res)) {
-        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',$tables['listmessage'],$id,$list['id']));
-    }
-  } elseif (!empty($_POST['list']['allactive'])) {
-    $res = Sql_query(sprintf('select id from %s where active',$tables['list']));
-    while($list = Sql_fetch_array($res)) {
-        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',$tables['listmessage'],$id,$list['id']));
-    }
+    $res = Sql_query("select * from $tables[list]");
+    while($list = Sql_fetch_array($res))
+      if ($list["active"]) {
+        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,current_timestamp)',$tables['listmessage'],$id,$list['id']));
+      }
   } else {
     foreach($_POST['list'] as $key => $val) {
-      if ($val == $key) {
-        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',$tables['listmessage'],$id,$key));
+      if ($val == 'signup') {
+        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,current_timestamp)',$tables['listmessage'],$id,$key));
       }
     }
   }
@@ -58,14 +53,25 @@ if (!empty($_POST['resend']) && is_array($_POST['list'])) {
   exit;  
 }
 
-require_once $coderoot . 'structure.php';
 
-$result = Sql_Fetch_Assoc_query(sprintf('select id, subject from %s where id = %d %s',$tables['message'],$id,$owner_select_and));
-if (empty($result['id'])) {
-  print $GLOBALS['I18N']->get('No such campaign');
+require $coderoot . 'structure.php';
+
+# This adds a return link. Should be replaced by uniformbreadcrumtrail
+## non-functional using RG
+if (isset($returnpage)) {
+  if ($returnoption) {
+    $more = "&amp;option=".$returnoption;
+   }
+  echo "<br/>".PageLink2("$returnpage$more","Return to $returnpage");
+  $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
+}
+
+$result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
+if (!Sql_Num_Rows($result)) {
+  print $GLOBALS['I18N']->get('No such message');
   return;
 }
-$campaignTitle = $result['subject'];
+
 
 $msgdata = loadMessageData($id);
 
@@ -85,49 +91,34 @@ if ($msgdata['status'] == 'draft' || $msgdata['status'] == 'suspended') {
 }  
 
 $content = '<table class="messageView">';
-$format = '<tr><td valign="top" class="dataname">%s</td><td valign="top">%s</td></tr>';
-$content .= sprintf($format,s('entered'),stripslashes($msgdata['entered']));
-$content .= sprintf($format,s('fromfield'),stripslashes($msgdata['fromfield']));
-$content .= sprintf($format,s('message'),stripslashes($msgdata['message']));
-$content .= sprintf($format,s('textmessage'),nl2br(stripslashes($msgdata['textmessage'])));
-$content .= sprintf($format,s('footer'),stripslashes($msgdata['footer']));
+## optimise this, use msgdata above
 
-$finishSending = mktime($msgdata['finishsending']['hour'],$msgdata['finishsending']['minute'],0,
-    $msgdata['finishsending']['month'],$msgdata['finishsending']['day'],$msgdata['finishsending']['year']);
-$embargoTime = mktime($msgdata['embargo']['hour'],$msgdata['embargo']['minute'],0,
-    $msgdata['embargo']['month'],$msgdata['embargo']['day'],$msgdata['embargo']['year']);
-$repeatuntilTime = mktime($msgdata['repeatuntil']['hour'],$msgdata['repeatuntil']['minute'],0,
-    $msgdata['repeatuntil']['month'],$msgdata['repeatuntil']['day'],$msgdata['repeatuntil']['year']);
-$requeueuntilTime = mktime($msgdata['requeueuntil']['hour'],$msgdata['requeueuntil']['minute'],0,
-    $msgdata['requeueuntil']['month'],$msgdata['requeueuntil']['day'],$msgdata['requeueuntil']['year']);
-
-if ($embargoTime > time()) {
-    $content .= sprintf($format,s('Embargoed until'),date('Y-m-d H:i:s',$embargoTime ));
-}
-if ($finishSending > time()) {
-    $content .= sprintf($format,s('Stop sending after'),date('Y-m-d H:i:s',$finishSending ));
-}
-if (!empty($msgdata['repeatinterval'])) {
-  $content .= sprintf($format,s('Repeating'),s('every %s until %s',s($repetitionLabels[$msgdata['repeatinterval']]),date('Y-m-d H:i:s',$repeatuntilTime )));
-}    
-if (!empty($msgdata['requeueinterval'])) {
-  $content .= sprintf($format,s('Requeueing'),s('every %s until %s',s($repetitionLabels[$msgdata['requeueinterval']]),date('Y-m-d H:i:s',$requeueuntilTime )));
-}    
-
-foreach ($plugins as $pi) {
-    if ($piAdd = $pi->viewMessage($id, $msgdata)) {
-        $content .= sprintf($format, $piAdd[0], $piAdd[1]);
-    }
+while ($msg = Sql_fetch_array($result)) {
+  foreach($DBstruct["message"] as $field => $val) {
+    # Correct for bug 0009687
+    # Skip 'astextandhtml' and add this count to 'as html'
+    # change the name of sendformat
+    if ($field != 'ashtml') {
+      if ($field == 'astextandhtml') {
+        $field = 'ashtml';
+        $msg[$field] += $msg['astextandhtml'];
+      };
+      if ($field == 'sendformat' and $msg[$field] = 'text and HTML')
+        $msg[$field] = 'HTML';
+      if (!empty($msg[$field])) {
+        $content .= sprintf('<tr><td valign="top" class="dataname">%s</td><td valign="top">%s</td></tr>',$GLOBALS['I18N']->get($field),$msg["htmlformatted"]?stripslashes($msg[$field]):nl2br(stripslashes($msg[$field])));
+      }
+    }  
+  }
 }
 
 if (ALLOW_ATTACHMENTS) {
-  $content .=  '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Attachments for this campaign') . '</h3></td></tr>';
+  $content .=  '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
   $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}
     where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
     {$tables["message_attachment"]}.messageid = $id");
-  if (!Sql_Affected_Rows()) {
+  if (!Sql_Num_Rows($req))
     $content .= '<tr><td colspan="2">' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
-  }
   while ($att = Sql_Fetch_array($req)) {
     $content .=sprintf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
     $content .=sprintf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Size'), formatBytes($att["size"]));
@@ -137,50 +128,57 @@ if (ALLOW_ATTACHMENTS) {
  # print '</table>';
 }
 
-if (empty($msgdata['sent'])) {
-    $content .= '<tr><td colspan="2"><h4>' . s('This campaign will be sent to subscribers, who are member of the following lists') . ':</h4></td></tr>';
-} else {
-    $content .= '<tr><td colspan="2"><h4>' . $GLOBALS['I18N']->get('This campaign has been sent to subscribers, who are member of the following lists') . ':</h4></td></tr>';
-}
+$content .= '<tr><td colspan="2"><h4>' . $GLOBALS['I18N']->get('This campaign has been sent to subscribers, who are member of the following lists') . ':</h4></td></tr>';
 
 $lists_done = array();
-$result = Sql_Query(sprintf('select l.name, l.id from %s lm, %s l where lm.messageid = %d and lm.listid = l.id',$tables['listmessage'],$tables['list'],$id));
-if (!Sql_Affected_Rows())
+$result = Sql_Query("select l.name, l.id from $tables[listmessage] lm, $tables[list] l where lm.messageid = $id and lm.listid = l.id");
+if (!Sql_Num_Rows($result))
   $content .= '<tr><td colspan="2">' . $GLOBALS['I18N']->get('None yet') . '</td></tr>';
 while ($lst = Sql_fetch_array($result)) {
   array_push($lists_done,$lst['id']);
-  $content .= sprintf ('<tr><td><!--%d--></td><td>%s</td></tr>',$lst['id'],stripslashes($lst['name']));
+  $content .= sprintf ('<tr><td>%d</td><td>%s</td></tr>',$lst['id'],stripslashes($lst['name']));
 }
 
 if ($msgdata['excludelist']) {
   $content .= '<tr><td colspan="2"><h4>' . $GLOBALS['I18N']->get('Except when they were also member of these lists') . ':</h4></td></tr>';
   $result = Sql_Query(sprintf('select l.name, l.id from %s l where id in (%s)',$tables['list'],join(',',$msgdata['excludelist'])));
   while ($lst = Sql_fetch_array($result)) {
-    $content .= sprintf ('<tr><td><!--%d--></td><td>%s</td></tr>',$lst['id'],stripslashes($lst['name']));
+    $content .= sprintf ('<tr><td>%d</td><td>%s</td></tr>',$lst['id'],stripslashes($lst['name']));
   }
 }
 $content .= '</table>';
 
-$panel = new UIPanel(htmlspecialchars($campaignTitle),$content);
+$panel = new UIPanel($msgdata['subject'],$content);
 print $panel->display();
 ?>
 
-<a name="resend"></a><p class="information"><?php echo s('Send this campaign to another list'); ?>:</p>
+<a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart(' class="messageResend" ')?>
 <input type="hidden" name="id" value="<?php echo $id?>" />
 
 <?php
-
-if (sizeof($lists_done)) {
-    if (empty($subselect)) {
-        $subselect .= ' where id not in ('.join(',',$lists_done).')';
-    } else {
-        $subselect .= ' and id not in ('.join(',',$lists_done).')';
+$messlis = '';
+$result = Sql_query("SELECT * FROM $tables[list] $subselect");
+while ($row = Sql_fetch_array($result)) {
+  if (!in_array($row['id'],$lists_done)) {
+    $messlis .= '<li><input type="checkbox" name="list[' . $row["id"] . ']" value="signup" ';
+    if (isset($_POST['list'][$row["id"]]) && $_POST['list'][$row["id"]] == 'signup') {
+      $messlis .= 'checked="checked"';
     }
+    $messlis .= " />".$row['name'];
+    if ($row["active"]) {
+      $messlis .= ' (' . $GLOBALS['I18N']->get('Public list') . ')';
+    } else {
+      $messlis .= ' (' . $GLOBALS['I18N']->get('Private list') . ')';
+    }
+    $some = 1;
+    $messlis .= '</li>';
+  }
 }
-$selectAgain = listSelectHTML(array(),'list',$subselect,'');
 
-print $selectAgain;
+if ($messlis == '')
+  print $GLOBALS['I18N']->get('<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.');
+else
+  print '<ul class="messageList">'.$messlis.'</ul><input class="submit" type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'" /></form>';
 
-print '<input class="submit" type="submit" name="resend" value="'.s('Resend').'" /></form>';
-
+?>

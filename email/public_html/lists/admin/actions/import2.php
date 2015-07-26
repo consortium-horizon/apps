@@ -2,7 +2,7 @@
 verifyCsrfGetToken();
 
 require dirname(__FILE__) . "/../structure.php";
-require dirname(__FILE__). '/../inc/importlib.php';
+require dirname(__FILE__). '/../importlib.php';
 
 @ob_end_flush();
 $status = 'FAIL';
@@ -207,35 +207,26 @@ if (sizeof($email_list)) {
           $exists = Sql_Affected_Rows();
           $existing_user = Sql_fetch_array($result);
           # check whether the email will clash
-          $clashcheck = Sql_Fetch_Array_Query(sprintf('select id,foreignkey,uniqid from %s
+          $clashcheck = Sql_Fetch_Row_Query(sprintf('select id from %s
                     where email = "%s"', $tables["user"], $user["systemvalues"]["email"]));
-          if ($clashcheck['id'] != $existing_user["id"]) {
-            #https://mantis.phplist.org/view.php?id=17752 
-            # if the existing record does not have an FK, we treat it as an update, matched on email
-            if (empty($clashcheck['foreignkey'])) {
-              $count["emailmatch"]++;
-              $count["fkeymatch"]--;
-              $exists = 1;
-              $existing_user = $clashcheck;
+          if ($clashcheck[0] != $existing_user["id"]) {
+            $count['duplicate']++;
+            $notduplicate = 0;
+            $c = 0;
+            while (!$notduplicate) {
+              $c++;
+              $req = Sql_Query(sprintf('select id from %s where email = "%s"', $tables["user"], $GLOBALS['I18N']->get('duplicate') .
+              "$c " . $user["systemvalues"]["email"]));
+              $notduplicate = !Sql_Affected_Rows();
+            }
+            if (!$_SESSION["retainold"]) {
+              Sql_Query(sprintf('update %s set email = "%s" where email = "%s"', $tables["user"], "duplicate$c " .
+              $user["systemvalues"]["email"], $user["systemvalues"]["email"]));
+              addUserHistory("duplicate$c " . $user["systemvalues"]["email"], "Duplication clash ", ' User marked duplicate email after clash with imported record');
             } else {
-              $count['duplicate']++;
-              $notduplicate = 0;
-              $c = 0;
-              while (!$notduplicate) {
-               $c++;
-                $req = Sql_Query(sprintf('select id from %s where email = "%s"', $tables["user"], $GLOBALS['I18N']->get('duplicate') .
-                "$c " . $user["systemvalues"]["email"]));
-                $notduplicate = !Sql_Affected_Rows();
-              }
-              if (!$_SESSION["retainold"]) {
-                Sql_Query(sprintf('update %s set email = "%s" where email = "%s"', $tables["user"], "duplicate$c " .
-                $user["systemvalues"]["email"], $user["systemvalues"]["email"]));
-                addUserHistory("duplicate$c " . $user["systemvalues"]["email"], "Duplication clash ", ' User marked duplicate email after clash with imported record');
-              } else {
-                if ($_SESSION["show_warnings"])
-                  print Warn($GLOBALS['I18N']->get('Duplicate Email') . ' ' . $user["systemvalues"]["email"] . $GLOBALS['I18N']->get(' user imported as ') . '&quot;' . $GLOBALS['I18N']->get('duplicate') . "$c " . $user["systemvalues"]["email"] . "&quot;");
-                $user["systemvalues"]["email"] = $GLOBALS['I18N']->get('duplicate') . "$c " . $user["systemvalues"]["email"];
-              }
+              if ($_SESSION["show_warnings"])
+                print Warn($GLOBALS['I18N']->get('Duplicate Email') . ' ' . $user["systemvalues"]["email"] . $GLOBALS['I18N']->get(' user imported as ') . '&quot;' . $GLOBALS['I18N']->get('duplicate') . "$c " . $user["systemvalues"]["email"] . "&quot;");
+              $user["systemvalues"]["email"] = $GLOBALS['I18N']->get('duplicate') . "$c " . $user["systemvalues"]["email"];
             }
           }
         } else {
@@ -293,7 +284,7 @@ if (sizeof($email_list)) {
           $count["dataupdate"]++;
           $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d', $tables["user"], $userid));
           $old_data = array_merge($old_data, getUserAttributeValues('', $userid));
-          $history_entry = $GLOBALS['admin_scheme'] . '://' . getConfig("website") . $GLOBALS["adminpages"] . '/?page=user&id=' . $userid . "\n\n";
+          $history_entry = $GLOBALS['scheme'] . '://' . getConfig("website") . $GLOBALS["adminpages"] . '/?page=user&id=' . $userid . "\n\n";
           foreach ($user["systemvalues"] as $column => $value) {
             if (!empty($column)) { # && !empty($value)) {
               if ($column == 'groupmapping' || strpos($column,'grouptype_') === 0) {
@@ -439,8 +430,6 @@ if (sizeof($email_list)) {
             }
           }
         } elseif ($isBlackListed) {
-          ## mark blacklisted, just in case ##17288
-          Sql_Query(sprintf('update %s set blacklisted = 1 where id = %d', $tables["user"], $userid));
           $count['foundblacklisted']++;
         }
         if (!is_array($_SESSION["groups"])) {
@@ -476,32 +465,32 @@ if (sizeof($email_list)) {
 
   $report = "";
   if (empty($some) && !$count["list_add"]) {
-    $report .= '<br/>' . s('All the emails already exist in the database and are member of the lists');
+    $report .= '<br/>' . $GLOBALS['I18N']->get('All the emails already exist in the database and are member of the lists');
   } else {
-    $report .= '<br/>' . s('%d emails succesfully imported to the database and added to %d lists.', $count["email_add"], $num_lists);
-    $report .= '<br/>' . s('%d emails subscribed to the lists', $count["list_add"]);
+    $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%s emails succesfully imported to the database and added to %d lists.'), $count["email_add"], $num_lists);
+    $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%d emails subscribed to the lists'), $count["list_add"]);
     if ($count["exist"]) {
-      $report .= '<br/>' . s('%d emails already existed in the database', $count["exist"]);
+      $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%s emails already existed in the database'), $count["exist"]);
     }
   }
   if ($count["invalid_email"]) {
-    $report .= '<br/>' . s('%d Invalid Emails found.', $count["invalid_email"]);
+    $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%d Invalid Emails found.'), $count["invalid_email"]);
     if (!$_SESSION["omit_invalid"]) {
-      $report .= '<br/>' . s('These records were added, but the email has been made up from ') . $_SESSION["assign_invalid"];
+      $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('These records were added, but the email has been made up from ') . $_SESSION["assign_invalid"]);
     } else {
-      $report .= '<br/>' . s('These records were deleted. Check your source and reimport the data. Duplicates will be identified.');
+      $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('These records were deleted. Check your source and reimport the data. Duplicates will be identified.'));
     }
   }
   if ($count["duplicate"]) {
-    $report .= '<br/>' . s('%d duplicate emails found.', $count["duplicate"]);
+    $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%d duplicate emails found.'), $count["duplicate"]);
   }
   if ($_SESSION["overwrite"] == "yes") {
-    $report .= '<br/>' . s('Subscriber data was updated for %d subscribers', $count["dataupdate"]);
+    $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('Subscriber data was updated for %d subscribers'), $count["dataupdate"]);
   }
   if ($count['foundblacklisted']) {
-    $report .= '<br/>' . s('%d emails were on the blacklist and have not been added to the lists', $count["foundblacklisted"]);
+    $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%s emails were on the blacklist and have not been added to the lists'), $count["foundblacklisted"]);
   }
-  $report .= '<br/>' . s('%d subscribers were matched by foreign key, %d by email', $count["fkeymatch"], $count["emailmatch"]);
+  $report .= sprintf('<br/>' . $GLOBALS['I18N']->get('%d subscribers were matched by foreign key, %d by email'), $count["fkeymatch"], $count["emailmatch"]);
   if (!$GLOBALS['commandline']) {
     print $report;
     if (function_exists('sendmail')) {

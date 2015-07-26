@@ -43,7 +43,7 @@ if ($message && $list) {
     $query = sprintf('insert into %s
       (subject,fromfield,tofield,replyto,message,footer,status,
       entered,userselection,htmlformatted,sendformat,template,owner)
-      values("%s","%s","%s","%s","%s","%s","submitted",now(),"%s",%d,"%s",%d,%d)',
+      values("%s","%s","%s","%s","%s","%s","submitted",current_timestamp,"%s",%d,"%s",%d,%d)',
         $tables["message"],
         addslashes($msg["subject"]),
         addslashes($msg["fromfield"]),
@@ -57,9 +57,9 @@ if ($message && $list) {
         $msg["template"],$owner
     );
     Sql_Query($query);
-    $messageid = Sql_Insert_Id();
+    $messageid = Sql_Insert_Id($tables['message'], 'id');
     foreach ($lists as $list)
-      $result = Sql_query("insert into {$tables["listmessage"]} (messageid,listid,entered) values($messageid,$list,now())");
+      $result = Sql_query("insert into {$tables["listmessage"]} (messageid,listid,entered) values($messageid,$list,current_timestamp)");
   }
   $done = 1;
   ?>

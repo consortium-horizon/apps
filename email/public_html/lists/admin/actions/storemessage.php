@@ -15,7 +15,7 @@ if (isset($_REQUEST['sendmethod']) && $_REQUEST['sendmethod'] == 'inputhere') {
   $_REQUEST['sendurl'] = '';
 }
 
-if (!empty($_POST['sendurl'])) {
+if (!empty($_REQUEST['sendurl'])) {
   if (!$GLOBALS["can_fetchUrl"]) {
     print Warn($GLOBALS['I18N']->get('You are trying to send a remote URL, but PEAR::HTTP_Request is not available, so this will fail'));
   } else {
@@ -23,14 +23,14 @@ if (!empty($_POST['sendurl'])) {
     ## check there's a protocol
     ## @@@ do we want to allow other than http and https? Can't imagine, ppl would want to use ftp or something
 
-    if ($_POST['sendurl'] == 'e.g. http://www.phplist.com/testcampaign.html') {
-      $_POST['sendurl'] = '';
+    if ($_REQUEST['sendurl'] == 'e.g. http://www.phplist.com/testcampaign.html') {
+      $_REQUEST['sendurl'] = '';
     } else {
-      if (!preg_match('/^https?:\/\//i',$_POST['sendurl']) && !preg_match('/testcampaign/i',$_POST['sendurl'])) {
-        $_POST['sendurl'] = 'http://'.$_POST['sendurl'];
+      if (!preg_match('/^https?:\/\//i',$_REQUEST['sendurl']) && !preg_match('/testcampaign/i',$_REQUEST['sendurl'])) {
+        $_REQUEST['sendurl'] = 'http://'.$_REQUEST['sendurl'];
       }
     
-      $_POST["message"] = '[URL:'.$_POST['sendurl'].']';
+      $_REQUEST["message"] = '[URL:'.$_REQUEST['sendurl'].']';
     }
   }
 } 
@@ -39,14 +39,14 @@ if (!empty($_POST['sendurl'])) {
 ## to be identified as listed, but not checked
 ## find the "cb" array and uncheck all checkboxes in it
 ## then the processing below will re-check them, if they were
-if (isset($_POST['cb']) && is_array($_POST['cb'])) {
-  foreach ($_POST['cb'] as $cbname => $cbval) {
+if (isset($_REQUEST['cb']) && is_array($_REQUEST['cb'])) {
+  foreach ($_REQUEST['cb'] as $cbname => $cbval) {
     ## $cbval is a dummy
     setMessageData($id,$cbname,'0');
   }
 }
 ## remember all data entered
-foreach ($_POST as $key => $val) { //#17566 - we are only interested in POST data, not all in REQUEST
+foreach ($_REQUEST as $key => $val) {
 /*
   print $key .' '.$val;
 */

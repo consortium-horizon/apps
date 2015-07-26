@@ -273,6 +273,10 @@ function Sql_Insert_Id() {
   return mysqli_insert_id($GLOBALS["database_connection"]);
 }
 
+function Sql_Result($result,$index,$column) {
+  return mysqli_result($result,$index,$column);
+}
+
 function Sql_Free_Result($dbresult) {
   mysqli_free_result($dbresult);
 };
@@ -338,14 +342,12 @@ function Sql_create_Table ($table,$structure) {
   unset($_SESSION["dbtables"]);
 }
 
+function Sql_Drop_Table($table) {
+#  print '<br/>DROP '.$table;
+  return mysqli_query($GLOBALS['database_connection'],'drop table if exists '.$table);
+}
+
 function sql_escape($text) {
-  if (empty($GLOBALS['database_connection'])) {
-    $GLOBALS['database_connection'] = Sql_Connect(
-      $GLOBALS['database_host'],
-      $GLOBALS['database_user'],
-      $GLOBALS['database_password'],
-      $GLOBALS['database_name']);
-  }
   if (!empty($GLOBALS['database_connection'])) {
     return mysqli_real_escape_string($GLOBALS['database_connection'],$text);
   } else {
@@ -354,4 +356,22 @@ function sql_escape($text) {
   }
 }
 
+function Sql_Replace ($table,$values,$pk) {
+
+  $query = ' replace into '.$table.' set ';
+  foreach ($values as $key => $val) {
+    if (is_numeric($val) || $val == 'current_timestamp') {
+      $query .= ' '.$key .'= '.sql_escape($val).',';
+    } else {
+      $query .= ' '.$key .'="'.sql_escape($val).'",';
+    }
+  }
+  $query = substr($query,0,-1);
+ # output($query);
+  return Sql_Query($query);
+}
+
+function Sql_Set_Search_Path($searchpath) {
+  return;
+}
 

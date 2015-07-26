@@ -11,7 +11,7 @@
   $importdata = unserialize(file_get_contents($GLOBALS['tmpdir'].'/'.$file.'.data'));
   
   $email_list = file_get_contents($GLOBALS['tmpdir'].'/'.$file);
-  include_once dirname(__FILE__)."/../inc/userlib.php";
+  include_once dirname(__FILE__)."/../commonlib/lib/userlib.php";
 
   // Clean up email file
   $email_list = trim($email_list);
@@ -53,7 +53,6 @@
   $count_email_exist = 0;
   $count_list_add = 0;
   $additional_emails = 0;
-  $foundBlacklisted = 0;
   $some = 0;
   $num_lists = sizeof($importdata['importlists']);
   $todo = sizeof($user_list);
@@ -126,7 +125,7 @@
         $uniqid = getUniqid();
         $old_listmembership = array();
 
-        $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",now(),%d,"%s","%s")',
+        $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",current_timestamp,%d,"%s","%s")',
         $tables["user"],$email,$importdata['notify'] != "yes",$uniqid,isset($importdata['htmlemail']) ? '1':'0');
         $result = Sql_query($query);
         $userid = Sql_Insert_Id($tables['user'], 'id');
@@ -151,7 +150,7 @@
       $isBlackListed = isBlackListed($email);
       if (!$isBlackListed) {
         foreach($importdata['importlists'] as $key => $listid) {
-          $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,now())";
+          $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,current_timestamp)";
           $result = Sql_query($query);
           # if the affected rows is 2, the user was already subscribed
           $addition = $addition || Sql_Affected_Rows() == 1;
@@ -162,10 +161,6 @@
         if ($addition) {
           $additional_emails++;
         }
-      } else {
-        ## mark blacklisted, just in case ##17288
-        Sql_Query(sprintf('update %s set blacklisted = 1 where id = %d', $tables["user"], $userid));
-        $foundBlacklisted++;
       }
 
       $subscribemessage = str_replace('[LISTS]', $listoflists, getUserConfig("subscribemessage",$userid));
@@ -223,10 +218,6 @@
   } else {
     $report .= "<br/>$count_email_add $dispemail ".s('succesfully imported to the database and added to')." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed to the')." $displists";
   }
-  if ($foundBlacklisted) {
-    $report .= '<br/>'.s('%d emails were found on the do-not-send-list and have not been added to the lists',$foundBlacklisted);
-  } 
-      
 
   $htmlupdate = $report.'<br/>'.PageLinkButton("import1",s('Import some more emails'));
   $htmlupdate = str_replace("'","\'",$htmlupdate);

@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('PHPLISTINIT')) {
+if (!defined('PHPLISTINIT') && !isset($GLOBALS["installer"])) {
 #	print backtrace();
   print "Invalid Request";
   exit;
@@ -37,7 +37,13 @@ function isSuperUser() {
     if (is_object($GLOBALS["admin_auth"]) ) {
       $issuperuser = $GLOBALS["admin_auth"]->isSuperUser($_SESSION["logindetails"]["id"]);
     } else {
-      $req = Sql_Fetch_Row_Query(sprintf('select superuser from %s where id = %d',$tables["admin"],$_SESSION["logindetails"]["id"]));
+      $query
+      = ' select superuser '
+      . ' from %s'
+      . ' where id = ?';
+      $query = sprintf($query, $tables['admin']);
+      $req = Sql_Query_Params($query, array($_SESSION['logindetails']['id']));
+      $req = Sql_Fetch_Row($req);
       $issuperuser = $req[0];
     }
     $_SESSION["logindetails"]["superuser"] = $issuperuser;

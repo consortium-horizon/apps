@@ -4,6 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 include_once dirname(__FILE__). "/date.php";
 
 $errormsg = '';
+//$rss_content = '';          //Obsolete by rssmanager plugin
 $done = 0;
 $messageid = 0;
 $forwardsubject = $forwardmessage = $forwardfooter = '';
@@ -46,13 +47,16 @@ if (!empty($_GET['tab'])) {
 if (!$id) {
   $defaulttemplate = getConfig('defaultmessagetemplate');
   $defaultfooter = getConfig('messagefooter');
-  Sql_Query(sprintf('insert into %s (subject, status, entered, sendformat, embargo, repeatuntil, owner, template, tofield, replyto,footer) 
-    values("(no title)", "draft", now(), "HTML", now(), now(), %d, %d, "", "", "%s" )',
-    $GLOBALS['tables']['message'],
-    $_SESSION['logindetails']['id'],
-    $defaulttemplate,sql_escape($defaultfooter)));
-
-  $id = Sql_Insert_Id();
+  $query
+  = " insert into %s"
+  . "    (subject, status, entered, sendformat, embargo"
+  . "    , repeatuntil, owner, template, tofield, replyto,footer)"
+  . " values"
+  . "    ('(no subject)', 'draft', current_timestamp, 'HTML'"
+  . "    , current_timestamp, current_timestamp, ?, ?, '', '', ? )";
+  $query = sprintf($query, $GLOBALS['tables']['message']);
+  Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate,$defaultfooter));
+  $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
 
   if (isset($_GET['list'])) {
     if ($_GET['list'] == 'all') {
@@ -65,8 +69,9 @@ if (!$id) {
     }
     $addlists = cleanArray($addlists);
     foreach ($addlists as $listid) {
-      $query = sprintf("replace into %s (messageid,listid,entered) values(%d,%d,now())",$GLOBALS['tables']['listmessage'],$id,$listid);
-      Sql_Query($query);
+      $query = "replace into %s (messageid,listid,entered) values(?,?,current_timestamp)";
+      $query = sprintf($query,$GLOBALS['tables']['listmessage']);
+      Sql_Query_Params($query,array($id,$listid));
     }
   }
 
@@ -103,7 +108,7 @@ ob_end_flush();
 if ($id) {
   // Load message attributes / values
   $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $ownership");
-  if (!Sql_Affected_Rows()) {
+  if (!Sql_Num_Rows($result)) {
     print $GLOBALS['I18N']->get('Access Denied');
     $done = 1;
     return;
@@ -181,48 +186,59 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
     $resultMsg = $plugin->sendMessageTabSave($id,$messagedata);
   }
 
-  if (!$htmlformatted  && strip_tags($messagedata["message"]) != $messagedata["message"]) {
+  if (!$htmlformatted  && strip_tags($messagedata["message"]) !=  $messagedata["message"])
     $errormsg = '<span  class="error">'.$GLOBALS['I18N']->get("Warning: You indicated the content was not HTML, but there were  some HTML  tags in it. This  may  cause  errors").'</span>';
-  }
     
-    $result = Sql_Query(
-      sprintf('update %s  set 
-        subject = "%s", fromfield = "%s", tofield = "%s",
-        replyto ="%s", embargo = "%s", repeatinterval = "%s", repeatuntil = "%s", 
-        message = "%s", textmessage = "%s", footer = "%s", status = "%s",
-        htmlformatted = "%s", sendformat  = "%s", template  =  "%s" where id = %d', $tables["message"], 
-           sql_escape($messagedata['campaigntitle']) // we store the title in the subject field. Better would be to rename the DB column, but this will do for now
-         , sql_escape($messagedata['fromfield'])
-         , sql_escape($messagedata['tofield'])
-         , sql_escape($messagedata['replyto'])
-         , sprintf('%04d-%02d-%02d %02d:%02d',
-            $messagedata['embargo']['year'],$messagedata['embargo']['month'],$messagedata['embargo']['day'],
-            $messagedata['embargo']['hour'],$messagedata['embargo']['minute'])
-         , $messagedata['repeatinterval']
-         , sprintf('%04d-%02d-%02d %02d:%02d',
-            $messagedata["repeatuntil"]['year'],$messagedata["repeatuntil"]['month'],$messagedata["repeatuntil"]['day'],
-            $messagedata["repeatuntil"]['hour'],$messagedata["repeatuntil"]['minute'])
-         , sql_escape($messagedata["message"])
-         , sql_escape($messagedata["textmessage"])
-         , sql_escape($messagedata["footer"])
-         , sql_escape($messagedata['status'])
-         , $htmlformatted ? '1' : '0'
-         , $messagedata["sendformat"]
-         , sql_escape($messagedata["template"])
-         , $id
-      )
-    );
+  $query = sprintf('update %s  set '
+     . '  subject = ?'
+     . ', fromfield = ?'
+     . ', tofield = ?'
+     . ', replyto = ?'
+     . ', embargo = ?'
+     . ', repeatinterval = ?'
+     . ', repeatuntil = ?'
+     . ', message = ?'
+     . ', textmessage = ?'
+     . ', footer = ?'
+     . ', status = ?'
+     . ', htmlformatted = ?'
+     . ', sendformat  =  ?'
+     . ', template  =  ?'
+     . ' where id = ?', $tables["message"]);
+  $result = Sql_Query_Params($query, array(
+       $messagedata['subject']
+     , $messagedata['fromfield']
+     , $messagedata['tofield']
+     , $messagedata['replyto']
+     , sprintf('%04d-%02d-%02d %02d:%02d',
+        $messagedata['embargo']['year'],$messagedata['embargo']['month'],$messagedata['embargo']['day'],
+        $messagedata['embargo']['hour'],$messagedata['embargo']['minute'])
+     , $messagedata['repeatinterval']
+     , sprintf('%04d-%02d-%02d %02d:%02d',
+        $messagedata["repeatuntil"]['year'],$messagedata["repeatuntil"]['month'],$messagedata["repeatuntil"]['day'],
+        $messagedata["repeatuntil"]['hour'],$messagedata["repeatuntil"]['minute'])
+     , $messagedata["message"]
+     , $messagedata["textmessage"]
+     , $messagedata["footer"]
+     , $messagedata['status']
+     , $htmlformatted ? '1' : '0'
+     , $messagedata["sendformat"]
+     , $messagedata["template"]
+     , $id));
 
     ## do this seperately, so that the above query doesn't fail when the DB hasn't been upgraded
-    $result = Sql_Query(
-      sprintf('update %s set requeueinterval = "%s", requeueuntil = "%s" where id = %d', $tables["message"], 
-        $messagedata['requeueinterval']
-      , sprintf('%04d-%02d-%02d %02d:%02d',
+    $query = sprintf('update %s ' 
+     . 'set requeueinterval = ?'
+     . ', requeueuntil = ?'
+     . ' where id = ?', $tables["message"]);    
+    $result = Sql_Query_Params($query, array(
+      $messagedata['requeueinterval']
+     , sprintf('%04d-%02d-%02d %02d:%02d',
         $messagedata['requeueuntil']['year'],$messagedata['requeueuntil']['month'],$messagedata['requeueuntil']['day'],
-        $messagedata['requeueuntil']['hour'],$messagedata['requeueuntil']['minute']),$id
-      )
-    );
+        $messagedata['requeueuntil']['hour'],$messagedata['requeueuntil']['minute'])
+     ,$id));
 
+#    print $query;
 #    print "Message ID: $id";
     #    exit;
     if (!$GLOBALS["can_fetchUrl"] && preg_match("/\[URL:/i",$_POST["message"])) {
@@ -292,7 +308,7 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
           $tables["attachment"],
           basename($newfile),$remotename,$type,$description,$file_size)
           );
-          $attachmentid = Sql_Insert_id();
+          $attachmentid = Sql_Insert_Id($tables['attachment'], 'id');
           Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
           $tables["message_attachment"],$id,$attachmentid));
           if (is_file($tmpfile)) {
@@ -314,7 +330,7 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
           $tables["attachment"],
           $_POST["localattachment".$att_cnt],$type,$description,filesize($_POST["localattachment".$att_cnt]))
         );
-        $attachmentid = Sql_Insert_id();
+        $attachmentid = Sql_Insert_Id($tables['attachment'], 'id');
         Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
         $tables["message_attachment"],$id,$attachmentid));
         print Info(s("Adding attachment")." ".$att_cnt. " mime: $type");
@@ -451,7 +467,12 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
     foreach ($emailaddresses as $address) {
       $address = trim($address);
       if (empty($address)) continue;
-      $result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
+      $query
+      = ' select id, email, uniqid, htmlemail, confirmed'
+      . ' from %s'
+      . ' where email = ?';
+      $query = sprintf($query, $tables['user']);
+      $result = Sql_Query_Params($query, array($address));
                                                                                                           //Leftover from the preplugin era
       if ($user = Sql_fetch_array($result)) {
         if ( FORWARD_ALTERNATIVE_CONTENT && $_GET['tab'] == 'Forward') {
@@ -636,10 +657,6 @@ if (!$done) {
 // custom code - start
   $utf8_subject = $messagedata['subject'];
   $utf8_from = $messagedata['fromfield'];
-  if (empty($utf8_subject)) $utf8_subject = '(no subject)';
-  if (empty($messagedata['campaigntitle'])) {
-      $messagedata['campaigntitle'] = $utf8_subject;
-  }
 /*
   if (0 && strcasecmp($GLOBALS['strCharSet'], 'utf-8') <> 0) {
      $utf8_subject = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_subject);
@@ -648,7 +665,7 @@ if (!$done) {
 */
 
   $maincontent .= '
-  <div class="field"><label for="subject">'.s("Campaign subject").Help("subject").'</label>'.
+  <div class="field"><label for="subject">'.$GLOBALS['I18N']->get("Subject").Help("subject").'</label>'.
   '<input type="text" name="subject"  id="subjectinput"
     value="'.htmlentities($utf8_subject,ENT_QUOTES,'UTF-8').'" size="60" /></div>
   <div class="field"><label for="fromfield">'.$GLOBALS['I18N']->get("From Line").Help("from").'</label>'.'
@@ -793,10 +810,9 @@ if (!$done) {
   $formatting_content .= '</div>';
 
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
-  if (Sql_affected_Rows()) {
+  if (Sql_Num_Rows($req)) {
     $formatting_content .= '<div class="field"><label for="template">'.$GLOBALS['I18N']->get("Use Template").Help("usetemplate").'</label>'.'
-      <select name="template"><option value="0">-- '.s("select one").'</option>
-      <option value="0">-- '.s("No template").'</option>';
+      <select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("select one").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
       if ($row["title"]) {
@@ -1003,8 +1019,8 @@ if (!$done) {
       } else {
         $exclude = '';
       }
-      
-      $htmlcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
+
+      $htmlcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s u where u.htmlemail and u.id = listuser.userid and listuser.listid in (%s) %s',
         $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
       $textcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where !user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
         $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
@@ -1025,8 +1041,9 @@ if (!$done) {
 
   ## the button to actually send the campagin
   $send_content .= $placeinqueue;
-  
+
 print '<div class="sendtabs_container">';
+
 
   $tabs->setListClass('sendcampaign');
   $tabs->setId('sendtabs');
@@ -1187,7 +1204,7 @@ foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
 
 if ($allReady) {
   $GLOBALS['pagefooter']['addtoqueue'] .= '<script type="text/javascript">
-  $("#addtoqueue").html(\'<input class="action-button" type="submit" name="send" id="addtoqueuebutton" value="'.htmlspecialchars(s('Place Campaign in Queue for Sending')).'">\');
+  $("#addtoqueue").html(\'<input class="action-button" type="submit" name="send" id="addtoqueuebutton" value="'.htmlspecialchars($GLOBALS['I18N']->get('Send Campaign')).'">\');
   </script>';
 } else {
   $GLOBALS['pagefooter']['addtoqueue'] .= '<script type="text/javascript">
@@ -1203,11 +1220,6 @@ $saveDraftButton = '<div class="sendSubmit">
     <input type="hidden" name="id" value="'.$id.'"/>
     <input type="hidden" name="status" value="draft"/></div>
 ';
-
-  $titleInput = '<label for="campaigntitle">'.s("Campaign Title").Help("campaigntitle").'</label>'.
-  '<input type="text" name="campaigntitle"  id="campaigntitleinput"
-    value="'.htmlentities($messagedata['campaigntitle'],ENT_QUOTES,'UTF-8').'" size="60" />';
-  $metaPanel = new UIPanel(s('Meta data'),$titleInput); 
 
   $testpanel = new UIPanel($GLOBALS['I18N']->get('Send Test'),$sendtest_content);
   $testpanel->setID('testpanel');

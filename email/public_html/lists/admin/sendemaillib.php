@@ -62,15 +62,16 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   foreach ($user_att_values as $key => $val) {
     $newkey = cleanAttributeName($key);
-    ## in the help, we only list attributes with "strlen <= 30"
+    ## in the help, we only list attributes with "strlen < 20"
     unset($user_att_values[$key]);
-    if (strlen($key) <= 30) {
+    if (strlen($key) < 20) {
       $user_att_values[$newkey] = $val;
     }
   }
  # print '<pre>';var_dump($user_att_values);print '</pre>';exit;
-  $query = sprintf('select * from %s where email = "%s"', $GLOBALS["tables"]["user"],sql_escape($email));
-  $userdata = Sql_Fetch_Assoc_Query($query);
+  $query = sprintf('select * from %s where email = ?', $GLOBALS["tables"]["user"]);
+  $rs = Sql_Query_Params($query, array($email));
+  $userdata = Sql_Fetch_Assoc($rs);
   if (empty($userdata['id'])) {
     $userdata = array();
   }
@@ -78,11 +79,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   if (stripos($content,"[LISTS]") !== false) {
     $listsarr = array();
-    $req = Sql_Query(sprintf('select list.name,list.active from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$GLOBALS["tables"]["list"],$GLOBALS["tables"]["listuser"],$userdata["id"]));
-    while ($row = Sql_Fetch_Assoc($req)) {
-      if ($row['active'] || PREFERENCEPAGE_SHOW_PRIVATE_LISTS) {
-        array_push($listsarr,stripslashes($row['name']));
-      }
+    $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$GLOBALS["tables"]["list"],$GLOBALS["tables"]["listuser"],$userdata["id"]));
+    while ($row = Sql_Fetch_Row($req)) {
+      array_push($listsarr,$row[0]);
     }
     if (!empty($listsarr)) {
       $html['lists'] = join('<br/>',$listsarr);
@@ -965,7 +964,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     if (!empty($mail->mailsize)) {
       $sizename = $htmlpref ? 'htmlsize' : 'textsize';
       if (empty($cached[$messageid][$sizename])) {
-        setMessageData($messageid,$sizename,$mail->mailsize);
+        Sql_Replace($GLOBALS['tables']['messagedata'], array('id' => $messageid, 'name' => $sizename, 'data' => $mail->mailsize), array('name', 'id'));
         $cached[$messageid][$sizename] = $mail->mailsize;
         if (isset($cached[$messageid]['htmlsize'])) {
           output(sprintf(s('Size of HTML email: %s ',formatBytes($cached[$messageid]['htmlsize']))),0,'progress');
@@ -1119,6 +1118,8 @@ function createPDF($text) {
   return $fname;
 }
 
+//function replaceChars() Moved to commonlib
+
 function mailto2href($text) {
   # converts <mailto:blabla> link to <a href="blabla"> links
   #~Bas 0008857
@@ -1211,39 +1212,28 @@ function encodeLinks($text) {
   return $text;
 }
 
+//function stripHTML() Moved to commonlib
+
 function clickTrackLinkId($messageid,$userid,$url,$link) {
   global $cached;
   if (!isset($cached['linktrack']) || !is_array($cached['linktrack'])) $cached['linktrack'] = array();
   if (!isset($cached['linktracksent']) || !is_array($cached['linktracksent'])) $cached['linktracksent'] = array();
   if (!isset($cached['linktrack'][$link])) {
-    /**
-     * we cannot handle URLs longer than 255 characters. 
-     * to handle that, take out the substr below and change the DB:
-     * 
-     * alter table phplist_linktrack_forward drop index urlunique;
-     * alter table phplist_linktrack_forward drop index urlindex; 
-     * alter table phplist_linktrack_forward change url url text; 
-     * alter table phplist_linktrack_forward add index urlunique (url(300)); 
-     * alter table phplist_linktrack_forward add index urlindex (url (300)); 
-     * 
-     * with 300 being the new limit. Then also change the substr-255 to substr-300
-     * 
-     * or to change back again:
-     * 
-     * alter table phplist_linktrack_forward drop index urlunique;
-     * alter table phplist_linktrack_forward drop index urlindex; 
-     * alter table phplist_linktrack_forward change url url varchar(255); 
-     * alter table phplist_linktrack_forward add index urlunique (url); 
-     * alter table phplist_linktrack_forward add index (url); 
-     * */
-      
-    $exists = Sql_Fetch_Row_Query(sprintf('select id from %s where url = "%s"',
-      $GLOBALS['tables']['linktrack_forward'],sql_escape(substr($url,0,255))));
+    $query
+    = ' select id'
+    . ' from ' . $GLOBALS['tables']['linktrack_forward']
+    . ' where url = ?';
+    $rs = Sql_Query_Params($query, array($url));
+    $exists = Sql_Fetch_Row($rs);
     if (!$exists[0]) {
       $personalise = preg_match('/uid=/',$link);
-      Sql_Query(sprintf('insert into %s set url = "%s", personalise = %d',
-        $GLOBALS['tables']['linktrack_forward'],sql_escape($url),$personalise));
-      $fwdid = Sql_Insert_id();
+      $query
+      = ' insert into ' . $GLOBALS['tables']['linktrack_forward']
+      . '    (url, personalise)'
+      . ' values'
+      . '    (?, ?)';
+      Sql_Query_Params($query, array($url, $personalise));
+      $fwdid = Sql_Insert_Id($GLOBALS['tables']['linktrack_forward'], 'id');
     } else {
       $fwdid = $exists[0];
     }
@@ -1252,18 +1242,26 @@ function clickTrackLinkId($messageid,$userid,$url,$link) {
     $fwdid = $cached['linktrack'][$link];
   }
 
-  if (!isset($cached['linktracksent'][$messageid]) || !is_array($cached['linktracksent'][$messageid])) $cached['linktracksent'][$messageid] = array();
+  if (!isset($cached['linktracksent'][$messageid]) || !is_array($cached['linktracksent'][$messageid]))
+    $cached['linktracksent'][$messageid] = array();
   if (!isset($cached['linktracksent'][$messageid][$fwdid])) {
-    $tot = Sql_Fetch_Row_Query(sprintf('select total from %s where messageid = %d and forwardid = %d',$GLOBALS['tables']['linktrack_ml'],$messageid,$fwdid));
-    if (!Sql_Affected_Rows()) {
+    $query
+    = ' select total'
+    . ' from ' . $GLOBALS['tables']['linktrack_ml']
+    . ' where messageid = ?'
+    . '   and forwardid = ?';
+    $rs = Sql_Query_Params($query, array($messageid, $fwdid));
+    if (!Sql_Num_Rows($rs)) {
+      $total = 1;
       ## first time for this link/message
-      Sql_Query(sprintf('replace into %s set total = %d,messageid = %d,forwardid = %d',
-        $GLOBALS['tables']['linktrack_ml'],$tot[0]+1,$messageid,$fwdid));
+      # BCD: Isn't this just an insert?
+      Sql_Replace($GLOBALS['tables']['linktrack_ml'], array('total' => $total, 'messageid' => $messageid, 'forwardid' => $fwdid), array('messageid', 'forwardid'));
     } else {
-      Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
-        $GLOBALS['tables']['linktrack_ml'],$tot[0]+1,$messageid,$fwdid));
+      $tot = Sql_Fetch_Row($rs);
+      $total = $tot[0] + 1;
+      Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d', $GLOBALS['tables']['linktrack_ml'], $total, $messageid, $fwdid));
     }
-    $cached['linktracksent'][$messageid][$fwdid] = $tot[0]+1;
+    $cached['linktracksent'][$messageid][$fwdid] = $total;
   } else {
     $cached['linktracksent'][$messageid][$fwdid]++;
     ## write every so often, to make sure it's saved when interrupted
@@ -1544,12 +1542,19 @@ exit;
 }  
 
 # make sure the 0 template has the powered by image
-Sql_Query(sprintf('select * from %s where filename = "%s" and template = 0',
-  $GLOBALS["tables"]["templateimage"],"powerphplist.png"));
-if (!Sql_Affected_Rows())
-  Sql_Query(sprintf('insert into %s (template,mimetype,filename,data,width,height)
-  values(0,"%s","%s","%s",%d,%d)',
-  $GLOBALS["tables"]["templateimage"],"image/png","powerphplist.png",
-  $newpoweredimage,
-  70,30));
+$query
+= ' select *'
+. ' from %s'
+. ' where filename = ?'
+. '   and template = 0';
+$query = sprintf($query, $GLOBALS['tables']['templateimage']);
+$rs = Sql_Query_Params($query, array('powerphplist.png'));
+if (!Sql_Num_Rows($rs)) {
+  $query
+  = ' insert into %s'
+  . '   (template, mimetype, filename, data, width, height)'
+  . ' values (0, ?, ?, ?, ?, ?)';
+  $query = sprintf($query, $GLOBALS["tables"]["templateimage"]);
+  Sql_Query_Params($query, array('image/png', 'powerphplist.png', $newpoweredimage, 70, 30));
+}
 

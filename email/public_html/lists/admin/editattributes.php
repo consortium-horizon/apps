@@ -1,6 +1,8 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
+# $Id: editattributes.php,v 1.6 2008-01-16 05:41:28 brian_252 Exp $
+
 $id = !empty($_GET['id']) ? sprintf('%d',$_GET['id']) : 0;
 ob_end_flush();
 
@@ -33,7 +35,7 @@ switch ($data['type']) {
 ?>
 <div class="panel"><div class="header"></div><!-- ENDOF .header -->
 <div class="content">
-<h3 id="attribute-name"><?php echo htmlspecialchars(stripslashes($data["name"]))?></h3>
+<h3 id="attribute-name"><?php echo $data["name"]?></h3>
 <div class="actions">
 <?php
  print PageLinkButton("attributes",s('Back to attributes'),"");
@@ -42,7 +44,7 @@ switch ($data['type']) {
 
   $button = new ConfirmButton(
      s('Are you sure you want to delete all values?'),
-     PageURL2("editattributes&id=$id&deleteall=yes",s('delete all')),
+     PageURL2("editattributes",s('delete all'),"id=$id&amp;deleteall=yes"),
      s('Delete all'));
    
   print $button->show();
@@ -142,10 +144,8 @@ function deleteItem($table,$attributeid,$delete) {
 }
 
 if (isset($_GET["delete"])) {
-  if (!verifyToken()) {  print Error(s('No Access'));  return; }
   deleteItem($table,$id,sprintf('%d',$_GET["delete"]));
 } elseif(isset($_GET["deleteall"])) {
-  if (!verifyToken()) {  print Error(s('No Access'));  return; }
   $count = 0;
   $errcount = 0;
   $res = Sql_Query("select id from $table");
@@ -167,25 +167,25 @@ if (isset($_GET["action"]) && $_GET["action"] == "new") {
   // ??
   ?>
 
-  <p><?php echo $GLOBALS["I18N"]->get("Add new")." ".htmlspecialchars(stripslashes($data["name"])).', '.$GLOBALS["I18N"]->get("one per line") ?></p>
+  <p><?php echo $GLOBALS["I18N"]->get("Add new")." ".$data["name"].', '.$GLOBALS["I18N"]->get("one per line") ?></p>
   <textarea name="itemlist" rows="20" cols="50"></textarea>
-  <input class="submit" type="submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("Add new")." ".htmlspecialchars(stripslashes($data["name"])) ?>" /><br />
+  <input class="submit" type="submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("Add new")." ".$data["name"] ?>" /><br />
   <hr />
 <?php
 }
 
-$req = Sql_query("SELECT * FROM $table order by listorder,name");
-$num = Sql_Affected_Rows();
-if ($num < ATTRIBUTEVALUE_REORDER_LIMIT && $num > 25)
+$rs = Sql_query("select * from $table order by listorder, name");
+$num = Sql_Num_Rows($rs);
+if ($num < 100 && $num > 25)
   printf('<input class="submit" type="submit" name="action" value="%s" /><br /><br />',$GLOBALS["I18N"]->get("Change order"));
 
-while ($row = Sql_Fetch_array($req)) {
+while ($row = Sql_Fetch_array($rs)) {
   printf( '<div class="row-value"><span class="delete"><a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('delete').'</a></span>',PageURL2("editattributes","","id=$id&amp;delete=".$row["id"]));
-  if ($num < ATTRIBUTEVALUE_REORDER_LIMIT)
+  if ($num < 100)
     printf(' <input type="text" name="listorder[%d]" value="%s" size="5" class="listorder" />',$row["id"],$row["listorder"]);
   printf(' %s %s </div>', $row["name"],($row["name"] == $data["default_value"]) ? '('.$GLOBALS['I18N']->get('default').')':"");
 }
-if ($num && $num < ATTRIBUTEVALUE_REORDER_LIMIT)
+if ($num && $num < 100)
   printf('<br /><input class="submit" type="submit" name="action" value="%s" />',$GLOBALS["I18N"]->get("Change order"));
 
 ?>

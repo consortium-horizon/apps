@@ -126,7 +126,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
   if ($templateok) {
     if (!$id) {
       Sql_Query(sprintf('insert into %s (title) values("%s")',$tables['template'],sql_escape($title)));
-      $id = Sql_Insert_id();
+      $id = Sql_Insert_Id($tables['template'], 'id');
     }
     Sql_Query(sprintf('update %s set title = "%s",template = "%s" where id = %d',
        $tables["template"],sql_escape($title),sql_escape($content),$id));
@@ -154,7 +154,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
       }
     }
 
-    if (sizeof($missingImages) && empty($_POST['sendtest'])) {
+    if (sizeof($missingImages)) {
       include dirname(__FILE__) . "/class.image.inc";
       $image = new imageUpload();
       print "<h3>".$GLOBALS['I18N']->get('Images').'</h3><p class="information">'.$GLOBALS['I18N']->get('Below is the list of images used in your template. If an image is currently unavailable, please upload it to the database.')."</p>";
@@ -201,9 +201,9 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 
     $targetEmails = explode(',',$_POST['testtarget']);
     $testtarget = '';
+    $actionresult .= '<h3>'.$GLOBALS['I18N']->get('Sending test').'</h3>';
     
     if ($id == $systemTemplateID) {
-      $actionresult .= '<h3>'.$GLOBALS['I18N']->get('Sending test').'</h3>';
       foreach ($targetEmails as $email) {
         if (validateEmail($email)) {
           $testtarget .= $email.', ';
@@ -234,9 +234,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
       }
     } else {
       ## Sending test emails of non system templates to be added.
-      $actionresult .= '<p>'.s('Sending a test from templates only works for the system template.').' '.
-      s('To test your template, go to campaigns and send a test campaign using the template.').
-      '</p>';
     }
     if (empty($testtarget)) {
       $testtarget = getConfig('admin_address');

@@ -84,14 +84,13 @@ if (!$GLOBALS["commandline"]) {
       $_SESSION['action_result'] = $GLOBALS['I18N']->get('All draft campaigns deleted');
       print Info($GLOBALS['I18N']->get('campaigns deleted'));
     } else {
-      verifyCsrfGetToken();
       deleteMessage(sprintf('%d',$_GET['delete']));
       print Info($GLOBALS['I18N']->get('campaign deleted'));
       $_SESSION['action_result'] = $GLOBALS['I18N']->get('Campaign deleted');
     }
   }
   
-  $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(now()) - unix_timestamp(entered) as age from %s where status = "draft" %s order by entered desc',$GLOBALS['tables']['message'],$ownership));
+  $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(current_timestamp) - unix_timestamp(entered) as age from %s where status = "draft" %s order by entered desc',$GLOBALS['tables']['message'],$ownership));
   $numdraft = Sql_Num_Rows($req);
   if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
     print '<p>'.PageLinkActionButton('send&amp;new=1',$I18N->get('start a new message'),'','',s('Start a new campaign')).'</p>';
@@ -127,8 +126,8 @@ if ($done) {
 
 /*if (!$_GET["id"]) {
   Sql_Query(sprintf('insert into %s (subject,status,entered)
-    values("(no subject)","draft",now())',$GLOBALS["tables"]["message"]));
-  $id = Sql_Insert_id();
+    values("(no subject)","draft",current_timestamp)',$GLOBALS["tables"]["message"]));
+  $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   Redirect("send&amp;id=$id");
 }
 */
@@ -162,9 +161,6 @@ $panelcontent .= $saveDraftButton;
 $panel = new UIPanel($tabs->tabTitle(),$panelcontent,$tabs->prevNextNav());
 print $panel->display();
 
-if (isset($metaPanel)) {
-    print $metaPanel->display();
-}
 
 if (isset($testpanel)) {
   print $testpanel->display();

@@ -23,13 +23,8 @@ if (!empty($_POST['importcontent'])) {
   $count['imported'] = 0;
   $count['duplicate'] = 0;
   $count['processed'] = 0;
-  $count['addedtolist'] = 0;
   $count['invalid'] = 0;
   $count['foundonblacklist'] = 0;
-  
-  $rejectReport = array(
-    'invalid' => "",
-  );
   
   $total = count($lines);
   foreach ($lines as $line) {
@@ -66,19 +61,15 @@ if (!empty($_POST['importcontent'])) {
       ## do not add them to the list(s) when blacklisted
       $isBlackListed = isBlackListed($line);
       if (!$isBlackListed) {
-        $count['addedtolist']++;
         foreach($selected_lists as $k => $listid) {
-          $query = "replace into ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,now())";
+          $query = "replace into ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,current_timestamp)";
           $result = Sql_query($query);
         }
       } else {
-        ## mark blacklisted, just in case ##17288
-        Sql_Query(sprintf('update %s set blacklisted = 1 where id = %d', $tables["user"], $userid));
         $count['foundonblacklist']++;
       }
     } else {
       $count['invalid']++;
-      $rejectReport['invalid'] .= "\n".$line; ## @TODO hmm, this can blow up
     }
 
     $count['processed']++;
@@ -87,16 +78,12 @@ if (!empty($_POST['importcontent'])) {
       flush();
     }
   }
-  $report =  s('%d lines processed',$count['processed'])."\n";
-  $report .= s('%d email addresses added to the list(s)',$count['addedtolist'])."\n";
-  $report .= s('%d new email addresses imported',$count['imported'])."\n";
-  $report .= s('%d email addresses already existed in the database',$count['duplicate'])."\n";
-  if (!empty($count['invalid'])) {
-    $report .= s('%d invalid email addresses',$count['invalid'])."\n";
-    $report .= s('Invalid addresses will be reported in the report that is sent to %s',getConfig("admin_address"));
-  }
+  $report = sprintf($GLOBALS['I18N']->get('%d lines processed')."\n",$count['processed']);
+  $report .= sprintf($GLOBALS['I18N']->get('%d email imported')."\n",$count['imported']);
+  $report .= sprintf($GLOBALS['I18N']->get('%d duplicates')."\n",$count['duplicate']);
+  $report .= sprintf($GLOBALS['I18N']->get('%d invalidated')."\n",$count['invalid']);
   if ($count['foundonblacklist']) {
-    $report .= s('%d addresses were blacklisted and have not been subscribed to the list',$count['foundonblacklist'])."\n";
+    $report .= sprintf($GLOBALS['I18N']->get('%d addresses were blacklisted and have not been subscribed to the list')."\n",$count['foundonblacklist']);
   }
 
   print ActionResult(nl2br($report));
@@ -109,18 +96,12 @@ if (!empty($_POST['importcontent'])) {
     }
     print '<div class="actions">
     '
-    .PageLinkButton('send&new=1'.$toList,s('Send a campaign'))
-    .PageLinkButton('importsimple',s('Import some more emails'))
+    .PageLinkButton('send&new=1'.$toList,$GLOBALS['I18N']->get('Send a campaign'))
+    .PageLinkButton('importsimple',$GLOBALS['I18N']->get('Import some more emails'))
     
     .'</div>';
   }
-  
-  if (!empty($rejectReport['invalid'])) {
-    $report .= "\n\n".s('Rejected email addresses').":\n";
-    $report .= $rejectReport['invalid'];
-  }
-  
-  sendMail(getConfig("admin_address"), s('phplist Import Results'), $report);
+  sendMail(getConfig("admin_address"), $GLOBALS['I18N']->get('phplist Import Results'), $report);
   foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
     $plugin->importReport($report);
   }
