@@ -1,11 +1,32 @@
 'use strict';
 
 $(function () {
+  initLocales();
   initCarousel();
   loadVideos();
   loadNews();
   //loadDiscussions();
 });
+
+function initLocales () {
+  moment.locale('fr', {
+    relativeTime : {
+      future : "%s",
+      past : "%s",
+      s : "à l'instant",
+      m : "il y a peu",
+      mm : "il y a peu",
+      h : "il y a 1 h",
+      hh : "il y a %d h",
+      d : "hier",
+      dd : "il y a %d jours",
+      M : "il y a 1 mois",
+      MM : "il y a %d mois",
+      y : "il y a 1 an",
+      yy : "il y a %d ans"
+    }
+  });
+}
 
 function initCarousel () {
   $('[carousel]').slick({
@@ -53,7 +74,7 @@ function parseRSSEntry (entry, category) {
   var o = {};
   o.title = entry.title;
   o.date = entry.publishedDate;
-  o.localDate = new Date(o.date).toLocaleFormat("%d %b");
+  o.displayDate = moment(o.date).fromNow();
   o.link = entry.link;
   o.author = entry.author;
   o.img = /<img[^>]+src=['"]?([^"\s]+)['"]/.exec( entry.content );
@@ -69,7 +90,7 @@ function parseYoutubeEntry (entry) {
   var o = {};
   o.title = entry.title;
   o.date = entry.publishedAt;
-  o.localDate = new Date(o.date).toLocaleFormat("%d %b");
+  o.displayDate = moment(o.date).fromNow();
   o.link = "https://www.youtube.com/watch?v=" + entry.resourceId.videoId;
   o.author = entry.channelTitle;
   o.img = entry.thumbnails.high.url;
@@ -104,7 +125,7 @@ function loadVideos () {
     success: function(data) {
       data.items.forEach(function (entry) {
         var o = parseYoutubeEntry(entry.snippet);
-        $('[carousel]').slick('slickAdd', "<a class='carousel-item' href='"+o.link+"' target='_blank'><img src='"+o.img+"'><div class='caption'><div class='cat'>"+o.cat+"</div><time datetime='"+o.date+"'>"+o.localDate+"</time><span class='author'> <small>par </small>"+o.author+"</span><h3>"+o.title+"</h3></div></a>");
+        $('[carousel]').slick('slickAdd', "<a class='carousel-item' href='"+o.link+"' target='_blank'><img src='"+o.img+"'><div class='caption'><div class='cat'>"+o.cat+"</div><time datetime='"+o.date+"'>"+o.displayDate+"</time><span class='author'> <small>par </small>"+o.author+"</span><h3>"+o.title+"</h3></div></a>");
       });
     }
   });
