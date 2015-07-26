@@ -161,7 +161,7 @@ a[button] {
       }
 
       &::after {
-        content: attr(title);
+        content: attr(data-game);
         position: absolute;
         background: rgba(14, 15, 31, .7);
         top: 0;

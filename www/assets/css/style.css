@@ -123,7 +123,7 @@ a[button] {
       object-fit: cover;
       padding: 0 2px 4px; }
     #header section[background] .tile::after {
-      content: attr(title);
+      content: attr(data-game);
       position: absolute;
       background: rgba(14, 15, 31, 0.7);
       top: 0;
