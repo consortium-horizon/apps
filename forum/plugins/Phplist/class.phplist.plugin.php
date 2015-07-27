@@ -76,7 +76,7 @@ class PhplistPlugin extends Gdn_Plugin {
 
     private function bulk($OptIn = TRUE) {
 
-        include_once(dirname(__FILE__) . DS . 'phplistrestapi' . DS .'phplist_restapi_helper.php');
+        include_once(dirname(__FILE__) . DS . 'phplist_restapi_helper' . DS .'phplist_restapi_helper.php');
 
         $GLOBALS['tmpdir'] = '/tmp';
 
@@ -123,7 +123,7 @@ class PhplistPlugin extends Gdn_Plugin {
             $Controller = Gdn::Controller();
         }
 
-        include_once(dirname(__FILE__) . DS . 'phplistrestapi' . DS .'phplist_restapi_helper.php');
+        include_once(dirname(__FILE__) . DS . 'phplist_restapi_helper' . DS .'phplist_restapi_helper.php');
 
         $GLOBALS['tmpdir'] = '/tmp';
 
