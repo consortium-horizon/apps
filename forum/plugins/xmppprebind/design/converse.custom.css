@@ -1,5 +1,5 @@
 /* Hide the main box, with its Contacts and Rooms tabs */
-#conversejs #controlbox { display: none; }
+#conversejs #controlbox { display: none !important; }
 
 /* Hide the "minimized" area */
 #conversejs #toggle-minimized-chats { display: none; }
