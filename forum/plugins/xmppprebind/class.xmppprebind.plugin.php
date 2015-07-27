@@ -38,6 +38,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
 
     public function AssetModel_StyleCss_Handler($Sender) {
         $Sender->AddCssFile('converse.min.css', 'plugins/xmppprebind');
+        $Sender->AddCssFile('converse.custom.css', 'plugins/xmppprebind');
     }
 
     public function RootController_xmpp_Create($Sender, $Args) {
