@@ -154,7 +154,8 @@ section[description] {
   text-align: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background: #eee; }
+  background: #eee;
+  background: url("../img/home-BWBanner.jpg"); }
   section[description] section[items] .tile, section[description] section[items] .icon {
     display: inline-block;
     vertical-align: top; }
