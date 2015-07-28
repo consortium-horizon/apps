@@ -1100,7 +1100,7 @@ class DiscussionModel extends VanillaModel {
          //->Where('w.DateLastViewed', NULL)
          //->OrWhere('d.DateLastComment >', 'w.DateLastViewed')
          //->EndWhereGroup()
-         ->Where('d.CountComments >', 'COALESCE(w.CountComments, 0)', TRUE, FALSE)
+         ->Where('d.CountComments >', 'COALESCE(w.CountComments, 0)', TRUE, FALSE);
          //->Where($Wheres);
       
       $Result = $this->SQL
