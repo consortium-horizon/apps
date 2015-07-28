@@ -1057,39 +1057,39 @@ class DiscussionModel extends VanillaModel {
       else
          $Perms = self::CategoryPermissions();
       
-      if (!$Wheres || (count($Wheres) == 1 && isset($Wheres['d.CategoryID']))) {
-         // Grab the counts from the faster category cache.
-         if (isset($Wheres['d.CategoryID'])) {
-            $CategoryIDs = (array)$Wheres['d.CategoryID'];
-            if ($Perms === FALSE)
-               $CategoryIDs = array();
-            elseif (is_array($Perms))
-               $CategoryIDs = array_intersect($CategoryIDs, $Perms);
+      // if (!$Wheres || (count($Wheres) == 1 && isset($Wheres['d.CategoryID']))) {
+      //    // Grab the counts from the faster category cache.
+      //    if (isset($Wheres['d.CategoryID'])) {
+      //       $CategoryIDs = (array)$Wheres['d.CategoryID'];
+      //       if ($Perms === FALSE)
+      //          $CategoryIDs = array();
+      //       elseif (is_array($Perms))
+      //          $CategoryIDs = array_intersect($CategoryIDs, $Perms);
             
-            if (count($CategoryIDs) == 0) {
-               return 0;
-            } else {
-               $Perms = $CategoryIDs;
-            }
-         }
+      //       if (count($CategoryIDs) == 0) {
+      //          return 0;
+      //       } else {
+      //          $Perms = $CategoryIDs;
+      //       }
+      //    }
          
-         $Categories = CategoryModel::Categories();
-         $Count = 0;
+      //    $Categories = CategoryModel::Categories();
+      //    $Count = 0;
          
-         foreach ($Categories as $Cat) {
-            if (is_array($Perms) && !in_array($Cat['CategoryID'], $Perms))
-               continue;
-            $Count += (int)$Cat['CountDiscussions'];
-         }
-         return $Count;
-      }
+      //    foreach ($Categories as $Cat) {
+      //       if (is_array($Perms) && !in_array($Cat['CategoryID'], $Perms))
+      //          continue;
+      //       $Count += (int)$Cat['CountDiscussions'];
+      //    }
+      //    return $Count;
+      // }
       
       if ($Perms !== TRUE) {
          $this->SQL->WhereIn('c.CategoryID', $Perms);
       }
       
       $this->EventArguments['Wheres'] = &$Wheres;
-		$this->FireEvent('BeforeGetUnreadCount'); // @see 'BeforeGet' for consistency in count vs. results
+      $this->FireEvent('BeforeGetUnreadCount'); // @see 'BeforeGet' for consistency in count vs. results
          
       $this->SQL
          ->Select('d.DiscussionID', 'count', 'CountDiscussions')
