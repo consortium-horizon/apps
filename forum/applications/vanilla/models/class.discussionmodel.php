@@ -1084,9 +1084,9 @@ class DiscussionModel extends VanillaModel {
       //    return $Count;
       // }
       
-      if ($Perms !== TRUE) {
-         $this->SQL->WhereIn('c.CategoryID', $Perms);
-      }
+      // if ($Perms !== TRUE) {
+      //    $this->SQL->WhereIn('c.CategoryID', $Perms);
+      // }
       
       $this->EventArguments['Wheres'] = &$Wheres;
       $this->FireEvent('BeforeGetUnreadCount'); // @see 'BeforeGet' for consistency in count vs. results
@@ -1101,7 +1101,7 @@ class DiscussionModel extends VanillaModel {
          //->OrWhere('d.DateLastComment >', 'w.DateLastViewed')
          //->EndWhereGroup()
          ->Where('d.CountComments >', 'COALESCE(w.CountComments, 0)', TRUE, FALSE)
-         ->Where($Wheres);
+         //->Where($Wheres);
       
       $Result = $this->SQL
          ->Get()
