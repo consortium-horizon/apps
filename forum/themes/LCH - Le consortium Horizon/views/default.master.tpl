@@ -32,16 +32,48 @@
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
       <ul class="SiteMenu">
-        {home_link}
+      	<li>
+      		<a href="http://www.consortium-horizon.com/">
+        		Accueil
+        	</a>
+      	</li>
+        <li>
+        	<a href="{link path="/forum/"}">
+        		Forum
+        	</a>
+        </li>
         {dashboard_link}
         <li class="dropdown">
-          Média
+          La Guilde
           <ul>
-            <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ">La chaine youtube</a></li>
+            <li>
+            	<a href="#">
+					La Charte (WIP)
+            	</a>
+            </li>
+            <li>
+            	<a href="#">
+					Organigramme (WIP)
+            	</a>
+            </li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          Nos médias
+          <ul>
+            <li>
+	            <a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ">
+	            	Sur YouTube
+	            </a>
+            </li>
+            <li>
+	            <a href="https://www.consortium-horizon.com/wiki/Accueil">
+	            	Notre Wiki (WIP)
+	            </a>
+            </li>
           </ul>
         </li>
         {discussions_link}
-        {inbox_link}
         {custom_menu}
         {profile_link}
         {signinout_link}
