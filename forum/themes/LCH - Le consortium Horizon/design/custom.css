@@ -323,6 +323,21 @@ body {
   color: #2877d0;
 }
 
+.New .Title::after {
+  content: "non lu";
+  margin-left: 9px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  background: #01BD01;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 3px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 /* ------ */
 /* Footer */
 /* ------ */
