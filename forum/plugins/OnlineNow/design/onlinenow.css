@@ -1,0 +1,102 @@
+.onimage {
+position: relative;
+top: 0;
+margin: 0;
+padding: 0;
+border: 0;
+border-radius: 2px;
+background: #000;
+width: 40px;
+height: 40px;
+}
+
+#OnlineNow.Box ul.PanelInfo {
+min-height: 40px;
+border: 0 none;
+text-align: left;
+width: 100%;
+}
+#OnlineNow.Box ul.PanelInfo li {
+display: inline-block;
+width: 40px;
+height: 40px;
+padding: 0;
+border: 0 none;
+text-align: left;
+white-space: nowrap;
+padding: 0;
+box-shadow: none;
+background:transparent;
+margin: 4px;
+}
+
+#OnlineNow.Box ul.PanelInfo li:hover div.Time {
+visibility: visible;
+display:block;
+}
+
+#OnlineNow.Box ul.PanelInfo li div.Time a.Popup.Name:hover,#OnlineNow.Box ul.PanelInfo li div.Time a.Popup.Time:hover {
+color:red;
+}
+
+#OnlineNow.Box ul.PanelInfo li a.PhotoWrap {
+padding:0;
+}
+
+#OnlineNow.Box ul.PanelInfo li div.Time:before, #OnlineNow.Box ul.PanelInfo li div.Time:after {
+border-top: 7px solid #fff;
+border-left: 7px solid transparent;
+border-right: 7px solid transparent;
+content: "";
+left: 27px;
+position: absolute;
+bottom: -8px;
+}
+#OnlineNow.Box ul.PanelInfo li div.Time:after {
+   border-top: 7px solid red;
+   
+}
+#OnlineNow.Box ul.PanelInfo li.Invisible{
+	display:none;
+}
+#OnlineNow.Box ul.PanelInfo li div.Time {
+position: relative;
+left: -10px;
+top: -63px;
+visibility: hidden;
+padding: 0;
+min-width: 90px;
+text-align: center;
+min-height: 20px;
+width: 100%;
+background: none;
+border-radius: none;
+border: 0;
+box-shadow: none;
+}
+#OnlineNow.Box ul.PanelInfo li div.Time a.Popup.Name, #OnlineNow.Box ul.PanelInfo li div.Time a.Popup.Time {
+color: #fff;
+position: relative;
+left: 0;
+top: 0;
+padding:4px!important;
+min-width: 80px;
+text-align: center;
+min-height: 15px;
+width: 100%;
+background:rgba(0,0,0,.7);
+border: 1px solid #222;
+box-shadow: 1px 1px 6px 0 #000;
+display: inline;
+font-size:10px!important;
+z-index:99999!important;
+}
+#OnlineNow.Box ul.PanelInfo li div.Time a.Popup.Name {
+border-radius: 3px 0 0 3px!important;
+border-right: 0!important;
+}
+
+#OnlineNow.Box ul.PanelInfo li div.Time a.Popup.Time {
+border-radius: 0 3px 3px 0!important;
+border-right: 0!important;
+}
