@@ -274,6 +274,11 @@ body {
 /* Categories */
 /* ---------- */
 
+// Remove description on the homepage
+#vanilla_categories_index {
+   .HomepageTitle, .PageDescription {display: none;}
+}
+
 .CategoryTable {
 
    .Item {

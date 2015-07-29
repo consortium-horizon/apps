@@ -245,6 +245,10 @@ body {
 /* ---------- */
 /* Categories */
 /* ---------- */
+#vanilla_categories_index .HomepageTitle, #vanilla_categories_index .PageDescription {
+  display: none;
+}
+
 .CategoryTable .Item td {
   padding: 10px 5px;
 }
