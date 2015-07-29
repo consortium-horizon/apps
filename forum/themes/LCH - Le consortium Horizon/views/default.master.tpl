@@ -38,7 +38,7 @@
         	</a>
       	</li>
         <li>
-        	<a href="{link path="/forum/"}">
+        	<a href="{link path="/"}">
         		Forum
         	</a>
         </li>
