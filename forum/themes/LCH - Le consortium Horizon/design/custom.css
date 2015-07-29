@@ -245,7 +245,7 @@ body {
 /* ---------- */
 /* Categories */
 /* ---------- */
-#vanilla_categories_index .HomepageTitle, #vanilla_categories_index .PageDescription {
+#vanilla_categories_index.Section-CategoryList .HomepageTitle, #vanilla_categories_index.Section-CategoryList .PageDescription {
   display: none;
 }
 

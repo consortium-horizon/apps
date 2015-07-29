@@ -275,7 +275,7 @@ body {
 /* ---------- */
 
 // Remove description on the homepage
-#vanilla_categories_index {
+#vanilla_categories_index.Section-CategoryList {
    .HomepageTitle, .PageDescription {display: none;}
 }
 
