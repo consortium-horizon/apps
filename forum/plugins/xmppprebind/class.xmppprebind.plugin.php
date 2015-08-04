@@ -115,7 +115,13 @@ require(['converse'], function (converse) {
         ping_interval: 60,
         allow_otr: false,
     });
-    converse.rooms.open('bar@chat.consortium-horizon.com');
+    var chatroom = converse.rooms.get('bar@chat.consortium-horizon.com');
+    if (!chatroom)
+    {
+        converse.rooms.open('bar@chat.consortium-horizon.com');
+        chatroom = converse.rooms.get('bar@chat.consortium-horizon.com');
+        chatroom.minimize();
+    }
 });
 </script>";
 
