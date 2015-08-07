@@ -313,6 +313,13 @@ body {
   white-space: nowrap;
 }
 
+.Announcement {
+  background: #E9F2FF !important;
+}
+.Announcement .Tag-Announcement {
+  background: #2877d0;
+}
+
 /* ----------- */
 /* Discussions */
 /* ----------- */
