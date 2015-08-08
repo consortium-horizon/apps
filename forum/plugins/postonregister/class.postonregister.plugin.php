@@ -17,12 +17,7 @@ class postonregister extends Gdn_Plugin {
     // Get UserName
     $name = GetValue('Name', $user, $Default = FALSE, $Remove = FALSE);
     // Get first visit date
-    $date = '2015-08-11 16:59:00';
-    $thedate = Gdn_Format::ToDateTime();
-    ob_start();
-    var_dump($thedate);
-    $dumpDate = ob_get_clean();
-    //GetValue('DateFirstVisit', $user, $Default = FALSE, $Remove = FALSE)
+    $date = Gdn_Format::ToDateTime();
     // Get additionnal info (using profile extender)
     $userMeta = Gdn::UserMetaModel()->GetUserMeta($userID, 'Profile%');
     $game = val('Profile.Pourqueljeuxpostulezvous', $userMeta);
@@ -34,34 +29,29 @@ class postonregister extends Gdn_Plugin {
     // Feed it ! Feeeeeeeeed it !
     $SQL = Gdn::Database()->SQL();
     // Where you wanna insert the discussion (which category)
-    $Discussion['CategoryID'] = '9';
+    $Discussion['CategoryID'] = '1';
+    // Discussion Format (BBcode)
+    $Discussion['Format'] = 'BBCode';
     // Discussion title
-    $Discussion['Name'] = 'Candidature de <span class="username">' . (string) $name . '</span> pour: ' . (string) $game . ' [En attente de validation]';
+    $Discussion['Name'] = '[' . (string) $game . '] <span class="username">' . (string) $name . '</span> [En attente de validation]';
     // Discussion content
-    $Discussion['Body'] = '<h4>Pour quel jeu en particulier postulez-vous dans la Guilde ?</h4><br>'
+    $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]<br>'
                . $game .
                '<br>
-               <h4>A quels autres jeux jouez-vous également ?</h4><br>'
+               [b]A quels autres jeux jouez-vous également ?[/b]<br>'
                . $games .
                '<br>
-               <h4>Comment avez-eu connaissance du Consortium Horizon ?</h4><br>'
+               [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]<br>'
                . $info .
                '<br>
-               <h4>Dites-en un peu plus sur vous :</h4><br>'
+               [b]Dites-en un peu plus sur vous :[/b]<br>'
                . $userInfo .
-               '<br>
-               <h4>La date que j ai mis en fixe est :</h4><br>'
-               . $date .
-               '<br>
-               <h4>La date que je veux balancer est :</h4><br>'
-               . $thedate .
-               '<br>
-               <h4>Et le dump me donne :</h4><br>'
-               . $dumpDate .
                '<br>
                En attente de validation par un modérateur';
     // Date of creation
-    $Discussion['DateInserted'] = $thedate; // '2015-08-09 00:00:00' is working SO WTF
+    $Discussion['DateInserted'] = $date;
+    // Date of last comment
+    $Discussion['DateLastComment'] = $date;
     // The author
     $Discussion['InsertUserID'] = $userID ;
     // Insert in the right category
