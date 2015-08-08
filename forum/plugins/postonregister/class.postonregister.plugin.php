@@ -29,7 +29,7 @@ class postonregister extends Gdn_Plugin {
     // Feed it ! Feeeeeeeeed it !
     $SQL = Gdn::Database()->SQL();
     // Where you wanna insert the discussion (which category)
-    $Discussion['CategoryID'] = '1';
+    $Discussion['CategoryID'] = '9';
     // Discussion Format (BBcode)
     $Discussion['Format'] = 'BBCode';
     // Discussion title
