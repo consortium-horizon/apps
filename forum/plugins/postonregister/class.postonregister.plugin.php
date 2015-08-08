@@ -20,7 +20,7 @@ class postonregister extends Gdn_Plugin {
     $date = Gdn_Format::ToDateTime();
     // Get additionnal info (using profile extender)
     $userMeta = Gdn::UserMetaModel()->GetUserMeta($userID, 'Profile%');
-    $game = val('Profile.Pourqueljeuxpostulezvous', $userMeta);
+    $game = val('Profile.Pourqueljeupostulezvous', $userMeta);
     $games = val('Profile.Aquelsjeujouezvousgalement', $userMeta);
     $info = val('Profile.CommentavezvouseuconnaissanceduConsortiumHorizon', $userMeta);
     $userInfo = val('Profile.Ditesnousenplussurvous', $userMeta);
@@ -33,18 +33,26 @@ class postonregister extends Gdn_Plugin {
     // Discussion Format (BBcode)
     $Discussion['Format'] = 'BBCode';
     // Discussion title
-    $Discussion['Name'] = '[' . (string) $game . '] <span class="username">' . (string) $name . '</span> [En attente de validation]';
+    $Discussion['Name'] = '[' . (string) $game . ']' . (string) $name . ' [En attente de validation]';
     // Discussion content
-    $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]<br>'
+    $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]
+
+               '
                . $game .
                '<br>
-               [b]A quels autres jeux jouez-vous également ?[/b]<br>'
+               [b]A quels autres jeux jouez-vous également ?[/b]
+
+               '
                . $games .
                '<br>
-               [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]<br>'
+               [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]
+
+               '
                . $info .
                '<br>
-               [b]Dites-en un peu plus sur vous :[/b]<br>'
+               [b]Dites-en un peu plus sur vous :[/b]
+
+               '
                . $userInfo .
                '<br>
                En attente de validation par un modérateur';
