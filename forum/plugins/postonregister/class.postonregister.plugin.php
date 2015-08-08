@@ -34,7 +34,7 @@ class postonregister extends Gdn_Plugin {
     // Feed it ! Feeeeeeeeed it !
     $SQL = Gdn::Database()->SQL();
     // Where you wanna insert the discussion (which category)
-    $Discussion['CategoryID'] = '1';
+    $Discussion['CategoryID'] = '9';
     // Discussion title
     $Discussion['Name'] = 'Candidature de <span class="username">' . (string) $name . '</span> pour: ' . (string) $game . ' [En attente de validation]';
     // Discussion content
