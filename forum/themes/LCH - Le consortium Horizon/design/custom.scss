@@ -5,6 +5,7 @@
 /* ------------------------ */
 
 @import "mixins";
+@import "fonts";
 
 /* ------------------------ */
 /* Colors ... such colors ! */
@@ -82,8 +83,8 @@ a {
 /* ---- */
 
 body {
-   /*REMOVE THIS AND USE FONT FACE*/
-   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+   font-weight: normal;
    height: 100vh;
    @include vertical-gradient-with-image(url('img/backgrounds/LCH--default.png'), black);
    background-repeat: no-repeat;
