@@ -69,7 +69,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
       $Menu = &$Sender->EventArguments['SideMenu'];
       $Menu->AddLink('Users', T('Profile Fields'), 'settings/profileextender', 'Garden.Settings.Manage');
    }
-   
+
    /**
     * Add non-checkbox fields to registration forms.
     */
@@ -112,7 +112,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
       if ('0-00-00' == $Sender->Form->GetFormValue('DateOfBirth'))
          $Sender->Form->SetFormValue('DateOfBirth', NULL);
    }
-   
+
    /**
     * Special manipulations.
     */
@@ -149,10 +149,10 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
                break;
          }
       }
-      
+
       return $Fields;
    }
-      
+
    /**
     * Add fields to edit profile form.
     */
@@ -235,7 +235,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
 
       include($this->GetView('profilefields.php'));
    }
-   
+
    /**
     * Settings page.
     */
@@ -345,7 +345,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
       }
       $Sender->Render('delete', '', 'plugins/ProfileExtender');
    }
-   
+
    /**
     * Display custom fields on Edit User form.
     */
@@ -372,10 +372,10 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
 			      Gdn::UserModel()->SaveAttribute($Sender->User->UserID, 'CustomProfileFields', FALSE);
 			   }
          }
-         
+
          // Send them off for magic formatting
          $ProfileFields = $this->ParseSpecialFields($ProfileFields);
-         
+
          // Get all field data, error check
          $AllFields = $this->GetProfileFields();
          if (!is_array($AllFields) || !is_array($ProfileFields))
@@ -408,7 +408,49 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
          // No errors
       }
    }
-   
+
+   /**
+    * Save custom profile fields on registration.
+    *
+    * @param $Sender object
+    * @param $Args array
+    */
+   public function userModel_afterInsertUser_handler($Sender, $Args) {
+       $this->updateUserFields($Args['InsertUserID'], $Args['User']);
+   }
+
+   /**
+    * Update user with new profile fields.
+    *
+    * @param $UserID int
+    * @param $Fields array
+    */
+   protected function updateUserFields($UserID, $Fields) {
+       // Confirm we have submitted form values
+       if (is_array($Fields)) {
+           // Retrieve whitelist & user column list
+           $AllowedFields = $this->getProfileFields();
+           $Columns = Gdn::sql()->fetchColumns('User');
+
+           foreach ($Fields as $Name => $Field) {
+               // Whitelist
+               if (!array_key_exists($Name, $AllowedFields)) {
+                   unset($Fields[$Name]);
+                   continue;
+               }
+               // Don't allow duplicates on User table
+               if (in_array($Name, $Columns)) {
+                   unset($Fields[$Name]);
+               }
+           }
+
+           // Update UserMeta if any made it thru
+           if (count($Fields)) {
+               Gdn::userModel()->setMeta($UserID, $Fields, 'Profile.');
+           }
+       }
+   }
+
    /**
     * Save custom profile fields when saving the user.
     */
@@ -435,7 +477,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
             Gdn::UserModel()->SetMeta($UserID, $FormPostValues, 'Profile.');
       }
    }
-   
+
    /**
     * Import from CustomProfileFields or upgrade from ProfileExtender 2.0.
     */
