@@ -419,6 +419,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     */
    public function userModel_afterInsertUser_handler($Sender, $Args) {
        ChromePhp::log('- Insert user');
+       ChromePhp::log(var_dump($Args));
        $this->updateUserFields($Args['InsertUserID'], $Args['User']);
    }
 
@@ -430,6 +431,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     */
    public function userModel_afterSave_handler($Sender, $Args) {
        ChromePhp::log('- Saving user');
+       ChromePhp::log(var_dump($Args));
        $this->updateUserFields($Args['UserID'], $Args['FormPostValues']);
    }
 
