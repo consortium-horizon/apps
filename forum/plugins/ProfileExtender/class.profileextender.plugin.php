@@ -18,6 +18,8 @@ $PluginInfo['ProfileExtender'] = array(
    'AuthorUrl' => 'http://lincolnwebs.com'
 );
 
+include 'ChromePhp.php';
+
 /**
  * Plugin to add additional fields to user profiles.
  *
@@ -416,7 +418,19 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     * @param $Args array
     */
    public function userModel_afterInsertUser_handler($Sender, $Args) {
+       ChromePhp::log('- Insert user');
        $this->updateUserFields($Args['InsertUserID'], $Args['User']);
+   }
+
+   /**
+    * Save custom profile fields when saving the user.
+    *
+    * @param $Sender object
+    * @param $Args array
+    */
+   public function userModel_afterSave_handler($Sender, $Args) {
+       ChromePhp::log('- Saving user');
+       $this->updateUserFields($Args['UserID'], $Args['FormPostValues']);
    }
 
    /**
@@ -426,6 +440,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     * @param $Fields array
     */
    protected function updateUserFields($UserID, $Fields) {
+       ChromePhp::log('- Update User fields');
        // Confirm we have submitted form values
        if (is_array($Fields)) {
            // Retrieve whitelist & user column list
@@ -451,32 +466,33 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
        }
    }
 
-   /**
-    * Save custom profile fields when saving the user.
-    */
-   public function UserModel_AfterSave_Handler($Sender) {
-      // Confirm we have submitted form values
-      $FormPostValues = GetValue('FormPostValues', $Sender->EventArguments);
-
-      if (is_array($FormPostValues)) {
-         $UserID = GetValue('UserID', $Sender->EventArguments);
-         $AllowedFields = $this->GetProfileFields();
-         $Columns = Gdn::SQL()->FetchColumns('User');
-
-         foreach ($FormPostValues as $Name => $Field) {
-            // Whitelist
-            if (!array_key_exists($Name, $AllowedFields))
-               unset($FormPostValues[$Name]);
-            // Don't allow duplicates on User table
-            if (in_array($Name, $Columns))
-               unset($FormPostValues[$Name]);
-         }
-
-         // Update UserMeta if any made it thru
-         if (count($FormPostValues))
-            Gdn::UserModel()->SetMeta($UserID, $FormPostValues, 'Profile.');
-      }
-   }
+  //  /**
+  //   * Save custom profile fields when saving the user.
+  //   */
+  //  public function UserModel_AfterSave_Handler($Sender) {
+  //    ChromePhp::log('This is just a log message');
+  //     // Confirm we have submitted form values
+  //     $FormPostValues = GetValue('FormPostValues', $Sender->EventArguments);
+   //
+  //     if (is_array($FormPostValues)) {
+  //        $UserID = GetValue('UserID', $Sender->EventArguments);
+  //        $AllowedFields = $this->GetProfileFields();
+  //        $Columns = Gdn::SQL()->FetchColumns('User');
+   //
+  //        foreach ($FormPostValues as $Name => $Field) {
+  //           // Whitelist
+  //           if (!array_key_exists($Name, $AllowedFields))
+  //              unset($FormPostValues[$Name]);
+  //           // Don't allow duplicates on User table
+  //           if (in_array($Name, $Columns))
+  //              unset($FormPostValues[$Name]);
+  //        }
+   //
+  //        // Update UserMeta if any made it thru
+  //        if (count($FormPostValues))
+  //           Gdn::UserModel()->SetMeta($UserID, $FormPostValues, 'Profile.');
+  //     }
+  //  }
 
    /**
     * Import from CustomProfileFields or upgrade from ProfileExtender 2.0.
