@@ -441,6 +441,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     */
    protected function updateUserFields($UserID, $Fields) {
        ChromePhp::log('- Update User fields');
+       ChromePhp::log(var_dump($Fields));
        // Confirm we have submitted form values
        if (is_array($Fields)) {
            // Retrieve whitelist & user column list
