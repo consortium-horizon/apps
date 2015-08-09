@@ -419,7 +419,6 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     */
    public function userModel_afterInsertUser_handler($Sender, $Args) {
        ChromePhp::log('- Insert user');
-       ChromePhp::log(var_dump($Args));
        $this->updateUserFields($Args['InsertUserID'], $Args['User']);
    }
 
@@ -431,7 +430,6 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     */
    public function userModel_afterSave_handler($Sender, $Args) {
        ChromePhp::log('- Saving user');
-       ChromePhp::log(var_dump($Args));
        $this->updateUserFields($Args['UserID'], $Args['FormPostValues']);
    }
 
@@ -443,7 +441,6 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     */
    protected function updateUserFields($UserID, $Fields) {
        ChromePhp::log('- Update User fields');
-       ChromePhp::log(var_dump($Fields));
        // Confirm we have submitted form values
        if (is_array($Fields)) {
            // Retrieve whitelist & user column list
