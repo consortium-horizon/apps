@@ -11,6 +11,8 @@
  * @return string HTML of the Participated Link or empty string.
  */
 function smarty_function_planetside_online($params, &$smarty) {
+
+  echo "<div>Qui est en ligne sur PS2 ?</div>";
   if (file_exists ( "themes/LCH - Le consortium Horizon/SmartyPlugins/planetsideOnlineModule.html" )) {
     $file_contents = readfile( "themes/LCH - Le consortium Horizon/SmartyPlugins/planetsideOnlineModule.html" );
   } else {
