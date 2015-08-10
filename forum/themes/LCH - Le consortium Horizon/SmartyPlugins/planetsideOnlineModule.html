@@ -1,0 +1,92 @@
+<script src="//ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+(function($) {
+	var ViewModel = function(options) {
+		var self = this;
+		this.url = 'http://census.soe.com/get/ps2/outfit_member?c:limit=1000&c:resolve=online_status,character(name,battle_rank,profile_id)&c:join=type:profile^list:0^inject_at:profile^show:name.en^on:character.profile_id^to:profile_id&outfit_id=' + options.outfitid;
+		this.Members = ko.observableArray([]);
+		this.HideOffline = ko.observable(true);
+		this.IsLoading = ko.observable(false);
+
+		this.MembersSorted = ko.computed(function(){
+			// filter out records without character data
+			var result = ko.utils.arrayFilter(self.Members(), function(item){
+				return item.character && item.character.name;
+			});
+
+			// filter on/off line and sort by name.
+			result = ko.utils.arrayFilter(result, function(item){
+				return self.HideOffline() ? item.online_status > 0 : true;
+			}).sort(function(l,r){
+				if (!l.character || !l.character.name || !r.character || !r.character.name)
+					return -1;
+				return l.character.name.first_lower == r.character.name.first_lower ? 0 : (l.character.name.first_lower > r.character.name.first_lower ? 1 : -1 )
+			});
+			return result;
+		});
+
+		this.start = function() {
+			var members = $.jStorage.get("outfit_members");
+			if (!members)
+			{
+				self.refresh();
+			} else {
+				self.Members(members);
+			}
+		}
+
+		this.refresh = function() {
+			$("#hideMembers").slideDown();
+			self.IsLoading(true);
+			$.ajax({
+				dataType: "jsonp",
+				url: this.url
+			}).done(function ( data ) {
+				self.Members(data.outfit_member_list);
+				$.jStorage.set("outfit_members", data.outfit_member_list, { TTL : options.cachettl });
+				self.IsLoading(false);
+			});
+		}
+	};
+
+	$(function(){
+	  	var options = {
+			outfitid: '37516961520090364',
+			cachettl: 5 * 60 * 1000 // 5 minutes
+		};
+		var viewmodel = new ViewModel(options);
+
+		ko.applyBindings(viewmodel, $('#memberlist')[0]);
+		viewmodel.start();
+		viewmodel.refresh();
+	});
+})(jQuery);
+</script>
+
+<div id="PS2memberlist">
+	<div class="Title">
+		<span>En ligne sur Planetside 2</span>
+	</div>
+	<div class="refresh">
+		<a href="#" data-bind="click: refresh"><i class="fa fa-refresh"></i>&nbsp;Raffraichir</a>
+	</div>
+
+		<ul class="list" data-bind="foreach: MembersSorted">
+
+				<li  data-bind="css: character.profile.name.en">
+					<div class="content">
+          <div>
+					<span class="playerName" data-bind="text: character.name.first"></span>
+          </div>
+          <div  class="playerRank">
+					  BR: <span data-bind="text: character.battle_rank.value"></span>
+          </div>
+					</div>
+				</li>
+
+		</ul>
+      <div id="hideMembers" style="display: none;">
+    		<label><input type="checkbox" data-bind="checked: HideOffline" />Cacher les membres hors ligne</label>
+    	</div>
+</div>

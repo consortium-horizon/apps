@@ -92,7 +92,13 @@
          {module name="MeModule"}
          {asset name="Panel"}
       </div>
-      <div class="Column ContentColumn" id="Content">{asset name="Content"}</div>
+      <div class="Column ContentColumn" id="Content">
+        <!-- Planetside 2 module -->
+        {if $Path=='/forum/categories/planetside-2'}
+            {planetside_online}
+        {/if}
+        {asset name="Content"}
+      </div>
       <!-- Fix for container height -->
       <div style="clear: both"></div>
     </div>

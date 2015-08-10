@@ -6,6 +6,7 @@
 
 @import "mixins";
 @import "fonts";
+@import "PS2Module";
 
 /* ------------------------ */
 /* Colors ... such colors ! */
@@ -13,7 +14,7 @@
 $darkTones : rgba(50, 51, 59, 1);
 $midTones : #e3e3e3;
 
-// Primary
+// Primary color
 $primary : #2877d0;
 $primaryHL : #00baff;
 

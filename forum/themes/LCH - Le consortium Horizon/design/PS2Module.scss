@@ -1,0 +1,126 @@
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for PS2 module */
+/* ------------------------ */
+
+@import "mixins";
+#PS2memberlist {
+   background: white;
+   margin-top: 5px;
+   padding: 10px;
+   @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+   white-space: nowrap;
+
+   .Title, .refresh {
+     display: inline-block;
+     width: 50%;
+     margin-bottom: 10px;
+   }
+
+   .refresh {
+     text-align: right;
+   }
+
+   .list {
+     display: block;
+     width: 100%;
+     margin-bottom: 10px;
+     white-space: normal;
+
+     li {
+       border-width: 2px;
+       border-style: solid;
+       display: inline-block;
+       border-radius: 3px;
+       padding: 0 5px 5px 5px;
+       position: relative;
+       margin-right: 5px;
+       margin-bottom: 10px;
+
+       .content {
+         margin-left: 30px;
+         position: relative;
+       }
+
+       .playerName {
+         text-transform: capitalize;
+       }
+       .playerRank {
+         line-height: 0.7em;
+         font-size: 0.7em;
+       }
+
+       &::before {
+         Content: "";
+         display: block;
+         height: 25px;
+         width: 25px;
+         position: absolute;
+         top: 4px;
+         left: 4px;
+       }
+
+       // Styles by Class (of the game)
+       &.Heavy {
+         color: white;
+         border-color: #932B2B;
+         background: #ED4545;
+         &::before {
+           background: url("img/modules/ps2/heavyIcon.png");
+           background-size: cover;
+         }
+       }
+
+       &.Infiltrator {
+         border-color: #21A087;
+         background: #49B96E;
+         color: white;
+         &::before {
+           background: url("img/modules/ps2/infIcon.png");
+           background-size: cover;
+         }
+       }
+
+       &.Light {
+         border-color: #2D3E50;
+         background: #3598D2;
+         color: white;
+         &::before {
+           background: url("img/modules/ps2/lightIcon.png");
+           background-size: cover;
+         }
+       }
+
+       &.MAX {
+         border-color: #544993;
+         background: #AC7DC2;
+         color: white;
+         &::before {
+           background: url("img/modules/ps2/maxIcon.png");
+           background-size: cover;
+         }
+       }
+
+       &.Medic {
+         border-color: #21A087;
+         background: #49B96E;
+         color: white;
+         &::before {
+           background: url("img/modules/ps2/medicIcon.png");
+           background-size: cover;
+         }
+       }
+
+       &.Engineer {
+         border-color: #E57E24;
+         background: #ECA816;
+         color: white;
+         &::before {
+           background: url("img/modules/ps2/engiIcon.png");
+           background-size: cover;
+         }
+       }
+     }
+   }
+}

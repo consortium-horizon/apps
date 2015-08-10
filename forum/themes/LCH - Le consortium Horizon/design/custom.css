@@ -94,6 +94,124 @@
   font-style: italic;
 }
 /* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for PS2 module */
+/* ------------------------ */
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+#PS2memberlist {
+  background: white;
+  margin-top: 5px;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+  white-space: nowrap;
+}
+#PS2memberlist .Title, #PS2memberlist .refresh {
+  display: inline-block;
+  width: 50%;
+  margin-bottom: 10px;
+}
+#PS2memberlist .refresh {
+  text-align: right;
+}
+#PS2memberlist .list {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  white-space: normal;
+}
+#PS2memberlist .list li {
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 5px 5px 5px;
+  position: relative;
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+#PS2memberlist .list li .content {
+  margin-left: 30px;
+  position: relative;
+}
+#PS2memberlist .list li .playerName {
+  text-transform: capitalize;
+}
+#PS2memberlist .list li .playerRank {
+  line-height: 0.7em;
+  font-size: 0.7em;
+}
+#PS2memberlist .list li::before {
+  Content: "";
+  display: block;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+#PS2memberlist .list li.Heavy {
+  color: white;
+  border-color: #932B2B;
+  background: #ED4545;
+}
+#PS2memberlist .list li.Heavy::before {
+  background: url("img/modules/ps2/heavyIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Infiltrator {
+  border-color: #21A087;
+  background: #49B96E;
+  color: white;
+}
+#PS2memberlist .list li.Infiltrator::before {
+  background: url("img/modules/ps2/infIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Light {
+  border-color: #2D3E50;
+  background: #3598D2;
+  color: white;
+}
+#PS2memberlist .list li.Light::before {
+  background: url("img/modules/ps2/lightIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.MAX {
+  border-color: #544993;
+  background: #AC7DC2;
+  color: white;
+}
+#PS2memberlist .list li.MAX::before {
+  background: url("img/modules/ps2/maxIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Medic {
+  border-color: #21A087;
+  background: #49B96E;
+  color: white;
+}
+#PS2memberlist .list li.Medic::before {
+  background: url("img/modules/ps2/medicIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Engineer {
+  border-color: #E57E24;
+  background: #ECA816;
+  color: white;
+}
+#PS2memberlist .list li.Engineer::before {
+  background: url("img/modules/ps2/engiIcon.png");
+  background-size: cover;
+}
+
+/* ------------------------ */
 /* Colors ... such colors ! */
 /* ------------------------ */
 /* ----------- */
