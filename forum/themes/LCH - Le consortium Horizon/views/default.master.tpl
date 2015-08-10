@@ -53,7 +53,7 @@
             </li>
             <li>
             	<a href="#">
-					Organigramme (WIP)
+					{$Path} (WIP)
             	</a>
             </li>
           </ul>
