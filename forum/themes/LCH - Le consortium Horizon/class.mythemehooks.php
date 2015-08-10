@@ -23,5 +23,9 @@ class MyThemeThemeHooks implements Gdn_IPlugin {
         // add directory "/themes/MyTheme/SmartyPlugins/"
         $sender->plugins_dir[] = dirname(__FILE__).DS.'SmartyPlugins';
     }
-    // whatever...
+
+    // Add JS files
+    public function Base_Render_Before($Sender) {
+       $Sender->AddJsFile('knockout.js');
+    }
 }
