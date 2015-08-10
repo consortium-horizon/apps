@@ -1,0 +1,50 @@
+/* Copyright 2014 Zachary Doll */
+#SelectedBadges li,
+#AvailableBadges li
+{
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  margin: 10px;
+}
+
+#FeaturedBadgeUI .Badges {
+  width: 372px;
+}
+
+.EmptyBadge {
+  border-radius: 5px;
+  border: 1px dashed black;
+  text-align: center;
+  width: 98px;
+  height: 98px;
+  line-height: 100px;
+  vertical-align: top;
+  background: #dddddd;
+}
+
+#SelectedBadges {
+  height: 120px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 2px dashed black;
+}
+
+#SelectedBadges li:nth-child(4) {
+  opacity: .25;
+}
+
+.AuthorInfo .FeaturedBadge {
+  margin-left: 10px;
+}
+
+.FeaturedBadgesWrap .FeaturedBadges {
+  margin: 5px 0px;
+  text-align: center;
+}
+.FeaturedBadgesWrap li {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  margin: 10px;
+}
