@@ -94,7 +94,7 @@
       </div>
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
-        {if $Path=='/categories/planetside-2'}
+        {if $Path=='categories/planetside-2'}
             {planetside_online}
         {/if}
         {asset name="Content"}
