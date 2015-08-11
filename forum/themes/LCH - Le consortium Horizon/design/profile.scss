@@ -1,0 +1,89 @@
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+
+@import "mixins";
+
+// Fix for the edit button
+.ProfileOptions {
+    margin: 20px 15px 0 0;
+}
+
+.Profile {
+  // Let's make things shiny
+  .User, .DataList.Activities {
+     background: white;
+     margin: 5px 0 0 0;
+     padding: 10px;
+     @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+  }
+
+  // Make the editor beautiful
+  .FormWrapper {
+    background: white;
+    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+  }
+
+  // Moar space foar the titles !
+  h2.H {
+    margin: 15px 0;
+  }
+
+  .DataList.Activities {
+     margin: 25px 0;
+     li:last-child {
+       border: none;
+     }
+  }
+}
+
+// Here comes the badges !
+
+// So here we go again
+.Badge-Details, .Badge-Earned {
+   background: white;
+   margin: 5px 0 15px 0;
+   padding: 10px;
+   @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+}
+
+// User has the badge
+.EarnedThisBadge {
+  margin: 5px 0;
+  color: #01BD01;
+}
+
+// Best of Page
+
+Body[id*="yaga"] {
+  h1 {
+    margin-left: 15px;
+  }
+  ul.DataList {
+    background: white;
+    margin: 5px 0 15px 0;
+    padding: 10px;
+    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+    li:last-child {
+      border: none;
+    }
+  }
+
+  ul.FilterMenu {
+    padding: 10px;
+  }
+}
+
+// Message box
+
+ul.Conversations {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+  li:last-child {
+    border: none;
+  }
+}
