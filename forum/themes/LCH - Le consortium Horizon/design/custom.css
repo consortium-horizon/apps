@@ -605,7 +605,7 @@ body {
 /* ----------- */
 /* Discussions */
 /* ----------- */
-.Role_Conseiller .Author a:first-child {
+.Role_Conseiller .Author a {
   color: #D02828;
 }
 
