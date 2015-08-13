@@ -655,8 +655,9 @@ jQuery(document).ready(function($) {
    }
    
    function buttonBarize() {
-      $('.ButtonBar').livequery(function(){
+      $('.ButtonBar:not(.ButtonBarized)').livequery(function(){
          var TextAreas = $(this).closest('form').find('div.TextBoxWrapper textarea');
+         $(this).addClass("ButtonBarized");
          $.each(TextAreas, function(i,TextArea){
             if ($(TextArea).hasClass('BodyBox'))
                ButtonBar.AttachTo(TextArea);
