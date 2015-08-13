@@ -605,8 +605,17 @@ body {
 /* ----------- */
 /* Discussions */
 /* ----------- */
-.Role_Conseiller .Author a {
+.Role_Conseiller .Author a:first-child {
   color: #D02828;
+}
+.Role_Conseiller .Author a:first-child:hover {
+  color: #FF6666;
+}
+.Role_Conseiller .Author a:first-child::after {
+  font-family: FontAwesome;
+  content: "\f005";
+  display: inline-block;
+  text-decoration: inherit;
 }
 
 .DiscussionsTable tr.Bookmarked {

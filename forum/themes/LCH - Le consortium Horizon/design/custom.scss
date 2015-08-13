@@ -372,8 +372,17 @@ body {
 // Styles for roles
 .Role_Conseiller {
   .Author {
-    a {
+    a:first-child {
       color: #D02828;
+      &:hover {
+        color: #FF6666;
+      }
+      &::after {
+        font-family: FontAwesome;
+        content: "\f005";
+        display: inline-block;
+        text-decoration: inherit;
+      }
     }
   }
 }
