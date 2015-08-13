@@ -614,6 +614,23 @@ body {
 .Role_Conseiller .Author .Username::after {
   font-family: FontAwesome;
   content: "\f005";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.Role_Modrateurglobal .Author .Username {
+  color: #209D2F;
+}
+.Role_Modrateurglobal .Author .Username:hover {
+  color: #3BCB62;
+}
+.Role_Modrateurglobal .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f0e3";
+  font-size: 0.8em;
+  margin-left: 5px;
   display: inline-block;
   text-decoration: inherit;
 }

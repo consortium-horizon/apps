@@ -380,6 +380,8 @@ body {
       &::after {
         font-family: FontAwesome;
         content: "\f005";
+        font-size: 0.8em;
+        margin-left: 5px;
         display: inline-block;
         text-decoration: inherit;
       }
@@ -387,6 +389,27 @@ body {
   }
 }
 
+.Role_Modrateurglobal {
+  .Author {
+    .Username {
+      color: #209D2F;
+      &:hover {
+        color: #3BCB62;
+      }
+      &::after {
+        font-family: FontAwesome;
+        content: "\f0e3";
+        font-size: 0.8em;
+        margin-left: 5px;
+        display: inline-block;
+        text-decoration: inherit;
+      }
+    }
+  }
+}
+
+
+// Bookmark & hover styles
 .DiscussionsTable {
    tr.Bookmarked {
       background: rgba(255, 232, 159, 0.3);
