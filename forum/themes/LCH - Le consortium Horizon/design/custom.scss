@@ -429,7 +429,15 @@ li[class*="Role_Rfrent"] {
 
 .RoleTitle {display: none;} // don't need to show that now
 
-
+// Allow users to display badge, BUT restrain number and size
+.AuthorInfo {
+  img {
+    max-height: 15px;
+    max-width: 15px;
+    vertical-align: middle;
+    margin-top: -5px;
+  }
+}
 // Bookmark & hover styles
 .DiscussionsTable {
    tr.Bookmarked {
