@@ -655,7 +655,7 @@ li[class*="Role_Rfrent"] .Author .Username::after {
 }
 
 .MessageList .Item:hover .RoleTitle {
-  display: block;
+  display: inline-block;
 }
 
 .AuthorInfo img {

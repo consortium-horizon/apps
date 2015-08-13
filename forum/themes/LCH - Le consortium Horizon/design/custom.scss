@@ -431,7 +431,7 @@ li[class*="Role_Rfrent"] {
 // But lets make it visible on hover
 .MessageList {
   .Item:hover {
-    .RoleTitle {display: block;}
+    .RoleTitle {display: inline-block;}
   }
 }
 // Allow users to display badge, BUT restrain number and size
