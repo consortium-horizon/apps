@@ -372,7 +372,7 @@ body {
 // Styles for roles
 .Role_Conseiller {
   .Author {
-    a:first-child {
+    .Username {
       color: #D02828;
       &:hover {
         color: #FF6666;

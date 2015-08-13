@@ -605,13 +605,13 @@ body {
 /* ----------- */
 /* Discussions */
 /* ----------- */
-.Role_Conseiller .Author a:first-child {
+.Role_Conseiller .Author .Username {
   color: #D02828;
 }
-.Role_Conseiller .Author a:first-child:hover {
+.Role_Conseiller .Author .Username:hover {
   color: #FF6666;
 }
-.Role_Conseiller .Author a:first-child::after {
+.Role_Conseiller .Author .Username::after {
   font-family: FontAwesome;
   content: "\f005";
   display: inline-block;
