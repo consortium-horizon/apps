@@ -654,6 +654,10 @@ li[class*="Role_Rfrent"] .Author .Username::after {
   display: none;
 }
 
+.MessageList .Item:hover .RoleTitle {
+  display: block;
+}
+
 .AuthorInfo img {
   max-height: 15px;
   max-width: 15px;
@@ -666,9 +670,6 @@ li[class*="Role_Rfrent"] .Author .Username::after {
 }
 .DiscussionsTable .Item:hover .CountDiscussions, .DiscussionsTable .Item:hover .CountComments {
   color: #2877d0;
-}
-.DiscussionsTable .Item:hover .RoleTitle {
-  display: block;
 }
 
 .New .Title::after {

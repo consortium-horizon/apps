@@ -428,7 +428,12 @@ li[class*="Role_Rfrent"] {
 }
 
 .RoleTitle {display: none;} // don't need to show that all day long
-
+// But lets make it visible on hover
+.MessageList {
+  .Item:hover {
+    .RoleTitle {display: block;}
+  }
+}
 // Allow users to display badge, BUT restrain number and size
 .AuthorInfo {
   img {
@@ -449,7 +454,6 @@ li[class*="Role_Rfrent"] {
          .CountDiscussions, .CountComments {
             color: $primary;
          }
-         .RoleTitle {display: block;} 
       }
    }
 }
