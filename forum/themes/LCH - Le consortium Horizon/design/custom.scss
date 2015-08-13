@@ -369,6 +369,15 @@ body {
 /* Discussions */
 /* ----------- */
 
+// Styles for roles
+.Role_Conseiller {
+  .Author {
+    a:first-child {
+      color: #D02828;
+    }
+  }
+}
+
 .DiscussionsTable {
    tr.Bookmarked {
       background: rgba(255, 232, 159, 0.3);
