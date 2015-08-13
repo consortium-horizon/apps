@@ -427,7 +427,7 @@ li[class*="Role_Rfrent"] {
   }
 }
 
-.RoleTitle {display: none;} // don't need to show that now
+.RoleTitle {display: none;} // don't need to show that all day long
 
 // Allow users to display badge, BUT restrain number and size
 .AuthorInfo {
@@ -449,6 +449,7 @@ li[class*="Role_Rfrent"] {
          .CountDiscussions, .CountComments {
             color: $primary;
          }
+         .RoleTitle {display: block;} 
       }
    }
 }

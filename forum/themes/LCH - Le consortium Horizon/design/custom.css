@@ -667,6 +667,9 @@ li[class*="Role_Rfrent"] .Author .Username::after {
 .DiscussionsTable .Item:hover .CountDiscussions, .DiscussionsTable .Item:hover .CountComments {
   color: #2877d0;
 }
+.DiscussionsTable .Item:hover .RoleTitle {
+  display: block;
+}
 
 .New .Title::after {
   content: "non lu";
