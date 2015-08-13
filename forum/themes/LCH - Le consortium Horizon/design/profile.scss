@@ -1,7 +1,7 @@
 /* ------------------------ */
 /* LCH Custom Vanilla Theme */
 /* By Vladvonvidden -- 2015 */
-/*        SCSS file         */
+/*   SCSS file - profile    */
 /* ------------------------ */
 
 @import "mixins";
@@ -58,9 +58,7 @@
 // Best of Page
 
 Body[id*="yaga"] {
-  h1 {
-    margin-left: 15px;
-  }
+
   ul.DataList {
     background: white;
     margin: 5px 0 15px 0;
@@ -76,9 +74,9 @@ Body[id*="yaga"] {
   }
 }
 
-// Message box
+// Message box, my discussions, my drafts, activities
 
-ul.Conversations {
+ul.Conversations, ul.Discussions, ul.Drafts, ul.Activities {
   background: white;
   margin: 5px 0 15px 0;
   padding: 10px;

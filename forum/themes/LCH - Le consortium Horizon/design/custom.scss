@@ -399,6 +399,13 @@ body {
    white-space: nowrap;
 }
 
+// Activitiy
+.ActivityFormWrap .FormWrapper {
+  background: white;
+  margin: 15px 0;
+  @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+}
+
 /* ------ */
 /* Footer */
 /* ------ */
