@@ -635,6 +635,25 @@ body {
   text-decoration: inherit;
 }
 
+li[class*="Role_Rfrent"] .Author .Username {
+  color: #A028D0;
+}
+li[class*="Role_Rfrent"] .Author .Username:hover {
+  color: #C265E7;
+}
+li[class*="Role_Rfrent"] .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f006";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.RoleTitle {
+  display: none;
+}
+
 .DiscussionsTable tr.Bookmarked {
   background: rgba(255, 232, 159, 0.3);
 }

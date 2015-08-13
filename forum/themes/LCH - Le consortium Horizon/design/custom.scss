@@ -408,6 +408,27 @@ body {
   }
 }
 
+li[class*="Role_Rfrent"] {
+  .Author {
+    .Username {
+      color: #A028D0;
+      &:hover {
+        color: #C265E7;
+      }
+      &::after {
+        font-family: FontAwesome;
+        content: "\f006";
+        font-size: 0.8em;
+        margin-left: 5px;
+        display: inline-block;
+        text-decoration: inherit;
+      }
+    }
+  }
+}
+
+.RoleTitle {display: none;} // don't need to show that now
+
 
 // Bookmark & hover styles
 .DiscussionsTable {
