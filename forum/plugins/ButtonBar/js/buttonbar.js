@@ -654,8 +654,7 @@ jQuery(document).ready(function($) {
       
    }
    
-   // Always find new button bars and handle their events
-   if(jQuery().livequery) {
+   function buttonBarize() {
       $('.ButtonBar').livequery(function(){
          var TextAreas = $(this).closest('form').find('div.TextBoxWrapper textarea');
          $.each(TextAreas, function(i,TextArea){
@@ -664,4 +663,7 @@ jQuery(document).ready(function($) {
          });
       });
    }
+
+   // Always find new button bars and handle their events
+   if(jQuery().livequery) setInterval(buttonBarize, 1000);
 });
