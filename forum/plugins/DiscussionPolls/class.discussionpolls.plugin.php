@@ -52,13 +52,13 @@ class DiscussionPolls extends Gdn_Plugin {
     }
     else {
       if($Sender->Form->Save() !== FALSE) {
-        $Sender->InformMessage('<span class="InformSprite Sliders"></span>' . T('Your changes have been saved.'), 'HasSprite');
+        $Sender->InformMessage('<span class="InformSprite Sliders"></span>' . T('Vos changements ont été sauvegardés.'), 'HasSprite');
       }
     }
 
     // Makes it look like a dashboard page
     $Sender->AddSideMenu('/dashboard/settings/discussionpolls');
-    $Sender->Title('Discussion Polls Settings');
+    $Sender->Title('réglages des sondages');
     $Sender->Render($this->ThemeView('settings'));
   }
 
@@ -96,7 +96,7 @@ class DiscussionPolls extends Gdn_Plugin {
     else {
       // You have to have voting privilege only
       if(!$Session->CheckPermission('Plugins.DiscussionPolls.Vote', FALSE) || !$Session->UserID) {
-        Gdn::Session()->Stash('DiscussionPollsMessage', T('Plugins.DiscussionPolls.UnableToSubmit', 'You do not have permission to submit a poll.'));
+        Gdn::Session()->Stash('DiscussionPollsMessage', T('Plugins.DiscussionPolls.UnableToSubmit', 'Vous n\'avez pas la permission de réaliser un sondage.'));
         Redirect('discussion/' . $FormPostValues['DiscussionID']);
       }
 
@@ -119,7 +119,7 @@ class DiscussionPolls extends Gdn_Plugin {
           $Type = 'Full Poll';
         }
         else {
-          $Results = T('Plugins.DiscussionPolls.SavedPartial', 'We have saved your completed poll questions.');
+          $Results = T('Plugins.DiscussionPolls.SavedPartial', 'les réponses que vous avez formulées ont été sauvegardées.');
           $Type = 'Partial Poll';
         }
         $Data = array('html' => $Results, 'type' => $Type);
@@ -130,10 +130,10 @@ class DiscussionPolls extends Gdn_Plugin {
           // Don't stash any message
         }
         else if($Partial) {
-          Gdn::Session()->Stash('DiscussionPollsMessage', T('Plugins.DiscussionPolls.UnsweredAllQuestions', 'You have not answered all questions!'));
+          Gdn::Session()->Stash('DiscussionPollsMessage', T('Plugins.DiscussionPolls.UnsweredAllQuestions', 'Vous n\'avez pas répondu à toute les questions !'));
         }
         else {
-          Gdn::Session()->Stash('DiscussionPollsMessage', T('Plugins.DiscussionPolls.UnsweredUnable', 'Unable to save!'));
+          Gdn::Session()->Stash('DiscussionPollsMessage', T('Plugins.DiscussionPolls.UnsweredUnable', 'Impossible de sauvegarder !'));
         }
         Redirect('discussion/' . $FormPostValues['DiscussionID']);
       }
@@ -206,9 +206,9 @@ class DiscussionPolls extends Gdn_Plugin {
     $Sender->AddJsFile($this->GetResource('js/discussionpolls.js', FALSE, FALSE));
     $Sender->AddCSSFile($this->GetResource('design/discussionpolls.css', FALSE, FALSE));
 
-    $Sender->AddDefinition('DP_ShowResults', T('Show Results'));
-    $Sender->AddDefinition('DP_ShowForm', T('Show Poll Form'));
-    $Sender->AddDefinition('DP_ConfirmDelete', T('Are you sure you want to delete this poll?'));
+    $Sender->AddDefinition('DP_ShowResults', T('Afficher les résultats'));
+    $Sender->AddDefinition('DP_ShowForm', T('Afficher le formulaire de sondage'));
+    $Sender->AddDefinition('DP_ConfirmDelete', T('Etes vous sur de vouloir supprimer ce sondage ?'));
 
     //check for any stashed messages from poll submit
     $Message = Gdn::Session()->Stash('DiscussionPollsMessage');
@@ -239,8 +239,8 @@ class DiscussionPolls extends Gdn_Plugin {
     $Sender->AddDefinition('DP_EmptyQuestion', $DefaultQuestionString);
 
     // Translated definitions
-    $Sender->AddDefinition('DP_NextQuestion', T('Next Question'));
-    $Sender->AddDefinition('DP_PrevQuestion', T('Previous Question'));
+    $Sender->AddDefinition('DP_NextQuestion', T('Question suivante'));
+    $Sender->AddDefinition('DP_PrevQuestion', T('Question précédente'));
   }
 
   /**
@@ -275,7 +275,7 @@ class DiscussionPolls extends Gdn_Plugin {
     }
 
     // render check box
-    $Sender->EventArguments['Options'] .= '<li>' . $Sender->Form->CheckBox('DP_Attach', T('Attach Poll'), array('value' => '1', 'checked' => TRUE)) . '</li>';
+    $Sender->EventArguments['Options'] .= '<li>' . $Sender->Form->CheckBox('DP_Attach', T('Ajouter un sondage'), array('value' => '1', 'checked' => TRUE)) . '</li>';
 
     // Load up existing poll data
     if(GetValueR('Discussion.DiscussionID', $Sender)) {
@@ -292,7 +292,7 @@ class DiscussionPolls extends Gdn_Plugin {
     if(!empty($DiscussionPoll->PollID)) {
       $Closed = TRUE;
       $Disabled = array('disabled' => 'true');
-      echo Wrap(T('Plugins.DiscussionPolls.PollClosedToEdits', 'You cannot edit a poll. You <em>may</em> delete this poll by unchecking the Attach Poll checkbox.'), 'div', array('class' => 'Messages Warning'));
+      echo Wrap(T('Plugins.DiscussionPolls.PollClosedToEdits', 'Vous ne pouvez pas éditer le sondage. Vous <em>pouvez</em> supprimer le sondage en décochant la case -Attacher un sondage-.'), 'div', array('class' => 'Messages Warning'));
     }
     else {
       $Disabled = array();
@@ -345,7 +345,7 @@ class DiscussionPolls extends Gdn_Plugin {
           foreach($FormPostValues['DP_Options' . $QIndex] as $Option) {
             if(trim($Option) != FALSE) {
               $Invalid = TRUE;
-              $Error = 'You must enter valid text for question #' . ($QIndex + 1);
+              $Error = 'Vous devez entrer un texte valide pour la question #' . ($QIndex + 1);
             }
           }
           if($Invalid === FALSE) {
@@ -369,7 +369,7 @@ class DiscussionPolls extends Gdn_Plugin {
           }
           if($OptionCount < 2) {
             $Invalid = TRUE;
-            $Error = 'You must enter at least two valid options for question #' . ($QIndex + 1);
+            $Error = 'Vous devez au moins entrer deux valeurs correctes pour la question #' . ($QIndex + 1);
             break;
           }
         }
@@ -403,7 +403,7 @@ class DiscussionPolls extends Gdn_Plugin {
     // Don't trust the discussion ID implicitly
     $DiscussionID = GetValue('DiscussionID', $Sender->EventArguments, 0);
     if($DiscussionID == 0) {
-      $Error = Wrap('Error', 'h1') . Wrap('Invalid discussion id', 'p');
+      $Error = Wrap('Error', 'h1') . Wrap('Identidiant de discussion invalide', 'p');
       return FALSE;
     }
 
@@ -413,7 +413,7 @@ class DiscussionPolls extends Gdn_Plugin {
     if(!GetValue('DP_Attach', $FormPostValues)) {
       // Delete existing poll
       if($DPModel->Exists($DiscussionID)) {
-        Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.PollRemoved', 'The attached poll has been removed'));
+        Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.PollRemoved', 'le sondage a été supprimé'));
         $DPModel->DeleteByDiscussionID($DiscussionID);
         return FALSE;
       }
@@ -421,7 +421,7 @@ class DiscussionPolls extends Gdn_Plugin {
 
     if($DPModel->Exists($DiscussionID)) {
       // Skip saving if a poll exists
-      Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.AlreadyExists', 'This poll already exists, poll was not updated'));
+      Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.AlreadyExists', 'Ce sondage existe déjà, il n\'a pas été mis à jour'));
       return FALSE;
     }
 
@@ -429,7 +429,7 @@ class DiscussionPolls extends Gdn_Plugin {
     if($DPModel->HasResponses($DiscussionID) &&
             !$Session->CheckPermission('Plugins.DiscussionPolls.Manage')) {
 
-      Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.UnableToEditAfterResponses', 'You do not have permission to edit a poll with responses.'));
+      Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.UnableToEditAfterResponses', 'Vous n\'avez pas la permission d\'éditer un sondage contenant des réponses.'));
       return FALSE;
     }
 
@@ -438,19 +438,19 @@ class DiscussionPolls extends Gdn_Plugin {
     $Error = '';
     if(trim($FormPostValues['DP_Title']) == FALSE && !C('Plugins.DiscussionPolls.DisablePollTitle', FALSE)) {
       $Invalid = TRUE;
-      $Error = 'You must enter a valid poll title!';
+      $Error = 'Entrez un titre de sondage valide !';
     }
 
     foreach($FormPostValues['DP_Questions'] as $Index => $Question) {
       if(trim($Question) == FALSE) {
         $Invalid = TRUE;
-        $Error = 'You must enter valid question text!';
+        $Error = 'Formulez mieux votre question ! (titre invalide)';
         break;
       }
       foreach($FormPostValues['DP_Options' . $Index] as $Option) {
         if(trim($Option) == FALSE) {
           $Invalid = TRUE;
-          $Error = 'You must enter valid option text!';
+          $Error = 'Option invalide !';
           break;
         }
       }
@@ -500,7 +500,7 @@ class DiscussionPolls extends Gdn_Plugin {
       // Can the current user view polls?
       if(!$Session->CheckPermission('Plugins.DiscussionPolls.View')) {
         // make this configurable?
-        echo Wrap(T('Plugins.DiscussionPolls.NoView', 'You do not have permission to view polls.'), 'div', array('class' => 'DP_AnswerForm'));
+        echo Wrap(T('Plugins.DiscussionPolls.NoView', 'Vous n\'avez pas la permission de voir les sondages.'), 'div', array('class' => 'DP_AnswerForm'));
         return;
       }
       // Check to see if the discussion is closed
@@ -525,7 +525,7 @@ class DiscussionPolls extends Gdn_Plugin {
         //if some saved partial answers inform
         if(!empty($PartialAnswers)) {
           // TODO: Remove?
-          Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.LoadedPartial', 'Your answered questions have been loaded.'));
+          Gdn::Controller()->InformMessage(T('Plugins.DiscussionPolls.LoadedPartial', 'Vos questions déjà remplies ont été chargées.'));
         }
         // Render the submission form
         $this->_RenderVotingForm($Sender, $Poll, $PartialAnswers);
@@ -554,7 +554,7 @@ class DiscussionPolls extends Gdn_Plugin {
       if($Discussion->InsertUserID == $Session->UserID || $Session->CheckPermission('Plugins.DiscussionPolls.Manage')) {
         echo Wrap(
                 Wrap(
-                        Anchor(T('Attach Poll'), '/vanilla/post/editdiscussion/' . $Discussion->DiscussionID), 'li'), 'ul', array('id' => 'DP_Tools')
+                        Anchor(T('Ajouter un sondage'), '/vanilla/post/editdiscussion/' . $Discussion->DiscussionID), 'li'), 'ul', array('id' => 'DP_Tools')
         );
       }
     }

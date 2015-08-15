@@ -3,10 +3,7 @@
 function DiscussionPollAnswerForm($PollForm, $Poll, $PartialAnswers) {
   echo '<div class="DP_AnswerForm">';
   if(GetValue('Title', $Poll) || C('Plugins.DiscussionPolls.DisablePollTitle', FALSE)) {
-    echo $Poll->Title;
-    if(trim($Poll->Title) != FALSE) {
-      echo '<hr />';
-    }
+    echo Wrap($Poll->Title, 'div', array('class' => 'pollMainTitle'));
   }
   echo $PollForm->Open(array('action' => Url('/discussion/poll/submit/'), 'method' => 'post', 'ajax' => TRUE));
   echo $PollForm->Errors();
@@ -17,7 +14,7 @@ function DiscussionPollAnswerForm($PollForm, $Poll, $PartialAnswers) {
   foreach($Poll->Questions as $Question) {
     echo '<li class="DP_AnswerQuestion">';
     echo $PollForm->Hidden('DP_AnswerQuestions[]', array('value' => $Question->QuestionID));
-    echo Wrap($Question->Title, 'span');
+    echo Wrap($Question->Title, 'div', array('class' => 'pollTitle'));
     echo '<ol class="DP_AnswerOptions">';
     foreach($Question->Options as $Option) {
       if(GetValue($Question->QuestionID, $PartialAnswers) == $Option->OptionID) {
@@ -33,6 +30,6 @@ function DiscussionPollAnswerForm($PollForm, $Poll, $PartialAnswers) {
     $m++;
   }
   echo '</ol>';
-  echo $PollForm->Close('Submit');
+  echo $PollForm->Close('Voter');
   echo '</div>';
 }
