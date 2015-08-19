@@ -1,0 +1,27 @@
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for QnA plugin */
+/* ------------------------ */
+
+@import "mixins";
+
+// Fix the left margin on answered notificatons
+.QnA-Box {
+  margin-left: -8px;
+}
+
+// Style for accepted answers
+.AcceptedAnswers {
+   background-color: white;
+   border-style: solid;
+   border-width: 2px;
+   border-color: #01BD01;
+   margin: 15px 0;
+   padding: 10px;
+   @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+}
+
+.QnA-Accepted, .QnA-Tag-Accepted {
+   background: #01BD01;
+}
