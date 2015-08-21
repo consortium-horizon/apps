@@ -654,17 +654,14 @@ jQuery(document).ready(function($) {
       
    }
    
-   function buttonBarize() {
-      $('.ButtonBar:not(.ButtonBarized)').livequery(function(){
+   // Always find new button bars and handle their events
+   if(jQuery().livequery) {
+      $('.ButtonBar').livequery(function(){
          var TextAreas = $(this).closest('form').find('div.TextBoxWrapper textarea');
-         $(this).addClass("ButtonBarized");
          $.each(TextAreas, function(i,TextArea){
             if ($(TextArea).hasClass('BodyBox'))
                ButtonBar.AttachTo(TextArea);
          });
       });
    }
-
-   // Always find new button bars and handle their events
-   if(jQuery().livequery) setInterval(buttonBarize, 1000);
 });
