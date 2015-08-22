@@ -393,6 +393,7 @@ body {
   background: url("img/backgrounds/LCH--default.png"), -moz-gradient(center bottom, black 0%, rgba(255, 255, 255, 0) 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-size: cover;
 }
 
 /* ------ */

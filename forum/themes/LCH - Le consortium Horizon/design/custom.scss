@@ -92,6 +92,7 @@ body {
    @include vertical-gradient-with-image(url('img/backgrounds/LCH--default.png'), black);
    background-repeat: no-repeat;
    background-attachment: fixed;
+   background-size: cover;
 }
 
 /* ------ */
