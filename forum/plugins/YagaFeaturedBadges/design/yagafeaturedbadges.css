@@ -38,6 +38,10 @@
   max-width: 100px;
 }
 
+#AvailableBadges li img{
+  max-width: 100px;
+}
+
 .AuthorInfo .FeaturedBadge {
   margin-left: 10px;
 }
