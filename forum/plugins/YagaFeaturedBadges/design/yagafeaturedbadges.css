@@ -48,3 +48,7 @@
   display: inline-block;
   margin: 10px;
 }
+
+.FeaturedBadgesWrap li img{
+  max-width: 100px;
+}
