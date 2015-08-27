@@ -34,6 +34,10 @@
   opacity: .25;
 }
 
+#SelectedBadges li img{
+  max-width: 100px;
+}
+
 .AuthorInfo .FeaturedBadge {
   margin-left: 10px;
 }
