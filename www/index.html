@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html lang="fr" class="no-js">
 <head>
-  <meta charset="utf-8">
+	<!-- useful kouyio stuff -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=1">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="shortcut icon" href="assets/img/favicon.png" sizes="32x32" type="image/png">
-  <title>Le Consortium Horizon</title>
   <meta name="description" content="LCH | Le Consortium Horizon, la guilde dont vous êtes le héros. Guilde multi-jeux francophone. Albion Online. Arma 3. EVE Online. Planetside 2. Star Citizen.">
   <link rel="publisher" href="https://plus.google.com/+Consortium-horizon/videos">
   <meta property="og:title" content="Le Consortium Horizon">
@@ -18,102 +20,181 @@
   <meta name="twitter:url" content="https://www.consortium-horizon.com">
   <meta name="twitter:title" content="Le Consortium Horizon">
   <meta name="twitter:description" content="LCH | Le Consortium Horizon, la guilde dont vous êtes le héros. Guilde multi-jeux francophone. Albion Online. Arma 3. EVE Online. Planetside 2. Star Citizen.">
-  <meta name="twitter:image" content="https://www.consortium-horizon.com/assets/img/logo.png">
-  <link rel="stylesheet" href="bower_components/normalize.css/normalize.css">
-  <link rel="stylesheet" href="bower_components/slick.js/slick/slick.css">
-  <link rel="stylesheet" href="assets/css/style.css">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+
+	<!-- useless vlad stuff -->
+	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/slider.css"> <!-- Resource style -->
+	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+	<title>Le consortium horizon</title>
+
 </head>
-<body>
-  <div id="central-container">
-    <div id="header">
-      <div id="branding">
-        <div class="content">
-          <h1><img src="assets/img/logo-big.png" alt="Le Consortium Horizon"></h1>
-          <div class="slogan">La guilde dont <strong>vous</strong> êtes le héros</div>
-        </div>
-      </div>
+<body data-hijacking="on" data-animation="parallax">
 
-      <section background>
-        <div class="tile" data-game="Albion Online">
-          <img src="assets/img/home-albion.jpg" alt="Albion Online">
-        </div>
-        <div class="tile" data-game="Arma 3">
-          <img src="assets/img/home-arma.jpg" alt="Arma 3">
-        </div>
-        <div class="tile" data-game="EVE Online">
-          <img src="assets/img/home-eve.jpg" alt="EVE Online">
-        </div>
-        <div class="tile" data-game="Planetside 2">
-          <img src="assets/img/home-planetside.jpg" alt="Planetside 2">
-        </div>
-        <div class="tile" data-game="Star Citizen">
-          <img src="assets/img/home-SC.jpg" alt="Star Citizen">
-        </div>
-      </section>
-  </div>
+	<!-- home section  -->
+	<section class="cd-section section-1 visible">
 
+		<!-- container -->
+		<div class="container">
 
-  <section description>
+			<!-- slider -->
+			<div class="cd-hero">
+				<ul class="cd-hero-slider autoplay">
 
-    <section items>
-      <div class="tile">
-        <a href="/">
-          <img class="icon" src="assets/img/home-community.jpg">
-          <h2>Une communauté</h2>
-        </a>
-        <p>Ouverte à tout francophone majeur ayant accepté notre charte. Bonne humeur et ambiance amicale sont nos maîtres mots !</p>
-      </div>
-      <div class="tile">
-        <a href="/forum">
-          <img class="icon" src="assets/img/home-forum.jpg">
-          <h2>Un forum</h2>
-        </a>
-        <p>Point de recontre des membres, vous y trouverez toutes les dernières nouvelles des jeux et de la communauté. Pas encore membre ?</p>
-      </div>
-      <div class="tile">
-        <a href="/wiki">
-          <img class="icon" src="assets/img/home-youtube.jpg">
-          <h2>Des créations originales</h2>
-        </a>
-        <p>Tutoriels, vidéos, wikis ... tout est permis ! Nous mettons à disposition des outils afin que chacun puisse apporter sa pierre à l'édifice.</p>
-      </div>
-    </section>
+					<!-- home item -->
+					<li class="selected">
+						<div class="cd-full-width">
+							<img src="img/logo.png" height="300px">
+							<h2>La Guilde dont <strong>vous</strong> êtes le héros</h2>
+							<p>La communauté française ouverte à tous, à partir de 18 ans.</p>
+							<p>
+								<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Devenir membre</a>
+								<a href="#0" class="cd-btn cd-next secondary">En savoir plus</a>
+							</p>
+						</div> <!-- .cd-full-width -->
+					</li>
 
-    <br>
-    <center><a button href="/forum/entry/register">Je vous rejoins !</a></center>
+					<!-- albion item -->
+					<li>
+						<div class="cd-full-width">
+							<h2>Albion Online</h2>
+							<p>Farmer c'est bien, mais en groupe c'est mieux !</p>
+							<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Rejoindre la guilde</a>
+						</div> <!-- .cd-full-width -->
+					</li>
 
-  </section>
-  
-    <section carousel></section>
+					<!-- arma item -->
+					<li>
+						<div class="cd-full-width">
+							<h2>Arma 3</h2>
+							<p>Opérations réalistes et campagnes scénarisées.</p>
+							<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Postuler</a>
+							<a href="http://www.consortium-horizon.com/forum/categories/diplomatie" class="cd-btn secondary">Contactez nos diplomates</a>
+						</div> <!-- .cd-full-width -->
+					</li>
 
-    <section news-header>
-      <h2>Les dernières nouvelles</h2>
-    </section>
+					<!-- planetside 2 item -->
+					<li>
+						<div class="cd-half-width">
+							<h2>Planetside 2</h2>
+							<p>Rigoureux et méthodiques, si le jeu d'équipe vous intéresse, le Consortium est fait pour vous !</p>
+							<p>
+								<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Devenir LCTH</a>
+								<a href="https://www.planetside2.com/home" class="cd-btn secondary">Télécharger le jeu</a>
+							</p>
+						</div> <!-- .cd-half-width -->
 
-    <div id="content-container">
-      <section left>
-        <h1><img src="assets/img/logo.png" alt="Le Consortium Horizon"></h1>
-        <p>La guilde dont vous êtes le héros.</p>
-        <p>Rejoignez nos rangs et accédez à :</p>
-        <ul>
-          <li>L'intégralité du forum et de ses sections.</li>
-          <li>L'ensemble des canaux <a href="mumble://mumble.consortium-horizon.com?title=Le%20Consortium%20Horizon">Mumble</a>.</li>
-        </ul>
-        <br>
-        <a button href="/forum/entry/register">Rejoignez-nous!</a>
-      </section>
+						<div class="cd-half-width cd-img-container">
+							<img src="img/char_ps2.png" alt="planetside 2">
+						</div> <!-- .cd-half-width.cd-img-container -->
+					</li>
 
-      <section central>
-        <section news></section>
-      </section>
-    </div>
-  </div>
+					<!-- star citizen item -->
+					<li>
+						<div class="cd-half-width cd-img-container">
+							<img src="img/char_sc.png" alt="star citizen">
+						</div> <!-- .cd-half-width.cd-img-container -->
 
-  <footer>Le Consortium Horizon</footer>
+						<div class="cd-half-width">
+							<h2>Star Citizen</h2>
+							<p>La tête dans les étoiles, partez vers de nouveaux horizons !</p>
+							<p>
+								<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Rejoindre le Consortium</a>
+								<a href="https://robertsspaceindustries.com/" class="cd-btn secondary">En savoir plus sur le jeu</a>
+							</p>
+						</div> <!-- .cd-half-width -->
+					</li>
+				</ul> <!-- .cd-hero-slider -->
 
-  <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/slick.js/slick/slick.min.js"></script>
-  <script src="bower_components/moment/min/moment.min.js"></script>
-  <script src="assets/js/main.js"></script>
+				<div class="cd-slider-nav">
+					<nav>
+						<span class="cd-marker item-1"></span>
+
+						<ul>
+							<li class="selected"><a href="#0">Accueil</a></li>
+							<li><a href="#0">Albion Online</a></li>
+							<li><a href="#0">Arma 3</a></li>
+							<li><a href="#0">Planetside 2</a></li>
+							<li><a href="#0">Star Citizen</a></li>
+						</ul>
+					</nav>
+				</div> <!-- .cd-slider-nav -->
+			</div> <!-- .cd-hero -->
+
+			<!-- links -->
+			<div class="links">
+				<div class="links-youtube">
+					<a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" class="Button Button--solid">Sur Youtube</a>
+					<div class="subtitle"><p>Découvrez nos vidéos originales !</p></div>
+				</div>
+				<div class="links-wiki">
+					<div class="Button Button--solid">Notre Wiki</div>
+					<div class="subtitle"><p>Des infos, des guides, tout ce qu'il vous faut.</p></div>
+				</div>
+				<div class="links-forum">
+					<a href="http://www.consortium-horizon.com/forum/" class="Button Button--solid">Le Forum</a>
+					<div class="subtitle"><p>Pour communiquer y'a pas mieux !</p></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- news and details section  -->
+	<section class="cd-section section-2">
+
+		<!-- main container -->
+		<div class="container">
+
+			<!-- details (left) -->
+			<div class="container-left">
+
+				<!-- details container -->
+				<div class="details">
+
+					<!-- actual content -->
+					<div class="content">
+						<div class="Button Button--solid">Le Consortium Horizon</div>
+						<p>Créé en 2013, le Consortium Horizon est une guilde multi-jeux francophone.
+						Notre crédo reflète notre manière de jouer: toujours privilégier la bonne humeur et
+						l'ambiance amicale devant le reste. Ainsi, le seul pré-requis pour nos membres est de faire preuve de motivation et d'entrain
+						pour rejoindre la communauté.</p>
+						<p>Nous utilisons notre forum pour communiquer à l'écrit, et mumble pour les discussions vocales.</p>
+						<p>Il est fortement conseillé aux membres qui souhaitent s'investir de se manifester, car nous mettons en effet à disposition divers
+						outils rédactionnels, tutoriels pour le montage vidéo et autres astuces pour leur permmettre de créer et partage du contenu personnalisé.</p>
+						<p>Si vous cherchez une communauté mature, dynamique et ou la bonne ambiance est assurée, ne vous tracassez plus !</p>
+						<img src="img/logo.png" max-height="300px">
+					</div>
+				</div>
+			</div>
+
+			<!-- news (right) -->
+			<div class="container-right">
+
+				<!-- title for news -->
+				<h2>Les dernières nouvelles</h2>
+
+				<!-- will be populated with js -->
+				<section central>
+	        <section news></section>
+	      </section>
+			</div>
+		</div>
+	</section>
+
+	<nav>
+		<ul class="cd-vertical-nav">
+			<li><a href="#0" class="cd-prev inactive">Next</a></li>
+			<li><a href="#0" class="cd-next">Prev</a></li>
+		</ul>
+	</nav> <!-- .cd-vertical-nav -->
+<script src="js/jquery-2.1.4.js"></script>
+<script src="js/velocity.min.js"></script>
+<script src="js/velocity.ui.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/rss.js"></script>
+<script src="js/moment.js"></script>
+<script src="js/slick.js"></script>
+<script src="js/slider.js"></script> <!-- Resource jQuery -->
 </body>
 </html>
