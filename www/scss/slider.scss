@@ -153,6 +153,7 @@ Slider
 	position: relative;
 	height: $intro-height-S;
 	overflow: hidden;
+	white-space: normal;
 
 	li {
 		position: absolute;
@@ -547,6 +548,11 @@ Slider navigation
 		box-shadow: inset 0 2px 0 currentColor;
 		@include transition(transform .2s, box-shadow .2s);
 
+		// mobile & tablet style
+		@media only screen and (max-width: $M) {
+			width: 80px;
+		}
+
 		&.item-2 {
 			@include transform(translateX(100%));
 		}
@@ -572,6 +578,11 @@ Slider navigation
 		display: inline-block;
 		width: 60px;
 		float: left;
+
+		// mobile & tablet style
+		@media only screen and (max-width: $M) {
+			width: 80px;
+		}
 
 		&.selected a {
 			color: $color-1;
