@@ -23,7 +23,7 @@
     <div class="Row">
       <strong class="SiteTitle"><a href="{link path="/"}">{logo}</a></strong>
       <!--
-      We've placed this optional advertising space below. Just comment out the line and replace "Advertising Space" with your 728x90 ad banner. 
+      We've placed this optional advertising space below. Just comment out the line and replace "Advertising Space" with your 728x90 ad banner.
       -->
       <!-- <div class="AdSpace">Advertising Space</div> -->
     </div>
@@ -47,8 +47,8 @@
           La Guilde
           <ul>
             <li>
-            	<a href="#">
-					La Charte (WIP)
+            	<a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">
+					La Charte
             	</a>
             </li>
             <li>
