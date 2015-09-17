@@ -1,0 +1,78 @@
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*   SCSS file - profile    */
+/* ------------------------ */
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+.ProfileOptions {
+  margin: 20px 15px 0 0;
+}
+
+.Profile .User, .Profile .DataList.Activities {
+  background: white;
+  margin: 5px 0 0 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+.Profile .FormWrapper {
+  background: white;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+.Profile h2.H {
+  margin: 15px 0;
+}
+.Profile .DataList.Activities {
+  margin: 25px 0;
+}
+.Profile .DataList.Activities li:last-child {
+  border: none;
+}
+
+.Badge-Details, .Badge-Earned {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+.EarnedThisBadge {
+  margin: 5px 0;
+  color: #01BD01;
+}
+
+Body[id*="yaga"] ul.DataList {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+Body[id*="yaga"] ul.DataList li:last-child {
+  border: none;
+}
+Body[id*="yaga"] ul.FilterMenu {
+  padding: 10px;
+}
+
+ul.Conversations, ul.Discussions, ul.Drafts, ul.Activities, ul.BlogList {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-child, ul.Activities li:last-child, ul.BlogList li:last-child {
+  border: none;
+}

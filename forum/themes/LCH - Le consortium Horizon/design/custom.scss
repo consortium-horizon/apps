@@ -81,6 +81,11 @@ a {
    @include box-shadow(0, 0, 3px, #FFB9B9, $inset: true);
 }
 
+// Buttons
+.Button {
+  margin: 15px 0;
+}
+
 /* ---- */
 /* Body */
 /* ---- */
