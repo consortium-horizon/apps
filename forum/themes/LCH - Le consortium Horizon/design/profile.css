@@ -76,3 +76,7 @@ ul.Conversations, ul.Discussions, ul.Drafts, ul.Activities, ul.BlogList {
 ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-child, ul.Activities li:last-child, ul.BlogList li:last-child {
   border: none;
 }
+
+.UserReactionWrap {
+  margin: 10px 0;
+}

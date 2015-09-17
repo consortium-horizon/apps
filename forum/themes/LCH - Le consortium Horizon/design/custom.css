@@ -290,6 +290,10 @@ ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-
   border: none;
 }
 
+.UserReactionWrap {
+  margin: 10px 0;
+}
+
 /* ------------------------ */
 /* LCH Custom Vanilla Theme */
 /* By Vladvonvidden -- 2015 */
