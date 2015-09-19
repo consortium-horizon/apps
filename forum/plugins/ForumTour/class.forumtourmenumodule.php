@@ -24,6 +24,10 @@ class ForumTourMenuModule extends Gdn_Module {
       foreach ($ForumtourData as $index => $step) {
         // Set step title & description ...
         $stepTitle = $step['Title'];
+        $PositionMethod = $step['PositionMethod'];
+        $VanillaTarget = $step['VanillaTarget'];
+        $CustomElement = $step['CustomElement'];
+        // get the display method selected by User
         $stepDescription = $step['Description'];
         // ... its relative position to the step indicator ...
         $TooltipPosition= $step['TooltipPosition'];

@@ -3,9 +3,23 @@
 
 <!-- this is the tutorial itself -->
   <!-- and so on .... -->
-  <li class="cd-single-step"
-      style="left:<?php echo $Xposition.$XpositionType; ?>;
-             top:<?php echo $Yposition.$YpositionType; ?>">
+  <li
+      <?php
+
+        echo "class='cd-single-step";
+        if ( ($PositionMethod == 'vanillaelement') || ($PositionMethod == 'customelement')) {
+            echo " cd-element-highlight";
+        }
+        echo "' ";
+        echo "data-target = '". ($PositionMethod == 'vanillaelement' ? $VanillaTarget : $CustomElement) . "'";
+
+        if ($PositionMethod == 'dom') {
+            echo "style=' left:" . $Xposition . $XpositionType . "; top:" . $Yposition . $YpositionType . ";'";
+        }
+
+        echo "data-positiontype='". $TooltipPosition ."'";
+      ?>
+      >
     <span></span>
 
     <div class="cd-more-info <?php echo $TooltipPosition; ?>">

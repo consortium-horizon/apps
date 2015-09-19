@@ -48,6 +48,7 @@ class ForumTourPlugin extends Gdn_Plugin {
     $sender->addSideMenu('/dashboard/settings/forumtour');
 
     $sender->SetData('Title', T('Ajouter'));
+    $sender->SetData('Description', T('Ceci est la description'));
 
     // No need to add a form, because we extend settingsController who already attaches a form
     // No need to add a validation since model can "lend" some validation functions
@@ -79,6 +80,9 @@ class ForumTourPlugin extends Gdn_Plugin {
         $ForumTour['YPosition'] = '0';
         $ForumTour['YPositionType'] = '%';
         $ForumTour['TooltipPosition'] = 'right';
+        $ForumTour['PositionMethod'] = 'vanillaelement';
+        $ForumTour['VanillaTarget'] = 'Panel';
+        $ForumTour['CustomElement'] = 'Panel';
     }
     // Now we handle what happens after the save button has been pressed
     if ($sender->Form->authenticatedPostBack() === true) {
@@ -94,6 +98,9 @@ class ForumTourPlugin extends Gdn_Plugin {
         $sender->Form->validateRule('YPosition', 'ValidateInteger');
         $sender->Form->validateRule('YPositionType', 'ValidateRequired');
         $sender->Form->validateRule('TooltipPosition', 'ValidateRequired');
+        $sender->Form->validateRule('PositionMethod', 'ValidateRequired');
+        $sender->Form->validateRule('VanillaTarget', 'ValidateRequired');
+        $sender->Form->validateRule('CustomElement', 'ValidateRequired');
 
         if ($sender->Form->errorCount() == 0) {
             // YEAH! Zero errors!
@@ -109,11 +116,15 @@ class ForumTourPlugin extends Gdn_Plugin {
 
             $ForumTour['Title'] = $postValues['Title'];
             $ForumTour['Description'] = $postValues['Description'];
+            $ForumTour['PositionMethod'] = $postValues['PositionMethod'];
+            $ForumTour['VanillaTarget'] = $postValues['VanillaTarget'];
+            $ForumTour['CustomElement'] = $postValues['CustomElement'];
             $ForumTour['XPosition'] = $postValues['XPosition'];
             $ForumTour['XPositionType'] = $postValues['XPositionType'];
             $ForumTour['YPosition'] = $postValues['YPosition'];
             $ForumTour['YPositionType'] = $postValues['YPositionType'];
             $ForumTour['TooltipPosition'] = $postValues['TooltipPosition'];
+
 
             if ($index == -1) {
                 // This should be a new item which should be added to the list
@@ -174,6 +185,7 @@ class ForumTourPlugin extends Gdn_Plugin {
     } else {
       // Load the dashboard assets
       $sender->AddCssFile('forumtourAdmin.css', 'plugins/ForumTour');
+       $sender->AddjsFile('forumtourAdmin.js', 'plugins/ForumTour');
     }
   }
 }

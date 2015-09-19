@@ -23,6 +23,38 @@ jQuery(document).ready(function($){
 			}
 		});
 
+		//if the step highlights an element, we have to set its coordinates
+		tourSteps.each( function(index ) {
+
+			if ($(this).hasClass("cd-element-highlight")) {
+				target = $(document.querySelector($(this).data("target")));
+
+				//get target size
+				topCoord = target.position().top;
+				leftCoord = target.position().left;
+				width = target.outerWidth();
+				height = target.height();
+				marginLeft = parseInt(target.css("margin-left").replace("px", ""));
+				marginTop = parseInt(target.css("margin-top").replace("px", ""));
+
+				//set the coordinates of the indicator
+				switch ($(this).data("positiontype")) {
+					case "top":
+						$(this).css({ top: topCoord + marginTop, left: leftCoord + marginLeft + width/2});
+						break;
+					case "right":
+						$(this).css({ top: topCoord + marginTop + height/2, left: leftCoord + marginLeft + width });
+						break;
+					case "bottom":
+						$(this).css({ top: topCoord + marginTop + height, left: leftCoord + marginLeft + width/2 });
+						break;
+					case "left":
+						$(this).css({ top: topCoord + marginTop + height/2, left: leftCoord + marginLeft });
+						break;
+				}
+			}
+		});
+
 		//change visible step
 		tourStepInfo.on('click', '.cd-prev', function(event){
 			//go to prev step - if available
@@ -74,6 +106,10 @@ jQuery(document).ready(function($){
 
 	function showStep(step, layer) {
 		step.addClass('is-selected').removeClass('move-left');
+		if (step.hasClass("cd-element-highlight")) {
+			target = $(document.querySelector(step.data("target")));
+			target.addClass("highlighted");
+		}
 		smoothScroll(step.children('.cd-more-info'));
 		showLayer(layer);
 	}
@@ -92,7 +128,13 @@ jQuery(document).ready(function($){
 	function changeStep(steps, layer, bool) {
 		var visibleStep = steps.filter('.is-selected'),
 			delay = (viewportSize() == 'desktop') ? 300: 0;
-		visibleStep.removeClass('is-selected');
+			visibleStep.removeClass('is-selected');
+
+		if (visibleStep.hasClass("cd-element-highlight")) {
+			target = $(document.querySelector(visibleStep.data("target")));
+			target.removeClass("highlighted");
+		}
+
 
 		(bool == 'next') && visibleStep.addClass('move-left');
 
@@ -107,6 +149,13 @@ jQuery(document).ready(function($){
 		steps.removeClass('is-selected move-left');
 		wrapper.removeClass('active');
 		$(document.body).removeClass('tutorial-mode');
+		steps.each( function(index ) {
+
+			if ($(this).hasClass("cd-element-highlight")) {
+				target = $(document.querySelector($(this).data("target")));
+				target.removeClass("highlighted");
+			}
+		});
 		layer.removeClass('is-visible');
 	}
 

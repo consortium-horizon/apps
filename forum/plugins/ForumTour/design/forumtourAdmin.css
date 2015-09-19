@@ -3,11 +3,27 @@
 Settings page
 
 -------------------------------- */
-.forumTourNewInput {
-  font-size: 15px;
-  padding: 6px 3px;
-  color: #3c763d;
-  background-color: #dff0d8;
-  border: 1px solid #d6e9c6;
-  border-radius: 5px;
+#ForumTourEditContainer {
+    padding: 20px;
+}
+
+#ForumTourEditContainer input, #ForumTourEditContainer select {
+    font-size: 15px;
+    padding: 6px;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+#ForumTourEditContainer label {
+    display: block;
+    font-size: 1.2em;
+    margin-top: 15px;
+}
+
+#ForumTourEditContainer .positioning--dom__inputGroup input,
+#ForumTourEditContainer .positioning--dom__inputGroup select {
+    display: inline-block;
+
 }
