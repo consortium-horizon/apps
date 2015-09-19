@@ -522,7 +522,7 @@ body {
 /* Content Column (Forum content) */
 /* ------------------------------ */
 #Content {
-  padding: 10px 10px 10px 20px;
+  margin: 15px 0 0 250px !important;
 }
 #Content .CategoryGroup {
   margin-bottom: 25px;

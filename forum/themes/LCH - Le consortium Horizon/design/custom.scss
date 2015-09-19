@@ -237,7 +237,7 @@ body {
 /* ------------------------------ */
 
 #Content {
-   padding: 10px 10px 10px 20px;
+       margin: 15px 0 0 250px !important; // need to overide vanilla's default settings 
 
    // Category group
    .CategoryGroup {
