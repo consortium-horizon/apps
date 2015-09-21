@@ -2,12 +2,11 @@
 ?>
 
 <!-- this is the tutorial itself -->
-  <!-- and so on .... -->
   <li
-      <?php
+        <?php
 
         echo "class='cd-single-step";
-        if ( ($PositionMethod == 'vanillaelement') || ($PositionMethod == 'customelement')) {
+        if (($PositionMethod == 'vanillaelement') || ($PositionMethod == 'customelement')) {
             echo " cd-element-highlight";
         }
         echo "' ";
@@ -18,7 +17,7 @@
         }
 
         echo "data-positiontype='". $TooltipPosition ."'";
-      ?>
+        ?>
       >
     <span></span>
 
