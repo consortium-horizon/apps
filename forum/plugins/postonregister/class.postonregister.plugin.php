@@ -7,13 +7,18 @@ $PluginInfo['postonregister'] = array(
    'Author' => 'Vladvonvidden',
 );
 
-    $var="Aucun";
+    $var = "Aucun";
+    $quelJeu = "Aucun";
+    $comment = "Par Internet";
+    $plusSurVous = "je suis quelqu'un de distrait";
 
 class postonregister extends Gdn_Plugin {
 
       public function entryController_RegisterValidation_handler($sender) {
-          var_dump($sender->Form->_FormValues);
         $GLOBALS['var'] = $sender->Form->_FormValues['Aqueljeujouezvousgalement'];
+        $GLOBALS['quelJeu'] = $sender->Form->_FormValues['Pourqueljeupostulezvous'];
+        $GLOBALS['comment'] = $sender->Form->_FormValues['CommentavezvousetconnaissanceduConsortiumHorizon'];
+        $GLOBALS['plusSurVous'] = $sender->Form->_FormValues['Ditesnousenplussurvous'];
       }
 
   public function userModel_afterRegister_handler($sender, $Args) {
@@ -34,28 +39,32 @@ class postonregister extends Gdn_Plugin {
     // Discussion Format (BBcode)
     $Discussion['Format'] = 'BBCode';
     // Discussion title
-    $Discussion['Name'] = '[' . (string) $GLOBALS['var'] . ']' . (string) $GLOBALS['var'] . ' [En attente de validation]';
+    $Discussion['Name'] = '[' . $GLOBALS['quelJeu'] . ']' . (string) $name . ' [En attente de validation]';
     // Discussion content
     $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]
 
                '
-               . $GLOBALS['var'] .
-               '<br>
+               . $GLOBALS['quelJeu'] .
+               '
+
                [b]A quels autres jeux jouez-vous également ?[/b]
 
                '
                . $GLOBALS['var'] .
-               '<br>
+               '
+
                [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]
 
                '
-               . $GLOBALS['var'] .
-               '<br>
+               . $GLOBALS['comment'] .
+               '
+
                [b]Dites-en un peu plus sur vous :[/b]
 
                '
-               . $GLOBALS['var'] .
-               '<br>
+               . $GLOBALS['plusSurVous'] .
+               '
+
                En attente de validation par un modérateur';
     // Date of creation
     $Discussion['DateInserted'] = $date;
