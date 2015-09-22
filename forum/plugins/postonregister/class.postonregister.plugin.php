@@ -9,7 +9,7 @@ $PluginInfo['postonregister'] = array(
 
 class postonregister extends Gdn_Plugin {
 
-  public function userModel_afterRegister_handler($sender, $Args) {
+  public function entryController_RegisterValidation_handler($sender) {
     var_dump($sender);
   }
 }
