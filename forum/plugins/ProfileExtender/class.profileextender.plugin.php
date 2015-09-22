@@ -10,7 +10,7 @@
 
 $PluginInfo['ProfileExtender'] = array(
     'Name' => 'Profile Extender (edited)',
-    'Description' => 'Add fields (like status, location, or gamer tags) to profiles and registration.',
+    'Description' => 'Add fields (edited) (like status, location, or gamer tags) to profiles and registration.',
     'Version' => '3.0.2',
     'RequiredApplications' => array('Vanilla' => '2.1'),
     'MobileFriendly' => true,
