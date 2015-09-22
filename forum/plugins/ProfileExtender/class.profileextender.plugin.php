@@ -9,7 +9,7 @@
  */
 
 $PluginInfo['ProfileExtender'] = array(
-    'Name' => 'Profile Extender',
+    'Name' => 'Profile Extender (edited)',
     'Description' => 'Add fields (like status, location, or gamer tags) to profiles and registration.',
     'Version' => '3.0.2',
     'RequiredApplications' => array('Vanilla' => '2.1'),
@@ -17,7 +17,7 @@ $PluginInfo['ProfileExtender'] = array(
     //'RegisterPermissions' => array('Plugins.ProfileExtender.Add'),
     'SettingsUrl' => '/dashboard/settings/profileextender',
     'SettingsPermission' => 'Garden.Settings.Manage',
-    'Author' => "Lincoln Russell",
+    'Author' => "Lincoln Russell (edited)",
     'AuthorEmail' => 'lincoln@vanillaforums.com',
     'AuthorUrl' => 'http://lincolnwebs.com'
 );
@@ -239,7 +239,8 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
         $this->ProfileFields = $this->getProfileFields();
 
         // Get user-specific data
-        $this->UserFields = Gdn::UserModel()->GetMeta($Sender->User->UserID, 'Profile.%', 'Profile.');
+      //  $this->UserFields = Gdn::userModel()->GetMeta($Sender->data("User.UserID"), 'Profile.%', 'Profile.');
+         $this->UserFields = Gdn::UserModel()->GetMeta($Sender->User->UserID, 'Profile.%', 'Profile.');
 
         // Fill in user data on form
         foreach ($this->UserFields as $Field => $Value) {
