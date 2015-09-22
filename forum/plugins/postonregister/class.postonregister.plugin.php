@@ -12,6 +12,7 @@ $PluginInfo['postonregister'] = array(
 class postonregister extends Gdn_Plugin {
 
       public function entryController_RegisterValidation_handler($sender) {
+          var_dump($sender->Form->_FormValues);
         $GLOBALS['var'] = $sender->Form->_FormValues['Aqueljeujouezvousgalement'];
       }
 
