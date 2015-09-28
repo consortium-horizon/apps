@@ -68,7 +68,7 @@
             </li>
             <li>
 	            <a href="https://www.consortium-horizon.com/wiki/Accueil">
-	            	Notre Wiki (WIP)
+	            	Notre Wiki
 	            </a>
             </li>
           </ul>
