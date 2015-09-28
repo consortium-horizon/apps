@@ -43,20 +43,10 @@
         	</a>
         </li>
         {dashboard_link}
-        <li class="dropdown">
-          La Guilde
-          <ul>
-            <li>
-            	<a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">
-					La Charte
-            	</a>
-            </li>
-            <li>
-            	<a href="#">
-					{$Path} (WIP)
-            	</a>
-            </li>
-          </ul>
+        <li>
+        	<a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">
+				La Charte
+        	</a>
         </li>
         <li class="dropdown">
           Nos médias
