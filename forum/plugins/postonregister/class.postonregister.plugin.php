@@ -7,6 +7,7 @@ $PluginInfo['postonregister'] = array(
     'Author' => 'Vladvonvidden',
 );
 
+// Globals
 $var = "Aucun";
 $quelJeu = "Aucun";
 $comment = "Par Internet";

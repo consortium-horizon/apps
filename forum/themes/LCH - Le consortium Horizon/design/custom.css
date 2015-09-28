@@ -430,6 +430,9 @@ body {
 #Head .SiteSearch {
   margin-top: 12px;
 }
+#Head .SiteSearch .Button {
+  margin: 0;
+}
 #Head .dropdown {
   position: relative;
   display: inline-block;

@@ -29,23 +29,23 @@ $alert : rgb(221, 0, 0);
 
 // Rows need to be larger !
 .Row {
-   width: 960px;
-   width: 75vw;
+    width: 960px;
+    width: 75vw;
 }
 
 // Center our most beautiful logo
 .Banner {
-   text-align: center;
+    text-align: center;
 }
 
 // Display new discussion buttons
 #Content .BoxNewDiscussion {
-   display: block;
+    display: block;
 }
 
 // Remove grey background from items
 .Item.Read {
-   background: none;
+    background: none;
 }
 
 /* -------- */
@@ -54,36 +54,36 @@ $alert : rgb(221, 0, 0);
 
 // Links
 a {
-   color: $primary;
-   &:hover {
-      color: $primaryHL;
-   }
+    color: $primary;
+    &:hover {
+        color: $primaryHL;
+    }
 }
 
 // Tags
 .TagCloud {
-   li {
-      padding: 5px;
-      @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
-      @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
-      a {
-         color: #fafafa;
-         &:hover {
-            color: $primaryHL;
-         }
-      }
-   }
+    li {
+        padding: 5px;
+        @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
+        @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
+        a {
+            color: #fafafa;
+            &:hover {
+                color: $primaryHL;
+            }
+        }
+    }
 }
 
 // Alerts
 .Alert {
-   @include vertical-gradient($start: rgb(255, 78, 78), $stop: $alert);
-   @include box-shadow(0, 0, 3px, #FFB9B9, $inset: true);
+    @include vertical-gradient($start: rgb(255, 78, 78), $stop: $alert);
+    @include box-shadow(0, 0, 3px, #FFB9B9, $inset: true);
 }
 
 // Buttons
 .Button {
-  margin: 15px 0;
+    margin: 15px 0;
 }
 
 /* ---- */
@@ -91,13 +91,13 @@ a {
 /* ---- */
 
 body {
-   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-   font-weight: normal;
-   height: 100vh;
-   @include vertical-gradient-with-image(url('img/backgrounds/LCH--default.png'), black);
-   background-repeat: no-repeat;
-   background-attachment: fixed;
-   background-size: cover;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    height: 100vh;
+    @include vertical-gradient-with-image(url('img/backgrounds/LCH--default.png'), black);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 /* ------ */
@@ -105,93 +105,97 @@ body {
 /* ------ */
 
 #Head {
-   // Default navbar (has to change !)
-   background: none;
+    // Default navbar (has to change !)
+    background: none;
 
-   // What we want to customize
-   .Row {
-      padding: 0px 10px;
-      @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
-      @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
-   }
+    // What we want to customize
+    .Row {
+        padding: 0px 10px;
+        @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
+        @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
+    }
 
-   .SiteMenu {
-      li {
-         padding: 15px 0;
-      }
-      a {
-         font-weight: normal;
-         font-size: 1em;
-      }
-   }
+    .SiteMenu {
+        li {
+            padding: 15px 0;
+        }
+        a {
+            font-weight: normal;
+            font-size: 1em;
+        }
+    }
 
-   .SiteSearch {
-      margin-top: 12px;
-   }
+    .SiteSearch {
+        margin-top: 12px;
+        // fix for button margin
+        .Button {
+            margin: 0;
+        }
+    }
 
-   // Dropdowns
-   .dropdown {
-      position: relative;
-      display: inline-block;
+    // Dropdowns
+    .dropdown {
+        position: relative;
+        display: inline-block;
 
-      &::after {
-         display: inline-block;
-         margin-left: 3px;
-         font-family: FontAwesome;
-         content: "\f0d7";
-      }
+        &::after {
+            display: inline-block;
+            margin-left: 3px;
+            font-family: FontAwesome;
+            content: "\f0d7";
+        }
 
-      &:hover {
-         ul {
-            z-index: 10;
-            opacity: 1;
-            -webkit-transition: opacity 0.3s;
-            transition: opacity 0.3s;
-         }
-         &::after {
-            @include rotate (180);
-         }
-      }
-
-      ul {
-         z-index: -99;
-         opacity: 0;
-         padding-top: 15px;
-         position: absolute;
-         top: 52px;
-         left: 0;
-
-         // Dropdown elements
-         li {
-
-            // First child is a bit different (arrow on top)
-            &:first-child {
-               position: relative;
-
-               &::after {
-                  position: absolute;
-                  top: -15px;
-                  left: 5px;
-                  display: inline-block;
-                  margin-left: 3px;
-                  font-family: FontAwesome;
-                  content: "\f0d8";
-                  color: $darkTones;
-                  font-size: 2em;
-               }
+        &:hover {
+            ul {
+                z-index: 10;
+                opacity: 1;
+                -webkit-transition: opacity 0.3s;
+                transition: opacity 0.3s;
             }
-
-            background: $darkTones;
-            padding: 7px 10px;
-            display: block;
-            border-bottom: 1px solid #323232;
-
-            a {
-               color: $midTones;
+            &::after {
+                @include rotate (180);
             }
-         }
-      }
-   }
+        }
+
+        ul {
+            z-index: -99;
+            opacity: 0;
+            padding-top: 15px;
+            position: absolute;
+            top: 52px;
+            left: 0;
+
+            // Dropdown elements
+            li {
+
+                // First child is a bit different (arrow on top)
+                &:first-child {
+                    position: relative;
+
+                    &::after {
+                        position: absolute;
+                        top: -15px;
+                        left: 5px;
+                        display: inline-block;
+                        margin-left: 3px;
+                        font-family: FontAwesome;
+                        content: "\f0d8";
+                        color: $darkTones;
+                        font-size: 2em;
+                    }
+                }
+
+                background: $darkTones;
+                padding: 7px 10px;
+                display: block;
+                border-bottom: 1px solid #323232;
+
+                a {
+                    color: $midTones;
+                }
+            }
+        }
+    }
 }
 
 /* --------------- */
@@ -199,13 +203,13 @@ body {
 /* --------------- */
 
 .BreadcrumbsWrapper {
-   .Row {
-      padding: 10px;
-      background: white;
-      .Breadcrumbs {
-         margin-left: 10px;
-      }
-   }
+    .Row {
+        padding: 10px;
+        background: white;
+        .Breadcrumbs {
+            margin-left: 10px;
+        }
+    }
 }
 
 /* ---------------------- */
@@ -213,12 +217,12 @@ body {
 /* ---------------------- */
 
 #Body {
-   .Row {
-      padding: 10px;
-      padding-bottom: 25px;
-      background: rgb(241, 241, 241);
-      border-radius: 0 0 5px 5px;
-   }
+    .Row {
+        padding: 10px;
+        padding-bottom: 25px;
+        background: rgb(241, 241, 241);
+        border-radius: 0 0 5px 5px;
+    }
 }
 
 /* ------------------------------------- */
@@ -226,10 +230,10 @@ body {
 /* ------------------------------------- */
 
 #Panel {
-   background: white;
-   margin: 15px 0 0 10px;
-   padding: 10px;
-   @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+    background: white;
+    margin: 15px 0 0 10px;
+    padding: 10px;
+    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
 }
 
 /* ------------------------------ */
@@ -237,47 +241,47 @@ body {
 /* ------------------------------ */
 
 #Content {
-       margin: 15px 0 0 250px !important; // need to overide vanilla's default settings 
+    margin: 15px 0 0 250px !important; // need to overide vanilla's default settings
 
-   // Category group
-   .CategoryGroup {
-      margin-bottom: 25px;
+    // Category group
+    .CategoryGroup {
+        margin-bottom: 25px;
 
-      // Category title
-      .H {
-         position: relative;
-         z-index: 2;
-         color: white;
-         background: $darkTones;
-         border: 1px solid $darkTones;
-         padding: 5px 10px;
+        // Category title
+        .H {
+            position: relative;
+            z-index: 2;
+            color: white;
+            background: $darkTones;
+            border: 1px solid $darkTones;
+            padding: 5px 10px;
 
-         // The blue stuff
-         &::after {
-            position: absolute;
-            z-index: -1;
-            top: 0;
-            left: 0;
-            content: "";
-            width: 25%;
-            height: 100%;
-            @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
-            @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
-         }
-      }
+            // The blue stuff
+            &::after {
+                position: absolute;
+                z-index: -1;
+                top: 0;
+                left: 0;
+                content: "";
+                width: 25%;
+                height: 100%;
+                @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
+                @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
+            }
+        }
 
-   }
+    }
 }
 
 .DataTable {
-   background: white;
-   padding: 5px 10px;
-   @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+    background: white;
+    padding: 5px 10px;
+    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
 
-   // Remove the border of the last child
-   tbody>tr:last-child td {
-      border-bottom: none;
-   }
+    // Remove the border of the last child
+    tbody>tr:last-child td {
+        border-bottom: none;
+    }
 }
 
 /* ---------- */
@@ -286,89 +290,89 @@ body {
 
 // Remove description on the homepage
 #vanilla_categories_index.Section-CategoryList {
-   .HomepageTitle, .PageDescription {display: none;}
+    .HomepageTitle, .PageDescription {display: none;}
 }
 
 .CategoryTable {
 
-   .Item {
-      td {
-         padding: 10px 5px;
-      }
+    .Item {
+        td {
+            padding: 10px 5px;
+        }
 
-      &:hover {
-         .CountDiscussions, .CountComments {
-            color: $primary;
-         }
-      }
-   }
+        &:hover {
+            .CountDiscussions, .CountComments {
+                color: $primary;
+            }
+        }
+    }
 }
 
 // Child-Categories
 .ChildCategoryList {
-   background: white;
-   padding: 0 10px 15px 10px;
-   @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+    background: white;
+    padding: 0 10px 15px 10px;
+    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
 
-   .Item {
-      width: 100%;
-   }
+    .Item {
+        width: 100%;
+    }
 }
 
 // Banners for main categories
 #CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires, #CategoryGroup-le-salon-ouvert-au-public{
-   position: relative;
-   margin-top: 150px;
-   &::after {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 150px;
-      top: -150px;
-      content: "";
-   }
+    position: relative;
+    margin-top: 150px;
+    &::after {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 150px;
+        top: -150px;
+        content: "";
+    }
 }
 
 #CategoryGroup-nos-jeux-principaux::after {
-   background: url('img/gamesBanner.jpg');
-   background-position: bottom center;
-   background-repeat: no-repeat;
+    background: url('img/gamesBanner.jpg');
+    background-position: bottom center;
+    background-repeat: no-repeat;
 }
 
 #CategoryGroup-nos-jeux-secondaires::after {
-   background: url('img/otherGamesBanner.jpg');
-   background-position: bottom center;
-   background-repeat: no-repeat;
+    background: url('img/otherGamesBanner.jpg');
+    background-position: bottom center;
+    background-repeat: no-repeat;
 }
 
 #CategoryGroup-le-salon-ouvert-au-public::after {
-   background: url('img/publicBanner.jpg');
-   background-position: bottom center;
-   background-repeat: no-repeat;
+    background: url('img/publicBanner.jpg');
+    background-position: bottom center;
+    background-repeat: no-repeat;
 }
 
 // Unread messages
 .Unread h3 a::after {
-   content: "nouveau";
-   margin-left: 9px;
-   border-radius: 2px;
-   -moz-border-radius: 2px;
-   -webkit-border-radius: 2px;
-   background: #FF0;
-   color: #000;
-   font-size: 9px;
-   font-weight: bold;
-   padding: 3px;
-   line-height: 1;
-   white-space: nowrap;
+    content: "nouveau";
+    margin-left: 9px;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    background: #FF0;
+    color: #000;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 3px;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 // Announcement
 .Announcement {
-  background: #E9F2FF !important; // needed to override discussion status (read/unread)
-  .Tag-Announcement {
-    background: #2877d0;
-  }
+    background: #E9F2FF !important; // needed to override discussion status (read/unread)
+    .Tag-Announcement {
+        background: #2877d0;
+    }
 }
 
 
@@ -378,114 +382,114 @@ body {
 
 // Styles for roles
 .Role_Conseiller {
-  .Author {
-    .Username {
-      color: #D02828;
-      &:hover {
-        color: #FF6666;
-      }
-      &::after {
-        font-family: FontAwesome;
-        content: "\f005";
-        font-size: 0.8em;
-        margin-left: 5px;
-        display: inline-block;
-        text-decoration: inherit;
-      }
+    .Author {
+        .Username {
+            color: #D02828;
+            &:hover {
+                color: #FF6666;
+            }
+            &::after {
+                font-family: FontAwesome;
+                content: "\f005";
+                font-size: 0.8em;
+                margin-left: 5px;
+                display: inline-block;
+                text-decoration: inherit;
+            }
+        }
     }
-  }
 }
 
 .Role_Modrateurglobal {
-  .Author {
-    .Username {
-      color: #209D2F;
-      &:hover {
-        color: #3BCB62;
-      }
-      &::after {
-        font-family: FontAwesome;
-        content: "\f0e3";
-        font-size: 0.8em;
-        margin-left: 5px;
-        display: inline-block;
-        text-decoration: inherit;
-      }
+    .Author {
+        .Username {
+            color: #209D2F;
+            &:hover {
+                color: #3BCB62;
+            }
+            &::after {
+                font-family: FontAwesome;
+                content: "\f0e3";
+                font-size: 0.8em;
+                margin-left: 5px;
+                display: inline-block;
+                text-decoration: inherit;
+            }
+        }
     }
-  }
 }
 
 li[class*="Role_Rfrent"] {
-  .Author {
-    .Username {
-      color: #A028D0;
-      &:hover {
-        color: #C265E7;
-      }
-      &::after {
-        font-family: FontAwesome;
-        content: "\f006";
-        font-size: 0.8em;
-        margin-left: 5px;
-        display: inline-block;
-        text-decoration: inherit;
-      }
+    .Author {
+        .Username {
+            color: #A028D0;
+            &:hover {
+                color: #C265E7;
+            }
+            &::after {
+                font-family: FontAwesome;
+                content: "\f006";
+                font-size: 0.8em;
+                margin-left: 5px;
+                display: inline-block;
+                text-decoration: inherit;
+            }
+        }
     }
-  }
 }
 
 .RoleTitle {display: none;} // don't need to show that all day long
 // But lets make it visible on hover
 .MessageList {
-  .Item:hover {
-    .RoleTitle {display: inline-block;}
-  }
+    .Item:hover {
+        .RoleTitle {display: inline-block;}
+    }
 }
 // Allow users to display badge, BUT restrain number and size
 .AuthorInfo {
-  img {
-    max-height: 15px;
-    max-width: 15px;
-    vertical-align: middle;
-    margin-top: -5px;
-  }
+    img {
+        max-height: 15px;
+        max-width: 15px;
+        vertical-align: middle;
+        margin-top: -5px;
+    }
 }
 // Bookmark & hover styles
 .DiscussionsTable {
-   tr.Bookmarked {
-      background: rgba(255, 232, 159, 0.3);
-   }
+    tr.Bookmarked {
+        background: rgba(255, 232, 159, 0.3);
+    }
 
-   .Item {
-      &:hover {
-         .CountDiscussions, .CountComments {
-            color: $primary;
-         }
-      }
-   }
+    .Item {
+        &:hover {
+            .CountDiscussions, .CountComments {
+                color: $primary;
+            }
+        }
+    }
 }
 
 // Unread discussions
 .New .Title::after {
-   content: "non lu";
-   margin-left: 9px;
-   border-radius: 2px;
-   -moz-border-radius: 2px;
-   -webkit-border-radius: 2px;
-   background: #01BD01;
-   color: white;
-   font-size: 9px;
-   font-weight: bold;
-   padding: 3px;
-   line-height: 1;
-   white-space: nowrap;
+    content: "non lu";
+    margin-left: 9px;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    background: #01BD01;
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 3px;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 // Activitiy
 .ActivityFormWrap .FormWrapper {
-  background: white;
-  margin: 15px 0;
-  @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+    background: white;
+    margin: 15px 0;
+    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
 }
 
 /* ------ */
@@ -493,18 +497,18 @@ li[class*="Role_Rfrent"] {
 /* ------ */
 
 #Foot {
-   margin-top: 50px;
+    margin-top: 50px;
 
-   .Row {
-      padding: 25px 10px !important;
-      position: relative;
-      margin-top: 10px;
-      background-color: $darkTones;
-      box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4), 0px 1px 1px rgba(255, 255, 255, 0.2) inset;
-      border: 1px solid #000;
-      @include vertical-gradient($start: $darkTones, $stop: rgb(31, 31, 34));
+    .Row {
+        padding: 25px 10px !important;
+        position: relative;
+        margin-top: 10px;
+        background-color: $darkTones;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4), 0px 1px 1px rgba(255, 255, 255, 0.2) inset;
+        border: 1px solid #000;
+        @include vertical-gradient($start: $darkTones, $stop: rgb(31, 31, 34));
 
-   }
+    }
 }
 
 @import "responsive";
