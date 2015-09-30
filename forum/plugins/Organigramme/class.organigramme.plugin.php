@@ -82,35 +82,6 @@ class OrganigrammePlugin extends Gdn_Plugin {
         Gdn::Router()-> DeleteRoute('^'.self::SHORT_ROUTE.'(/.*)?$');
     }
 
-
-    /**
-     * Create a link to our page in the menu.
-     *
-     * @param object $sender Garden Controller.
-     * @return void.
-     * @package Organigramme
-     * @since 0.1
-     */
-    // public function base_render_before ($sender) {
-    //     // We only need to add the menu entry if a) the controller has a menu
-    //     // and b) we are not in the admin area.
-    //     if ($sender->Menu && $sender->masterView != 'admin') {
-    //         // If current page is our custom page, we want the menu entry
-    //         // to be selected. This is only needed if you've changed the route,
-    //         // otherwise it will happen automatically.
-    //         if ($sender->SelfUrl == self::SHORT_ROUTE) {
-    //             $AnchorAttributes = array('class' => 'Selected');
-    //         } else {
-    //             $AnchorAttributes = '';
-    //         }
-    //
-    //         // We add our Link to a section (but you can pass an empty string
-    //         // if there is no group you like to add your link to), pass a name,
-    //         // the link target and our class to the function.
-    //         $sender->Menu->AddLink('', t(self::PAGE_NAME), self::SHORT_ROUTE, '', $AnchorAttributes);
-    //     }
-    // }
-
     /**
      * Create a new page that uses the current theme.
      *
