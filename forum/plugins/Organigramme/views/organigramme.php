@@ -4,7 +4,7 @@
 
 <?php
     if ($this->data('admins')) {
-        echo "<h2>Les administrateurs<h2>";
+        echo "<h2>Les administrateurs</h2>";
         echo "<p>Si t'as un problème technique, réfléchi et vide ton cache ... sinon, demande leur de l'aide.</p>";
         echo "<ul>";
         foreach ($this->data('admins') as $key => $value) {
@@ -16,7 +16,7 @@
     }
 
     if ($this->data('conseillers')) {
-        echo "<h2>Les conseillers<h2>";
+        echo "<h2>Les conseillers</h2>";
         echo "<p>Les plus vénérables mammifères du Consortium, ils assurent le bon fonctionnement de la guilde.</p>";
         echo "<ul>";
         foreach ($this->data('conseillers') as $key => $value) {
@@ -28,7 +28,7 @@
     }
 
     if ($this->data('modos')) {
-        echo "<h2>Les modérateurs globaux<h2>";
+        echo "<h2>Les modérateurs globaux</h2>";
         echo "<p>Les gardiens du très saint banhammer.</p>";
         echo "<ul>";
         foreach ($this->data('modos') as $key => $value) {
@@ -40,7 +40,7 @@
     }
 
     if ($this->data('refPS2')) {
-        echo "<h2>Les référents Planetside 2<h2>";
+        echo "<h2>Les référents Planetside 2</h2>";
         echo "<ul>";
         foreach ($this->data('refPS2') as $key => $value) {
             echo "<li>";

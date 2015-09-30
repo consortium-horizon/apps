@@ -6,3 +6,6 @@
     -moz-box-shadow: 0 0 3px #d5d5d5;
     box-shadow: 0 0 3px #d5d5d5;
 }
+
+#vanilla_vanilla_organigramme #Content ul li{
+    display: inline-block;
