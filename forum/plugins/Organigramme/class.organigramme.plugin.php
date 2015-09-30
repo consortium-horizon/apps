@@ -175,7 +175,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         RoleModel::SetUserRoles($sender->UserData->Result());
 
         $admins = array();
-        $members = array();
+        $conseillers = array();
 
         foreach ($sender->UserData as $key => $value) {
             if ($value->Deleted == 0) {
@@ -184,17 +184,19 @@ class OrganigrammePlugin extends Gdn_Plugin {
                         array_push($admins, $value);
                         break;
 
+                    case in_array('Conseiller',$value->Roles):
+                        array_push($conseillers, $value);
+                        break;
+
                     default:
-                        var_dump($value->Roles);
                         break;
                 }
             }
         }
 
-        var_dump($admins);
-
         // Let's pass this example to our view.
         $sender->setData('admins', $admins);
+        $sender->setData('conseillers', $conseillers);
         $sender->setData('name', $name);
 
         // We could have simply echoed to screen here, but Garden is a MVC
