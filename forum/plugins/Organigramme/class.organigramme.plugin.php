@@ -108,7 +108,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         // subfolders "design" (for CSS) and "js" (for Javascript). The naming
         // of the files is completely up to you. You can load them by
         // uncommenting the respective line below.
-        // $sender->addCssFile('organigramme.css', 'plugins/Organigramme');
+        $sender->addCssFile('organigramme.css', 'plugins/Organigramme');
         // $sender->addJsFile('organigramme.js', 'plugins/Organigramme');
 
 
@@ -196,8 +196,6 @@ class OrganigrammePlugin extends Gdn_Plugin {
                 array_push($refPS2, $value);
             }
         }
-
-        var_dump($sender->UserData);
 
         // Let's pass this example to our view.
         $sender->setData('admins', $admins);
