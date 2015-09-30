@@ -197,7 +197,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
             }
         }
 
-        var_dump($conseillers);
+        var_dump($sender->UserData);
 
         // Let's pass this example to our view.
         $sender->setData('admins', $admins);
