@@ -171,7 +171,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
             // Only show user once if in more than one role.
             $SQL->GroupBy('ur.UserID');
 
-        $sender->UserData = $SQL->Limit(10, 0)->Get();
+        $sender->UserData = $SQL->Limit(1000, 0)->Get();
         RoleModel::SetUserRoles($sender->UserData->Result());
 
         $admins = array();
