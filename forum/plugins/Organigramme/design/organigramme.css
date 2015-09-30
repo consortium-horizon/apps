@@ -9,3 +9,8 @@
 
 #vanilla_vanilla_organigramme #Content ul li{
     display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #2C68C7;
+    border-radius: 5px;
+}
