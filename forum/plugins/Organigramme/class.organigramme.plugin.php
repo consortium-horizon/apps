@@ -209,7 +209,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         foreach ($sender->UserData as $key => $value) {
             if ($value->Deleted == 0) {
                 switch (true) {
-                    case in_array('Administrator',$value->Roles):
+                    case in_array('Administrateur',$value->Roles):
                         array_push($admins, $value);
                         break;
 
