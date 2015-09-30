@@ -1,11 +1,5 @@
-<?php defined('APPLICATION') or die;
-if ($this->data('hasArguments')) {
-    $linkSuggestion = Gdn_Theme::Link($this->SelfUrl, 'no parameters');
-} else {
-    $linkSuggestion = Gdn_Theme::Link($this->SelfUrl.'/Anonymous', 'parameters');
-}
-$alternative
-?>
+<?php defined('APPLICATION') or die;?>
+
 <h2>Bonjour à toi, <?= $this->data('name') ?>, qui consulte cette page en construction (petit gredin)</h2>
 
 <?php

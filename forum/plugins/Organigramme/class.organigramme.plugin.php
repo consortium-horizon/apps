@@ -180,23 +180,20 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $refPS2 = array();
 
         foreach ($sender->UserData as $key => $value) {
-            if ($value->Deleted == 0) {
+            if (in_array('Administrateur',$value->Roles)) {
+                array_push($admins, $value);
+            }
 
-                if (in_array('Administrateur',$value->Roles)) {
-                    array_push($admins, $value);
-                }
+            if (in_array('Conseiller',$value->Roles)) {
+                array_push($conseillers, $value);
+            }
 
-                if (in_array('Conseiller',$value->Roles)) {
-                    array_push($conseillers, $value);
-                }
+            if (in_array('Modérateur global',$value->Roles)) {
+                array_push($modos, $value);
+            }
 
-                if (in_array('Modérateur global',$value->Roles)) {
-                    array_push($modos, $value);
-                }
-
-                if (in_array('Référent Planetside 2',$value->Roles)) {
-                    array_push($refPS2, $value);
-                }
+            if (in_array('Référent Planetside 2',$value->Roles)) {
+                array_push($refPS2, $value);
             }
         }
 
