@@ -180,21 +180,17 @@ class OrganigrammePlugin extends Gdn_Plugin {
 
         foreach ($sender->UserData as $key => $value) {
             if ($value->Deleted == 0) {
-                switch (true) {
-                    case in_array('Administrateur',$value->Roles):
-                        array_push($admins, $value);
-                        break;
 
-                    case in_array('Conseiller',$value->Roles):
-                        array_push($conseillers, $value);
-                        break;
+                if (in_array('Administrateur',$value->Roles)) {
+                    array_push($admins, $value);
+                }
 
-                    case in_array('Modérateur global',$value->Roles):
-                        array_push($modos, $value);
-                        break;
+                if (in_array('Conseiller',$value->Roles)) {
+                    array_push($conseillers, $value);
+                }
 
-                    default:
-                        break;
+                if (in_array('Modérateur global',$value->Roles)) {
+                    array_push($modos, $value);
                 }
             }
         }
