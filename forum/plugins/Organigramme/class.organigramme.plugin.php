@@ -171,11 +171,12 @@ class OrganigrammePlugin extends Gdn_Plugin {
             // Only show user once if in more than one role.
             $SQL->GroupBy('ur.UserID');
 
-        $sender->UserData = $SQL->Limit(1000, 0)->Get();
+        $sender->UserData = $SQL->Limit(500, 0)->Get();
         RoleModel::SetUserRoles($sender->UserData->Result());
 
         $admins = array();
         $conseillers = array();
+        $modos = array();
 
         foreach ($sender->UserData as $key => $value) {
             if ($value->Deleted == 0) {
@@ -188,6 +189,10 @@ class OrganigrammePlugin extends Gdn_Plugin {
                         array_push($conseillers, $value);
                         break;
 
+                    case in_array('Modérateur global',$value->Roles):
+                        array_push($modos, $value);
+                        break;
+
                     default:
                         break;
                 }
@@ -197,6 +202,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         // Let's pass this example to our view.
         $sender->setData('admins', $admins);
         $sender->setData('conseillers', $conseillers);
+        $sender->setData('modos', $modos);
         $sender->setData('name', $name);
 
         // We could have simply echoed to screen here, but Garden is a MVC

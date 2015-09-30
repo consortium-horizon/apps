@@ -32,4 +32,16 @@ $alternative
         }
         echo "</ul>";
     }
+
+    if ($this->data('modos')) {
+        echo "<h2>Les modérateurs globaux<h2>";
+        echo "<p>Les gardiens du très saint banhammer.</p>";
+        echo "<ul>";
+        foreach ($this->data('modos') as $key => $value) {
+            echo "<li>";
+            echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
+            echo "</li>";
+        }
+        echo "</ul>";
+    }
 ?>
