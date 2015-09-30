@@ -177,6 +177,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $admins = array();
         $conseillers = array();
         $modos = array();
+        $refPS2 = array();
 
         foreach ($sender->UserData as $key => $value) {
             if ($value->Deleted == 0) {
@@ -192,6 +193,10 @@ class OrganigrammePlugin extends Gdn_Plugin {
                 if (in_array('Modérateur global',$value->Roles)) {
                     array_push($modos, $value);
                 }
+
+                if (in_array('Référent Planetside 2',$value->Roles)) {
+                    array_push($refPS2, $value);
+                }
             }
         }
 
@@ -200,6 +205,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->setData('conseillers', $conseillers);
         $sender->setData('modos', $modos);
         $sender->setData('name', $name);
+        $sender->setData('refPS2', $refPS2);
 
         // We could have simply echoed to screen here, but Garden is a MVC
         // framework and that's why we should use a separate view if possible.

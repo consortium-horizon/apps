@@ -44,4 +44,15 @@ $alternative
         }
         echo "</ul>";
     }
+
+    if ($this->data('refPS2')) {
+        echo "<h2>Les référents Planetside 2<h2>";
+        echo "<ul>";
+        foreach ($this->data('refPS2') as $key => $value) {
+            echo "<li>";
+            echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
+            echo "</li>";
+        }
+        echo "</ul>";
+    }
 ?>
