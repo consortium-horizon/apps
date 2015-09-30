@@ -25,7 +25,7 @@ $alternative
         echo "<h2>Les conseillers<h2>";
         echo "<p>Les plus vénérables mammifères du Consortium, ils assurent le bon fonctionnement de la guilde.</p>";
         echo "<ul>";
-        foreach ($this->data('admins') as $key => $value) {
+        foreach ($this->data('conseillers') as $key => $value) {
             echo "<li>";
             echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
