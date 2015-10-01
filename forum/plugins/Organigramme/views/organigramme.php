@@ -1,7 +1,5 @@
 <?php defined('APPLICATION') or die;?>
 
-<h2>Bonjour à toi, <?= $this->data('name') ?>, qui consulte cette page en construction (petit gredin)</h2>
-
 <?php
     if ($this->data('admins')) {
         echo "<div class='OrgContainer'>";

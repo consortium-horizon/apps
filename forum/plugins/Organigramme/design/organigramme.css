@@ -8,7 +8,7 @@
     border: 1px solid transparent;
     transition: all 0.2s;
     white-space: nowrap;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 }
 
 #vanilla_vanilla_organigramme #Content .OrgContainer:hover {
@@ -42,6 +42,7 @@
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.modos {
     background: url("img/modospics.jpg");
     background-size: cover;
+    background-position: center;
 }
 
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refAlbion {
