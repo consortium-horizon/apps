@@ -43,10 +43,20 @@
         	</a>
         </li>
         {dashboard_link}
-        <li>
-        	<a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">
-				La Charte
-        	</a>
+        <li class="dropdown">
+          Nos médias
+          <ul>
+            <li>
+            	<a href="http://www.consortium-horizon.com/forum/organigramme">
+    				Organigramme
+            	</a>
+            </li>
+            <li>
+            	<a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">
+    				La Charte
+            	</a>
+            </li>
+          </ul>
         </li>
         <li class="dropdown">
           Nos médias

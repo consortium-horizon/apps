@@ -7,7 +7,6 @@
     overflow: hidden;
     border: 1px solid transparent;
     transition: all 0.2s;
-    white-space: nowrap;
     margin-bottom: 15px;
 }
 
@@ -23,7 +22,7 @@
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic {
     vertical-align: top;
     width: 33%;
-    height: 150px;
+    height: 200px;
     padding: 0;
     position: relative;
 }
@@ -80,8 +79,8 @@
     left: 0;
     color: white;
     text-align: center;
-    line-height: 150px;
-    font-size: 2em;
+    line-height: 200px;
+    font-size: 2.3em;
     text-transform: uppercase;
     background: rgba(40, 119, 208, 0.8);
     opacity: 0;
@@ -95,6 +94,7 @@
 
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerContent {
     padding: 10px 20px;
+    width: 55%;
 }
 
 #vanilla_vanilla_organigramme #Content ul li{
