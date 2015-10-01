@@ -28,10 +28,47 @@
     position: relative;
 }
 
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.admins {
+    background: url("img/adminspics.jpg");
+    background-size: cover;
+}
+
+
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.conseillers {
     background: url("img/conseillerspics.jpg");
     background-size: cover;
 }
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.modos {
+    background: url("img/modospics.jpg");
+    background-size: cover;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refAlbion {
+    background: url("img/refAlbionpics.jpg");
+    background-size: cover;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refArma {
+    background: url("img/refArmapics.jpg");
+    background-size: cover;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refPS2 {
+    background: url("img/refPS2pics.jpg");
+    background-size: cover;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refSkyforge {
+    background: url("img/refSkyforgepics.jpg");
+    background-size: cover;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refSC {
+    background: url("img/refSCpics.jpg");
+    background-size: cover;
+}
+
 
 
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic span {
