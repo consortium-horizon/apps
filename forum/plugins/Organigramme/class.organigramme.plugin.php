@@ -174,11 +174,19 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $conseillers = array();
         $modos = array();
         $refPS2 = array();
+        $refArma = array();
+        $refSkyforge = array();
+        $refSC = array();
+        $refAlbion = array();
 
         $adminspics = array();
         $conseillerspics = array();
         $modospics = array();
         $refPS2pics = array();
+        $refArmapics = array();
+        $refSkyforgepics = array();
+        $refSCpics = array();
+        $refAlbionpics = array();
 
         foreach ($sender->UserData as $key => $value) {
             if (in_array('Administrateur',$value->Roles)) {
@@ -200,6 +208,26 @@ class OrganigrammePlugin extends Gdn_Plugin {
                 array_push($refPS2, $value);
                 array_push($refPS2pics, UserPhoto($value));
             }
+
+            if (in_array('Référent Arma 3',$value->Roles)) {
+                array_push($refArma, $value);
+                array_push($refArmapics, UserPhoto($value));
+            }
+
+            if (in_array('Référent Albion',$value->Roles)) {
+                array_push($refAlbion, $value);
+                array_push($refAlbionpics, UserPhoto($value));
+            }
+
+            if (in_array('Référent Star Citizen',$value->Roles)) {
+                array_push($refSC, $value);
+                array_push($refSCpics, UserPhoto($value));
+            }
+
+            if (in_array('Référent Skyforge',$value->Roles)) {
+                array_push($refSkyforge, $value);
+                array_push($refSkyforgepics, UserPhoto($value));
+            }
         }
 
         // Pass the member data.
@@ -208,6 +236,10 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->setData('modos', $modos);
         $sender->setData('name', $name);
         $sender->setData('refPS2', $refPS2);
+        $sender->setData('refAlbion', $refAlbion);
+        $sender->setData('refArma', $refArma);
+        $sender->setData('refSC', $refSC);
+        $sender->setData('refSkyforge', $refSkyforge);
 
         // The the profile pics
         $sender->setData('adminspics', $adminspics);
@@ -215,6 +247,10 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->setData('modospics', $modospics);
         $sender->setData('namepics', $namepics);
         $sender->setData('refPS2pics', $refPS2pics);
+        $sender->setData('refAlbionpics', $refAlbionpics);
+        $sender->setData('refArmapics', $refArmapics);
+        $sender->setData('refSCpics', $refSCpics);
+        $sender->setData('refSkyforgepics', $refSkyforgepics);
 
         $sender->Render(parent::getView('organigramme.php'));
     }

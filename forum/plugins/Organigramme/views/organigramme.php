@@ -26,7 +26,7 @@
 
     if ($this->data('conseillers')) {
         echo "<div class='OrgContainer'>";
-        echo "<div class='OrgContainerPic'><span>Le conseil</span></div>";
+        echo "<div class='OrgContainerPic'><span>conseil</span></div>";
         echo "<div class='OrgContainerContent'>";
         echo "<h2 class='Title'>Les conseillers</h2>";
         echo "<div class='Description'>Les plus vénérables mammifères du Consortium, ils assurent le bon fonctionnement de la guilde.</div>";
@@ -56,6 +56,27 @@
         $pics = $this->data('modospics');
         foreach ($this->data('modos') as $key => $value) {
             echo "<li class='modos'>";
+            echo $pics[$count];
+            echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
+            echo "</li>";
+            $count++;
+        }
+        echo "</ul>";
+        echo "</div>";
+        echo "</div>";
+    }
+
+    if ($this->data('refArma')) {
+        echo "<div class='OrgContainer'>";
+        echo "<div class='OrgContainerPic'><span>Arma 3</span></div>";
+        echo "<div class='OrgContainerContent'>";
+        echo "<h2 class='Title'>Les référents Arma 3</h2>";
+        echo "<div class='Description'>Description à compléter.</div>";
+        echo "<ul>";
+        $count = 0;
+        $pics = $this->data('refArmapics');
+        foreach ($this->data('refArma') as $key => $value) {
+            echo "<li class='refArma'>";
             echo $pics[$count];
             echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
