@@ -214,7 +214,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
                 array_push($refArmapics, UserPhoto($value));
             }
 
-            if (in_array('Référent Albion',$value->Roles)) {
+            if (in_array('Référent Albion Online',$value->Roles)) {
                 array_push($refAlbion, $value);
                 array_push($refAlbionpics, UserPhoto($value));
             }
