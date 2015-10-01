@@ -100,14 +100,10 @@ class OrganigrammePlugin extends Gdn_Plugin {
         // this controller to the default theme template.
         $sender->masterView();
 
-        // If you've changed the route, you should change that value, too. We
-        // use it for highlighting the menu entry.
+        // Set route
         $sender->SelfUrl = self::SHORT_ROUTE;
 
-        // If you need custom CSS or Javascript, create the files in the
-        // subfolders "design" (for CSS) and "js" (for Javascript). The naming
-        // of the files is completely up to you. You can load them by
-        // uncommenting the respective line below.
+        // Add custom CSS
         $sender->addCssFile('organigramme.css', 'plugins/Organigramme');
         // $sender->addJsFile('organigramme.js', 'plugins/Organigramme');
 
@@ -179,33 +175,47 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $modos = array();
         $refPS2 = array();
 
+        $adminspics = array();
+        $conseillerspics = array();
+        $modospics = array();
+        $refPS2pics = array();
+
         foreach ($sender->UserData as $key => $value) {
             if (in_array('Administrateur',$value->Roles)) {
                 array_push($admins, $value);
+                array_push($adminspics, UserPhoto($value));
             }
 
             if (in_array('Conseiller',$value->Roles)) {
                 array_push($conseillers, $value);
+                array_push($conseillerspics, UserPhoto($value));
             }
 
             if (in_array('Modérateur global',$value->Roles)) {
                 array_push($modos, $value);
+                array_push($modospics, UserPhoto($value));
             }
 
             if (in_array('Référent Planetside 2',$value->Roles)) {
                 array_push($refPS2, $value);
+                array_push($refPS2pics, UserPhoto($value));
             }
         }
 
-        // Let's pass this example to our view.
+        // Pass the member data.
         $sender->setData('admins', $admins);
         $sender->setData('conseillers', $conseillers);
         $sender->setData('modos', $modos);
         $sender->setData('name', $name);
         $sender->setData('refPS2', $refPS2);
 
-        // We could have simply echoed to screen here, but Garden is a MVC
-        // framework and that's why we should use a separate view if possible.
+        // The the profile pics
+        $sender->setData('adminspics', $adminspics);
+        $sender->setData('conseillers', $conseillerspics);
+        $sender->setData('modospics', $modospics);
+        $sender->setData('namepics', $namepics);
+        $sender->setData('refPS2pics', $refPS2pics);
+
         $sender->Render(parent::getView('organigramme.php'));
     }
 }
