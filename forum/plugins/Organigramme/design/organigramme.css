@@ -1,16 +1,72 @@
-#vanilla_vanilla_organigramme #Content {
+#vanilla_vanilla_organigramme #Content .OrgContainer {
     background: white;
-    margin: 15px 0 0 10px;
-    padding: 10px;
     -webkit-box-shadow: 0 0 3px #d5d5d5;
     -moz-box-shadow: 0 0 3px #d5d5d5;
     box-shadow: 0 0 3px #d5d5d5;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    margin-bottom: 30px;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer:hover {
+    border-color:#2877d0;
+    transition: all 0.2s;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer div {
+    display: inline-block;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic {
+    vertical-align: top;
+    width: 33%;
+    height: 150px;
+    padding: 0;
+    background: url("img/conseillerspics.jpg");
+    background-size: cover;
+    position: relative;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    color: white;
+    text-align: center;
+    line-height: 150px;
+    font-size: 2em;
+    text-transform: uppercase;
+    background: rgba(40, 119, 208, 0.8);
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer:hover .OrgContainerPic span {
+    opacity: 1;
+    transition: all 0.2s;
+}
+
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerContent {
+    padding: 10px 20px;
 }
 
 #vanilla_vanilla_organigramme #Content ul li{
     display: inline-block;
-    padding: 5px;
-    margin: 5px;
-    border: 1px solid #2C68C7;
+    vertical-align: middle;
+    margin-right: 10px;
+    margin-top: 10px;
     border-radius: 5px;
+    border: 1px solid #2874CE;
+    background-color: #EAF8FF;
+
+}
+
+#vanilla_vanilla_organigramme #Content ul li .username{
+    line-height: 40px;
+    padding: 0 5px;
 }

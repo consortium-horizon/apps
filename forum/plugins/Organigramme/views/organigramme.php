@@ -20,19 +20,24 @@
     }
 
     if ($this->data('conseillers')) {
-        echo "<h2>Les conseillers</h2>";
-        echo "<p>Les plus vénérables mammifères du Consortium, ils assurent le bon fonctionnement de la guilde.</p>";
+        echo "<div class='OrgContainer'>";
+        echo "<div class='OrgContainerPic'><span>Le conseil</span></div>";
+        echo "<div class='OrgContainerContent'>";
+        echo "<h2 class='Title'>Les Conseillers</h2>";
+        echo "<div class='Description'>Les plus vénérables mammifères du Consortium, ils assurent le bon fonctionnement de la guilde.</div>";
         echo "<ul>";
         $count = 0;
         $pics = $this->data('conseillerspics');
         foreach ($this->data('conseillers') as $key => $value) {
-            echo "<li>";
+            echo "<li class='conseiller'>";
             echo $pics[$count];
-            echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
+            echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
             $count++;
         }
         echo "</ul>";
+        echo "</div>";
+        echo "</div>";
     }
 
     if ($this->data('modos')) {
