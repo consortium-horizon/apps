@@ -211,7 +211,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
 
         // The the profile pics
         $sender->setData('adminspics', $adminspics);
-        $sender->setData('conseillers', $conseillerspics);
+        $sender->setData('conseillerspics', $conseillerspics);
         $sender->setData('modospics', $modospics);
         $sender->setData('namepics', $namepics);
         $sender->setData('refPS2pics', $refPS2pics);

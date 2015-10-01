@@ -14,6 +14,7 @@
             echo $pics[$count];
             echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
+            $count++;
         }
         echo "</ul>";
     }
@@ -29,6 +30,7 @@
             echo $pics[$count];
             echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
+            $count++;
         }
         echo "</ul>";
     }
@@ -44,6 +46,7 @@
             echo $pics[$count];
             echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
+            $count++;
         }
         echo "</ul>";
     }
@@ -58,6 +61,7 @@
             echo $pics[$count];
             echo "<a href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
+            $count++;
         }
         echo "</ul>";
     }
