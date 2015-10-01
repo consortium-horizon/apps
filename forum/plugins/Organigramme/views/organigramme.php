@@ -55,7 +55,7 @@
         $count = 0;
         $pics = $this->data('modospics');
         foreach ($this->data('modos') as $key => $value) {
-            echo "<li'>";
+            echo "<li>";
             echo $pics[$count];
             echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
@@ -97,7 +97,7 @@
         $count = 0;
         $pics = $this->data('refArmapics');
         foreach ($this->data('refArma') as $key => $value) {
-            echo "<li'>";
+            echo "<li>";
             echo $pics[$count];
             echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
             echo "</li>";
