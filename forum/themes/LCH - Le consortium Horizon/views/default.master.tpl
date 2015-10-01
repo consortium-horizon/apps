@@ -44,7 +44,7 @@
         </li>
         {dashboard_link}
         <li class="dropdown">
-          Nos médias
+          La guilde
           <ul>
             <li>
             	<a href="http://www.consortium-horizon.com/forum/organigramme">
