@@ -112,3 +112,12 @@
     line-height: 40px;
     padding: 0 5px;
 }
+
+@media screen and (max-width: 1440px) {
+  #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic {
+      display: none;
+  }
+  #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerContent {
+      width: auto;
+  }
+}
