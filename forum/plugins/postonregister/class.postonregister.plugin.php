@@ -22,7 +22,7 @@ class postonregister extends Gdn_Plugin {
     {
         // Load the assets if not admin
         if ($sender->MasterView != 'admin') {
-            $sender->AddCssFile('postonregister.css', 'plugins/PostOnRegister');
+            $sender->AddCssFile('postonregister.css', 'plugins/postonregister');
         }
     }
 
@@ -31,7 +31,7 @@ class postonregister extends Gdn_Plugin {
     */
     public function EntryController_registerBeforePassword_Handler($Sender, $Args) {
         echo '<div class="registerNotification">
-        <h2>Remplissez attentivement les champs suivants</h2>
+        <h2>Remplissez attentivement les champs demandés !</h2>
         <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
         <p>Les informations seront passées en revue par un modérateur puis utilisées pour créer votre post de candidature.</p>
         </div>';
