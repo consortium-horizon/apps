@@ -704,8 +704,8 @@ li[class*="Role_Rfrent"] .Author .Username::after {
 }
 
 .AuthorInfo img {
-  max-height: 15px;
-  max-width: 15px;
+  height: 20px;
+  width: 20px;
   vertical-align: middle;
   margin-top: -5px;
 }
