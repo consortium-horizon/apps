@@ -1,0 +1,84 @@
+/* --------------------------------
+
+Main Components
+
+-------------------------------- */
+
+#dashboard_entry_register #Content {
+    margin: 0 auto !important;
+    max-width: 800px;
+}
+
+#dashboard_entry_register .FormTitleWrapper h1 {
+    text-align: center;
+}
+
+#dashboard_entry_register .FormTitleWrapper {
+    background: white;
+    margin: 16px 0 0 10px;
+    padding: 10px;
+    -webkit-box-shadow: 0 0 3px #d5d5d5;
+    -moz-box-shadow: 0 0 3px #d5d5d5;
+    box-shadow: 0 0 3px #d5d5d5;
+}
+
+#dashboard_entry_register .FormTitleWrapper .FormWrapper {
+    background: none;
+}
+
+#dashboard_entry_register .registerNotification {
+    position: relative;
+    padding: 15px;
+    margin: 170px 0 20px 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+#dashboard_entry_register .registerNotification::before {
+    position: absolute;
+    height: 150px;
+    top: -150px;
+    left: 0;
+    right: 0;
+    content: "";
+    background: url("banner.jpg");
+    background-size: cover;
+}
+
+#dashboard_entry_register input[type="text"],
+#dashboard_entry_register input[type="email"],
+#dashboard_entry_register input[type="password"] {
+    width: 100%;
+    padding: 7px;
+    background: #F7F7F7;
+}
+
+#dashboard_entry_register label {
+    margin: 5px 0 7px 0;
+}
+
+#dashboard_entry_register input[type="text"] {
+    width: 100%;
+    padding: 7px;
+}
+
+#dashboard_entry_register select {
+    font-size: 15px;
+    padding: 7px;
+}
+
+#dashboard_entry_register .TextBoxWrapper input,
+#dashboard_entry_register .TextBoxWrapper span,
+#dashboard_entry_register .TextBoxWrapper div:first-child {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/*Small fix for some shitty CSS i didn't write*/
+#dashboard_entry_register .TextBoxWrapper .PasswordStrength {
+    width: 100% !important;
+    padding: 0;
+}

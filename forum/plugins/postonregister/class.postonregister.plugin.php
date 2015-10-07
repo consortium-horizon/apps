@@ -15,6 +15,31 @@ $plusSurVous = "je suis quelqu'un de distrait";
 
 class postonregister extends Gdn_Plugin {
 
+    /**
+    * Load assets.
+    */
+    public function Base_Render_Before($sender, $args)
+    {
+        // Load the assets if not admin
+        if ($sender->MasterView != 'admin') {
+            $sender->AddCssFile('postonregister.css', 'plugins/PostOnRegister');
+        }
+    }
+
+    /**
+    * Custom notification on registration page.
+    */
+    public function EntryController_registerBeforePassword_Handler($Sender, $Args) {
+        echo '<div class="registerNotification">
+        <h2>Remplissez attentivement les champs suivants</h2>
+        <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
+        <p>Les informations seront passées en revue par un modérateur puis utilisées pour créer votre post de candidature.</p>
+        </div>';
+    }
+
+    /**
+    * Get form values.
+    */
     public function entryController_RegisterValidation_handler($sender) {
         $GLOBALS['var'] = $sender->Form->_FormValues['Aqueljeujouezvousgalement'];
         $GLOBALS['quelJeu'] = $sender->Form->_FormValues['Pourqueljeupostulezvous'];
@@ -22,6 +47,9 @@ class postonregister extends Gdn_Plugin {
         $GLOBALS['plusSurVous'] = $sender->Form->_FormValues['Ditesnousenplussurvous'];
     }
 
+    /**
+    * Create new discussion.
+    */
     public function userModel_afterRegister_handler($sender, $Args) {
         // Get user ID from sender
         $userID = $sender->EventArguments['UserID'];
