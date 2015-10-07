@@ -527,6 +527,9 @@ body {
 #Content {
   margin: 15px 0 0 250px !important;
 }
+#Content img {
+  max-width: 100%;
+}
 #Content .CategoryGroup {
   margin-bottom: 25px;
 }

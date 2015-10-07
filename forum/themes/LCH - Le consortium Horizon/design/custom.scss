@@ -243,6 +243,11 @@ body {
 #Content {
     margin: 15px 0 0 250px !important; // need to overide vanilla's default settings
 
+   // Fix for image overflow
+   img {
+       max-width: 100%;
+   }
+
     // Category group
     .CategoryGroup {
         margin-bottom: 25px;
