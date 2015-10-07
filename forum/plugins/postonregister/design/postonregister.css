@@ -68,6 +68,7 @@ Main Components
 #dashboard_entry_register select {
     font-size: 15px;
     padding: 7px;
+    margin-right: 5px;
 }
 
 #dashboard_entry_register .TextBoxWrapper input,
