@@ -94,7 +94,7 @@ class postonregister extends Gdn_Plugin {
         . $GLOBALS['plusSurVous'] .
         '
 
-        En attente de validation par un modérateur';
+        [color=#FF0000]En attente de validation par un modérateur[/color]';
         // Date of creation
         $Discussion['DateInserted'] = $date;
         // Date of last comment
