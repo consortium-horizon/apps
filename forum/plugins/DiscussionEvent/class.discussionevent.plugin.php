@@ -152,7 +152,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 				{
 					$this->Form->AddHidden('Type', 'Subscribe', true);
 					echo $Sender->Form->label(t('Remark'), 'DiscussionEventRemark'), ' ';
-					echo $this->Form->TextBox(t('Remark'));
+					echo $this->Form->TextBox('Remark');
 					echo $this->Form->getHidden();
 					echo $this->Form->Close(t('Subscribe'));
 				}
