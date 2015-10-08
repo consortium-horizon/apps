@@ -85,7 +85,7 @@ class postonregister extends Gdn_Plugin {
         [b]Quel âge avez vous ? ?[/b]
 
         '
-        . $GLOBALS['age'] .'ans.'.
+        . $GLOBALS['age'] .' ans.'.
         '
 
         [b]A quels autres jeux jouez-vous également ?[/b]
