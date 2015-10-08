@@ -12,6 +12,7 @@ $var = "Aucun";
 $quelJeu = "Aucun";
 $comment = "Par Internet";
 $plusSurVous = "je suis quelqu'un de distrait";
+$age = "1984";
 
 class postonregister extends Gdn_Plugin {
 
@@ -45,6 +46,11 @@ class postonregister extends Gdn_Plugin {
         $GLOBALS['quelJeu'] = $sender->Form->_FormValues['Pourqueljeupostulezvous'];
         $GLOBALS['comment'] = $sender->Form->_FormValues['CommentavezvousetconnaissanceduConsortiumHorizon'];
         $GLOBALS['plusSurVous'] = $sender->Form->_FormValues['Ditesnousenplussurvous'];
+
+        // get the age of the new applicant
+        $dateString =$sender->Form->_FormValues['DateOfBirth_Year'].'-'.$sender->Form->_FormValues['DateOfBirth_Month'].'-'.$sender->Form->_FormValues['DateOfBirth_Day'];
+        $diff = abs(strtotime(date('Y-m-d')) - strtotime($dateString));
+        $GLOBALS['age'] = floor($diff / (365*60*60*24));
     }
 
     /**
@@ -74,6 +80,12 @@ class postonregister extends Gdn_Plugin {
 
         '
         . $GLOBALS['quelJeu'] .
+        '
+
+        [b]Quel âge avez vous ? ?[/b]
+
+        '
+        . $GLOBALS['age'] .'ans.'.
         '
 
         [b]A quels autres jeux jouez-vous également ?[/b]
