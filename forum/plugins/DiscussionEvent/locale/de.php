@@ -1,0 +1,15 @@
+<?php if (!defined('APPLICATION')) exit();
+
+$Definition['Day'] = 'Tag';$Definition['Month'] = 'Monat';$Definition['Year'] = 'Jahr';
+$Definition['Jan'] = 'Januar';
+$Definition['Feb'] = 'Februar';
+$Definition['Mar'] = 'März';
+$Definition['Apr'] = 'April';
+$Definition['May'] = 'Mai';
+$Definition['Jun'] = 'Juni';
+$Definition['Jul'] = 'Juli';
+$Definition['Aug'] = 'August';
+$Definition['Sep'] = 'September';
+$Definition['Oct'] = 'Oktober';
+$Definition['Nov'] = 'November';
+$Definition['Dec'] = 'Dezember';$Definition['Is an event?'] = 'Ist ein Event?';$Definition['Please enter an event date.'] = 'Bitte gebe ein Datum an.';$Definition['The event date you\'ve entered is invalid.'] = 'Das angegebene Datum ist ungültig.';

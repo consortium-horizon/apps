@@ -1,0 +1,24 @@
+<?php if (!defined('APPLICATION')) exit();
+
+$Definition['Day'] = 'Jour';
+$Definition['Month'] = 'Mois';
+$Definition['Year'] = 'Année';
+$Definition['Jan'] = 'Janvier';
+$Definition['Feb'] = 'Février';
+$Definition['Mar'] = 'Mars';
+$Definition['Apr'] = 'Avril';
+$Definition['May'] = 'Mai';
+$Definition['Jun'] = 'Juin';
+$Definition['Jul'] = 'Juillet';
+$Definition['Aug'] = 'Août';
+$Definition['Sep'] = 'Septembre';
+$Definition['Oct'] = 'Octobre';
+$Definition['Nov'] = 'Novembre';
+$Definition['Dec'] = 'Decembre';
+$Definition['Is an event?'] = 'Est-ce un évenement?';
+$Definition['Please enter an event date.'] = 'Merci de renseigner une date';
+$Definition['The event date you\'ve entered is invalid.'] = 'La date entrée est invalide';
+$Definition['Guests List'] = 'Liste des participants';
+$Definition['Remark'] = 'Remarque';
+$Definition['Subscribe'] = 'S\'inscrire';
+$Definition['Unsubscribe'] = 'Se désinscrire';
