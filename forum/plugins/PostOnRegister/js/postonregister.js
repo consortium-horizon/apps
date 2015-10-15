@@ -77,8 +77,8 @@ $(document).ready(function() {
 
     // More about you focus/blur actions
     $( "#moreAboutYouInput" ).blur(function() {
-        var minLength = 5;
-        var goodLength = 10;
+        var minLength = 50;
+        var goodLength = 100;
 
         if($(this).val().split(/\s+/).length < minLength) {
             $( "#descriptionKO" ).fadeIn();

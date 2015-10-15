@@ -102,7 +102,7 @@ class PostOnRegister extends Gdn_Plugin {
         echo '<div id="moreAboutYouSection">';
         echo '<label for="moreAboutYou">Dites nous en plus sur vous (c\'est important !)</label>';
         echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required"></textarea>';
-        echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'interressant à ajouter ?</div>';
+        echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
         echo '</div>';
 
@@ -206,7 +206,7 @@ class PostOnRegister extends Gdn_Plugin {
             . $howDidYouFindUs .
             '
 
-            [b]Quel âge avez vous ? ?[/b]
+            [b]Quel âge avez vous ?[/b]
 
             '
             . $GLOBALS['age'] .' ans.'.
