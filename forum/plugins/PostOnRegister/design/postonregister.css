@@ -1,0 +1,172 @@
+/* --------------------------------
+
+Main Components
+
+-------------------------------- */
+#dashboard_entry_register label {
+    font-size: 14px;
+    color: #474747;
+    font-weight: bold;
+    padding: 6px 0 0;
+    display: block;
+}
+
+#dashboard_entry_register #Content {
+    margin: 0 auto !important;
+    max-width: 800px;
+}
+
+#dashboard_entry_register .FormTitleWrapper h1 {
+    text-align: center;
+}
+
+#dashboard_entry_register .FormTitleWrapper {
+    background: white;
+    margin: 16px 0 0 10px;
+    padding: 10px;
+    -webkit-box-shadow: 0 0 3px #d5d5d5;
+    -moz-box-shadow: 0 0 3px #d5d5d5;
+    box-shadow: 0 0 3px #d5d5d5;
+}
+
+#dashboard_entry_register .FormTitleWrapper .FormWrapper {
+    background: none;
+}
+
+#dashboard_entry_register .registerNotification {
+    position: relative;
+    padding: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    transition: all 0.3s;
+}
+
+#dashboard_entry_register .registerNotification.info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+#dashboard_entry_register .registerNotification.success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+#dashboard_entry_register .registerNotification.danger {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+#dashboard_entry_register .mainNotification {
+    margin: 170px 0 20px 0;
+}
+
+#dashboard_entry_register #iWannaJoinNotif {
+    margin-top: 15px;
+}
+
+#dashboard_entry_register .mainNotification::before {
+    position: absolute;
+    height: 150px;
+    top: -150px;
+    left: 0;
+    right: 0;
+    content: "";
+    background: url("banner.jpg");
+    background-size: cover;
+    background-position: top center;
+}
+
+#dashboard_entry_register textarea,
+#dashboard_entry_register input[type="text"],
+#dashboard_entry_register input[type="email"],
+#dashboard_entry_register input[type="password"] {
+    width: 100%;
+    padding: 7px;
+    background: #F7F7F7;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+#dashboard_entry_register label {
+    margin: 5px 0 7px 0;
+}
+
+#dashboard_entry_register input[type="text"] {
+    width: 100%;
+    padding: 7px;
+}
+
+#dashboard_entry_register select {
+    font-size: 15px;
+    padding: 7px;
+    margin-right: 15px;
+}
+
+#dashboard_entry_register textarea {
+    resize: vertical;
+}
+
+#dashboard_entry_register .TextBoxWrapper input,
+#dashboard_entry_register .TextBoxWrapper span,
+#dashboard_entry_register .TextBoxWrapper div:first-child {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#dashboard_entry_register .sectionPic {
+    width: 100%;
+    height: 150px;
+    margin-top: 15px;
+}
+
+#dashboard_entry_register .sectionPic.planetside {
+    background: url("planetside2_banner.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+#dashboard_entry_register #moreGames input.otherGameInput {
+    width: 31%;
+    padding: 7px;
+    margin-right: 15px;
+    margin-top: 10px;
+}
+
+#dashboard_entry_register #addGame {
+    vertical-align: bottom;
+    line-height: 15px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    color: #3c763d;
+    background-color: #dff0d8;
+    border: 1px solid #d6e9c6;
+}
+
+#dashboard_entry_register #removeGame {
+    vertical-align: bottom;
+    line-height: 15px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+}
+
+/*Small fix for some shitty CSS i didn't write*/
+#dashboard_entry_register .TextBoxWrapper .PasswordStrength {
+    width: 100% !important;
+    padding: 0;
+}
