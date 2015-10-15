@@ -9,8 +9,7 @@ $PluginInfo['PostOnRegister'] = array(
     'SettingsPermission' => 'Garden.Settings.Manage',
 );
 
-$var="Aucun";
-$annee="";
+$age="1984";
 
 class PostOnRegister extends Gdn_Plugin {
 
@@ -114,11 +113,10 @@ class PostOnRegister extends Gdn_Plugin {
     public function entryController_RegisterValidation_handler($sender) {
         $dateString =$sender->Form->_FormValues['DateOfBirth_Year'].'-'.$sender->Form->_FormValues['DateOfBirth_Month'].'-'.$sender->Form->_FormValues['DateOfBirth_Day'];
         $diff = abs(strtotime(date('Y-m-d')) - strtotime($dateString));
-        $years = floor($diff / (365*60*60*24));
+        $GLOBALS['age'] = floor($diff / (365*60*60*24));
     }
 
     public function userModel_afterRegister_handler($sender, $Args) {
-        var_dump($sender->EventArguments['User']);
         // Does the user wanna joind the guild ?
         if ($sender->EventArguments['User']['iWannaJoin']!=NULL) {
 
@@ -173,7 +171,7 @@ class PostOnRegister extends Gdn_Plugin {
             // Feed it ! Feeeeeeeeed it !
             $SQL = Gdn::Database()->SQL();
             // Where you wanna insert the discussion (which category)
-            $Discussion['CategoryID'] = '1';
+            $Discussion['CategoryID'] = '9';
             // Discussion Format (BBcode)
             $Discussion['Format'] = 'BBCode';
             // Discussion title
@@ -206,6 +204,12 @@ class PostOnRegister extends Gdn_Plugin {
 
             '
             . $howDidYouFindUs .
+            '
+
+            [b]Quel âge avez vous ? ?[/b]
+
+            '
+            . $GLOBALS['age'] .' ans.'.
             '
 
             [b]Dites-en un peu plus sur vous :[/b]
