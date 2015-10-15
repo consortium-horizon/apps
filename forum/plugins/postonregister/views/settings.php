@@ -1,19 +1,53 @@
-<h1><?= $this->Data('Title');
-var_dump($this->Data('RegistrationFields'));
- ?></h1>
-<div class="Info"><?= $this->Data('Description') ?></div>
-<div class="Wrap"><?= Anchor(T('Plugins.PostOnRegister.NewElement', 'New element'), 'settings/postonregisteraddedit', 'SmallButton') ?></div>
+<?php if (!defined('APPLICATION')) exit();
+echo $this->Form->Open();
+echo $this->Form->Errors();
+?>
+<h1><?php echo T("Utilisateurs en ligne"); ?></h1>
+      <div class="Info"><?php echo T('Ou doit on afficher la liste ?'); ?></div>
+      <table class="AltRows">
+         <thead>
+            <tr>
+               <th><?php echo T('Sections'); ?></th>
+               <th class="Alt"><?php echo T('Description'); ?></th>
+            </tr>
+         </thead>
+         <tbody>
+               <tr>
+                  <th><?php
+                     echo $this->Form->Radio('Plugins.OnlineNow.Location.Show', "Toutes", array('value' => 'every', 'selected' => 'selected'));
+                  ?></th>
+                  <td class="Alt"><?php echo T("Afficher le panneau sur toutes les pages."); ?></td>
+               </tr>
+                <tr>
+                     <th><?php
+                        echo $this->Form->Radio('Plugins.OnlineNow.Location.Show', "Discussion", array('value' => "discussion"));
+                     ?></th>
+                     <td class="Alt"><?php echo T("Afficher le panneau sur la page des discussions seulement"); ?></td>
+                </tr>
+         </tbody>
+      </table>
+         <table class="AltRows">  
+         <tbody>
+               <tr>
+                  <th><?php
+                     echo $this->Form->Checkbox('Plugins.OnlineNow.Hide', "Masquer pour les utilisateurs externes");
+                  ?></th>
+               </tr>             
+         </tbody>
+      </table>
+      <table class="AltRows">
+         <thead>
+            <tr>
+               <th><?php echo T('Fréquence'); ?></th>
+               <th class="Alt"><?php echo T('En secondes'); ?></th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <th><?php echo T('Taux de rafraichissement'); ?></th>
+               <td class="Alt"><?php echo $this->Form->TextBox('Plugins.OnlineNow.Frequency'); ?></td>
+            </tr>
+         </tbody>
+      </table>
 
-<?= $this->Form->Open() ?>
-<?= $this->Form->Errors();
-$test = array('vanillaelement' => t('Vanilla element'), 'customelement' => t('Custom Element'), 'dom' => t('DOM'));
-
- ?>
-<div id="ForumTourEditContainer">
-  <div class>
-    <?= $this->Form->Label(T('Plugins.PostOnRegister.EditStepPositionMethod', 'Choose a fied'), 'RegistrationField') ?>
-    <?= $this->Form->DropDown('RegistrationField', $this->Data('RegistrationFields') , array('Value' => $this->Form->getValue('PositionMethod'))) ?>
-  </div>
-</div>
-
-<?= $this->Form->Close('Save') ?>
+<?php echo $this->Form->Close('Sauvegarder');
