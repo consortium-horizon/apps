@@ -3,3 +3,7 @@
 <div class="cd-nugget-info">
   <a id="cd-tour-trigger" class="cd-btn"><?=T('Plugins.ForumTour.HelpButton', 'Need Help ?')?></a>
 </div>
+
+<div class="cd-mumble-info">
+  <a id="cd-mumble-trigger" href="mumble://mumble.consortium-horizon.com:64738/?version=1.2.0" class="cd-btn"><?=T('Plugins.ForumTour.mumbleButton', 'Accéder à mumble')?></a>
+</div>

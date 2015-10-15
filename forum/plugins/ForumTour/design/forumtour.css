@@ -14,6 +14,17 @@ Main Components
   text-align: center;
 }
 
+.cd-mumble-info {
+  margin: 10px 0;
+  width: auto;
+  padding: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #bce8f1;
+  border-radius: 4px;
+  background-color: #d9edf7;
+  text-align: center;
+}
+
 #cd-tour-trigger {
   color: #3c763d;
   cursor: pointer;
