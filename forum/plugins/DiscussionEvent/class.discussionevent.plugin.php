@@ -16,12 +16,12 @@ $PluginInfo['DiscussionEvent'] = array(
 
 class DiscussionEventPlugin extends Gdn_Plugin {
 	public static $ApplicationFolder = 'plugins/DiscussionEvent';
-	
+
 	public $Form;
 	public function __construct($Sender='') {
 		parent::__construct($Sender, self::$ApplicationFolder);
 	}
-	
+
 	public function Base_Render_before($Sender) {
 		if (C('Plugins.DiscussionEvent.DisplayInSidepanel')) {
 			// only add the module if we are in the panel asset and NOT in the dashboard
@@ -31,10 +31,10 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 			}
 		}
 	}
-	
+
 	public function SettingsController_DiscussionEvent_create($Sender) {
 		$Sender->permission('Garden.Settings.Manage');
-		
+
 		$Sender->Form = new Gdn_Form();
 		$Validation = new Gdn_Validation();
 		$ConfigurationModel = new Gdn_ConfigurationModel($Validation);
@@ -43,7 +43,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 			'Plugins.DiscussionEvent.MaxDiscussionEvents'
 		));
 		$Sender->Form->setModel($ConfigurationModel);
-		
+
 		if ($Sender->Form->authenticatedPostBack()) {
 			if ($Sender->Form->save() !== false) {
 				$Sender->informMessage(sprite('Check', 'InformSprite').T('Your changes have been saved.'), 'Dismissable AutoDismiss HasSprite');
@@ -51,17 +51,17 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 		} else {
 			$Sender->Form->setData($ConfigurationModel->Data);
 		}
-				
+
 		$Sender->title(T('Discussion Event Settings'));
 		$Sender->addSideMenu();
 		$Sender->render($this->GetView('settings.php'));
 	}
-	
+
 	public function PostController_beforeBodyInput_handler($Sender) {
 		$Sender->addJsFile('discussionevent.js', self::$ApplicationFolder);
-		
+
 		if (!$Sender->Form->authenticatedPostBack()) {
-			
+
 			if ($Sender->Discussion->DiscussionEventDate) {
 				$Sender->Form->setValue('DiscussionEventCheck', true);
 				$Sender->Form->setValue('DiscussionEventDate', $Sender->Discussion->DiscussionEventDate);
@@ -70,10 +70,10 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 				$Sender->Form->setValue('DiscussionEventDate',  Gdn_Format::date('Y-m-d'));
 			}
 		}
-		
+
 		$Year = Date('Y');
 		$YearRange = $Year.'-'.($Year + 3);
-		
+
 		echo '<div class="P"><div class="DiscussionEvent">';
 		echo $Sender->Form->checkBox('DiscussionEventCheck', 'Is an event?');
 		echo '<div class="DiscussionEventDate"><div class="P">';
@@ -81,7 +81,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 		echo $Sender->Form->date('DiscussionEventDate', array('YearRange' => $YearRange, 'fields' => array('day', 'month', 'year')));
 		echo '</div></div></div></div>';
 	}
-	
+
 	public function DiscussionModel_beforeSaveDiscussion_handler($Sender) {
 		if ($Sender->EventArguments['FormPostValues']['DiscussionEventCheck']) {
 			$Sender->Validation->applyRule('DiscussionEventDate', 'Required', T('Please enter an event date.'));
@@ -90,17 +90,17 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 			$Sender->EventArguments['FormPostValues']['DiscussionEventDate'] = null;
 		}
 	}
-	
-	public function DiscussionController_afterDiscussionTitle_handler($Sender, $Args) {		
+
+	public function DiscussionController_afterDiscussionTitle_handler($Sender, $Args) {
 		$EventDate = $Sender->EventArguments['Discussion']->DiscussionEventDate;
 		self::displayEventDate($EventDate);
 	}
-	
+
 	public function DiscussionsController_afterDiscussionTitle_handler($Sender) {
 		$EventDate = $Sender->EventArguments['Discussion']->DiscussionEventDate;
 		self::displayEventDate($EventDate);
 	}
-	
+
 	public function CategoriesController_afterDiscussionTitle_handler($Sender) {
 		$EventDate = $Sender->EventArguments['Discussion']->DiscussionEventDate;
 		self::displayEventDate($EventDate);
@@ -119,10 +119,10 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 				$UserId = $Session->User->UserID;
 			else
 				$UserId = false;
-	
+
 			if (!$this->Form)
 				$this->Form = new Gdn_Form();
-	
+
 			if ($this->Form->authenticatedPostBack()) {
 				$Data = $this->Form->FormValues();
 				if ($Data['Type'] == 'Subscribe')
@@ -142,11 +142,11 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 					}
 				}
 			}
-	
+
 			self::displayEventGuests($Guests);
 			echo $this->Form->Open();
 			echo $this->Form->Errors();
-	
+
 			if ($UserId) {
 				if (!$Guests || !array_key_exists($UserId,$Guests) )
 				{
@@ -172,28 +172,28 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 			->column('DiscussionEventDate', 'date', true, 'index')
 			->set();
 		$Structure->table('Discussion')
-			->column('DiscussionEventGuests', 'varchar(1000)', true, 'index')
+			->column('DiscussionEventGuests', 'varchar(65535)', true, 'index')
 			->set();
 	}
-	
+
 	public function setup() {
 		$this->structure();
-		
+
 		// Compatibility: Update from version <= 0.2
 		Gdn::sql()->update('Discussion d')
 			->set('d.DiscussionEventDate', null)
 			->where('d.DiscussionEventDate', '0000-00-00')
 			->put();
-		
+
 		saveToConfig('Plugins.DiscussionEvent.DisplayInSidepanel', true);
 		saveToConfig('Plugins.DiscussionEvent.MaxDiscussionEvents', 10);
 	}
-	
+
 	public function onDisable() {
 		removeFromConfig('Plugins.DiscussionEvent.DisplayInSidepanel');
 		removeFromConfig('Plugins.DiscussionEvent.MaxDiscussionEvents');
 	}
-	
+
 	public static function displayEventDate($EventDate) {
 		if ($EventDate) {
 			echo '<div class="DiscussionEventDate icon icon-calendar"> '.Gdn_Format::date($EventDate, 'html').'</div>';
