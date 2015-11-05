@@ -31,18 +31,8 @@ class XMPPPrebindPlugin extends Gdn_Plugin
     public function Setup() {
     }
 
-    public function Base_Render_Before($Sender) {
-        $Sender->AddJsFile('converse.min.js', 'plugins/xmppprebind');
-        //$Sender->AddJsFile('converse.autojoin.js', 'plugins/xmppprebind');
-    }
-
-    public function AssetModel_StyleCss_Handler($Sender) {
-        $Sender->AddCssFile('converse.min.css', 'plugins/xmppprebind');
-        $Sender->AddCssFile('converse.custom.css', 'plugins/xmppprebind');
-    }
-
     public function RootController_xmpp_Create($Sender, $Args) {
-                if (!Gdn::Session()->IsValid())
+        if (!Gdn::Session()->IsValid())
             return;
 
         $UserName = Gdn::Session()->User->Name;
@@ -71,61 +61,6 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         $jid = $sessionInfo['jid'];
         header('Content-Type: application/json');
         echo json_encode($sessionInfo);
-    }
-    public function Base_AfterBody_Handler($Sender, $Args) {
-
-        $UserName = Gdn::Session()->User->Name;
-        echo "
-<script>
-require(['converse'], function (converse) {
-
-    converse.plugins.add('myplugin', {
-        overrides: {
-            onConnected: function () {
-                // Override the onConnected method in converse.js
-                this._super.onConnected();
-                var converse = this._super.converse;
-                var jid = 'bar@chat.consortium-horizon.com';
-                var chatbox = converse.rooms.get(jid);
-                if (!chatbox) {
-                    converse.rooms.open(jid);
-                }
-            },
-        },
-
-        initialize: function() {},
-    });
-    converse.initialize({
-        bosh_service_url: '/http-bind/',
-        prebind_url: '/forum/xmpp',
-        keepalive: true,
-        i18n: locales.fr, // Refer to ./locale/locales.js to see which locales are supported
-        show_controlbox_by_default: false,
-        roster_groups: true,
-        authentication: 'prebind',
-        jid: '{$UserName}@consortium-horizon.com/vanilla',
-        fullname: '{$UserName}',
-        show_only_online_users: true,
-        allow_registration: false,
-        auto_list_rooms: true,
-        message_carbons: true,
-        hide_offline_users: true,
-        debug: true,
-        hide_muc_server: true,
-        ping_interval: 60,
-        allow_otr: false,
-    });
-    var chatroom = converse.rooms.get('bar@chat.consortium-horizon.com');
-    if (!chatroom)
-    {
-        converse.rooms.open('bar@chat.consortium-horizon.com');
-        chatroom = converse.rooms.get('bar@chat.consortium-horizon.com');
-        chatroom.minimize();
-    }
-});
-</script>";
-
-        //$Sender->InformMessage("XMPP BINDING: ".implode($sessionInfo));
     }
 
 
