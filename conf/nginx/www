@@ -68,6 +68,13 @@ server {
     # proxy_temp_file_write_size 64k;
   }
 
+  location /chat {
+    root /var/www/webapps/current;
+    index index.html;
+    # access_log /var/www/webapps/shared/log/chat/nginx.access.log;
+    # error_log /var/www/webapps/shared/log/chat/nginx.error.log;
+  }
+
   location @mediawiki {
     rewrite ^/wiki/([^?]*)(?:\?(.*))? /wiki/index.php?title=$1&$2 last;
   }
