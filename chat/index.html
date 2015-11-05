@@ -5,10 +5,13 @@
 	<title>LCH - Chat</title>
 	<link rel="shortcut icon" href="./res/img/favicon.png" type="image/gif" />
 	<link rel="stylesheet" type="text/css" href="./res/default.css" />
+	<link rel="stylesheet" type="text/css" href="roomPanel/default.css" />
 
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="./libs.min.js"></script>
 	<script type="text/javascript" src="./candy.min.js"></script>
+	<script type="text/javascript" src="roomPanel/roomPanel.js"></script>
+
 	<script type="text/javascript">
 		$(document).ready(function() {
 			Candy.init('http://www.consortium-horizon.com/http-bind/', {
@@ -29,6 +32,40 @@
 				var jid = data['jid'];
 				var sid = data['sid'];
 				var rid = data['rid'];
+				// enable RoomPanel plugin
+				CandyShop.RoomPanel.init({
+				    // domain that hosts the muc rooms, only required if autoDetectRooms is enabled
+				    mucDomain: 'chat.consortium-horizon.com',
+
+				    // allow you to force a list of rooms, only required if autoDetectRoom is disabled
+				    // roomList: [
+				    //     {
+				    //         name: 'my room',
+				    //         jid:  'my-room@conference.example.com'
+				    //     },
+				    //     {
+				    //         name: 'other room',
+				    //         jid:  'other-room@conference.example.com'
+				    //     }
+				    // ],
+
+				    // show room list if all rooms are closed, default value is true. [optional]
+				    showIfAllTabClosed: true,
+
+				    // show '+' at the end of the room tabs
+				    showTab: true,
+
+				    // show icon in toolbar to show room list
+				    showToolbarIcon: true,
+
+
+				    // detect rooms before showing list, default value is true. [optional]
+				    autoDetectRooms: true,
+
+				    // how long in seconds before refreshing room list, default value is 600. [optional]
+				    roomCacheTime: 60
+				});
+
 				Candy.Core.attach(jid, sid, rid);
 			});
 
