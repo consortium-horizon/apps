@@ -85,9 +85,7 @@ Main Components
   /* Second section: Details + news */
 }
 .cd-section .container {
-  white-space: nowrap;
   height: 100vh;
-  font-size: 2.4rem;
   position: relative;
 }
 .cd-section .container-left, .cd-section .container-right {
