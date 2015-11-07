@@ -246,6 +246,24 @@ Main Components
 
 .newsArticle {
   display: inline-block;
+  width: 20%;
+  vertical-align: top;
+  height: 20vh;
+  position: relative;
+}
+
+.newsArticle:nth-child(3) {
+  width: 40%;
+}
+
+.newsArticle img {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  object-fit: cover;
 }
 
 @media only screen and (max-width: 1024px) {
