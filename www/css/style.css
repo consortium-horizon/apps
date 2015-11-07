@@ -245,6 +245,11 @@ Main Components
   margin: 15px;
   position: relative;
 }
+
+.newsArticle {
+  display: inline-block;
+}
+
 @media only screen and (max-width: 1024px) {
   .cd-section.section-2 .container-right article {
     width: 45%;
