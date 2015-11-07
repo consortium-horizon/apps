@@ -404,7 +404,7 @@ Single slide style
 @media only screen and (min-width: 1170px) {
   .cd-hero-slider .cd-full-width,
   .cd-hero-slider .cd-half-width {
-    padding-top: 220px;
+    padding-top: 15vh;
   }
   .cd-hero-slider h2, .cd-hero-slider p {
     margin-bottom: 20px;
