@@ -410,7 +410,7 @@ Single slide style
     margin-bottom: 20px;
   }
   .cd-hero-slider h2 {
-    font-size: 3.2em;
+    font-size: 5vw;
   }
   .cd-hero-slider p {
     font-size: 1.6rem;
@@ -703,6 +703,13 @@ Slider navigation
 Main content
 
 -------------------------------- */
+
+/*Custom fix for LCH logo */
+
+#logo-consortium {
+  width: 35vh;
+}
+
 .cd-main-content {
   width: 90%;
   max-width: 768px;
