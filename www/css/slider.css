@@ -371,7 +371,7 @@ Single slide style
   }
   .cd-hero-slider .cd-full-width,
   .cd-hero-slider .cd-half-width {
-    padding-top: 150px;
+    padding-top: 15vh;
     text-align: left;
   }
   .cd-hero-slider .cd-bg-video-wrapper {
