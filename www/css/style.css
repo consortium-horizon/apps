@@ -212,8 +212,6 @@ Main Components
 
 #logo-below {
   width: 300px;
-  display: block;
-  text-align: center;
 }
 
 @media only screen and (max-width: 1440px) {
@@ -295,7 +293,15 @@ Main Components
   color: white;
   background: red;
   padding: 5px;
-  margin-bottom: 7px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.newsArticle p a {
+  color: white;
+  background: #3CAEDD;
+  padding: 5px;
+  margin-top: 7px;
   display: inline-block;
 }
 
