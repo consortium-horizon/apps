@@ -244,11 +244,17 @@ Main Components
   position: relative;
 }
 
+.newsContainer {
+  position: absolute;
+  bottom: 0;
+  height: 25%;
+}
+
 .newsArticle {
   display: inline-block;
   width: 20%;
   vertical-align: top;
-  height: 20vh;
+  height: 100%;
   position: relative;
 }
 
