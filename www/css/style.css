@@ -210,10 +210,16 @@ Main Components
   background: rgba(37, 42, 58, 0.3);
 }
 
+.details .content p:first-child {
+  margin-top: 25px;
+}
+
+
 .details .content p{
   margin: 10px 0;
+  margin-left: 15px;
   color: white;
-  font-size: 1.2em;
+  line-height: 1.5em;
 }
 
 @media only screen and (max-width: 1024px) {
