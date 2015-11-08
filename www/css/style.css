@@ -198,31 +198,17 @@ Main Components
     height: auto;
   }
 }
-.cd-section.section-2 .container-left .details {
+
+.details {
+  height: 75%;
+}
+
+.details .content{
   height: 100%;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 25px;
-  width: 27vw;
-  position: relative;
-  z-index: 1;
+  width: 60%;
+  padding: 2vw;
 }
-.cd-section.section-2 .container-left .details .content {
-  background: white;
-  padding: 15px;
-  height: 100%;
-}
-.cd-section.section-2 .container-left .details .content p {
-  text-align: justify;
-  font-size: 0.7em;
-  margin: 30px 0;
-}
-.cd-section.section-2 .container-right {
-  text-align: center;
-  padding-left: 150px;
-  width: 75%;
-  height: 100%;
-  background: rgba(35, 55, 90, 0.8);
-}
+
 @media only screen and (max-width: 1024px) {
   .cd-section.section-2 .container-right {
     padding-left: 0;
