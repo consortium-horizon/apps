@@ -210,6 +210,12 @@ Main Components
   background: rgba(37, 42, 58, 0.3);
 }
 
+.details .content p{
+  margin: 10px 0;
+  color: white;
+  font-size: 1.2em;
+}
+
 @media only screen and (max-width: 1024px) {
   .cd-section.section-2 .container-right {
     padding-left: 0;
