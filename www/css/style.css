@@ -207,20 +207,21 @@ Main Components
   height: 100%;
   width: 60%;
   padding: 2vw;
-  background: rgba(37, 42, 58, 0.3);
+  padding-top: 12vh;
+  background: rgba(37, 42, 58, 0.5);
+}
+
+.details .content p{
+  margin: 15px 0;
+  margin-left: 15px;
+  color: white;
+  line-height: 1.5em;
 }
 
 .details .content p:first-child {
   margin-top: 25px;
 }
 
-
-.details .content p{
-  margin: 10px 0;
-  margin-left: 15px;
-  color: white;
-  line-height: 1.5em;
-}
 
 @media only screen and (max-width: 1024px) {
   .cd-section.section-2 .container-right {
@@ -255,6 +256,7 @@ Main Components
   vertical-align: top;
   height: 100%;
   position: relative;
+  background: rgba(37, 42, 58, 0.4);
 }
 
 .newsArticle:nth-child(3) {
@@ -285,6 +287,7 @@ Main Components
   text-transform: uppercase;
   color: white;
   font-size: 1.4em;
+  margin-top: 10px;
 }
 
 @media only screen and (max-width: 1024px) {

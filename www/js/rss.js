@@ -102,7 +102,7 @@ function loadNews () {
   parseRSS("https://www.consortium-horizon.com/forum/categories/actualites/feed.rss", 10, function (data) {
     for (var i = 0; i < 4; i++) {
         var o = parseRSSEntry(data.entries[i]);
-        $('[news]').append("<article class='newsArticle'><img src='"+o.img+"'/><div class='content'><span class='cat'>"+(o.cat ? o.cat : 'LCH')+"</span><h3><a class='newsLink' href='"+o.link+"'>"+o.title+"</a></h3><p><a class='forumLink' href='"+o.link+"#Item_0'>suite&hellip;</a></p></div></article>");
+        $('[news]').append("<article class='newsArticle'><img src='"+o.img+"'/><div class='content'><span class='cat'>"+(o.cat ? o.cat : 'LCH')+"</span><h3><a class='newsLink' href='"+o.link+"'>"+o.title+"</a></h3><p><a class='forumLink' href='"+o.link+"#Item_0'>suite</a></p></div></article>");
     }
   });
 }
