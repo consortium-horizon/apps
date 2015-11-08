@@ -397,11 +397,7 @@ Single slide style
     font-size: 5vw;
     font-weight: 300;
   }
-  @media only screen and (min-width: 1600px) {
-    .cd-hero-slider h2 {
-      font-size: 5.4em;
-    }
-  }
+
   .cd-hero-slider .cd-btn {
     font-size: 1.4rem;
   }
@@ -417,6 +413,13 @@ Single slide style
   .cd-hero-slider h2 {
     font-size: 5vw;
   }
+
+  @media only screen and (min-width: 1600px) {
+    .cd-hero-slider h2 {
+      font-size: 5.4em;
+    }
+  }
+  
   .cd-hero-slider p {
     font-size: 1.6rem;
   }
