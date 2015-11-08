@@ -257,6 +257,12 @@ Main Components
   height: 100%;
   position: relative;
   background: rgba(37, 42, 58, 0.4);
+  transition: all 0.3s;
+}
+
+.newsArticle:hover {
+  transition: all 0.3s;
+  background: rgba(37, 42, 58, 0.6);
 }
 
 .newsArticle:nth-child(3) {
@@ -272,7 +278,7 @@ Main Components
 }
 
 .newsArticle .content {
-  padding: 10px;
+  padding: 25px;
 }
 
 .newsArticle .cat {
