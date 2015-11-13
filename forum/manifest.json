@@ -1,0 +1,14 @@
+{
+  "name": "Consortium Horizon",
+  "icons": [
+    {
+      "src": "/themes/mobile/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "density": 4.0
+    }
+  ],
+  "start_url": "/discussions",
+  "display": "standalone",
+  "orientation": "any"
+}
