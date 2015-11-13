@@ -1,6 +1,36 @@
 {
   "name": "Consortium Horizon",
   "icons": [
+      {
+      "src": "/themes/mobile/logo36.png",
+      "sizes": "36x36",
+      "type": "image/png",
+      "density": 0.75
+    },
+    {
+      "src": "/themes/mobile/logo48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "density": 1.0
+    },
+    {
+      "src": "/themes/mobile/logo72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "density": 1.5
+    },
+    {
+      "src": "/themes/mobile/logo96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "density": 2.0
+    },
+    {
+      "src": "/themes/mobile/logo144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "density": 3.0
+    },
     {
       "src": "/themes/mobile/logo192.png",
       "sizes": "192x192",
