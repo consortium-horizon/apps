@@ -93,4 +93,18 @@ server {
       include fastcgi_params;
     }
   }
+
+  location /albion {
+    alias /var/www/webapps/current/albion/public;
+    index index.html index.htm index.php;
+    access_log /var/www/webapps/shared/log/albion/nginx.access.log;
+    error_log /var/www/webapps/shared/log/albion/nginx.error.log;
+
+    location ~* \.php$ {
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+      fastcgi_pass unix:/var/run/php5-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+    }
+  }
 }
