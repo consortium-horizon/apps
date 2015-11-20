@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'url' => 'http://localhost',
+    'url' => 'http://www.consortium-horizon.com/albion/',
 
     /*
     |--------------------------------------------------------------------------
