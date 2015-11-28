@@ -36,7 +36,11 @@
 }
 
 .page-Wildstar {
-  background: url("http://orig00.deviantart.net/025b/f/2014/131/2/6/wallpaper_4_landscape_wildstar_1920_1080_by_empessah-d7i1r39.jpg") fixed no-repeat;
+  background: url("https://assets.vg247.com/current//2012/03/20120307planetside2_06.jpg") fixed top no-repeat;
+}
+
+.page-Planetside_2 {
+  background: url("https://assets.vg247.com/current//2012/03/20120307planetside2_06.jpg") fixed top no-repeat;
 }
 
 .top-bar {

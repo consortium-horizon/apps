@@ -4,16 +4,83 @@
 /* Visit http://rscss.io/ for more infos                    */
 /* -------------------------------------------------------- */
 
-.generic-navbar {
-  display: flex;
-  list-style: none;
-  margin: -15px -15px 25px -15px !important; /* Need to override mediawiki defaults here */
-  background: #3B444F;
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover div{
+  margin:0px;
 }
 
-.generic-navbar > .navitem {
-  color: red;
-  flex: 25%;
-  padding: 25px;
+#p-cactions #mw-content-text .generic-navbar > .navitem:after{
+  background:transparent;
+  height:2px;
+  content:'';
+  margin-left:50%;
+  margin-right:30px;
+  width:0px;
+  padding:0px;
+  transition:500ms all ease;
+  display:block;
+  margin-top:5px;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover:after {
+  width:1px;
+  background: black;
+  padding-left:100%;
+}
+
+#p-cactions #mw-content-text .generic-navbar {
   text-align: center;
+  margin:0px;
+  padding:15px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 25px;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover:after{
+  margin:5px 0px 0px 0px;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem{
+  display:inline-block;
+  margin:10px 20px;
+  transition:500ms all ease;
+  text-transform:uppercase;
+  color:#111;
+  font-weight:bold;
+  font-family:sans-serif;
+  text-align:center;
+  position: relative;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem > .dropdown{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  display: none;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover > .dropdown {
+    display: block;
+    -webkit-animation: fadein .7s; /* Safari and Chrome */
+    -moz-animation: fadein .7s; /* Firefox */
+    -ms-animation: fadein .7s; /* Internet Explorer */
+    -o-animation: fadein .7s; /* Opera */
+    animation: fadein .7s;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem > .dropdown > li{
+  background: rgba(0,0,0,0.7);
+  color: whitesmoke;
+  font-weight: normal;
+  padding: 5px;
+  text-transform: none;
+}
+
+/* Animations */
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }

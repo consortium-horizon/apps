@@ -84,24 +84,89 @@
 /* Visit http://rscss.io/ for more infos                    */
 /* -------------------------------------------------------- */
 
-.generic-navbar {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  list-style: none;
-  margin: -15px -15px 25px -15px !important; /* Need to override mediawiki defaults here */
-  background: #3B444F;
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover div{
+  margin:0px;
 }
 
-.generic-navbar > .navitem {
-  color: red;
-  -webkit-box-flex: 25%;
-  -webkit-flex: 25%;
-      -ms-flex: 25%;
-          flex: 25%;
-  padding: 25px;
+#p-cactions #mw-content-text .generic-navbar > .navitem:after{
+  background:transparent;
+  height:2px;
+  content:'';
+  margin-left:50%;
+  margin-right:30px;
+  width:0px;
+  padding:0px;
+  -webkit-transition:500ms all ease;
+          transition:500ms all ease;
+  display:block;
+  margin-top:5px;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover:after {
+  width:1px;
+  background: black;
+  padding-left:100%;
+}
+
+#p-cactions #mw-content-text .generic-navbar {
   text-align: center;
+  margin:0px;
+  padding:15px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 25px;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover:after{
+  margin:5px 0px 0px 0px;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem{
+  display:inline-block;
+  margin:10px 20px;
+  -webkit-transition:500ms all ease;
+          transition:500ms all ease;
+  text-transform:uppercase;
+  color:#111;
+  font-weight:bold;
+  font-family:sans-serif;
+  text-align:center;
+  position: relative;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem > .dropdown{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  display: none;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem:hover > .dropdown {
+    display: block;
+    -webkit-animation: fadein .7s; /* Safari and Chrome */ /* Firefox */ /* Internet Explorer */ /* Opera */
+    animation: fadein .7s;
+}
+
+#p-cactions #mw-content-text .generic-navbar > .navitem > .dropdown > li{
+  background: #000000;
+  background: rgba(0,0,0,0.7);
+  color: whitesmoke;
+  font-weight: normal;
+  padding: 5px;
+  text-transform: none;
+}
+
+/* Animations */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 /* Component - Titles */
@@ -245,7 +310,11 @@ footer.row {
 }
 
 .page-Wildstar {
-  background: url("http://orig00.deviantart.net/025b/f/2014/131/2/6/wallpaper_4_landscape_wildstar_1920_1080_by_empessah-d7i1r39.jpg") fixed no-repeat;
+  background: url("https://assets.vg247.com/current//2012/03/20120307planetside2_06.jpg") fixed top no-repeat;
+}
+
+.page-Planetside_2 {
+  background: url("https://assets.vg247.com/current//2012/03/20120307planetside2_06.jpg") fixed top no-repeat;
 }
 
 .top-bar {
