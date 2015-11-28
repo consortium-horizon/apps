@@ -8,13 +8,6 @@
 /* Let's make this B... aby responsive */
 /* ----------------------------------- */
 
-// The freaking menu bar
-@media all and (max-width: 1440px) {
-  .SiteMenu > li:nth-child(7), .SiteMenu > li:nth-child(8) {
-    display: none;
-  }
-}
-
 // Want small size ? GET SMALL SIZE
 @media all and (max-width: 800px) {
   .CountComments, .CountDiscussions, .CountReplies {
