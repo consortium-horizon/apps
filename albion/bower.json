@@ -1,0 +1,35 @@
+{
+  "name": "LCH Albion Online Management App",
+  "version": "0.1.0",
+  "homepage": "https://github.com/MiikroKimiro/lchalbion",
+  "authors": [
+    "MiikroKimiro <kriimo666@gmail.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "resources/assets/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "startbootstrap-sb-admin-2": "*",
+    "bootstrap-sass-official": "^3.0.0",
+    "select2": "^4.0.0",
+    "select2-bootstrap-css": "^1.4.6",
+    "respond": "~1.4.2",
+    "anchor-js": "~1.1.1",
+    "datatables": "~1.10.9",
+    "datatables-plugins": "~1.10.9",
+    "datatables-responsive": "~1.0.7",
+    "font-awesome": "~4.4.0"
+  },
+  "resolutions": {
+    "select2": "^4.0.0"
+  }
+}
