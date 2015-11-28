@@ -1,0 +1,12 @@
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for FOOTER element              */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+footer.row {
+  margin-right: 0;
+  margin-left: 0;
+  background: #3B444F;
+  max-width: none;
+}

@@ -1,0 +1,19 @@
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for NAVBAR element              */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+.generic-navbar {
+  display: flex;
+  list-style: none;
+  margin: -15px -15px 25px -15px !important; /* Need to override mediawiki defaults here */
+  background: #3B444F;
+}
+
+.generic-navbar > .navitem {
+  color: red;
+  flex: 25%;
+  padding: 25px;
+  text-align: center;
+}

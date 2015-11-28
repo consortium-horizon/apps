@@ -1,0 +1,60 @@
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for GALLERY element             */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+.row.-gallery {
+  height: 300px;
+  overflow: hidden;
+}
+
+.row.-gallery > .columns {
+  height: 300px;
+}
+
+.row.-gallery > .columns > .item {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.row.-gallery > .columns > .item > .galleryItemTitle {
+  position: absolute;
+  bottom: 2.5em;
+  left: 0.9375em;
+  color: #FFFFFF;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.row.-gallery > .columns > .item > .galleryItemSubtitle {
+  position: absolute;
+  bottom: 2.5em;
+  left: 1.3em;
+  color: #999999;
+  opacity: 0;
+}
+
+.row.-gallery > .columns > .item:hover > .galleryItemTitle {
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+
+.row.-gallery > .columns > .item:hover > .galleryItemSubtitle {
+  opacity: 1;
+  transition: all 0.5s;
+}
+
+.row.-gallery > .columns > .item > a > img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}

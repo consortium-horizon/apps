@@ -1,0 +1,7 @@
+/* Base css file for wildstar section on lCH wiki */
+
+/* Wildstar theme properties */
+:root {
+--mainColor: #12345678;
+--highlightColor: hwb(190, 35%, 20%);
+}

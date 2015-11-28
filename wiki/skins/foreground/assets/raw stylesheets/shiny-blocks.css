@@ -1,0 +1,60 @@
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for SHINY-BLOCK element         */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+.shiny-container::before {
+  display: block;
+  content: "";
+  height: 100px;
+  position: absolute;
+  top: -150px;
+  left: 0;
+  border-right: 1px solid black;
+}
+
+.shiny-container {
+  position: relative;
+  display: flex;
+  min-height: 300px;
+  padding: 30px inherit;
+  margin: 150px 0;
+}
+
+.shiny-container::after {
+  display: block;
+  content: "";
+  height: 100px;
+  width: 100%;
+  position: absolute;
+  bottom: -100px;
+  left: 0;
+  border-right: 1px solid black;
+}
+
+.shiny-container > .shiny-content {
+  background: linear-gradient( to right, transparent 50%, #F3F3F3 50%);
+  flex: 60%;
+  padding: 60px 0;
+}
+
+.shiny-container > .shiny-content > .subtitle {
+  color: #999999;
+  letter-spacing: 0.7em;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.shiny-container > .shiny-content > .title {
+  text-transform: uppercase;
+  font-size: 4em;
+  font-weight: bold;
+}
+
+.shiny-container > .shiny-media {
+  flex: 40%;
+  background: url("img/PS2-cantina.jpg");
+  background-size: cover;
+}

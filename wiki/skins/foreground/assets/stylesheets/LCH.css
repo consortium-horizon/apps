@@ -1,0 +1,114 @@
+
+/* Generic Layout for section homepage */
+/* By Mr V - Nov 2015 */
+
+body.page-Wildstar {
+  position: relative;
+  background: none;
+}
+
+body.page-Wildstar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: url("http://orig00.deviantart.net/025b/f/2014/131/2/6/wallpaper_4_landscape_wildstar_1920_1080_by_empessah-d7i1r39.jpg") no-repeat;
+  background-size: cover;
+  z-index: -1;
+}
+
+.page-Wildstar .row {
+  max-width: none;
+}
+
+/* text container */
+
+.page-Wildstar #p-cactions {
+  padding: 0;
+}
+
+/* title */
+.page-Wildstar #p-cactions .title, .page-Wildstar #p-cactions #tagline {
+  text-align: center;
+}
+
+.page-Wildstar #p-cactions .title {
+  font-size: 6em;
+  margin-top: 30vh;
+}
+
+.page-Wildstar #p-cactions #tagline {
+  font-size: 2em;
+  margin-bottom: 25vh;
+}
+
+.page-Wildstar #p-cactions .mw-bodytext {
+  background: #ECEFF0;
+  position: relative;
+  padding-bottom: 100px;
+}
+
+.page-Wildstar #p-cactions #mw-content-text {
+  max-width: 62.5em;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background: white;
+  padding: 0 25px;
+  padding-bottom: 30px;
+}
+
+/* Game description */
+.GameDescription {
+  float: left;
+  width: 60%;
+  background: url("http://blog.lesoir.be/wp-content/uploads/sites/2/2013/05/209171-wildstar1.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.GameDescription > .GameDescriptionTitle {
+  text-transform: uppercase;
+  font-size: 1.2em;
+  margin-bottom: 15px;
+  font-weight: bold;
+  background: red;
+  color: white;
+  padding: 5px;
+}
+
+.GameDescription > .GameDescriptionContent{
+  color: white;
+}
+
+/* Game infos */
+.GameInfos {
+  float: right;
+  width: 37.5%;
+  margin-left: 2.5%;
+  background: #F0F0F0;
+}
+
+.GameInfos > .GameInfosTitle {
+  text-transform: uppercase;
+  font-size: 1.7em;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+/* Game info + desc */
+.GameDescription, .GameInfos {
+  height: 300px;
+  padding: 50px;
+  text-align: center;
+}
+
+/* Footer */
+
+footer.row {
+  background: #3B444F;
+  margin-top: 0;
+  padding-top: 20px;
+}

@@ -1,0 +1,42 @@
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for TITLES element              */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+#p-cactions .title:first-of-type {
+  margin-top: 15vh;
+  padding-left: 30px;
+  font-size: 5em;
+  display: block;
+  max-width:1024px;;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#tagline {
+  padding-left: 30px;
+  display: block;
+  max-width:1024px;;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  margin: 20px 0;
+}
+
+.section-title > .title {
+  text-transform: uppercase;
+  font-size: 4em;
+  font-weight: bold;
+}
+
+
+.section-title > .subtitle {
+  color: #999999;
+  letter-spacing: 0.7em;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  font-weight: bold;
+}

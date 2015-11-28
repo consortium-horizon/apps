@@ -1,0 +1,289 @@
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for lch-theme on mediawiki 1.25 */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+/* Basic properties */
+/* ================ */
+/* Base css file for wildstar section on lCH wiki */
+
+/* Wildstar theme properties */
+
+/* Component - Gallery */
+/* =================== */
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for GALLERY element             */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+.row.-gallery {
+  height: 300px;
+  overflow: hidden;
+}
+
+.row.-gallery > .columns {
+  height: 300px;
+}
+
+.row.-gallery > .columns > .item {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.row.-gallery > .columns > .item > .galleryItemTitle {
+  position: absolute;
+  bottom: 2.5em;
+  left: 0.9375em;
+  color: #FFFFFF;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  font-weight: bold;
+  -webkit-transition: all 0.3s;
+          transition: all 0.3s;
+}
+
+.row.-gallery > .columns > .item > .galleryItemSubtitle {
+  position: absolute;
+  bottom: 2.5em;
+  left: 1.3em;
+  color: #999999;
+  opacity: 0;
+}
+
+.row.-gallery > .columns > .item:hover > .galleryItemTitle {
+  margin-bottom: 10px;
+  -webkit-transition: all 0.3s;
+          transition: all 0.3s;
+}
+
+.row.-gallery > .columns > .item:hover > .galleryItemSubtitle {
+  opacity: 1;
+  -webkit-transition: all 0.5s;
+          transition: all 0.5s;
+}
+
+.row.-gallery > .columns > .item > a > img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Component - Navbar */
+/* ================== */
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for NAVBAR element              */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+.generic-navbar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  list-style: none;
+  margin: -15px -15px 25px -15px !important; /* Need to override mediawiki defaults here */
+  background: #3B444F;
+}
+
+.generic-navbar > .navitem {
+  color: red;
+  -webkit-box-flex: 25%;
+  -webkit-flex: 25%;
+      -ms-flex: 25%;
+          flex: 25%;
+  padding: 25px;
+  text-align: center;
+}
+
+/* Component - Titles */
+/* ================== */
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for TITLES element              */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+#p-cactions .title:first-of-type {
+  margin-top: 15vh;
+  padding-left: 30px;
+  font-size: 5em;
+  display: block;
+  max-width:1024px;;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#tagline {
+  padding-left: 30px;
+  display: block;
+  max-width:1024px;;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  margin: 20px 0;
+}
+
+.section-title > .title {
+  text-transform: uppercase;
+  font-size: 4em;
+  font-weight: bold;
+}
+
+
+.section-title > .subtitle {
+  color: #999999;
+  letter-spacing: 0.7em;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+/* Component - Shiny blocks */
+/* ======================== */
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for SHINY-BLOCK element         */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+.shiny-container:before {
+  display: block;
+  content: "";
+  height: 100px;
+  position: absolute;
+  top: -150px;
+  left: 0;
+  border-right: 1px solid black;
+}
+
+.shiny-container {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 300px;
+  padding: 30px inherit;
+  margin: 150px 0;
+}
+
+.shiny-container:after {
+  display: block;
+  content: "";
+  height: 100px;
+  width: 100%;
+  position: absolute;
+  bottom: -100px;
+  left: 0;
+  border-right: 1px solid black;
+}
+
+.shiny-container > .shiny-content {
+  background: -webkit-linear-gradient(left, transparent 50%, #F3F3F3 50%);
+  background: linear-gradient( to right, transparent 50%, #F3F3F3 50%);
+  -webkit-box-flex: 60%;
+  -webkit-flex: 60%;
+      -ms-flex: 60%;
+          flex: 60%;
+  padding: 60px 0;
+}
+
+.shiny-container > .shiny-content > .subtitle {
+  color: #999999;
+  letter-spacing: 0.7em;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.shiny-container > .shiny-content > .title {
+  text-transform: uppercase;
+  font-size: 4em;
+  font-weight: bold;
+}
+
+.shiny-container > .shiny-media {
+  -webkit-box-flex: 40%;
+  -webkit-flex: 40%;
+      -ms-flex: 40%;
+          flex: 40%;
+  background: url("../raw stylesheets/img/PS2-cantina.jpg");
+  background-size: cover;
+}
+
+/* Component - Footer */
+/* ================== */
+/* -------------------------------------------------------- */
+/* cssnext based stylesheet for FOOTER element              */
+/* This file uses the RSCSS method to define css properties */
+/* Visit http://rscss.io/ for more infos                    */
+/* -------------------------------------------------------- */
+
+footer.row {
+  margin-right: 0;
+  margin-left: 0;
+  background: #3B444F;
+  max-width: none;
+}
+
+/* Page Layout */
+/* =========== */
+
+.row {
+  max-width: 1024px;
+}
+
+.page-Wildstar {
+  background: url("http://orig00.deviantart.net/025b/f/2014/131/2/6/wallpaper_4_landscape_wildstar_1920_1080_by_empessah-d7i1r39.jpg") fixed no-repeat;
+}
+
+.top-bar {
+  margin: 0;
+}
+
+#page-content {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  min-height: 100vh;
+}
+
+#page-content > .row:nth-child(3){
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  max-width: none;
+}
+
+#p-cactions {
+  padding: 0;
+}
+
+.mw-bodytext {
+  background: white;
+}
+
+#mw-content-text {
+  padding: 15px;
+  max-width: 62.5em;
+  margin: 0 auto;
+  margin-top: 15vh;
+}

@@ -1,0 +1,66 @@
+#p-cactions #mw-content-text .generic-navbar li:hover div{
+  margin:0px;
+}
+
+#p-cactions #mw-content-text .generic-navbar li:before{
+  height:2px;
+  content:'';
+  width:0px;
+  padding:0px;
+  display:block;
+  margin-left:50%;
+  margin-right:30px;
+  margin-bottom:5px;
+  transition:500ms all ease;
+}
+
+#p-cactions #mw-content-text .generic-navbar li:after{
+  background:transparent;
+  height:2px;
+  content:'';
+  margin-left:50%;
+  margin-right:30px;
+  width:0px;
+  padding:0px;
+  transition:500ms all ease;
+  display:block;
+  margin-top:5px;
+}
+
+#p-cactions #mw-content-text .generic-navbar li:hover:after, #p-cactions #mw-content-text .generic-navbar li:hover:before{
+  width:1px;
+  background:rgb(79, 178, 125);
+  padding-left:100%;
+}
+
+#p-cactions #mw-content-text .generic-navbar {
+  text-align: center;
+  margin:0px;
+  padding:0px;
+  padding:15px;
+  position: relative;
+  z-index: 2;
+  margin: 0 -100%;
+  margin-bottom: 25px;
+  background: #3B444F;
+}
+
+#p-cactions #mw-content-text .generic-navbar li:hover:after{
+  margin:5px 0px 0px 0px;
+}
+
+#p-cactions #mw-content-text .generic-navbar li:hover:before{
+  margin:0px 0px 5px 0px;
+}
+
+#p-cactions #mw-content-text .generic-navbar li{
+  display:inline-block;
+  padding:10px 20px;
+  transition:500ms all ease;
+  text-transform:uppercase;
+  color:#111;
+  font-weight:bold;
+  color:rgb(79, 178, 125);
+  font-family:sans-serif;
+  text-align:center;
+}

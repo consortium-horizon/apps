@@ -43,7 +43,8 @@ $wgResourceModules['skins.foreground'] = array(
     	'foreground/assets/stylesheets/foreground.css',
         'foreground/assets/stylesheets/foreground-print.css',
     	'foreground/assets/stylesheets/jquery.autocomplete.css',
-    	'foreground/assets/stylesheets/responsive-tables.css'
+    	'foreground/assets/stylesheets/responsive-tables.css',
+			'foreground/assets/stylesheets/lch-theme.css',
     ),
     'scripts'        => array(
         'foreground/assets/scripts/vendor/custom.modernizr.js',
