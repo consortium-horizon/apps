@@ -16,8 +16,8 @@
 }
 
 // Want small size ? GET SMALL SIZE
-@media all and (max-width: 1440px) {
-  .CountComments, .CountDiscussions {
+@media all and (max-width: 800px) {
+  .CountComments, .CountDiscussions, .CountReplies {
     display: none;
   }
 }

@@ -269,7 +269,8 @@ body {
                 top: 0;
                 left: 0;
                 content: "";
-                width: 25%;
+                width: 50%;
+                width: 25vw;
                 height: 100%;
                 @include vertical-gradient($start: rgb(40, 119, 208), $stop: rgb(46, 100, 197));
                 @include box-shadow(0, 0, 3px, #00BAFF, $inset: true);
