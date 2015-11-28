@@ -22,9 +22,8 @@
 }
 
 #p-cactions #mw-content-text .generic-navbar > .navitem:hover:after {
-  width:1px;
+  width:100%;
   background: black;
-  padding-left:100%;
 }
 
 #p-cactions #mw-content-text .generic-navbar {
