@@ -448,7 +448,7 @@ li[class*="Role_Rfrent"] {
 .Role_Surveill {
     .Author {
         .Username {
-            color: red;
+            color: red !important;
             &:hover {
                 color: red !important;
             }
