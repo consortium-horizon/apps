@@ -45,7 +45,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
             $this->SetUserMeta($UserID, $SecretKey, $Secret );
         }
 
-        $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://localhost:5280/http-bind', 'vanilla'.rand(), false, false);
+        $xmppPrebind = new XmppPrebind('consortium-horizon.com', 'http://www.consortium-horizon.com/http-bind/', 'vanilla'.rand(), false, false);
         try{
             $xmppPrebind->connect($UserName, $Secret);
             $xmppPrebind->auth();

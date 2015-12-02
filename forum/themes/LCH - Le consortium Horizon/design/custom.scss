@@ -445,6 +445,25 @@ li[class*="Role_Rfrent"] {
     }
 }
 
+.Role_Surveill {
+    .Author {
+        .Username {
+            color: red;
+            &:hover {
+                color: red;
+            }
+            &::after {
+                font-family: FontAwesome;
+                content: "\f024";
+                font-size: 0.8em;
+                margin-left: 5px;
+                display: inline-block;
+                text-decoration: inherit;
+            }
+        }
+    }
+}
+
 .RoleTitle {display: none;} // don't need to show that all day long
 // But lets make it visible on hover
 .MessageList {
@@ -452,6 +471,7 @@ li[class*="Role_Rfrent"] {
         .RoleTitle {display: inline-block;}
     }
 }
+
 // Allow users to display badge, BUT restrain number and size
 .AuthorInfo {
     img {
