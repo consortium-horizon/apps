@@ -450,11 +450,11 @@ li[class*="Role_Rfrent"] {
         .Username {
             color: red;
             &:hover {
-                color: red;
+                color: red !important;
             }
             &::after {
                 font-family: FontAwesome;
-                content: "\f024";
+                content: "\f024" !important;
                 font-size: 0.8em;
                 margin-left: 5px;
                 display: inline-block;
