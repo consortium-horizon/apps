@@ -29,7 +29,7 @@ $Configuration['Garden']['ContentType']                         = 'text/html';
 $Configuration['Garden']['Charset']                             = 'utf-8';
 // An array of folders the application should never search through when searching for classes. (note: plugins had to be removed so that locale searches could get the locale folder from the plugin's folder).
 $Configuration['Garden']['FolderBlacklist']                     = array('.', '..', '_svn', '.git');
-$Configuration['Garden']['Locale']                              = 'en-CA';
+$Configuration['Garden']['Locale']                              = 'en';
 $Configuration['Garden']['LocaleCodeset']                       = 'UTF8';
 $Configuration['Garden']['Title']                               = 'Vanilla 2';
 $Configuration['Garden']['Domain']                              = '';
@@ -58,7 +58,7 @@ $Configuration['Garden']['UserAccount']['AllowEdit']            = TRUE; // Allow
 $Configuration['Garden']['Registration']['Method']              = 'Captcha'; // Options are: Basic, Captcha, Approval, Invitation
 $Configuration['Garden']['Registration']['DefaultRoles']        = array('8'); // The default role(s) to assign new users (4 is "Member")
 $Configuration['Garden']['Registration']['ApplicantRoleID']     = 4; // The "Applicant" RoleID.
-$Configuration['Garden']['Registration']['InviteExpiration']    = '-1 week'; // The time before now that an invitation expires. ie. If an invitation was sent within the last week, it is still valid. This value will be plugged directly into strtotime()
+$Configuration['Garden']['Registration']['InviteExpiration']    = '1 week'; // When invitations expire. This will be plugged into strtotime().
 $Configuration['Garden']['Registration']['InviteRoles']         = 'FALSE';
 $Configuration['Garden']['Registration']['ConfirmEmail']        = FALSE;
 $Configuration['Garden']['Registration']['ConfirmEmailRole']    = 3;
@@ -110,6 +110,7 @@ $Configuration['Garden']['Modules']['ShowRecentUserModule']     = FALSE;
 $Configuration['Garden']['Embed']['CommentsPerPage']            = 50;
 $Configuration['Garden']['Embed']['SortComments']               = 'desc';
 $Configuration['Garden']['Embed']['PageToForum']                = TRUE;
+$Configuration['Garden']['BannedPhoto']                         = 'https://cd8ba0b44a15c10065fd-24461f391e20b7336331d5789078af53.ssl.cf1.rackcdn.com/images/banned_large.png';
 
 
 // Formatting
@@ -121,22 +122,18 @@ $Configuration['Garden']['Format']['EmbedSize']                 = 'normal'; // t
 
 // Default Preferences
 $Configuration['Preferences']['Email']['ConversationMessage']   = '1';
-//$Configuration['Preferences']['Email']['AddedToConversation']   = '1'; // merged with ConversationMessage
 $Configuration['Preferences']['Email']['BookmarkComment']       = '1';
+$Configuration['Preferences']['Email']['ParticipateComment']    = '0';
 $Configuration['Preferences']['Email']['WallComment']           = '0';
 $Configuration['Preferences']['Email']['ActivityComment']       = '0';
 $Configuration['Preferences']['Email']['DiscussionComment']     = '0';
-//$Configuration['Preferences']['Email']['DiscussionMention']     = '0'; // merged with regular mention
-//$Configuration['Preferences']['Email']['CommentMention']        = '0';
+$Configuration['Preferences']['Email']['Mention']               = '0';
 $Configuration['Preferences']['Popup']['ConversationMessage']   = '1';
-//$Configuration['Preferences']['Popup']['AddedToConversation']   = '1';
 $Configuration['Preferences']['Popup']['BookmarkComment']       = '1';
+$Configuration['Preferences']['Popup']['ParticipateComment']    = '0';
 $Configuration['Preferences']['Popup']['WallComment']           = '1';
 $Configuration['Preferences']['Popup']['ActivityComment']       = '1';
 $Configuration['Preferences']['Popup']['DiscussionComment']     = '1';
-//$Configuration['Preferences']['Popup']['DiscussionMention']     = '1';
-//$Configuration['Preferences']['Popup']['CommentMention']        = '1';
-$Configuration['Preferences']['Email']['Mention']               = '0';
 $Configuration['Preferences']['Popup']['Mention']               = '1';
 
 // Modules

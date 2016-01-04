@@ -9,15 +9,15 @@
  */
 
 $PluginInfo['ProfileExtender'] = array(
-    'Name' => 'Profile Extender (edited)',
-    'Description' => 'Add fields (edited) (like status, location, or gamer tags) to profiles and registration.',
+    'Name' => 'Profile Extender',
+    'Description' => 'Add fields (like status, location, or gamer tags) to profiles and registration.',
     'Version' => '3.0.2',
     'RequiredApplications' => array('Vanilla' => '2.1'),
     'MobileFriendly' => true,
     //'RegisterPermissions' => array('Plugins.ProfileExtender.Add'),
     'SettingsUrl' => '/dashboard/settings/profileextender',
     'SettingsPermission' => 'Garden.Settings.Manage',
-    'Author' => "Lincoln Russell (edited)",
+    'Author' => "Lincoln Russell",
     'AuthorEmail' => 'lincoln@vanillaforums.com',
     'AuthorUrl' => 'http://lincolnwebs.com'
 );
@@ -239,8 +239,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
         $this->ProfileFields = $this->getProfileFields();
 
         // Get user-specific data
-      //  $this->UserFields = Gdn::userModel()->GetMeta($Sender->data("User.UserID"), 'Profile.%', 'Profile.');
-         $this->UserFields = Gdn::UserModel()->GetMeta($Sender->User->UserID, 'Profile.%', 'Profile.');
+        $this->UserFields = Gdn::userModel()->GetMeta($Sender->data("User.UserID"), 'Profile.%', 'Profile.');
 
         // Fill in user data on form
         foreach ($this->UserFields as $Field => $Value) {
@@ -441,7 +440,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
                 }
 
                 echo ' <dt class="ProfileExtend Profile'.Gdn_Format::alphaNumeric($Name).'">'.Gdn_Format::text($AllFields[$Name]['Label']).'</dt> ';
-                echo ' <dd class="ProfileExtend Profile'.Gdn_Format::alphaNumeric($Name).'">'.Gdn_Format::html($Value).'</dd> ';
+                echo ' <dd class="ProfileExtend Profile'.Gdn_Format::alphaNumeric($Name).'">'.Gdn_Format::htmlFilter($Value).'</dd> ';
             }
         } catch (Exception $ex) {
             // No errors

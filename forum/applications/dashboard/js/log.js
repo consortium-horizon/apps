@@ -1,186 +1,190 @@
 jQuery(document).ready(function($) {
-   var currentAction = null;
+    var currentAction = null;
 
-   // Gets the selected IDs as an array.
-   var getIDs = function() {
-      var IDs = [];
-      $('input:checked').each(function(index, element) {
-         if ($(element).attr('id') == 'SelectAll')
-            return;
-         
-         IDs.push($(element).val());
-      });
-      return IDs;
-   };
+    // Gets the selected IDs as an array.
+    var getIDs = function() {
+        var IDs = [];
+        $('input:checked').each(function(index, element) {
+            if ($(element).attr('id') == 'SelectAll')
+                return;
 
-   var afterSuccess = function(data) {
-      // Figure out the IDs that are currently in the view.
-      var rows = [];
-      $('#Log tbody tr').each(function(index, element) {
-         if ($(element).attr('id') == 'SelectAll')
-            return;
-         rows.push($(element).attr('id'));
-      });
-      var rowsSelector = '#'+rows.join(',#');
+            IDs.push($(element).val());
+        });
+        return IDs;
+    };
 
-      // Requery the view and put it in the table.
-      $.get(
-         window.location.href,
-         {'DeliveryType': 'VIEW'},
-         function (data) {
-            $('#LogTable').html(data);
-            setExpander();
+    var afterSuccess = function(data) {
+        // Figure out the IDs that are currently in the view.
+        var rows = [];
+        $('#Log tbody tr').each(function(index, element) {
+            if ($(element).attr('id') == 'SelectAll')
+                return;
+            rows.push($(element).attr('id'));
+        });
+        var rowsSelector = '#' + rows.join(',#');
 
-            // Highlight the rows that are different.
-            var $foo = $('#Log tbody tr').not(rowsSelector);
+        // Requery the view and put it in the table.
+        $.get(
+            window.location.href,
+            {'DeliveryType': 'VIEW'},
+            function(data) {
+                $('#LogTable').html(data);
+                setExpander();
 
-            $foo.effect('highlight', {}, 'slow');
-         });
+                // Highlight the rows that are different.
+                var $foo = $('#Log tbody tr').not(rowsSelector);
 
-      // Update the counts in the sidepanel.
-      $('.Popin').popin();
-   };
+                $foo.effect('highlight', {}, 'slow');
+            });
 
-   // Restores the
-   var restore = function() {
-      handleAction('/dashboard/log/restore');
-   };
+        // Update the counts in the sidepanel.
+        $('.Popin').popin();
+    };
 
-   var deleteForever = function() {
-      handleAction('/dashboard/log/delete');
-   };
-   
-   var deleteSpam = function() {
-      handleAction('/dashboard/log/deletespam');
-   };
+    // Restores the
+    var restore = function() {
+        handleAction('/dashboard/log/restore');
+    };
 
-   var setExpander = function() {
-      $Expander = $('.Expander');
-      $('.Expander').expander({slicePoint: 200, expandText: gdn.definition('ExpandText'), userCollapseText: gdn.definition('CollapseText')});
-   };
-   setExpander();
-   
-   $(document).delegate('.CheckboxCell', 'click', function(e) {
-      var $checkbox = $('input:checkbox', this);
-      $checkbox.trigger('click', true);
-   });
+    var deleteForever = function() {
+        handleAction('/dashboard/log/delete');
+    };
 
-   $(document).delegate('tbody .CheckboxCell input', 'click', function(e, flip) {
-      e.stopPropagation();
-      var $checkbox = $(this);
-      
-      var selected = $checkbox.attr('checked') == 'checked';
-      if (flip)
-         selected = !selected;
-      
-      if (selected)
-         $checkbox.closest('tr').addClass('Selected');
-      else
-         $checkbox.closest('tr').removeClass('Selected');
-   });
+    var deleteSpam = function() {
+        handleAction('/dashboard/log/deletespam');
+    };
 
-   $('#SelectAll').live('click', function(e, flip) {
-      e.stopPropagation();
-      var selected = $(this).attr('checked') == 'checked';
-      
-      if (flip)
-         selected = !selected;
-      
-      var table = $(this).closest('table').find('tbody');
-      $('input:checkbox', table).attr('checked', selected);
-      if (selected)
-         $('tr', table).addClass('Selected', selected);
-      else
-         $('tr', table).removeClass('Selected', selected);
-   });
+    var setExpander = function() {
+        $Expander = $('.Expander');
+        $('.Expander').expander({
+            slicePoint: 200,
+            expandText: gdn.definition('ExpandText'),
+            userCollapseText: gdn.definition('CollapseText')
+        });
+    };
+    setExpander();
 
-   $('.RestoreButton').click(function(e) {
-      var IDs = getIDs().join(',');
-      currentAction = restore;
+    $(document).delegate('.CheckboxCell', 'click', function(e) {
+        var $checkbox = $('input:checkbox', this);
+        $checkbox.trigger('click', true);
+    });
 
-      // Popup the confirm.
-      var bar = $.popup({ afterSuccess: afterSuccess},
-         function(settings) {
+    $(document).delegate('tbody .CheckboxCell input', 'click', function(e, flip) {
+        e.stopPropagation();
+        var $checkbox = $(this);
+
+        var selected = $checkbox.prop('checked');
+        if (flip)
+            selected = !selected;
+
+        if (selected)
+            $checkbox.closest('tr').addClass('Selected');
+        else
+            $checkbox.closest('tr').removeClass('Selected');
+    });
+
+    $(document).on('click', '#SelectAll', function(e, flip) {
+        e.stopPropagation();
+        var selected = $(this).prop('checked');
+
+        if (flip)
+            selected = !selected;
+
+        var table = $(this).closest('table').find('tbody');
+        $('input:checkbox', table).prop('checked', selected);
+        if (selected)
+            $('tr', table).addClass('Selected');
+        else
+            $('tr', table).removeClass('Selected');
+    });
+
+    $('.RestoreButton').click(function(e) {
+        var IDs = getIDs().join(',');
+        currentAction = restore;
+
+        // Popup the confirm.
+        var bar = $.popup({afterSuccess: afterSuccess},
+            function(settings) {
+                $.get(
+                    gdn.url('/dashboard/log/confirm/restore?logids=' + IDs),
+                    {'DeliveryType': 'VIEW'},
+                    function(data) {
+                        $.popup.reveal(settings, data);
+                    })
+            });
+
+        return false;
+    });
+
+    $('.DeleteButton').click(function(e) {
+        var IDs = getIDs().join(',');
+        currentAction = deleteForever;
+
+        // Popup the confirm.
+        var bar = $.popup({afterSuccess: afterSuccess}, function(settings) {
             $.get(
-               gdn.url('/dashboard/log/confirm/restore?logids='+IDs),
-               {'DeliveryType': 'VIEW'},
-               function (data) {
-                  $.popup.reveal(settings, data);
-               })
-         });
-      
-      return false;
-   });
+                gdn.url('/dashboard/log/confirm/delete?logids=' + IDs),
+                {'DeliveryType': 'VIEW'},
+                function(data) {
+                    $.popup.reveal(settings, data);
+                })
+        });
 
-   $('.DeleteButton').click(function(e) {
-      var IDs = getIDs().join(',');
-      currentAction = deleteForever;
+        return false;
+    });
 
-      // Popup the confirm.
-      var bar = $.popup({ afterSuccess: afterSuccess}, function(settings) {
-         $.get(
-            gdn.url('/dashboard/log/confirm/delete?logids='+IDs),
-            {'DeliveryType': 'VIEW'},
-            function (data) {
-               $.popup.reveal(settings, data);
-            })
-         });
+    $('.SpamButton').click(function(e) {
+        var IDs = getIDs().join(',');
+        currentAction = deleteSpam;
 
-      return false;
-   });
-   
-   $('.SpamButton').click(function(e) {
-      var IDs = getIDs().join(',');
-      currentAction = deleteSpam;
+        // Popup the confirm.
+        var bar = $.popup({afterSuccess: afterSuccess}, function(settings) {
+            $.get(
+                gdn.url('/dashboard/log/confirm/deletespam?logids=' + IDs),
+                {'DeliveryType': 'VIEW'},
+                function(data) {
+                    $.popup.reveal(settings, data);
+                })
+        });
 
-      // Popup the confirm.
-      var bar = $.popup({ afterSuccess: afterSuccess}, function(settings) {
-         $.get(
-            gdn.url('/dashboard/log/confirm/deletespam?logids='+IDs),
-            {'DeliveryType': 'VIEW'},
-            function (data) {
-               $.popup.reveal(settings, data);
-            })
-         });
+        return false;
+    });
 
-      return false;
-   });
+    $('.NotSpamButton').click(function(e) {
+        var IDs = getIDs().join(',');
+        currentAction = restore;
 
-   $('.NotSpamButton').click(function(e) {
-      var IDs = getIDs().join(',');
-      currentAction = restore;
+        // Popup the confirm.
+        var bar = $.popup({afterSuccess: afterSuccess}, function(settings) {
+            $.get(
+                gdn.url('/dashboard/log/confirm/notspam?logids=' + IDs),
+                {'DeliveryType': 'VIEW'},
+                function(data) {
+                    $.popup.reveal(settings, data);
+                })
+        });
 
-      // Popup the confirm.
-      var bar = $.popup({ afterSuccess: afterSuccess}, function(settings) {
-         $.get(
-            gdn.url('/dashboard/log/confirm/notspam?logids='+IDs),
-            {'DeliveryType': 'VIEW'},
-            function (data) {
-               $.popup.reveal(settings, data);
-            })
-         });
+        return false;
+    });
 
-      return false;
-   });
+    $(document).on('click', '.ConfirmNo', function() {
+        $.popup.close({});
+        return false;
+    });
 
-   $('.ConfirmNo').live('click', function() {
-      $.popup.close({});
-      return false;
-   });
-   
-   $(document).delegate('#Confirm_SelectAll', 'click', function() {
-      var checked = $('#Confirm_SelectAll').attr('checked') == 'checked';
-      $('#ConfirmForm input:checkbox').attr('checked', checked);
-   });
-   
-   // Filter menu
-   $('.FilterButton').click(function(e) {
-      // Get selected value
-      var category = $('#Form_CategoryID').val();
+    $(document).delegate('#Confirm_SelectAll', 'click', function() {
+        var checked = $('#Confirm_SelectAll').prop('checked');
+        $('#ConfirmForm input:checkbox').prop('checked', checked);
+    });
 
-      // Ajax us to filtered results
-      $('#LogTable').load(gdn.url('/dashboard/log/moderation?DeliveryType=VIEW&CategoryID='+category));
-      
-      return false;
-   });
+    // Filter menu
+    $('.FilterButton').click(function(e) {
+        // Get selected value
+        var category = $('#Form_CategoryID').val();
+
+        // Ajax us to filtered results
+        $('#LogTable').load(gdn.url('/dashboard/log/moderation?DeliveryType=VIEW&CategoryID=' + category));
+
+        return false;
+    });
 });

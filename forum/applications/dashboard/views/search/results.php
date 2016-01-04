@@ -1,45 +1,87 @@
-<?php if (!defined('APPLICATION')) exit();
-$SearchTerm = GetValue('SearchTerm', $this);
+<?php if (!defined('APPLICATION')) exit(); ?>
+
+<?php if (!count($this->data('SearchResults')) && $this->data('SearchTerm'))
+    echo '<p class="NoResults">', sprintf(t('No results for %s.', 'No results for <b>%s</b>.'), $this->data('SearchTerm')), '</p>';
 ?>
-<ul class="DataList SearchResults">
+    <ol id="search-results" class="DataList DataList-Search" start="<?php echo $this->data('From'); ?>">
+        <?php foreach ($this->data('SearchResults') as $Row): ?>
+            <li class="Item Item-Search">
+                <h3><?php echo anchor(htmlspecialchars($Row['Title']), $Row['Url']); ?></h3>
+
+                <div class="Item-Body Media">
+                    <?php
+                    $Photo = userPhoto($Row, array('LinkClass' => 'Img'));
+                    if ($Photo) {
+                        echo $Photo;
+                    }
+                    ?>
+                    <div class="Media-Body">
+                        <div class="Meta">
+                            <?php
+                            echo ' <span class="MItem-Author">'.
+                                sprintf(t('by %s'), userAnchor($Row)).
+                                '</span>';
+
+                            echo Bullet(' ');
+                            echo ' <span clsss="MItem-DateInserted">'.
+                                Gdn_Format::date($Row['DateInserted'], 'html').
+                                '</span> ';
+
+
+                            if (isset($Row['Breadcrumbs'])) {
+                                echo Bullet(' ');
+                                echo ' <span class="MItem-Location">'.Gdn_Theme::Breadcrumbs($Row['Breadcrumbs'], false).'</span> ';
+                            }
+
+                            if (isset($Row['Notes'])) {
+                                echo ' <span class="Aside Debug">debug('.$Row['Notes'].')</span>';
+                            }
+                            ?>
+                        </div>
+                        <div class="Summary">
+                            <?php echo $Row['Summary']; ?>
+                        </div>
+                        <?php
+                        $Count = val('Count', $Row);
+                        //            $i = 0;
+                        //            if (isset($Row['Children'])) {
+                        //               echo '<ul>';
+                        //
+                        //               foreach($Row['Children'] as $child) {
+                        //                  if ($child['PrimaryID'] == $Row['PrimaryID'])
+                        //                     continue;
+                        //
+                        //                  $i++;
+                        //                  $Count--;
+                        //
+                        //                  echo "\n<li>".
+                        //                     anchor($child['Summary'], $child['Url']);
+                        //                     '</li>';
+                        //
+                        //                  if ($i >= 3)
+                        //                     break;
+                        //               }
+                        //               echo '</ul>';
+                        //            }
+
+                        if (($Count) > 1) {
+                            $url = $this->data('SearchUrl').'&discussionid='.urlencode($Row['DiscussionID']).'#search-results';
+                            echo '<div>'.anchor(Plural($Count, '%s result', '%s results'), $url).'</div>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </li>
+        <?php endforeach; ?>
+    </ol>
+
 <?php
-if (is_array($this->SearchResults) && count($this->SearchResults) > 0) {
-	foreach ($this->SearchResults as $Key => $Row) {
-		$Row = (object)$Row;
-		$this->EventArguments['Row'] = $Row;
-?>
-	<li class="Item">
-		<?php $this->FireEvent('BeforeItemContent'); ?>
-		<div class="ItemContent">
-			<?php echo Anchor(Gdn_Format::Text($Row->Title), $Row->Url, 'Title'); ?>
-			<div class="Message Excerpt"><?php
-            if ($SearchTerm)
-               echo MarkString($SearchTerm, $Row->Summary);
-            else
-               echo $Row->Summary;
-			?></div>
-         <div class="Item-Footer">
-            <?php
-               echo UserPhoto($Row, array('Size' => 'Small')).' '.UserAnchor($Row); 
-            ?>
-            <span class="Meta"><span class="MItem">
-               <?php
-                  echo Anchor(Gdn_Format::Date($Row->DateInserted, 'html'), $Row->Url); 
-                 
-                  if (isset($Row->CategoryID)) {
-                     $Category = CategoryModel::Categories($Row->CategoryID);
-                     if ($Category) {
-                        $Url = CategoryUrl($Category);
-                        echo ' in '.Anchor($Category['Name'], $Url, 'Category');
-                     }
-                  }
-               ?>
-            </span></span>
-         </span>
-		</div>
-	</li>
-<?php
-	}
-}
-?>
-</ul>
+echo '<div class="PageControls Bottom">';
+
+$RecordCount = $this->data('RecordCount');
+if ($RecordCount)
+    echo '<span class="Gloss">'.plural($RecordCount, '%s result', '%s results').'</span>';
+
+PagerModule::write(array('Wrapper' => '<div %1$s>%2$s</div>'));
+
+echo '</div>';
