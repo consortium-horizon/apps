@@ -53,16 +53,28 @@ function RenderQuestion($Question) {
     break;
     }
 
-    // let's wrap this up !
-    $bar = Wrap('', 'div', array('class' => 'bar '. $class .''));
-    $fill = Wrap('', 'div', array('class' => 'fill '. $class .''));
-    $slice = Wrap($bar . $fill, 'div', array('class' => 'slice'));
-    $percent = Wrap(round($Percentage) .'%', 'span');
-    $graph = Wrap($percent.$slice, 'div', array('class' => 'c100 p'. round($Percentage) .''));
-    $optionTitle = Wrap($String, 'div', array('class' => 'optionTitle'));
-    echo Wrap($optionTitle.$graph, 'div', array('class' => 'pollResultItem'));
+    // // let's wrap this up !
+    // $bar = Wrap('', 'div', array('class' => 'bar '. $class .''));
+    // $fill = Wrap('', 'div', array('class' => 'fill '. $class .''));
+    // $slice = Wrap($bar . $fill, 'div', array('class' => 'slice'));
+    // $percent = Wrap(round($Percentage) .'%', 'span');
+    // $graph = Wrap($percent.$slice, 'div', array('class' => 'c100 p'. round($Percentage) .''));
+    // $optionTitle = Wrap($String, 'div', array('class' => 'optionTitle'));
+    // echo Wrap($optionTitle.$graph, 'div', array('class' => 'pollResultItem'));
 
 
+    $barRoof  = Wrap('', 'div', array('class' => 'bar-face face-position roof percentage'));
+    $barBack  = Wrap('', 'div', array('class' => 'bar-face face-position back percentage'));
+    $barFloor = Wrap('', 'div', array('class' => 'bar-face face-position floor percentage volume-lights'));
+    $barLeft  = Wrap('', 'div', array('class' => 'bar-face face-position left'));
+    $barRight = Wrap('', 'div', array('class' => 'bar-face face-position right'));
+    $barFront = Wrap('', 'div', array('class' => 'bar-face face-position front percentage volume-lights shine'));
+    echo '<div class="QuestionTitle">'.$Option->Title.'</div>';
+    echo '<div class="progress-bar">';
+    echo '<div class="bar has-rotation has-colors cyan heat-gradient" role="progressbar" aria-valuenow="'.round($Percentage).'" aria-valuemin="0" aria-valuemax="100">';
+    echo'<div class="tooltip white"></div>';
+    echo $barRoof.$barBack.$barFloor.$barLeft.$barRight.$barFront;
+    echo '</div></div>';
     // // Put text where it makes sense
     // if($Percentage < 10) {
     //   $String .= '<span class="DP_Bar DP_Bar-' . $k . '" style="width: ' . $Percentage . '%;">&nbsp</span> ' . $Percentage . '%';
