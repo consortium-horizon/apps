@@ -221,7 +221,7 @@ body {
     .Row {
         padding: 10px;
         padding-bottom: 25px;
-        background: rgb(241, 241, 241);
+        background: #F1F4F9;
         border-radius: 0 0 5px 5px;
     }
 }
@@ -242,7 +242,7 @@ body {
 /* ------------------------------ */
 
 #Content {
-    margin: 15px 0 0 250px !important; // need to overide vanilla's default settings
+    margin: 15px 0 0 260px !important; // need to overide vanilla's default settings
 
    // Fix for image overflow
    img {

@@ -10,10 +10,10 @@
 /* First post */
 /* ---------- */
 
-.MessageList.Discussion, .MessageList.Comments {
+.MessageList.Discussion, {
    background: white;
    margin-top: 5px;
-   padding: 10px;
+   padding: 30px;
    @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
 }
 
@@ -30,15 +30,49 @@
 /* -------- */
 
 .CommentHeading, .CommentForm .H {
-	margin: 25px 0;
+  margin: 30px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgb(222, 228, 239);
+  font-size: 26px;
+  color: #414a51;
 }
 
 .ItemComment {
-	padding: 30px 8px !important; //please forgive me father for I have sinned
+  background: white;
+  margin: 10px 0 !important;
    	&:hover {
       	background: #FFFCF3;
    	}
    	&:last-child {
    		border-bottom: none;
    	}
+
+    //Options
+    .Options {
+      margin-top: 10px;
+      z-index: 1;
+      position: relative;
+    }
+
+   // Comment header
+   .CommentHeader {
+     background: #F1F5F8;
+     padding: 10px 0;
+     padding-left: 40px;
+     position: relative;
+
+     //User picture
+     .PhotoWrap {
+       position: absolute;
+       left: -20px;
+       top: 7px;
+       border: 3px solid white;
+     }
+   }
+
+   //Message content
+   .Item-Body {
+     padding: 15px 0;
+     padding-left: 40px;
+   }
 }
