@@ -13,10 +13,10 @@ echo $this->Form->Errors();
      echo $this->Form->RadioList('QnA', $this->Data('_QnAs'), array('list' => TRUE));
    ?>
 </div>
-
+   
 <?php
-echo '<div class="Buttons Buttons-Confirm">',
-   $this->Form->Button(T('Ok')), ' ',
+echo '<div class="Buttons Buttons-Confirm">', 
+   $this->Form->Button(T('OK')), ' ',
    $this->Form->Button(T('Cancel'), array('type' => 'button', 'class' => 'Button Close')),
    '</div>';
 echo $this->Form->Close();
