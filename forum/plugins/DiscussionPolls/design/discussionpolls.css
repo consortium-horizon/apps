@@ -133,11 +133,11 @@ h1 span.heading-3d {
 
 /* line 79, ../scss/component.scss */
 .progress-bar {
-  font-size: 4em;
+  font-size: 2em;
   text-align: center;
   width: 100%;
   margin-top: 1.2em;
-  perspective: 20em;
+  perspective: 40em;
   perspective-origin: 50% 50%;
 }
 
@@ -1061,9 +1061,9 @@ input[type='checkbox']:checked ~ .flexy-column .bar[aria-valuenow] .tooltip:befo
 
 /* line 199, ../scss/custom-bars.scss */
 .tooltip {
-  font-size: .65em;
+  font-size: 2em;
   font-weight: bold;
-  margin: 1.85em 0 0 -.5em;
+  margin: 1em 0 0 -.5em;
   display: inline-block;
   position: absolute;
   line-height: 1em;
