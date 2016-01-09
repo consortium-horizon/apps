@@ -27,5 +27,7 @@ class MyThemeThemeHooks implements Gdn_IPlugin {
     // Add JS files
     public function Base_Render_Before($Sender) {
        $Sender->AddJsFile('knockout.js');
+       $Sender->AddJsFile('stickySidebar.js');
+       $Sender->AddJsFile('init.js');
     }
 }
