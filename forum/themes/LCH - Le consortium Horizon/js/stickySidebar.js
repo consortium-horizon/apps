@@ -7,9 +7,9 @@
             headerSelector: '#Head',
             navSelector: '.BreadcrumbsWrapper',
             contentSelector: '#Content',
-            footerSelector: 'footer',
+            footerSelector: '#Foot',
             sidebarTopMargin: 10,
-            footerThreshold: 40
+            footerThreshold: 200
         }, options);
 
         var fixSidebr = function () {
