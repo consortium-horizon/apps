@@ -55,7 +55,7 @@
           <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
         </li>
         <li class="dropdown">
-          Votre profil
+          Mon profil
           <ul>
             {profile_link}
             {inbox_link}
