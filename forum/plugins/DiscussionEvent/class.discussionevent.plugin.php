@@ -23,6 +23,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 	}
 
 	public function Base_Render_before($Sender) {
+		$Sender->AddCssFile('settings.css', 'plugins/DiscussionEvent');
 		if (C('Plugins.DiscussionEvent.DisplayInSidepanel')) {
 			// only add the module if we are in the panel asset and NOT in the dashboard
 			if (getValue('Panel', $Sender->Assets) && $Sender->MasterView != 'admin') {
