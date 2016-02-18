@@ -73,6 +73,7 @@
 
   <div id="Body">
     <div class="Row">
+      {module name="DiscussionEventModule"}
       <div class="Column PanelColumn" id="Panel">
          {module name="MeModule"}
          {asset name="Panel"}

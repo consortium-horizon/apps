@@ -12,10 +12,16 @@ if (!function_exists('WriteDiscussionEvent')) {
 	?>
 	<li class="<?php echo CssClass($Discussion); ?>">
 		<div class="Title">
-		<?php echo Anchor(Gdn_Format::Text($Discussion->Name, false), DiscussionUrl($Discussion).($Discussion->CountCommentWatch > 0 ? '#Item_'.$Discussion->CountCommentWatch : ''), 'DiscussionLink'); ?>
-		</div><div class="Meta"><span class="MItem">
-		<?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, 'html'); ?>
-		</span></div>
+			<span class="MItem"><?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, '%e %B %Y'); ?></span>
+			<?php echo Anchor(Gdn_Format::Text($Discussion->Name, false), DiscussionUrl($Discussion).($Discussion->CountCommentWatch > 0 ? '#Item_'.$Discussion->CountCommentWatch : ''), 'DiscussionLink'); ?>
+		</div>
+		<!--
+			<div class="Meta">
+				<span class="MItem">
+					<?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, '%e %B %Y'); ?>
+				</span>
+			</div>
+		-->
 	</li>
 	<?php
 	}
