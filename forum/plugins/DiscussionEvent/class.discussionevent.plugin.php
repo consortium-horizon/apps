@@ -28,6 +28,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 			if (getValue('Panel', $Sender->Assets) && $Sender->MasterView != 'admin') {
 				$DiscussionEventModule = new DiscussionEventModule($Sender);
 				$Sender->addModule($DiscussionEventModule);
+				$Sender->AddCssFile('settings.css', 'plugins/DiscussionEvent');
 			}
 		}
 	}

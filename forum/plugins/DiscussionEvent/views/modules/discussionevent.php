@@ -10,11 +10,11 @@ if (!function_exists('PanelHeading')) {
 if (!function_exists('WriteDiscussionEvent')) {
 	function WriteDiscussionEvent($Discussion, $Prefix = null) {
 	?>
-	<li class="<?php echo CssClass($Discussion); ?>">
-		<div class="Title">
+	
+		<span class="Title">
 			<span class="MItem"><?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, '%e %B %Y'); ?></span>
 			<?php echo Anchor(Gdn_Format::Text($Discussion->Name, false), DiscussionUrl($Discussion).($Discussion->CountCommentWatch > 0 ? '#Item_'.$Discussion->CountCommentWatch : ''), 'DiscussionLink'); ?>
-		</div>
+		</span>
 		<!--
 			<div class="Meta">
 				<span class="MItem">
@@ -22,7 +22,7 @@ if (!function_exists('WriteDiscussionEvent')) {
 				</span>
 			</div>
 		-->
-	</li>
+
 	<?php
 	}
 }
@@ -31,10 +31,12 @@ if (!function_exists('WriteDiscussionEvent')) {
 <div class="Box BoxDiscussionEvents">
 	<?php echo PanelHeading(t('Upcoming Events')); ?>
 	<ul class="PanelInfo PanelDiscussionEvents DataList">
+		<li class="<?php echo CssClass($Discussion); ?>">
 		<?php
 		foreach ($this->Data('DiscussionEvents')->Result() as $Discussion) {
 			WriteDiscussionEvent($Discussion);
 		}
 		?>
+		</li>
 	</ul>
 </div>
