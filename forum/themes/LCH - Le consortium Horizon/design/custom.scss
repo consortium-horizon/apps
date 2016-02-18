@@ -308,7 +308,6 @@ body {
 }
 
 .CategoryTable {
-
     .Item {
         td {
             padding: 10px 5px;
@@ -320,6 +319,10 @@ body {
             }
         }
     }
+}
+
+.SubCategoryTable {
+  margin-bottom: 20px;
 }
 
 // Child-Categories
