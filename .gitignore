@@ -6,3 +6,4 @@ tmp/
 
 # email
 email/public_html/lists/config/config*
+forum/conf/config.php
