@@ -669,7 +669,7 @@ class CategoryModel extends Gdn_Model {
         ;
         $LastCategoryID = null;
 
-        if ($Category['DisplayAs'] == 'Categories') {
+        if (true || $Category['DisplayAs'] == 'Categories') {
             // This is an overview category so grab it's recent data from it's children.
             foreach ($Category['ChildIDs'] as $CategoryID) {
                 if (!isset($Categories[$CategoryID])) {
@@ -677,7 +677,7 @@ class CategoryModel extends Gdn_Model {
                 }
 
                 $ChildCategory =& $Categories[$CategoryID];
-                if ($ChildCategory['DisplayAs'] == 'Categories') {
+                if (true || $ChildCategory['DisplayAs'] == 'Categories') {
                     self::JoinRecentChildPosts($ChildCategory, $Categories);
                 }
                 $Timestamp = Gdn_Format::toTimestamp($ChildCategory['LastDateInserted']);
