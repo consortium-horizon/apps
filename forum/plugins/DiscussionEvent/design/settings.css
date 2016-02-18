@@ -8,5 +8,23 @@
 }
 
 .BoxDiscussionEvents .Title {
-  /*float: left;*/
+  font-size: 12px;
+  display: inline;
+  margin-right: 10px;
+}
+
+.BoxDiscussionEvents .MItem {
+  font-size: 11px;
+  margin: 0;
+  padding: 1px 3px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  font-weight: normal;
+  color: white;
+  background-color: #666666;
+}
+
+.BoxDiscussionEvents .DiscussionLink {
+
 }

@@ -10,26 +10,17 @@ if (!function_exists('PanelHeading')) {
 if (!function_exists('WriteDiscussionEvent')) {
 	function WriteDiscussionEvent($Discussion, $Prefix = null) {
 	?>
-	
 		<span class="Title">
-			<span class="MItem"><?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, '%e %B %Y'); ?></span>
-			<?php echo Anchor(Gdn_Format::Text($Discussion->Name, false), DiscussionUrl($Discussion).($Discussion->CountCommentWatch > 0 ? '#Item_'.$Discussion->CountCommentWatch : ''), 'DiscussionLink'); ?>
+			<span class="MItem"><?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, '%e %b'); ?></span>
+			<?php echo Anchor(SliceString(Gdn_Format::Text($Discussion->Name, false), 35), DiscussionUrl($Discussion).($Discussion->CountCommentWatch > 0 ? '#Item_'.$Discussion->CountCommentWatch : ''), 'DiscussionLink'); ?>
 		</span>
-		<!--
-			<div class="Meta">
-				<span class="MItem">
-					<?php echo Gdn_Format::Date($Discussion->DiscussionEventDate, '%e %B %Y'); ?>
-				</span>
-			</div>
-		-->
-
 	<?php
 	}
 }
 ?>
 
 <div class="Box BoxDiscussionEvents">
-	<?php echo PanelHeading(t('Upcoming Events')); ?>
+	<?php echo PanelHeading('<i class="fa fa-calendar"></i> '.t('Upcoming Events')); ?>
 	<ul class="PanelInfo PanelDiscussionEvents DataList">
 		<li class="<?php echo CssClass($Discussion); ?>">
 		<?php

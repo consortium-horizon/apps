@@ -368,6 +368,74 @@ ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-
 }
 
 /* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for threads    */
+/* ------------------------ */
+/* This files is used to customize topic & answers on the forum */
+/* ---------- */
+/* First post */
+/* ---------- */
+.MessageList.Discussion {
+  background: white;
+  margin-top: 5px;
+  padding: 30px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+/* ----------- */
+/* Discussions */
+/* ----------- */
+.ItemDiscussion td {
+  padding: 15px 4px !important;
+}
+
+/* -------- */
+/* Comments */
+/* -------- */
+.CommentHeading, .CommentForm .H {
+  margin: 30px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dee4ef;
+  font-size: 26px;
+  color: #414a51;
+}
+
+.ItemComment {
+  background: white;
+  margin: 10px 0 !important;
+}
+.ItemComment:hover {
+  background: #FFFCF3;
+}
+.ItemComment:last-child {
+  border-bottom: none;
+}
+.ItemComment .Options {
+  margin-top: 10px;
+  z-index: 1;
+  position: relative;
+}
+.ItemComment .CommentHeader {
+  background: #F1F5F8;
+  padding: 10px 0;
+  padding-left: 40px;
+  position: relative;
+}
+.ItemComment .CommentHeader .PhotoWrap {
+  position: absolute;
+  left: -20px;
+  top: 7px;
+  border: 3px solid white;
+}
+.ItemComment .Item-Body {
+  padding: 15px 0;
+  padding-left: 40px;
+}
+
+/* ------------------------ */
 /* Colors ... such colors ! */
 /* ------------------------ */
 /* ----------- */
@@ -830,115 +898,4 @@ li[class*="Role_Rfrent"] .Author .Username::after {
   background: -webkit-gradient(linear, left top, left bottom, from(#32333b), to(#1f1f22));
   background: -moz-linear-gradient(center top, #32333b 0%, #1f1f22 100%);
   background: -moz-gradient(center top, #32333b 0%, #1f1f22 100%);
-}
-
-/* ------------------------ */
-/* LCH Custom Vanilla Theme */
-/* By Vladvonvidden -- 2015 */
-/*        SCSS file         */
-/* ------------------------ */
-/* ----------------------------------- */
-/* Let's make this B... aby responsive */
-/* ----------------------------------- */
-@media all and (max-width: 800px) {
-  .CountComments, .CountDiscussions, .CountReplies {
-    display: none;
-  }
-}
-@media all and (max-width: 1026px) {
-  .Row {
-    width: 960px;
-    width: 90vw;
-  }
-
-  #Content .CategoryGroup .H::after {
-    width: 50%;
-  }
-
-  #Head .SiteSearch #Form_Search {
-    display: none;
-  }
-
-  #Panel {
-    display: none;
-  }
-
-  #Content {
-    margin: 0 !important;
-    padding: 10px;
-  }
-
-  #CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires {
-    margin-top: 10px;
-  }
-  #CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after {
-    display: none;
-  }
-}
-/* ------------------------ */
-/* LCH Custom Vanilla Theme */
-/* By Vladvonvidden -- 2015 */
-/* SCSS file for threads    */
-/* ------------------------ */
-/* This files is used to customize topic & answers on the forum */
-/* ---------- */
-/* First post */
-/* ---------- */
-.MessageList.Discussion {
-  background: white;
-  margin-top: 5px;
-  padding: 30px;
-  -webkit-box-shadow: 0 0 3px #d5d5d5;
-  -moz-box-shadow: 0 0 3px #d5d5d5;
-  box-shadow: 0 0 3px #d5d5d5;
-}
-
-/* ----------- */
-/* Discussions */
-/* ----------- */
-.ItemDiscussion td {
-  padding: 15px 4px !important;
-}
-
-/* -------- */
-/* Comments */
-/* -------- */
-.CommentHeading, .CommentForm .H {
-  margin: 30px 0;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #dee4ef;
-  font-size: 26px;
-  color: #414a51;
-}
-
-.ItemComment {
-  background: white;
-  margin: 10px 0 !important;
-}
-.ItemComment:hover {
-  background: #FFFCF3;
-}
-.ItemComment:last-child {
-  border-bottom: none;
-}
-.ItemComment .Options {
-  margin-top: 10px;
-  z-index: 1;
-  position: relative;
-}
-.ItemComment .CommentHeader {
-  background: #F1F5F8;
-  padding: 10px 0;
-  padding-left: 40px;
-  position: relative;
-}
-.ItemComment .CommentHeader .PhotoWrap {
-  position: absolute;
-  left: -20px;
-  top: 7px;
-  border: 3px solid white;
-}
-.ItemComment .Item-Body {
-  padding: 15px 0;
-  padding-left: 40px;
 }
