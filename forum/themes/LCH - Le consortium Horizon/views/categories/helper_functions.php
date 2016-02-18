@@ -261,21 +261,12 @@ if (!function_exists('WriteTableRow')):
                     echo "</{$H}>";
                     ?>
 
-
-
-
-
-
-
-                    <?php //echo '<pre>'; print_r($Row); echo '</pre>'; ?>
-
-
-
-
-
-
-
-
+                    <?php // debugage ?>
+                        <?php //echo $Row['LastUserID']; ?>
+                        <?php //echo $Row['LastName']; ?>
+                        <?php //echo $Row['LastUserID']['Name']; ?>
+                        <?php //echo '<pre>'; print_r($Row); echo '</pre>'; ?>
+                    <?php // fin debugage ?>
 
                     <div class="CategoryDescription">
                         <?php echo $Row['Description']; ?>
@@ -310,7 +301,9 @@ if (!function_exists('WriteTableRow')):
                 <div class="Block Wrap">
                     <?php if ($Row['LastTitle']): ?>
                         <?php
-                        echo userPhoto($Row, array('Size' => 'Small', 'Px' => 'Last'));
+                        if ($Row['LastName'] !== null) {
+                            echo userPhoto($Row, array('Size' => 'Small', 'Px' => 'Last'));
+                        }
                         echo anchor(
                             SliceString(Gdn_Format::text($Row['LastTitle']), 100),
                             $Row['LastUrl'],
@@ -319,9 +312,11 @@ if (!function_exists('WriteTableRow')):
                         ?>
                         <div class="Meta">
                             <?php
-                            echo userAnchor($Row, 'UserLink MItem', 'Last');
+                            if ($Row['LastName'] !== null) {
+                                echo userAnchor($Row, 'UserLink MItem', 'Last');
+                                echo '<span class="Bullet">•</span>';
+                            }
                             ?>
-                            <span class="Bullet">•</span>
                             <?php
                             echo anchor(
                                 Gdn_Format::date($Row['LastDateInserted'], 'html'),
