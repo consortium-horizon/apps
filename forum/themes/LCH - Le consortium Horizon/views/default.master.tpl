@@ -41,7 +41,8 @@
         <li class="dropdown">
           Forum
           <ul>
-            <li><a href="{link path="/"}">Accueil</a></li>
+            <li><a href="{link path="/"}">Toutes les catégories</a></li>
+            {discussions_link}
             {custom_menu}
             {dashboard_link}
           </ul>
@@ -53,44 +54,14 @@
         <li>
           <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
         </li>
-        <!--
-          <li class="dropdown">
-            La guilde
-            <ul>
-              <li>
-                <a href="{link path="/"}">
-                  Forum
-                </a>
-              </li>
-              <li>
-                <a href="http://www.consortium-horizon.com/forum/organigramme">
-                  Organigramme
-                </a>
-              </li>
-              <li>
-                <a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">
-                  La Charte
-                </a>
-              </li>
-              <li>
-                <a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ">
-                  Sur YouTube
-                </a>
-              </li>
-              <li>
-                <a href="https://www.consortium-horizon.com/wiki/Accueil">
-                  Notre Wiki
-                </a>
-              </li>
-              <li>
-              <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
-              </li>
-            </ul>
-          </li>
-        -->
-        <!--{discussions_link}-->
-        <!--{profile_link}-->
-        <!--{signinout_link}-->
+        <li class="dropdown">
+          Votre profil
+          <ul>
+            {profile_link}
+            {inbox_link}
+            {signinout_link}
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
