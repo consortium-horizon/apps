@@ -709,14 +709,14 @@ body {
 /* Discussions */
 /* ----------- */
 .Role_Modrateurglobal .Author .Username {
-  color: #209D2F !important;
+  color: #209D2F;
 }
 .Role_Modrateurglobal .Author .Username:hover {
-  color: #3BCB62 !important;
+  color: #3BCB62;
 }
 .Role_Modrateurglobal .Author .Username::after {
   font-family: FontAwesome;
-  content: "\f0e3" !important;
+  content: "\f0e3";
   font-size: 0.8em;
   margin-left: 5px;
   display: inline-block;

@@ -403,13 +403,13 @@ body {
 .Role_Modrateurglobal {
     .Author {
         .Username {
-            color: #209D2F !important;
+            color: #209D2F;
             &:hover {
-                color: #3BCB62 !important;
+                color: #3BCB62;
             }
             &::after {
                 font-family: FontAwesome;
-                content: "\f0e3" !important; //marteau
+                content: "\f0e3"; //marteau
                 font-size: 0.8em;
                 margin-left: 5px;
                 display: inline-block;
