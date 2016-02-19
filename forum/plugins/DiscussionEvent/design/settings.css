@@ -7,6 +7,11 @@
   box-shadow: 0 0 3px #d5d5d5;
 }
 
+.BoxDiscussionEvents .Item {
+  border: none;
+}
+
+
 .BoxDiscussionEvents .Title {
   font-size: 12px;
   display: inline;
@@ -16,6 +21,7 @@
 .BoxDiscussionEvents .MItem {
   font-size: 11px;
   margin: 0;
+  margin-right: 5px;
   padding: 1px 3px;
   border-radius: 2px;
   -moz-border-radius: 2px;

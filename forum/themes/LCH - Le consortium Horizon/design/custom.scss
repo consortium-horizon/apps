@@ -376,13 +376,17 @@ body {
     border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
-    background: #FF0;
+    background: #FEE65E;
     color: #000;
     font-size: 9px;
     font-weight: bold;
     padding: 3px;
     line-height: 1;
     white-space: nowrap;
+}
+
+.HasNew {
+    background: #FEE65E;
 }
 
 // Announcement
