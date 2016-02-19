@@ -708,30 +708,15 @@ body {
 /* ----------- */
 /* Discussions */
 /* ----------- */
-.Role_Conseiller .Author .Username {
-  color: #D02828;
-}
-.Role_Conseiller .Author .Username:hover {
-  color: #FF6666;
-}
-.Role_Conseiller .Author .Username::after {
-  font-family: FontAwesome;
-  content: "\f005";
-  font-size: 0.8em;
-  margin-left: 5px;
-  display: inline-block;
-  text-decoration: inherit;
-}
-
 .Role_Modrateurglobal .Author .Username {
-  color: #209D2F;
+  color: #209D2F !important;
 }
 .Role_Modrateurglobal .Author .Username:hover {
-  color: #3BCB62;
+  color: #3BCB62 !important;
 }
 .Role_Modrateurglobal .Author .Username::after {
   font-family: FontAwesome;
-  content: "\f0e3";
+  content: "\f0e3" !important;
   font-size: 0.8em;
   margin-left: 5px;
   display: inline-block;
@@ -747,6 +732,36 @@ li[class*="Role_Rfrent"] .Author .Username:hover {
 li[class*="Role_Rfrent"] .Author .Username::after {
   font-family: FontAwesome;
   content: "\f006";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.Role_Administrateur .Author .Username {
+  color: #db542a;
+}
+.Role_Administrateur .Author .Username:hover {
+  color: #fb995e;
+}
+.Role_Administrateur .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f123";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.Role_Conseiller .Author .Username {
+  color: #c81e1e;
+}
+.Role_Conseiller .Author .Username:hover {
+  color: #FF6666;
+}
+.Role_Conseiller .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f005";
   font-size: 0.8em;
   margin-left: 5px;
   display: inline-block;
