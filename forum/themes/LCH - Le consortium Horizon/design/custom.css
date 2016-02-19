@@ -708,13 +708,13 @@ body {
 /* ----------- */
 /* Discussions */
 /* ----------- */
-.Role_Modrateurglobal .Author .Username {
+li.Role_Modrateurglobal .Author .Username {
   color: #209D2F;
 }
-.Role_Modrateurglobal .Author .Username:hover {
+li.Role_Modrateurglobal .Author .Username:hover {
   color: #3BCB62;
 }
-.Role_Modrateurglobal .Author .Username::after {
+li.Role_Modrateurglobal .Author .Username::after {
   font-family: FontAwesome;
   content: "\f0e3";
   font-size: 0.8em;
@@ -738,13 +738,13 @@ li[class*="Role_Rfrent"] .Author .Username::after {
   text-decoration: inherit;
 }
 
-.Role_Administrateur .Author .Username {
+li.Role_Administrateur .Author .Username {
   color: #db542a;
 }
-.Role_Administrateur .Author .Username:hover {
+li.Role_Administrateur .Author .Username:hover {
   color: #fb995e;
 }
-.Role_Administrateur .Author .Username::after {
+li.Role_Administrateur .Author .Username::after {
   font-family: FontAwesome;
   content: "\f123";
   font-size: 0.8em;
@@ -753,13 +753,13 @@ li[class*="Role_Rfrent"] .Author .Username::after {
   text-decoration: inherit;
 }
 
-.Role_Conseiller .Author .Username {
+li.Role_Conseiller .Author .Username {
   color: #c81e1e;
 }
-.Role_Conseiller .Author .Username:hover {
+li.Role_Conseiller .Author .Username:hover {
   color: #FF6666;
 }
-.Role_Conseiller .Author .Username::after {
+li.Role_Conseiller .Author .Username::after {
   font-family: FontAwesome;
   content: "\f005";
   font-size: 0.8em;
@@ -768,13 +768,13 @@ li[class*="Role_Rfrent"] .Author .Username::after {
   text-decoration: inherit;
 }
 
-.Role_Surveill .Author .Username {
+li.Role_Surveill .Author .Username {
   color: red !important;
 }
-.Role_Surveill .Author .Username:hover {
+li.Role_Surveill .Author .Username:hover {
   color: red !important;
 }
-.Role_Surveill .Author .Username::after {
+li.Role_Surveill .Author .Username::after {
   font-family: FontAwesome;
   content: "\f024" !important;
   font-size: 0.8em;

@@ -400,7 +400,7 @@ body {
 
 // Styles for roles
 
-.Role_Modrateurglobal {
+li.Role_Modrateurglobal {
     .Author {
         .Username {
             color: #209D2F;
@@ -438,7 +438,7 @@ li[class*="Role_Rfrent"] {
     }
 }
 
-.Role_Administrateur {
+li.Role_Administrateur {
     .Author {
         .Username {
             color: #db542a;
@@ -457,7 +457,7 @@ li[class*="Role_Rfrent"] {
     }
 }
 
-.Role_Conseiller {
+li.Role_Conseiller {
     .Author {
         .Username {
             color: #c81e1e;
@@ -476,7 +476,7 @@ li[class*="Role_Rfrent"] {
     }
 }
 
-.Role_Surveill {
+li.Role_Surveill {
     .Author {
         .Username {
             color: red !important;
