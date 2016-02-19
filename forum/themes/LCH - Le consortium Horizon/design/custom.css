@@ -1,1 +1,963 @@
-@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-Regular-webfont.eot");src:url("fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-Regular-webfont.woff") format("woff"),url("fonts/OpenSans-Regular-webfont.ttf") format("truetype"),url("fonts/OpenSans-Regular-webfont.svg#OpenSansRegular") format("svg");font-weight:normal;font-weight:400;font-style:normal}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-Italic-webfont.eot");src:url("fonts/OpenSans-Italic-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-Italic-webfont.woff") format("woff"),url("fonts/OpenSans-Italic-webfont.ttf") format("truetype"),url("fonts/OpenSans-Italic-webfont.svg#OpenSansItalic") format("svg");font-weight:normal;font-weight:400;font-style:italic}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-Light-webfont.eot");src:url("fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-Light-webfont.woff") format("woff"),url("fonts/OpenSans-Light-webfont.ttf") format("truetype"),url("fonts/OpenSans-Light-webfont.svg#OpenSansLight") format("svg");font-weight:200;font-style:normal}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-LightItalic-webfont.eot");src:url("fonts/OpenSans-LightItalic-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-LightItalic-webfont.woff") format("woff"),url("fonts/OpenSans-LightItalic-webfont.ttf") format("truetype"),url("fonts/OpenSans-LightItalic-webfont.svg#OpenSansLightItalic") format("svg");font-weight:200;font-style:italic}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-Semibold-webfont.eot");src:url("fonts/OpenSans-Semibold-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-Semibold-webfont.woff") format("woff"),url("fonts/OpenSans-Semibold-webfont.ttf") format("truetype"),url("fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold") format("svg");font-weight:500;font-style:normal}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-SemiboldItalic-webfont.eot");src:url("fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-SemiboldItalic-webfont.woff") format("woff"),url("fonts/OpenSans-SemiboldItalic-webfont.ttf") format("truetype"),url("fonts/OpenSans-SemiboldItalic-webfont.svg#OpenSansSemiboldItalic") format("svg");font-weight:500;font-style:italic}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-Bold-webfont.eot");src:url("fonts/OpenSans-Bold-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-Bold-webfont.woff") format("woff"),url("fonts/OpenSans-Bold-webfont.ttf") format("truetype"),url("fonts/OpenSans-Bold-webfont.svg#OpenSansBold") format("svg");font-weight:bold;font-weight:700;font-style:normal}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-BoldItalic-webfont.eot");src:url("fonts/OpenSans-BoldItalic-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-BoldItalic-webfont.woff") format("woff"),url("fonts/OpenSans-BoldItalic-webfont.ttf") format("truetype"),url("fonts/OpenSans-BoldItalic-webfont.svg#OpenSansBoldItalic") format("svg");font-weight:bold;font-weight:700;font-style:italic}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-ExtraBold-webfont.eot");src:url("fonts/OpenSans-ExtraBold-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-ExtraBold-webfont.woff") format("woff"),url("fonts/OpenSans-ExtraBold-webfont.ttf") format("truetype"),url("fonts/OpenSans-ExtraBold-webfont.svg#OpenSansExtrabold") format("svg");font-weight:900;font-style:normal}@font-face{font-family:'Open Sans';src:url("fonts/OpenSans-ExtraBoldItalic-webfont.eot");src:url("fonts/OpenSans-ExtraBoldItalic-webfont.eot?#iefix") format("embedded-opentype"),url("fonts/OpenSans-ExtraBoldItalic-webfont.woff") format("woff"),url("fonts/OpenSans-ExtraBoldItalic-webfont.ttf") format("truetype"),url("fonts/OpenSans-ExtraBoldItalic-webfont.svg#OpenSansExtraboldItalic") format("svg");font-weight:900;font-style:italic}#PS2memberlist{background:white;margin-top:5px;padding:10px;box-shadow:0 0 3px #D5D5D5;white-space:nowrap}#PS2memberlist .Title,#PS2memberlist .refresh{display:inline-block;width:50%;margin-bottom:10px}#PS2memberlist .refresh{text-align:right}#PS2memberlist .list{display:block;width:100%;margin-bottom:10px;white-space:normal}#PS2memberlist .list li{border-width:2px;border-style:solid;display:inline-block;border-radius:3px;padding:0 5px 5px 5px;position:relative;margin-right:5px;margin-bottom:10px}#PS2memberlist .list li .content{margin-left:30px;position:relative}#PS2memberlist .list li .playerName{text-transform:capitalize}#PS2memberlist .list li .playerRank{line-height:0.7em;font-size:0.7em}#PS2memberlist .list li::before{Content:"";display:block;height:25px;width:25px;position:absolute;top:4px;left:4px}#PS2memberlist .list li.Heavy{color:white;border-color:#932B2B;background:#ED4545}#PS2memberlist .list li.Heavy::before{background:url("img/modules/ps2/heavyIcon.png");background-size:cover}#PS2memberlist .list li.Infiltrator{border-color:#21A087;background:#49B96E;color:white}#PS2memberlist .list li.Infiltrator::before{background:url("img/modules/ps2/infIcon.png");background-size:cover}#PS2memberlist .list li.Light{border-color:#2D3E50;background:#3598D2;color:white}#PS2memberlist .list li.Light::before{background:url("img/modules/ps2/lightIcon.png");background-size:cover}#PS2memberlist .list li.MAX{border-color:#544993;background:#AC7DC2;color:white}#PS2memberlist .list li.MAX::before{background:url("img/modules/ps2/maxIcon.png");background-size:cover}#PS2memberlist .list li.Medic{border-color:#21A087;background:#49B96E;color:white}#PS2memberlist .list li.Medic::before{background:url("img/modules/ps2/medicIcon.png");background-size:cover}#PS2memberlist .list li.Engineer{border-color:#E57E24;background:#ECA816;color:white}#PS2memberlist .list li.Engineer::before{background:url("img/modules/ps2/engiIcon.png");background-size:cover}.ProfileOptions{margin:20px 15px 0 0}.Profile .User,.Profile .DataList.Activities{background:white;margin:5px 0 0 0;padding:10px;box-shadow:0 0 3px #D5D5D5}.Profile .FormWrapper{background:white;box-shadow:0 0 3px #D5D5D5}.Profile h2.H{margin:15px 0}.Profile .DataList.Activities{margin:25px 0}.Profile .DataList.Activities li:last-child{border:none}.Badge-Details,.Badge-Earned{background:white;margin:5px 0 15px 0;padding:10px;box-shadow:0 0 3px #D5D5D5}.EarnedThisBadge{margin:5px 0;color:#01BD01}Body[id*="yaga"] ul.DataList{background:white;margin:5px 0 15px 0;padding:10px;box-shadow:0 0 3px #D5D5D5}Body[id*="yaga"] ul.DataList li:last-child{border:none}Body[id*="yaga"] ul.FilterMenu{padding:10px}ul.Conversations,ul.Discussions,ul.Drafts,ul.Activities,ul.BlogList,ul.Conversation{background:white;margin:5px 0 15px 0;padding:10px;box-shadow:0 0 3px #D5D5D5}ul.Conversations li:last-child,ul.Discussions li:last-child,ul.Drafts li:last-child,ul.Activities li:last-child,ul.BlogList li:last-child,ul.Conversation li:last-child{border:none}.UserReactionWrap{margin:10px 0}@media all and (max-width: 800px){.CountComments,.CountDiscussions,.CountReplies{display:none}}@media all and (max-width: 1026px){.Row{width:960px;width:90vw}#Content .CategoryGroup .H::after{width:50%}#Head .SiteSearch #Form_Search{display:none}#Panel{display:none}#Content{margin:0 !important;padding:10px}#CategoryGroup-nos-jeux-principaux,#CategoryGroup-nos-jeux-secondaires{margin-top:10px}#CategoryGroup-nos-jeux-principaux::after,#CategoryGroup-nos-jeux-secondaires::after{display:none}}.QnA-Box{margin-left:-8px}.AcceptedAnswers{background-color:white;border-style:solid;border-width:2px;border-color:#01BD01;margin:15px 0;padding:10px;box-shadow:0 0 3px #D5D5D5}.QnA-Accepted,.QnA-Tag-Accepted{background:#01BD01}.Row{width:960px;width:75vw}.Banner{text-align:center}#Content .BoxNewDiscussion{display:block}.Item.Read{background:none}a{color:#2877d0}a:hover{color:#00baff}.TagCloud li{padding:5px;background:#2877d0;background:-webkit-gradient(linear, left top, left bottom, from(#2877d0), to(#2e64c5));background:-moz-linear-gradient(center top, #2877d0 0%, #2e64c5 100%);background:-moz-gradient(center top, #2877d0 0%, #2e64c5 100%);box-shadow:inset 0 0 3px #00BAFF}.TagCloud li a{color:#fafafa}.TagCloud li a:hover{color:#00baff}.Alert{background:#ff4e4e;background:-webkit-gradient(linear, left top, left bottom, from(#ff4e4e), to(#d00));background:-moz-linear-gradient(center top, #ff4e4e 0%, #d00 100%);background:-moz-gradient(center top, #ff4e4e 0%, #d00 100%);box-shadow:inset 0 0 3px #FFB9B9}.Button{margin:15px 0}body{font-family:'Open Sans', Helvetica, Arial, sans-serif;font-weight:normal;height:100vh;background:black url("img/backgrounds/LCH--default.png");background:-webkit-gradient(linear, left bottom, left top, from(black), to(rgba(255,255,255,0))),url("img/backgrounds/LCH--default.png");background:url("img/backgrounds/LCH--default.png"),-moz-linear-gradient(center bottom, black 0%, rgba(255,255,255,0) 100%);background:url("img/backgrounds/LCH--default.png"),-moz-gradient(center bottom, black 0%, rgba(255,255,255,0) 100%);background-repeat:no-repeat;background-attachment:fixed;background-size:cover}#Head{background:none}#Head .Row{padding:0px 10px;background:#2877d0;background:-webkit-gradient(linear, left top, left bottom, from(#2877d0), to(#2e64c5));background:-moz-linear-gradient(center top, #2877d0 0%, #2e64c5 100%);background:-moz-gradient(center top, #2877d0 0%, #2e64c5 100%);box-shadow:inset 0 0 3px #00BAFF}#Head .SiteMenu{margin-left:10px}#Head .SiteMenu li{padding:15px 0}#Head .SiteMenu a{font-weight:normal;font-size:1em}#Head .SiteSearch{margin-top:12px}#Head .SiteSearch .Button{margin:0}#Head .dropdown{position:relative;display:inline-block}#Head .dropdown::after{display:inline-block;margin-left:3px;font-family:FontAwesome;content:"\f0d7"}#Head .dropdown:hover ul{z-index:10;opacity:1;-webkit-transition:opacity 0.3s;transition:opacity 0.3s}#Head .dropdown:hover::after{-ms-transform:rotate(180deg);-webkit-transform:rotate(180deg);transform:rotate(180deg)}#Head .dropdown ul{z-index:-99;opacity:0;padding-top:15px;position:absolute;top:52px;left:0}#Head .dropdown ul li{background:#32333b;padding:7px 10px;display:block;border-bottom:1px solid #323232}#Head .dropdown ul li:first-child{position:relative}#Head .dropdown ul li:first-child::after{position:absolute;top:-15px;left:5px;display:inline-block;margin-left:3px;font-family:FontAwesome;content:"\f0d8";color:#32333b;font-size:2em}#Head .dropdown ul li a{color:#e3e3e3}.BreadcrumbsWrapper .Row{padding:10px;background:white}.BreadcrumbsWrapper .Row .Breadcrumbs{margin-left:10px}#Body .Row{padding:10px;padding-bottom:25px;background:#F1F4F9;border-radius:0 0 5px 5px}#Panel{background:white;margin:15px 0 0 10px;padding:10px;box-shadow:0 0 3px #D5D5D5}#Panel.sticky{float:none;position:fixed;top:20px;z-index:6;left:auto}#Content{margin:15px 0 0 260px !important}#Content img{max-width:100%}#Content .CategoryGroup{margin-bottom:25px}#Content .CategoryGroup .H{position:relative;z-index:2;color:white;background:#32333b;border:1px solid #32333b;padding:5px 10px}#Content .CategoryGroup .H::after{position:absolute;z-index:-1;top:0;left:0;content:"";width:50%;width:25vw;height:100%;background:#2877d0;background:-webkit-gradient(linear, left top, left bottom, from(#2877d0), to(#2e64c5));background:-moz-linear-gradient(center top, #2877d0 0%, #2e64c5 100%);background:-moz-gradient(center top, #2877d0 0%, #2e64c5 100%);box-shadow:inset 0 0 3px #00BAFF}.DataTable{background:white;padding:5px 10px;box-shadow:0 0 3px #D5D5D5}.DataTable tbody>tr:last-child td{border-bottom:none}#vanilla_categories_index.Section-CategoryList .HomepageTitle,#vanilla_categories_index.Section-CategoryList .PageDescription{display:none}.CategoryTable .Item td{padding:10px 5px}.CategoryTable .Item:hover .CountDiscussions,.CategoryTable .Item:hover .CountComments{color:#2877d0}.SubCategoryTable{margin-bottom:20px}.ChildCategoryList{background:white;padding:0 10px 15px 10px;box-shadow:0 0 3px #D5D5D5}.ChildCategoryList .Item{width:100%}#CategoryGroup-nos-jeux-principaux,#CategoryGroup-nos-jeux-secondaires,#CategoryGroup-le-salon-ouvert-au-public{position:relative;margin-top:150px}#CategoryGroup-nos-jeux-principaux::after,#CategoryGroup-nos-jeux-secondaires::after,#CategoryGroup-le-salon-ouvert-au-public::after{position:absolute;left:0;right:0;height:150px;top:-150px;content:""}#CategoryGroup-nos-jeux-principaux::after{background:url("img/gamesBanner.jpg");background-position:bottom center;background-repeat:no-repeat}#CategoryGroup-nos-jeux-secondaires::after{background:url("img/otherGamesBanner.jpg");background-position:bottom center;background-repeat:no-repeat}#CategoryGroup-le-salon-ouvert-au-public::after{background:url("img/publicBanner.jpg");background-position:bottom center;background-repeat:no-repeat}.Unread h3 a::after{content:"nouveau";margin-left:9px;border-radius:2px;-moz-border-radius:2px;-webkit-border-radius:2px;background:#FEE65E;color:#000;font-size:9px;font-weight:bold;padding:3px;line-height:1;white-space:nowrap}.HasNew{background:#FEE65E}.Announcement{background:#E9F2FF !important}.Announcement .Tag-Announcement{background:#2877d0}li.Role_Modrateurglobal .Author .Username{color:#209D2F}li.Role_Modrateurglobal .Author .Username:hover{color:#3BCB62}li.Role_Modrateurglobal .Author .Username::after{font-family:FontAwesome;content:"\f0e3";font-size:0.8em;margin-left:5px;display:inline-block;text-decoration:inherit}li[class*="Role_Rfrent"] .Author .Username{color:#A028D0}li[class*="Role_Rfrent"] .Author .Username:hover{color:#C265E7}li[class*="Role_Rfrent"] .Author .Username::after{font-family:FontAwesome;content:"\f006";font-size:0.8em;margin-left:5px;display:inline-block;text-decoration:inherit}li.Role_Administrateur .Author .Username{color:#db542a}li.Role_Administrateur .Author .Username:hover{color:#fb995e}li.Role_Administrateur .Author .Username::after{font-family:FontAwesome;content:"\f123";font-size:0.8em;margin-left:5px;display:inline-block;text-decoration:inherit}li.Role_Conseiller .Author .Username{color:#c81e1e}li.Role_Conseiller .Author .Username:hover{color:#FF6666}li.Role_Conseiller .Author .Username::after{font-family:FontAwesome;content:"\f005";font-size:0.8em;margin-left:5px;display:inline-block;text-decoration:inherit}li.Role_Surveill .Author .Username{color:red !important}li.Role_Surveill .Author .Username:hover{color:red !important}li.Role_Surveill .Author .Username::after{font-family:FontAwesome;content:"\f024" !important;font-size:0.8em;margin-left:5px;display:inline-block;text-decoration:inherit}.RoleTitle{display:none}.MessageList .Item:hover .RoleTitle{display:inline-block}.AuthorInfo img{height:20px;width:20px;vertical-align:middle;margin-top:-5px}.DiscussionsTable tr.Bookmarked{background:rgba(255,232,159,0.3)}.DiscussionsTable .Item:hover .CountDiscussions,.DiscussionsTable .Item:hover .CountComments{color:#2877d0}.New .Title::after{content:"non lu";margin-left:9px;border-radius:2px;-moz-border-radius:2px;-webkit-border-radius:2px;background:#01BD01;color:white;font-size:9px;font-weight:bold;padding:3px;line-height:1;white-space:nowrap}.ActivityFormWrap .FormWrapper{background:white;margin:15px 0;box-shadow:0 0 3px #D5D5D5}#Foot{margin-top:50px}#Foot .Row{padding:25px 10px !important;position:relative;margin-top:10px;background-color:#32333b;box-shadow:1px 2px 3px rgba(0,0,0,0.4),0px 1px 1px rgba(255,255,255,0.2) inset;border:1px solid #000;background:#32333b;background:-webkit-gradient(linear, left top, left bottom, from(#32333b), to(#1f1f22));background:-moz-linear-gradient(center top, #32333b 0%, #1f1f22 100%);background:-moz-gradient(center top, #32333b 0%, #1f1f22 100%)}@media all and (max-width: 800px){.CountComments,.CountDiscussions,.CountReplies{display:none}}@media all and (max-width: 1026px){.Row{width:960px;width:90vw}#Content .CategoryGroup .H::after{width:50%}#Head .SiteSearch #Form_Search{display:none}#Panel{display:none}#Content{margin:0 !important;padding:10px}#CategoryGroup-nos-jeux-principaux,#CategoryGroup-nos-jeux-secondaires{margin-top:10px}#CategoryGroup-nos-jeux-principaux::after,#CategoryGroup-nos-jeux-secondaires::after{display:none}}.MessageList.Discussion{background:white;margin-top:5px;padding:30px;box-shadow:0 0 3px #D5D5D5}.ItemDiscussion td{padding:15px 4px !important}.CommentHeading,.CommentForm .H{margin:30px 0;padding-bottom:15px;border-bottom:1px solid #dee4ef;font-size:26px;color:#414a51}.ItemComment{background:white;margin:10px 0 !important}.ItemComment:hover{background:#FFFCF3}.ItemComment:last-child{border-bottom:none}.ItemComment .Options{margin-top:10px;z-index:1;position:relative}.ItemComment .CommentHeader{background:#F1F5F8;padding:10px 0;padding-left:40px;position:relative}.ItemComment .CommentHeader .PhotoWrap{position:absolute;left:-20px;top:7px;border:3px solid white}.ItemComment .Item-Body{padding:15px 0;padding-left:40px}
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+/***** Font Definition for Open Sans. *****/
+/* Regular */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-Regular-webfont.eot");
+  src: url("fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Regular-webfont.woff") format("woff"), url("fonts/OpenSans-Regular-webfont.ttf") format("truetype"), url("fonts/OpenSans-Regular-webfont.svg#OpenSansRegular") format("svg");
+  font-weight: normal;
+  font-weight: 400;
+  font-style: normal;
+}
+/* Italic */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-Italic-webfont.eot");
+  src: url("fonts/OpenSans-Italic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Italic-webfont.woff") format("woff"), url("fonts/OpenSans-Italic-webfont.ttf") format("truetype"), url("fonts/OpenSans-Italic-webfont.svg#OpenSansItalic") format("svg");
+  font-weight: normal;
+  font-weight: 400;
+  font-style: italic;
+}
+/* Light */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-Light-webfont.eot");
+  src: url("fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Light-webfont.woff") format("woff"), url("fonts/OpenSans-Light-webfont.ttf") format("truetype"), url("fonts/OpenSans-Light-webfont.svg#OpenSansLight") format("svg");
+  font-weight: 200;
+  font-style: normal;
+}
+/* Light Italic */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-LightItalic-webfont.eot");
+  src: url("fonts/OpenSans-LightItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-LightItalic-webfont.woff") format("woff"), url("fonts/OpenSans-LightItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-LightItalic-webfont.svg#OpenSansLightItalic") format("svg");
+  font-weight: 200;
+  font-style: italic;
+}
+/* Semibold */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-Semibold-webfont.eot");
+  src: url("fonts/OpenSans-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Semibold-webfont.woff") format("woff"), url("fonts/OpenSans-Semibold-webfont.ttf") format("truetype"), url("fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold") format("svg");
+  font-weight: 500;
+  font-style: normal;
+}
+/* Semibold Italic */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-SemiboldItalic-webfont.eot");
+  src: url("fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-SemiboldItalic-webfont.woff") format("woff"), url("fonts/OpenSans-SemiboldItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-SemiboldItalic-webfont.svg#OpenSansSemiboldItalic") format("svg");
+  font-weight: 500;
+  font-style: italic;
+}
+/* Bold */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-Bold-webfont.eot");
+  src: url("fonts/OpenSans-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Bold-webfont.woff") format("woff"), url("fonts/OpenSans-Bold-webfont.ttf") format("truetype"), url("fonts/OpenSans-Bold-webfont.svg#OpenSansBold") format("svg");
+  font-weight: bold;
+  font-weight: 700;
+  font-style: normal;
+}
+/* Bold Italic */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-BoldItalic-webfont.eot");
+  src: url("fonts/OpenSans-BoldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-BoldItalic-webfont.woff") format("woff"), url("fonts/OpenSans-BoldItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-BoldItalic-webfont.svg#OpenSansBoldItalic") format("svg");
+  font-weight: bold;
+  font-weight: 700;
+  font-style: italic;
+}
+/* Extra Bold */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-ExtraBold-webfont.eot");
+  src: url("fonts/OpenSans-ExtraBold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-ExtraBold-webfont.woff") format("woff"), url("fonts/OpenSans-ExtraBold-webfont.ttf") format("truetype"), url("fonts/OpenSans-ExtraBold-webfont.svg#OpenSansExtrabold") format("svg");
+  font-weight: 900;
+  font-style: normal;
+}
+/* Extra Bold Italic */
+@font-face {
+  font-family: 'Open Sans';
+  src: url("fonts/OpenSans-ExtraBoldItalic-webfont.eot");
+  src: url("fonts/OpenSans-ExtraBoldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-ExtraBoldItalic-webfont.woff") format("woff"), url("fonts/OpenSans-ExtraBoldItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-ExtraBoldItalic-webfont.svg#OpenSansExtraboldItalic") format("svg");
+  font-weight: 900;
+  font-style: italic;
+}
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for PS2 module */
+/* ------------------------ */
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+#PS2memberlist {
+  background: white;
+  margin-top: 5px;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+  white-space: nowrap;
+}
+#PS2memberlist .Title, #PS2memberlist .refresh {
+  display: inline-block;
+  width: 50%;
+  margin-bottom: 10px;
+}
+#PS2memberlist .refresh {
+  text-align: right;
+}
+#PS2memberlist .list {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  white-space: normal;
+}
+#PS2memberlist .list li {
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 5px 5px 5px;
+  position: relative;
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+#PS2memberlist .list li .content {
+  margin-left: 30px;
+  position: relative;
+}
+#PS2memberlist .list li .playerName {
+  text-transform: capitalize;
+}
+#PS2memberlist .list li .playerRank {
+  line-height: 0.7em;
+  font-size: 0.7em;
+}
+#PS2memberlist .list li::before {
+  Content: "";
+  display: block;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+#PS2memberlist .list li.Heavy {
+  color: white;
+  border-color: #932B2B;
+  background: #ED4545;
+}
+#PS2memberlist .list li.Heavy::before {
+  background: url("img/modules/ps2/heavyIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Infiltrator {
+  border-color: #21A087;
+  background: #49B96E;
+  color: white;
+}
+#PS2memberlist .list li.Infiltrator::before {
+  background: url("img/modules/ps2/infIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Light {
+  border-color: #2D3E50;
+  background: #3598D2;
+  color: white;
+}
+#PS2memberlist .list li.Light::before {
+  background: url("img/modules/ps2/lightIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.MAX {
+  border-color: #544993;
+  background: #AC7DC2;
+  color: white;
+}
+#PS2memberlist .list li.MAX::before {
+  background: url("img/modules/ps2/maxIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Medic {
+  border-color: #21A087;
+  background: #49B96E;
+  color: white;
+}
+#PS2memberlist .list li.Medic::before {
+  background: url("img/modules/ps2/medicIcon.png");
+  background-size: cover;
+}
+#PS2memberlist .list li.Engineer {
+  border-color: #E57E24;
+  background: #ECA816;
+  color: white;
+}
+#PS2memberlist .list li.Engineer::before {
+  background: url("img/modules/ps2/engiIcon.png");
+  background-size: cover;
+}
+
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*   SCSS file - profile    */
+/* ------------------------ */
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+.ProfileOptions {
+  margin: 20px 15px 0 0;
+}
+
+.Profile .User, .Profile .DataList.Activities {
+  background: white;
+  margin: 5px 0 0 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+.Profile .FormWrapper {
+  background: white;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+.Profile h2.H {
+  margin: 15px 0;
+}
+.Profile .DataList.Activities {
+  margin: 25px 0;
+}
+.Profile .DataList.Activities li:last-child {
+  border: none;
+}
+
+.Badge-Details, .Badge-Earned {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+.EarnedThisBadge {
+  margin: 5px 0;
+  color: #01BD01;
+}
+
+Body[id*="yaga"] ul.DataList {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+Body[id*="yaga"] ul.DataList li:last-child {
+  border: none;
+}
+Body[id*="yaga"] ul.FilterMenu {
+  padding: 10px;
+}
+
+ul.Conversations, ul.Discussions, ul.Drafts, ul.Activities, ul.BlogList, ul.Conversation {
+  background: white;
+  margin: 5px 0 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-child, ul.Activities li:last-child, ul.BlogList li:last-child, ul.Conversation li:last-child {
+  border: none;
+}
+
+.UserReactionWrap {
+  margin: 10px 0;
+}
+
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+/* ----------------------------------- */
+/* Let's make this B... aby responsive */
+/* ----------------------------------- */
+@media all and (max-width: 800px) {
+  .CountComments, .CountDiscussions, .CountReplies {
+    display: none;
+  }
+}
+@media all and (max-width: 1026px) {
+  .Row {
+    width: 960px;
+    width: 90vw;
+  }
+
+  #Content .CategoryGroup .H::after {
+    width: 50%;
+  }
+
+  #Head .SiteSearch #Form_Search {
+    display: none;
+  }
+
+  #Panel {
+    display: none;
+  }
+
+  #Content {
+    margin: 0 !important;
+    padding: 10px;
+  }
+
+  #CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires {
+    margin-top: 10px;
+  }
+  #CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after {
+    display: none;
+  }
+}
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for QnA plugin */
+/* ------------------------ */
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+.QnA-Box {
+  margin-left: -8px;
+}
+
+.AcceptedAnswers {
+  background-color: white;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #01BD01;
+  margin: 15px 0;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+.QnA-Accepted, .QnA-Tag-Accepted {
+  background: #01BD01;
+}
+
+/* ------------------------ */
+/* Colors ... such colors ! */
+/* ------------------------ */
+/* ----------- */
+/* Small fixes */
+/* ----------- */
+.Row {
+  width: 960px;
+  width: 75vw;
+}
+
+.Banner {
+  text-align: center;
+}
+
+#Content .BoxNewDiscussion {
+  display: block;
+}
+
+.Item.Read {
+  background: none;
+}
+
+/* -------- */
+/* Elements */
+/* -------- */
+a {
+  color: #2877d0;
+}
+a:hover {
+  color: #00baff;
+}
+
+.TagCloud li {
+  padding: 5px;
+  background: #2877d0;
+  background: -webkit-gradient(linear, left top, left bottom, from(#2877d0), to(#2e64c5));
+  background: -moz-linear-gradient(center top, #2877d0 0%, #2e64c5 100%);
+  background: -moz-gradient(center top, #2877d0 0%, #2e64c5 100%);
+  -webkit-box-shadow: inset 0 0 3px #00baff;
+  -moz-box-shadow: inset 0 0 3px #00baff;
+  box-shadow: inset 0 0 3px #00baff;
+}
+.TagCloud li a {
+  color: #fafafa;
+}
+.TagCloud li a:hover {
+  color: #00baff;
+}
+
+.Alert {
+  background: #ff4e4e;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ff4e4e), to(#dd0000));
+  background: -moz-linear-gradient(center top, #ff4e4e 0%, #dd0000 100%);
+  background: -moz-gradient(center top, #ff4e4e 0%, #dd0000 100%);
+  -webkit-box-shadow: inset 0 0 3px #ffb9b9;
+  -moz-box-shadow: inset 0 0 3px #ffb9b9;
+  box-shadow: inset 0 0 3px #ffb9b9;
+}
+
+.Button {
+  margin: 15px 0;
+}
+
+/* ---- */
+/* Body */
+/* ---- */
+body {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  height: 100vh;
+  background: black url("img/backgrounds/LCH--default.png");
+  background: -webkit-gradient(linear, left bottom, left top, from(black), to(rgba(255, 255, 255, 0))), url("img/backgrounds/LCH--default.png");
+  background: url("img/backgrounds/LCH--default.png"), -moz-linear-gradient(center bottom, black 0%, rgba(255, 255, 255, 0) 100%);
+  background: url("img/backgrounds/LCH--default.png"), -moz-gradient(center bottom, black 0%, rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* ------ */
+/* Navbar */
+/* ------ */
+#Head {
+  background: none;
+}
+#Head .Row {
+  padding: 0px 10px;
+  background: #2877d0;
+  background: -webkit-gradient(linear, left top, left bottom, from(#2877d0), to(#2e64c5));
+  background: -moz-linear-gradient(center top, #2877d0 0%, #2e64c5 100%);
+  background: -moz-gradient(center top, #2877d0 0%, #2e64c5 100%);
+  -webkit-box-shadow: inset 0 0 3px #00baff;
+  -moz-box-shadow: inset 0 0 3px #00baff;
+  box-shadow: inset 0 0 3px #00baff;
+}
+#Head .SiteMenu {
+  margin-left: 10px;
+}
+#Head .SiteMenu li {
+  padding: 15px 0;
+}
+#Head .SiteMenu a {
+  font-weight: normal;
+  font-size: 1em;
+}
+#Head .SiteSearch {
+  margin-top: 12px;
+}
+#Head .SiteSearch .Button {
+  margin: 0;
+}
+#Head .dropdown {
+  position: relative;
+  display: inline-block;
+}
+#Head .dropdown::after {
+  display: inline-block;
+  margin-left: 3px;
+  font-family: FontAwesome;
+  content: "\f0d7";
+}
+#Head .dropdown:hover ul {
+  z-index: 10;
+  opacity: 1;
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+#Head .dropdown:hover::after {
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+#Head .dropdown ul {
+  z-index: -99;
+  opacity: 0;
+  padding-top: 15px;
+  position: absolute;
+  top: 52px;
+  left: 0;
+}
+#Head .dropdown ul li {
+  background: #32333b;
+  padding: 7px 10px;
+  display: block;
+  border-bottom: 1px solid #323232;
+}
+#Head .dropdown ul li:first-child {
+  position: relative;
+}
+#Head .dropdown ul li:first-child::after {
+  position: absolute;
+  top: -15px;
+  left: 5px;
+  display: inline-block;
+  margin-left: 3px;
+  font-family: FontAwesome;
+  content: "\f0d8";
+  color: #32333b;
+  font-size: 2em;
+}
+#Head .dropdown ul li a {
+  color: #e3e3e3;
+}
+
+/* --------------- */
+/* Navigation tree */
+/* --------------- */
+.BreadcrumbsWrapper .Row {
+  padding: 10px;
+  background: white;
+}
+.BreadcrumbsWrapper .Row .Breadcrumbs {
+  margin-left: 10px;
+}
+
+/* ---------------------- */
+/* Main container (#Body) */
+/* ---------------------- */
+#Body .Row {
+  padding: 10px;
+  padding-bottom: 25px;
+  background: #F1F4F9;
+  border-radius: 0 0 5px 5px;
+}
+
+/* ------------------------------------- */
+/* Pannel Column (infos and quick links) */
+/* ------------------------------------- */
+#Panel {
+  background: white;
+  margin: 15px 0 0 10px;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+#Panel.sticky {
+  float: none;
+  position: fixed;
+  top: 20px;
+  z-index: 6;
+  left: auto;
+}
+
+/* ------------------------------ */
+/* Content Column (Forum content) */
+/* ------------------------------ */
+#Content {
+  margin: 15px 0 0 260px !important;
+}
+#Content img {
+  max-width: 100%;
+}
+#Content .CategoryGroup {
+  margin-bottom: 25px;
+}
+#Content .CategoryGroup .H {
+  position: relative;
+  z-index: 2;
+  color: white;
+  background: #32333b;
+  border: 1px solid #32333b;
+  padding: 5px 10px;
+}
+#Content .CategoryGroup .H::after {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  content: "";
+  width: 50%;
+  width: 25vw;
+  height: 100%;
+  background: #2877d0;
+  background: -webkit-gradient(linear, left top, left bottom, from(#2877d0), to(#2e64c5));
+  background: -moz-linear-gradient(center top, #2877d0 0%, #2e64c5 100%);
+  background: -moz-gradient(center top, #2877d0 0%, #2e64c5 100%);
+  -webkit-box-shadow: inset 0 0 3px #00baff;
+  -moz-box-shadow: inset 0 0 3px #00baff;
+  box-shadow: inset 0 0 3px #00baff;
+}
+
+.DataTable {
+  background: white;
+  padding: 5px 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+.DataTable tbody > tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---------- */
+/* Categories */
+/* ---------- */
+#vanilla_categories_index.Section-CategoryList .HomepageTitle, #vanilla_categories_index.Section-CategoryList .PageDescription {
+  display: none;
+}
+
+.CategoryTable .Item td {
+  padding: 10px 5px;
+}
+.CategoryTable .Item:hover .CountDiscussions, .CategoryTable .Item:hover .CountComments {
+  color: #2877d0;
+}
+
+.SubCategoryTable {
+  margin-bottom: 20px;
+}
+
+.ChildCategoryList {
+  background: white;
+  padding: 0 10px 15px 10px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+.ChildCategoryList .Item {
+  width: 100%;
+}
+
+#CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires, #CategoryGroup-le-salon-ouvert-au-public {
+  position: relative;
+  margin-top: 150px;
+}
+#CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after, #CategoryGroup-le-salon-ouvert-au-public::after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 150px;
+  top: -150px;
+  content: "";
+}
+
+#CategoryGroup-nos-jeux-principaux::after {
+  background: url("img/gamesBanner.jpg");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
+#CategoryGroup-nos-jeux-secondaires::after {
+  background: url("img/otherGamesBanner.jpg");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
+#CategoryGroup-le-salon-ouvert-au-public::after {
+  background: url("img/publicBanner.jpg");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
+.Unread h3 a::after {
+  content: "nouveau";
+  margin-left: 9px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  background: #FEE65E;
+  color: #000;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 3px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.HasNew {
+  background: #FEE65E;
+}
+
+.Announcement {
+  background: #E9F2FF !important;
+}
+.Announcement .Tag-Announcement {
+  background: #2877d0;
+}
+
+/* ----------- */
+/* Discussions */
+/* ----------- */
+li.Role_Modrateurglobal .Author .Username {
+  color: #209D2F;
+}
+li.Role_Modrateurglobal .Author .Username:hover {
+  color: #3BCB62;
+}
+li.Role_Modrateurglobal .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f0e3";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+li[class*="Role_Rfrent"] .Author .Username {
+  color: #A028D0;
+}
+li[class*="Role_Rfrent"] .Author .Username:hover {
+  color: #C265E7;
+}
+li[class*="Role_Rfrent"] .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f006";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+li.Role_Administrateur .Author .Username {
+  color: #db542a;
+}
+li.Role_Administrateur .Author .Username:hover {
+  color: #fb995e;
+}
+li.Role_Administrateur .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f123";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+li.Role_Conseiller .Author .Username {
+  color: #c81e1e;
+}
+li.Role_Conseiller .Author .Username:hover {
+  color: #FF6666;
+}
+li.Role_Conseiller .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f005";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+li.Role_Surveill .Author .Username {
+  color: red !important;
+}
+li.Role_Surveill .Author .Username:hover {
+  color: red !important;
+}
+li.Role_Surveill .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f024" !important;
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.RoleTitle {
+  display: none;
+}
+
+.MessageList .Item:hover .RoleTitle {
+  display: inline-block;
+}
+
+.AuthorInfo img {
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+  margin-top: -5px;
+}
+
+.DiscussionsTable tr.Bookmarked {
+  background: rgba(255, 232, 159, 0.3);
+}
+.DiscussionsTable .Item:hover .CountDiscussions, .DiscussionsTable .Item:hover .CountComments {
+  color: #2877d0;
+}
+
+.New .Title::after {
+  content: "non lu";
+  margin-left: 9px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  background: #01BD01;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 3px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ActivityFormWrap .FormWrapper {
+  background: white;
+  margin: 15px 0;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+/* ------ */
+/* Footer */
+/* ------ */
+#Foot {
+  margin-top: 50px;
+}
+#Foot .Row {
+  padding: 25px 10px !important;
+  position: relative;
+  margin-top: 10px;
+  background-color: #32333b;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4), 0px 1px 1px rgba(255, 255, 255, 0.2) inset;
+  border: 1px solid #000;
+  background: #32333b;
+  background: -webkit-gradient(linear, left top, left bottom, from(#32333b), to(#1f1f22));
+  background: -moz-linear-gradient(center top, #32333b 0%, #1f1f22 100%);
+  background: -moz-gradient(center top, #32333b 0%, #1f1f22 100%);
+}
+
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/*        SCSS file         */
+/* ------------------------ */
+/* ----------------------------------- */
+/* Let's make this B... aby responsive */
+/* ----------------------------------- */
+@media all and (max-width: 800px) {
+  .CountComments, .CountDiscussions, .CountReplies {
+    display: none;
+  }
+}
+@media all and (max-width: 1026px) {
+  .Row {
+    width: 960px;
+    width: 90vw;
+  }
+
+  #Content .CategoryGroup .H::after {
+    width: 50%;
+  }
+
+  #Head .SiteSearch #Form_Search {
+    display: none;
+  }
+
+  #Panel {
+    display: none;
+  }
+
+  #Content {
+    margin: 0 !important;
+    padding: 10px;
+  }
+
+  #CategoryGroup-nos-jeux-principaux, #CategoryGroup-nos-jeux-secondaires {
+    margin-top: 10px;
+  }
+  #CategoryGroup-nos-jeux-principaux::after, #CategoryGroup-nos-jeux-secondaires::after {
+    display: none;
+  }
+}
+/* ------------------------ */
+/* LCH Custom Vanilla Theme */
+/* By Vladvonvidden -- 2015 */
+/* SCSS file for threads    */
+/* ------------------------ */
+/* This files is used to customize topic & answers on the forum */
+/* ---------- */
+/* First post */
+/* ---------- */
+.MessageList.Discussion {
+  background: white;
+  margin-top: 5px;
+  padding: 30px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+}
+
+/* ----------- */
+/* Discussions */
+/* ----------- */
+.ItemDiscussion td {
+  padding: 15px 4px !important;
+}
+
+/* -------- */
+/* Comments */
+/* -------- */
+.CommentHeading, .CommentForm .H {
+  margin: 30px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dee4ef;
+  font-size: 26px;
+  color: #414a51;
+}
+
+.ItemComment {
+  background: white;
+  margin: 10px 0 !important;
+}
+.ItemComment:hover {
+  background: #FFFCF3;
+}
+.ItemComment:last-child {
+  border-bottom: none;
+}
+.ItemComment .Options {
+  margin-top: 10px;
+  z-index: 1;
+  position: relative;
+}
+.ItemComment .CommentHeader {
+  background: #F1F5F8;
+  padding: 10px 0;
+  padding-left: 40px;
+  position: relative;
+}
+.ItemComment .CommentHeader .PhotoWrap {
+  position: absolute;
+  left: -20px;
+  top: 7px;
+  border: 3px solid white;
+}
+.ItemComment .Item-Body {
+  padding: 15px 0;
+  padding-left: 40px;
+}

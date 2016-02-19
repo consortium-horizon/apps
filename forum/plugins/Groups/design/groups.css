@@ -1,0 +1,15 @@
+ul li div.Warning {
+   margin: 10px 0px;
+}
+
+div.GroupContent {
+   padding: 20px;
+}
+div.GroupContent div.GroupItem {
+   border-bottom: 1px solid #e0e0e0;
+   padding: 10px 0px;
+}
+
+div.GroupContent div.GroupItem div.GroupItemName {
+   font-weight: bold;
+}
