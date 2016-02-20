@@ -689,13 +689,17 @@ body {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
-  background: #FF0;
+  background: #FEE65E;
   color: #000;
   font-size: 9px;
   font-weight: bold;
   padding: 3px;
   line-height: 1;
   white-space: nowrap;
+}
+
+.HasNew {
+  background: #FEE65E;
 }
 
 .Announcement {
@@ -708,28 +712,13 @@ body {
 /* ----------- */
 /* Discussions */
 /* ----------- */
-.Role_Conseiller .Author .Username {
-  color: #D02828;
-}
-.Role_Conseiller .Author .Username:hover {
-  color: #FF6666;
-}
-.Role_Conseiller .Author .Username::after {
-  font-family: FontAwesome;
-  content: "\f005";
-  font-size: 0.8em;
-  margin-left: 5px;
-  display: inline-block;
-  text-decoration: inherit;
-}
-
-.Role_Modrateurglobal .Author .Username {
+li.Role_Modrateurglobal .Author .Username {
   color: #209D2F;
 }
-.Role_Modrateurglobal .Author .Username:hover {
+li.Role_Modrateurglobal .Author .Username:hover {
   color: #3BCB62;
 }
-.Role_Modrateurglobal .Author .Username::after {
+li.Role_Modrateurglobal .Author .Username::after {
   font-family: FontAwesome;
   content: "\f0e3";
   font-size: 0.8em;
@@ -753,13 +742,43 @@ li[class*="Role_Rfrent"] .Author .Username::after {
   text-decoration: inherit;
 }
 
-.Role_Surveill .Author .Username {
+li.Role_Administrateur .Author .Username {
+  color: #db542a;
+}
+li.Role_Administrateur .Author .Username:hover {
+  color: #fb995e;
+}
+li.Role_Administrateur .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f123";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+li.Role_Conseiller .Author .Username {
+  color: #c81e1e;
+}
+li.Role_Conseiller .Author .Username:hover {
+  color: #FF6666;
+}
+li.Role_Conseiller .Author .Username::after {
+  font-family: FontAwesome;
+  content: "\f005";
+  font-size: 0.8em;
+  margin-left: 5px;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+li.Role_Surveill .Author .Username {
   color: red !important;
 }
-.Role_Surveill .Author .Username:hover {
+li.Role_Surveill .Author .Username:hover {
   color: red !important;
 }
-.Role_Surveill .Author .Username::after {
+li.Role_Surveill .Author .Username::after {
   font-family: FontAwesome;
   content: "\f024" !important;
   font-size: 0.8em;

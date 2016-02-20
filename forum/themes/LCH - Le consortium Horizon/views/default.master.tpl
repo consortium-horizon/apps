@@ -37,28 +37,32 @@
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
       <ul class="SiteMenu">
-        <!--<li><a href="http://www.consortium-horizon.com/">Accueil</a></li>-->
         <li class="dropdown">
           Forum
           <ul>
-            <li><a href="{link path="/"}">Toutes les catégories</a></li>
-            {discussions_link}
+            <li><a href="{link path="/"}">Accueil du forum</a></li>
+            <li><a href="{link path="/discussions"}">Sujets récents</a></li>
             {custom_menu}
             {dashboard_link}
           </ul>
         </li>
         <li><a href="https://www.consortium-horizon.com/wiki/Accueil" target="_blank">Wiki</a></li>
-        <li><a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde">Charte</a></li>
-        <li><a href="http://www.consortium-horizon.com/forum/organigramme">Organigramme</a></li>
+        <li class="dropdown">
+          Guilde
+          <ul>
+            <li><a href="{link path="/page/presentation-de-la-guilde"}">Charte</a></li>
+            <li><a href="{link path="/organigramme"}">Organigramme</a></li>
+          </ul>
+        </li>
         <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" target="_blank">YouTube</a></li>
         <li>
           <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
         </li>
         <li class="dropdown">
-          Votre profil
+          Mon profil
           <ul>
             {profile_link}
-            {inbox_link}
+            <li><a href="{link path="/messages/inbox"}">Messagerie</a></li>
             {signinout_link}
           </ul>
         </li>
@@ -73,6 +77,7 @@
 
   <div id="Body">
     <div class="Row">
+      {module name="DiscussionEventModule" Limit=4}
       <div class="Column PanelColumn" id="Panel">
          {module name="MeModule"}
          {asset name="Panel"}

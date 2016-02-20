@@ -376,13 +376,17 @@ body {
     border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
-    background: #FF0;
+    background: #FEE65E;
     color: #000;
     font-size: 9px;
     font-weight: bold;
     padding: 3px;
     line-height: 1;
     white-space: nowrap;
+}
+
+.HasNew {
+    background: #FEE65E;
 }
 
 // Announcement
@@ -399,26 +403,8 @@ body {
 /* ----------- */
 
 // Styles for roles
-.Role_Conseiller {
-    .Author {
-        .Username {
-            color: #D02828;
-            &:hover {
-                color: #FF6666;
-            }
-            &::after {
-                font-family: FontAwesome;
-                content: "\f005";
-                font-size: 0.8em;
-                margin-left: 5px;
-                display: inline-block;
-                text-decoration: inherit;
-            }
-        }
-    }
-}
 
-.Role_Modrateurglobal {
+li.Role_Modrateurglobal {
     .Author {
         .Username {
             color: #209D2F;
@@ -427,7 +413,7 @@ body {
             }
             &::after {
                 font-family: FontAwesome;
-                content: "\f0e3";
+                content: "\f0e3"; //marteau
                 font-size: 0.8em;
                 margin-left: 5px;
                 display: inline-block;
@@ -446,7 +432,7 @@ li[class*="Role_Rfrent"] {
             }
             &::after {
                 font-family: FontAwesome;
-                content: "\f006";
+                content: "\f006"; //étoile vide
                 font-size: 0.8em;
                 margin-left: 5px;
                 display: inline-block;
@@ -456,16 +442,16 @@ li[class*="Role_Rfrent"] {
     }
 }
 
-.Role_Surveill {
+li.Role_Administrateur {
     .Author {
         .Username {
-            color: red !important;
+            color: #db542a;
             &:hover {
-                color: red !important;
+                color: #fb995e;
             }
             &::after {
                 font-family: FontAwesome;
-                content: "\f024" !important;
+                content: "\f123"; //étoile semi-pleine
                 font-size: 0.8em;
                 margin-left: 5px;
                 display: inline-block;
@@ -474,6 +460,45 @@ li[class*="Role_Rfrent"] {
         }
     }
 }
+
+li.Role_Conseiller {
+    .Author {
+        .Username {
+            color: #c81e1e;
+            &:hover {
+                color: #FF6666;
+            }
+            &::after {
+                font-family: FontAwesome;
+                content: "\f005"; //étoile pleine
+                font-size: 0.8em;
+                margin-left: 5px;
+                display: inline-block;
+                text-decoration: inherit;
+            }
+        }
+    }
+}
+
+li.Role_Surveill {
+    .Author {
+        .Username {
+            color: red !important;
+            &:hover {
+                color: red !important;
+            }
+            &::after {
+                font-family: FontAwesome;
+                content: "\f024" !important; //drapeau
+                font-size: 0.8em;
+                margin-left: 5px;
+                display: inline-block;
+                text-decoration: inherit;
+            }
+        }
+    }
+}
+
 
 .RoleTitle {display: none;} // don't need to show that all day long
 // But lets make it visible on hover

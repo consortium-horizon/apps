@@ -313,8 +313,8 @@ if (!function_exists('WriteTableRow')):
                         <div class="Meta">
                             <?php
                             if ($Row['LastName'] !== null) {
-                                echo userAnchor($Row, 'UserLink MItem', 'Last');
-                                echo '<span class="Bullet">•</span>';
+                                echo userAnchor($Row, 'UserLink MItem', 'Last'); 
+                                echo '<span class="Bullet"> •</span>';
                             }
                             ?>
                             <?php
