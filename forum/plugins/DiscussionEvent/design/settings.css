@@ -1,4 +1,4 @@
-.BoxDiscussionEvents {
+.Row > .BoxDiscussionEvents {
   background: white;
   margin: 5px 0 0 10px;
   padding: 10px;
@@ -7,12 +7,12 @@
   box-shadow: 0 0 3px #d5d5d5;
 }
 
-.BoxDiscussionEvents .Item {
+.Row > .BoxDiscussionEvents .Item {
   border: none;
 }
 
 
-.BoxDiscussionEvents .Title {
+.Row > .BoxDiscussionEvents .Title {
   font-size: 12px;
   display: inline;
   margin-right: 10px;
@@ -31,6 +31,6 @@
   background-color: #666666;
 }
 
-.BoxDiscussionEvents .DiscussionLink {
+.Row > .BoxDiscussionEvents .DiscussionLink {
 
 }
