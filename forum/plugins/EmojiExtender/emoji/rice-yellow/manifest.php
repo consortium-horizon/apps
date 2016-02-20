@@ -55,6 +55,7 @@
             '8-)' => 'glasses',
             '>_<' => 'rage',
             ':3' => 'blush',
+            'xd' => 'ohnoes',
         ),
     'editor' =>
         array(
