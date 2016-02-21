@@ -54,6 +54,11 @@
     background-size: cover;
 }
 
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refEveOnline {
+    background: url("img/refEveOnlinepics.jpg");
+    background-size: cover;
+}
+
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.refPS2 {
     background: url("img/refPS2pics.jpg");
     background-size: cover;

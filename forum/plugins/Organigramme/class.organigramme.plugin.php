@@ -173,20 +173,25 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $admins = array();
         $conseillers = array();
         $modos = array();
-        $refPS2 = array();
+        $refAlbion = array();
         $refArma = array();
+        $refEveOnline = array();
+        $refPS2 = array();
         $refSkyforge = array();
         $refSC = array();
-        $refAlbion = array();
 
         $adminspics = array();
         $conseillerspics = array();
         $modospics = array();
-        $refPS2pics = array();
+        $refAlbionpics = array();
         $refArmapics = array();
+        $refEveOnlinepics = array();
+        $refPS2pics = array();
         $refSkyforgepics = array();
         $refSCpics = array();
-        $refAlbionpics = array();
+
+        //débugage
+        //echo '<pre>'; print_r($sender); echo '</pre>';
 
         foreach ($sender->UserData as $key => $value) {
             if (in_array('Administrateur',$value->Roles)) {
@@ -228,6 +233,11 @@ class OrganigrammePlugin extends Gdn_Plugin {
                 array_push($refSkyforge, $value);
                 array_push($refSkyforgepics, UserPhoto($value));
             }
+
+            if (in_array('Référent Eve Online',$value->Roles)) {
+                array_push($refEveOnline, $value);
+                array_push($refEveOnlinepics, UserPhoto($value));
+            }
         }
 
         // Pass the member data.
@@ -240,6 +250,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->setData('refArma', $refArma);
         $sender->setData('refSC', $refSC);
         $sender->setData('refSkyforge', $refSkyforge);
+        $sender->setData('refEveOnline', $refEveOnline);
 
         // The the profile pics
         $sender->setData('adminspics', $adminspics);
@@ -251,6 +262,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->setData('refArmapics', $refArmapics);
         $sender->setData('refSCpics', $refSCpics);
         $sender->setData('refSkyforgepics', $refSkyforgepics);
+        $sender->setData('refEveOnlinepics', $refEveOnlinepics);
 
         $sender->Render(parent::getView('organigramme.php'));
     }

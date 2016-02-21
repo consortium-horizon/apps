@@ -106,6 +106,27 @@
         echo "</div>";
     }
 
+    if ($this->data('refEveOnline')) {
+        echo "<div class='OrgContainer'>";
+        echo "<div class='OrgContainerPic refEveOnline'><span>EVE Online</span></div>";
+        echo "<div class='OrgContainerContent'>";
+        echo "<h2 class='Title'>Les référents EVE Online</h2>";
+        echo "<div class='Description'>Description à compléter.</div>";
+        echo "<ul>";
+        $count = 0;
+        $pics = $this->data('refEveOnlinepics');
+        foreach ($this->data('refEveOnline') as $key => $value) {
+            echo "<li>";
+            echo $pics[$count];
+            echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
+            echo "</li>";
+            $count++;
+        }
+        echo "</ul>";
+        echo "</div>";
+        echo "</div>";
+    }
+
     if ($this->data('refPS2')) {
         echo "<div class='OrgContainer'>";
         echo "<div class='OrgContainerPic refPS2'><span>Planetside 2</span></div>";
@@ -153,7 +174,7 @@
         echo "<div class='OrgContainerPic refSC'><span>Star citizen</span></div>";
         echo "<div class='OrgContainerContent'>";
         echo "<h2 class='Title'>Les référents Star Citizen</h2>";
-        echo "<div class='Description'>Description à compléter.</div>";
+        echo "<div class='Description'>Vers l'infini et l'au-delà ! Heu, non, c'est pas ça je crois...</div>";
         echo "<ul>";
         $count = 0;
         $pics = $this->data('refSCpics');
