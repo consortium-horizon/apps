@@ -90,9 +90,12 @@ if (!function_exists('WriteDiscussionRow')):
                         echo CategoryLink($Discussion, ' '.t('in').' ');
 
                     // Other stuff that was in the standard view that you may want to display:
-                    /*echo '<div class="Meta Meta-Discussion">';
-                    WriteTags($Discussion);
-                    echo '</div>';*/
+                    // old way
+                    /*
+                        echo '<div class="Meta Meta-Discussion">';
+                        WriteTags($Discussion);
+                        echo '</div>';
+                    */
                     
 
                     //			if ($Source = val('Source', $Discussion))

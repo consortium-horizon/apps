@@ -34,3 +34,12 @@
 .Row > .BoxDiscussionEvents .DiscussionLink {
 
 }
+
+.Wrap .DiscussionEventDate {
+  padding: 2px 6px;
+  color: white;
+  background: #2877d0;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+}
