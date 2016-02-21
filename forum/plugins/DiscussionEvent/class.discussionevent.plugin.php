@@ -197,7 +197,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 
 	public static function displayEventDate($EventDate) {
 		if ($EventDate) {
-			echo '<div class="DiscussionEventDate icon icon-calendar"> '.Gdn_Format::date($EventDate, 'html').'</div>';
+			echo '<div class="DivDiscussionEventDate"><span class="DiscussionEventDate icon icon-calendar"> '.Gdn_Format::date($EventDate, '%e %B %Y').'</span></div>';
 		}
 	}
 
