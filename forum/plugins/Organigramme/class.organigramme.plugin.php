@@ -170,6 +170,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->UserData = $SQL->Get();
         RoleModel::SetUserRoles($sender->UserData->Result());
 
+        $fondateurs = array();
         $admins = array();
         $conseillers = array();
         $modos = array();
@@ -180,6 +181,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $refSkyforge = array();
         $refSC = array();
 
+        $fondateurspics = array();
         $adminspics = array();
         $conseillerspics = array();
         $modospics = array();
@@ -194,6 +196,11 @@ class OrganigrammePlugin extends Gdn_Plugin {
         //echo '<pre>'; print_r($sender); echo '</pre>';
 
         foreach ($sender->UserData as $key => $value) {
+            if (in_array('Fondateur',$value->Roles)) {
+                array_push($fondateurs, $value);
+                array_push($fondateurspics, UserPhoto($value));
+            }
+
             if (in_array('Administrateur',$value->Roles)) {
                 array_push($admins, $value);
                 array_push($adminspics, UserPhoto($value));
@@ -241,6 +248,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         }
 
         // Pass the member data.
+        $sender->setData('fondateurs', $fondateurs);
         $sender->setData('admins', $admins);
         $sender->setData('conseillers', $conseillers);
         $sender->setData('modos', $modos);
@@ -253,6 +261,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
         $sender->setData('refEveOnline', $refEveOnline);
 
         // The the profile pics
+        $sender->setData('fondateurspics', $fondateurspics);
         $sender->setData('adminspics', $adminspics);
         $sender->setData('conseillerspics', $conseillerspics);
         $sender->setData('modospics', $modospics);
