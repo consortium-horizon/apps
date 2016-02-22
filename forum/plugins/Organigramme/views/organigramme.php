@@ -1,6 +1,27 @@
 <?php defined('APPLICATION') or die;?>
 
 <?php
+    if ($this->data('fondateurs')) {
+        echo "<div class='OrgContainer'>";
+        echo "<div class='OrgContainerPic fondateurs'><span>Fondateurs</span></div>";
+        echo "<div class='OrgContainerContent'>";
+        echo "<h2 class='Title'>Les fondateurs</h2>";
+        echo "<div class='Description'>Ils ont mis la guilde sur pied, aidés par les membres, il y a fort fort longtemps.</div>";
+        echo "<ul>";
+        $count = 0;
+        $pics = $this->data('fondateurspics');
+        foreach ($this->data('fondateurs') as $key => $value) {
+            echo "<li>";
+            echo $pics[$count];
+            echo "<a class='username' href='../forum/profile/" . $value->UserID . "/" . $value->Name ."'>" . $value->Name . "</a>";
+            echo "</li>";
+            $count++;
+        }
+        echo "</ul>";
+        echo "</div>";
+        echo "</div>";
+    }
+
     if ($this->data('admins')) {
         echo "<div class='OrgContainer'>";
         echo "<div class='OrgContainerPic admins'><span>Admins</span></div>";
@@ -63,6 +84,8 @@
         echo "</div>";
         echo "</div>";
     }
+
+    echo '<br><br>';
 
     if ($this->data('refAlbion')) {
         echo "<div class='OrgContainer'>";

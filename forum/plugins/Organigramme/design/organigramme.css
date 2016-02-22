@@ -27,6 +27,11 @@
     position: relative;
 }
 
+#vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.fondateurs {
+    background: url("img/fondateurspics.jpg");
+    background-size: cover;
+}
+
 #vanilla_vanilla_organigramme #Content .OrgContainer .OrgContainerPic.admins {
     background: url("img/adminspics.jpg");
     background-size: cover;
