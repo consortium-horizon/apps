@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
   function setDataFields() {
     // Pass the data-ids into the hidden form fields
     var i = 1;
-    $SelectedBadges.children('li:').each( function() {
+    $SelectedBadges.children('li').each( function() {
       var attrNameSelector = 'input[name="Badge'+i+'"]';
       var badgeID = $(this).attr('data-id');
       $(attrNameSelector).val(badgeID);
