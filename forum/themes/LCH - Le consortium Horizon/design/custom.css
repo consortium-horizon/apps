@@ -468,6 +468,7 @@ body {
 }
 #Head .SiteMenu li {
   padding: 15px 0;
+  margin-right: 5px;
 }
 #Head .SiteMenu a {
   font-weight: normal;
@@ -485,7 +486,8 @@ body {
 }
 #Head .dropdown::after {
   display: inline-block;
-  margin-left: 3px;
+  margin-left: 1px;
+  margin-right: 5px;
   font-family: FontAwesome;
   content: "\f0d7";
 }

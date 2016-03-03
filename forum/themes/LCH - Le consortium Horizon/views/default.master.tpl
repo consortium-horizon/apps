@@ -54,7 +54,14 @@
             <li><a href="{link path="/organigramme"}">Organigramme</a></li>
           </ul>
         </li>
-        <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" target="_blank">YouTube</a></li>
+        <li class="dropdown">
+          Réseaux sociaux
+          <ul>
+            <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" target="_blank">YouTube</a></li>
+            <li><a href="https://www.facebook.com/LeConsortiumHorizon" target="_blank">Facebook</a></li>
+            <li><a href="https://twitter.com/LCHorizon" target="_blank">Twitter</a></li>
+          </ul>
+        </li>
         <li>
           <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
         </li>
