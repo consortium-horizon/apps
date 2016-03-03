@@ -72,12 +72,12 @@ class PostOnRegister extends Gdn_Plugin {
         echo '<div class="registerNotification mainNotification info">
         <h2>Remplissez attentivement les champs demandés !</h2>
         <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
-        <p>Les informations seront passées en revue par un modérateur puis utilisées pour créer votre post de candidature.</p>
+        <p>Les informations seront utilisées pour créer votre post de candidature automatiquement.</p>
         </div>';
 
         // How did you find us ?
         echo '<div id="howDidYouFindUs">';
-        echo '<label for="howDidYouFindUs">Comment avez vous découvert le consortium horizon ?</label>';
+        echo '<label for="howDidYouFindUs">Comment avez vous découvert Le Consortium Horizon ?</label>';
         echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"></textarea>';
         echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Plus de précisions peut-être ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
         echo '<div id="howDidYouFindUsOK" class="registerNotification success" style="display: none;">On apprécie toutes ces informations !</div>';
@@ -123,7 +123,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // More about you
         echo '<div id="moreAboutYouSection">';
-        echo '<label for="moreAboutYou">Dites nous en plus sur vous (c\'est important !)</label>';
+        echo '<label for="moreAboutYou">Dites-nous en plus sur vous (c\'est important !)</label>';
         echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required"></textarea>';
         echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
@@ -244,12 +244,13 @@ class PostOnRegister extends Gdn_Plugin {
 
             ------------------------------------------------------------------------
 
-            [color=#0012ff][b]Rappel de Mr Robot[/b] -> tu peux te connecter à mumble en utilisant les informations suivantes :
+            [color=#0012ff][b]Rappel de Mr Robot[/b] -> tu peux te connecter à Mumble en utilisant les informations suivantes :
             - Adresse : mumble.consortium-horizon.com
             - Port : 64738
             - Username/mdp : les tiens sur le forum, une fois ta candidature validée[/color]
 
             [color=#FF0000]En attente de validation par un modérateur[/color]';
+
             // Date of creation
             $Discussion['DateInserted'] = $date;
             // Date of last comment
