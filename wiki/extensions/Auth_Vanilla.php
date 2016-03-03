@@ -17,13 +17,13 @@
  * @package MediaWiki
  */
 
-// define('APPLICATION', 'Vanilla');
-// define('APPLICATION_VERSION', '2.1.11');
-// define('DS', '/');
-// define('PATH_ROOT', '/var/www/webapps/current/forum/');
-// ob_start();
-// require_once(PATH_ROOT.DS.'bootstrap.php');
-// ob_end_clean(); // clear any header output from vanila
+define('APPLICATION', 'Vanilla');
+define('APPLICATION_VERSION', '2.1.11');
+define('DS', '/');
+define('PATH_ROOT', '/var/www/webapps/current/forum/');
+ob_start();
+require_once(PATH_ROOT.DS.'bootstrap.php');
+ob_end_clean(); // clear any header output from vanila
 // $Session = Gdn::Session();
 // $Authenticator = Gdn::Authenticator();
 // if ($Session->IsValid()) {
