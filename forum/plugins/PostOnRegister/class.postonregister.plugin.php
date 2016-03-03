@@ -15,23 +15,46 @@ class PostOnRegister extends Gdn_Plugin {
 
 
 
-    public function settingsController_PostOnRegister_create($sender)
+    /**
+     * Add the Dashboard menu item.
+     */
+    public function base_GetAppSettingsMenuItems_handler($Sender) {
+        $Menu = &$Sender->EventArguments['SideMenu'];
+        $Menu->addLink('Users', t('Post on register settings'), 'settings/postonregister', 'Garden.Settings.Manage');
+    }
+
+    public function settingsController_PostOnRegister_create($Sender)
     {
-        $sender->permission('Garden.Settings.Manage');
-        $sender->addSideMenu('/dashboard/settings/postonregister');
-        $sender->setData('Title', t('Post on register settings'));
-        $sender->setData('Description', t('Forum Tour Description'));
+        $Sender->permission('Garden.Settings.Manage');
+        $Sender->addSideMenu('/dashboard/settings/postonregister');
 
-        $RegistrationFields = array();
-        $counter = 1;
+        $Sender->setData('Title', t('Post on register settings'));
+        // $sender->setData('Description', t('BLA'));
 
-        foreach (c('ProfileExtender', array())['Fields'] as $key => $value) {
-            if ($value['OnRegister'] == 1) {
-                $RegistrationFields[$value['Name']] = $value['Label'];
-            }
+        // $RegistrationFields = array();
+        // $counter = 1;
+
+        // foreach (c('ProfileExtender', array())['Fields'] as $key => $value) {
+        //     if ($value['OnRegister'] == 1) {
+        //         $RegistrationFields[$value['Name']] = $value['Label'];
+        //     }
+        // }
+
+        $Validation = new Gdn_Validation();
+        $ConfigurationModel = new Gdn_ConfigurationModel($Validation);
+        $ConfigurationModel->SetField(array('Plugins.PostOnRegister.RegisteredRoleID'));
+
+        $Sender->Form->SetModel($ConfigurationModel);
+
+        if($Sender->Form->AuthenticatedPostBack() === FALSE) {
+          $Sender->Form->SetData($ConfigurationModel->Data);
         }
-        $sender->setData('RegistrationFields', $RegistrationFields);
-        $sender->Render('settings', '', 'plugins/PostOnRegister');
+        else {
+          if($Sender->Form->Save() !== FALSE) {
+            $Sender->InformMessage('<span class="InformSprite Sliders"></span>' . T('Vos changements ont été sauvegardés.'), 'HasSprite');
+          }
+        }
+        $Sender->Render('settings', '', 'plugins/PostOnRegister');
     }
 
     // this is where the magic happen
@@ -238,6 +261,20 @@ class PostOnRegister extends Gdn_Plugin {
             // If everything is ok, refresh discussion count
             if ($DiscussionID) { $DiscussionModel->UpdateDiscussionCount($Discussion['CategoryID']) ;}
         }
+        else
+        {
+            //Put the registerd but not applicant role
+            // Get user ID from sender
+            $userID = $sender->EventArguments['UserID'];
+            // Retreive user object
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            //UserModel::GetRoles($userID)
+            $registeredRoleId = (int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]);
+            $arrayregisteredRoleId = array($registeredRoleId);
+            $UserModel = new UserModel();
+            $UserModel->saveRoles($userID,$arrayregisteredRoleId, true);
+
+        }
 
     }
 
@@ -252,4 +289,5 @@ class PostOnRegister extends Gdn_Plugin {
             $sender->AddJsFile('postonregister.js', 'plugins/PostOnRegister');
         }
     }
+
 }
