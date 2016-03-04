@@ -241,7 +241,7 @@ class OrganigrammePlugin extends Gdn_Plugin {
                 array_push($refSkyforgepics, UserPhoto($value));
             }
 
-            if (in_array('Référent Eve Online',$value->Roles)) {
+            if (in_array('Référent EVE Online',$value->Roles)) {
                 array_push($refEveOnline, $value);
                 array_push($refEveOnlinepics, UserPhoto($value));
             }

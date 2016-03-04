@@ -11,10 +11,8 @@ $PluginInfo['PostOnRegister'] = array(
 
 $age="1984";
 
+
 class PostOnRegister extends Gdn_Plugin {
-
-
-
     /**
      * Add the Dashboard menu item.
      */
@@ -23,8 +21,7 @@ class PostOnRegister extends Gdn_Plugin {
         $Menu->addLink('Users', t('Post on register settings'), 'settings/postonregister', 'Garden.Settings.Manage');
     }
 
-    public function settingsController_PostOnRegister_create($Sender)
-    {
+    public function settingsController_PostOnRegister_create($Sender) {
         $Sender->permission('Garden.Settings.Manage');
         $Sender->addSideMenu('/dashboard/settings/postonregister');
 
@@ -57,9 +54,15 @@ class PostOnRegister extends Gdn_Plugin {
         $Sender->Render('settings', '', 'plugins/PostOnRegister');
     }
 
+    public function entryController_RegisterValidation_handler($sender) {
+        $dateString =$sender->Form->_FormValues['DateOfBirth_Year'].'-'.$sender->Form->_FormValues['DateOfBirth_Month'].'-'.$sender->Form->_FormValues['DateOfBirth_Day'];
+        $diff = abs(strtotime(date('Y-m-d')) - strtotime($dateString));
+        $GLOBALS['age'] = floor($diff / (365*60*60*24));
+    }
+
+
     // this is where the magic happen
     public function EntryController_registerBeforePassword_Handler($Sender, $Args) {
-
         // Check if user wanna join us
         echo '<div id="iWannaJoinNotif" class="registerNotification info">';
         echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin"> Je souhaite rejoindre la guilde (une candidature sera automatiquement créée)';
@@ -84,15 +87,21 @@ class PostOnRegister extends Gdn_Plugin {
         echo '</div>';
 
         // Game list
-        echo '<label for="gamelist">Pour quel jeu postulez vous ?</label>';
-        echo '<select id="gamelist" name="gamelist">
-          <option value="Arma 3">Arma 3</option>
-          <option value="Albion Online">Albion Online</option>
-          <option value="Planetside 2">Planetside 2</option>
-          <option value="Star Citizen">Star Citizen</option>
-          <option value="Diplomatie">Diplomatie</option>
-          <option value="Autre">Autre</option>
-        </select>';
+        echo '<label for="gamelist">Pour quel jeu postulez-vous ?</label>';
+        echo '<select id="gamelist" name="gamelist">';
+            // Récupération des noms des catégories principales
+            $SQLSectionName = Gdn::sql()->query('
+                SELECT gdn_category.Name
+                FROM gdn_category
+                WHERE gdn_category.ParentCategoryID = "1000002"
+                ORDER BY gdn_category.Name ASC');
+            $SectionNameResultArray = $SQLSectionName->resultArray();
+            foreach ($SectionNameResultArray as $value) {
+                echo '<option value="'.$value[Name].'">'.$value[Name].'</option>';
+            }
+        echo '<option value="Diplomatie">Diplomatie</option>
+          <option value="Autre">Autre</option>';
+        echo '</select>';
 
         // Section autre
         echo '<div id="otherRegistrationSection" class="registrationSection" style="display: none;">';
@@ -133,11 +142,6 @@ class PostOnRegister extends Gdn_Plugin {
         echo '</div>';
     }
 
-    public function entryController_RegisterValidation_handler($sender) {
-        $dateString =$sender->Form->_FormValues['DateOfBirth_Year'].'-'.$sender->Form->_FormValues['DateOfBirth_Month'].'-'.$sender->Form->_FormValues['DateOfBirth_Day'];
-        $diff = abs(strtotime(date('Y-m-d')) - strtotime($dateString));
-        $GLOBALS['age'] = floor($diff / (365*60*60*24));
-    }
 
     public function userModel_afterRegister_handler($sender, $Args) {
         // Does the user wanna joind the guild ?
@@ -197,6 +201,7 @@ class PostOnRegister extends Gdn_Plugin {
             $Discussion['CategoryID'] = '9';
             // Discussion Format (BBcode)
             $Discussion['Format'] = 'BBCode';
+            //$Discussion['Format'] = 'Wysiwyg';
             // Discussion title
             $Discussion['Name'] = '[' . $game . '] ' . $name . ' [En attente de validation]';
 
@@ -210,6 +215,32 @@ class PostOnRegister extends Gdn_Plugin {
                 '. ($ps2Inf ? "Infiltré; " : '') . ($ps2LA ? "Assaut léger; " : '') . ($ps2Medic ? "Médic; " : '') . ($ps2Ing ? "Ingénieur; " : '') . ($ps2HA ? "Assaut lourd;  " : '') . ($ps2Max ? "Max; " : '') ;
 
             }
+
+
+            $PingNames = '';
+            // Récupération des UserID, UserName, UserRole des membres gradés
+            $SQLUserName = Gdn::sql()->query('
+                SELECT gdn_userrole.UserID, gdn_userrole.RoleID, gdn_user.Name "UserName", gdn_role.Name "RoleName"
+                FROM gdn_userrole, gdn_user, gdn_role
+                WHERE gdn_userrole.RoleID = gdn_role.RoleID AND gdn_userrole.UserID = gdn_user.UserID
+                AND gdn_role.Name != "Membre du Consortium"
+                AND gdn_role.Name != "Candidat"
+                AND gdn_role.Name != "Inscrit"
+                AND gdn_role.Name != "Invité"
+                ORDER BY gdn_user.Name ASC');
+            // Le resultat de la requête est stockée dans un tableau
+            $UserNameResultArray = $SQLUserName->resultArray();
+            //echo '<pre>'; print_r($UserNameResultArray); echo '</pre>';      // debuggage
+
+            // Récupération des noms des Référents selon le jeu principal selectionné
+            foreach ($UserNameResultArray as $value) {
+                if (in_array('Référent '.$game, $value)) {
+                    //echo '<pre>'; print_r($value); echo '</pre>';      // debuggage
+                    $PingNames .= '@'.$value[UserName].' ';
+                }
+            }
+
+
 
             // Discussion content
             $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]
@@ -238,11 +269,17 @@ class PostOnRegister extends Gdn_Plugin {
             [b]Dites-en un peu plus sur vous :[/b]
 
             '
-            . $moreAboutYou .
+            . $moreAboutYou . 
+
             '
 
 
             ------------------------------------------------------------------------
+
+            '
+            . $PingNames .
+
+            '
 
             [color=#0012ff][b]Rappel de Mr Robot[/b] -> tu peux te connecter à Mumble en utilisant les informations suivantes :
             - Adresse : mumble.consortium-horizon.com
