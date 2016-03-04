@@ -65,7 +65,8 @@ class PostOnRegister extends Gdn_Plugin {
     public function EntryController_registerBeforePassword_Handler($Sender, $Args) {
         // Check if user wanna join us
         echo '<div id="iWannaJoinNotif" class="registerNotification info">';
-        echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin"> Je souhaite rejoindre la guilde (une candidature sera automatiquement créée)';
+        echo '<label class="CheckBoxLabel" for="iWannaJoin">';
+        echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin"> Je souhaite rejoindre la guilde (une candidature sera automatiquement créée)</label>';
         echo '</div>';
 
         // The main form
@@ -76,6 +77,7 @@ class PostOnRegister extends Gdn_Plugin {
         <h2>Remplissez attentivement les champs demandés !</h2>
         <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
         <p>Les informations seront utilisées pour créer votre post de candidature automatiquement.</p>
+        <p><b>ATTENTION :</b> en créant un post de candidature, vous certifiez avoir lu et accepté <a href="/forum/page/presentation-de-la-guilde" target="_blank">la Charte du Consortium Horizon</a>.</p>
         </div>';
 
         // How did you find us ?
