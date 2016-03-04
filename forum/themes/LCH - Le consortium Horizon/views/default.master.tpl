@@ -58,6 +58,7 @@
           Réseaux sociaux
           <ul>
             <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" target="_blank">YouTube</a></li>
+            <li><a href="https://www.twitch.tv/lchorizon" target="_blank">Twitch</a></li>
             <li><a href="https://www.facebook.com/LeConsortiumHorizon" target="_blank">Facebook</a></li>
             <li><a href="https://twitter.com/LCHorizon" target="_blank">Twitter</a></li>
           </ul>
