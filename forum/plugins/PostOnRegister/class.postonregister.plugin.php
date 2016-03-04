@@ -139,6 +139,42 @@ class PostOnRegister extends Gdn_Plugin {
         $GLOBALS['age'] = floor($diff / (365*60*60*24));
     }
 
+    public function DiscussionController_AfterPageTitle_Handler($Sender, $Args) {
+        if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
+            $DiscussionUserID = $Args['Discussion']->InsertUserID;
+            $RoleModel = new RoleModel();
+            $Roles = $RoleModel->getByUserID($DiscussionUserID)->resultArray();
+            //print_r($Roles);
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            $registeredRoleId = (int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]);
+            $isapplicant = false;
+            foreach($Roles as $role)
+            {
+                if (in_array ($role['RoleID'], $applicantRoleIDs) )
+                    $isapplicant = true;
+            }
+
+            if ($isapplicant)
+            {
+                $Title = t('Valider');
+                echo anchor(
+                    $Title,
+                    '/discussion/validate/',
+                    'LOL',
+                    array('title' => $Title)
+                );
+                echo "\t";
+                $Title = t('Refuser');
+                echo anchor(
+                    $Title,
+                    '/discussion/decline/',
+                    'LOL',
+                    array('title' => $Title)
+                );
+            }
+        }
+    }
+
     public function userModel_afterRegister_handler($sender, $Args) {
         // Does the user wanna joind the guild ?
         if ($sender->EventArguments['User']['iWannaJoin']!=NULL) {
