@@ -353,15 +353,14 @@ class PostOnRegister extends Gdn_Plugin {
                 $Action = $Sender->ApplicantForm->getValue('Submit');
                 $UserID = $Sender->ApplicantForm->getValue('UserID');
                 try {
-                    if ($Action == 'Approve') {
+                    if ($Action == t('Approve') ) {
                         $Session = Gdn::session();
                         $Email = new Gdn_Email();
                         $UserModel = new UserModel();
                         $Result = $UserModel->Approve($UserID, $Email);
                         
                     }
-                    if ($Action == 'Decline') {
-                        echo "Decline";
+                    if ($Action == t('Decline') ) {
                         declineUser($UserID);
                     }
 
