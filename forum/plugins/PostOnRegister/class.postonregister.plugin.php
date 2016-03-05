@@ -84,7 +84,7 @@ class PostOnRegister extends Gdn_Plugin {
         echo '<div id="howDidYouFindUs">';
         echo '<label for="howDidYouFindUs">Comment avez vous découvert Le Consortium Horizon ?</label>';
         echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"></textarea>';
-        echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Plus de précisions peut-être ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
+        echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Besoin d\'aide ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
         echo '<div id="howDidYouFindUsOK" class="registerNotification success" style="display: none;">On apprécie toutes ces informations !</div>';
         echo '</div>';
 
@@ -193,6 +193,8 @@ class PostOnRegister extends Gdn_Plugin {
             $user = $sender->GetID($userID);
             // Get UserName
             $name = GetValue('Name', $user, $Default = FALSE, $Remove = FALSE);
+            // Get DiscoveryText
+            $DiscoveryText = GetValue('DiscoveryText', $user, $Default = FALSE, $Remove = FALSE);
             // Get first visit date
             $date = Gdn_Format::ToDateTime();
             // Create new discussionModel
@@ -246,7 +248,6 @@ class PostOnRegister extends Gdn_Plugin {
 
             // Discussion content
             $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]
-
             '
             . $game . $ps2Username
 
@@ -256,24 +257,30 @@ class PostOnRegister extends Gdn_Plugin {
 
             '
 
-            [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]
 
+            [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]
             '
             . $howDidYouFindUs .
             '
 
-            [b]Quel âge avez vous ?[/b]
 
+            [b]Quel âge avez vous ?[/b]
             '
             . $GLOBALS['age'] .' ans.'.
             '
 
-            [b]Dites-en un peu plus sur vous :[/b]
 
+            [b]Dites-en un peu plus sur vous :[/b]
             '
             . $moreAboutYou . 
-
             '
+
+
+            [b]Pourquoi voulez-vous vous inscrire ?[/b]
+            '
+            . $DiscoveryText .
+            '
+
 
 
             ------------------------------------------------------------------------
@@ -288,7 +295,7 @@ class PostOnRegister extends Gdn_Plugin {
             - Port : 64738
             - Username/mdp : les tiens sur le forum, une fois ta candidature validée[/color]
 
-            [color=#FF0000]En attente de validation par un modérateur[/color]';
+            [color=#FF0000]En attente de validation par un Référent/Modérateur[/color]';
 
             // Date of creation
             $Discussion['DateInserted'] = $date;

@@ -165,13 +165,6 @@ Main Components
     border: 1px solid #ebccd1;
 }
 
-label[for=Form_DiscoveryText]::after
-{
-    margin-left: 10px;
-    content: "(à destination des administrateurs seulement)"
-}
-
-
 /*Small fix for some shitty CSS i didn't write*/
 #dashboard_entry_register .TextBoxWrapper .PasswordStrength {
     width: 100% !important;
