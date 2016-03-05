@@ -11,35 +11,62 @@ $PluginInfo['PostOnRegister'] = array(
 
 $age="1984";
 
+
 class PostOnRegister extends Gdn_Plugin {
-
-
-
-    public function settingsController_PostOnRegister_create($sender)
-    {
-        $sender->permission('Garden.Settings.Manage');
-        $sender->addSideMenu('/dashboard/settings/postonregister');
-        $sender->setData('Title', t('Post on register settings'));
-        $sender->setData('Description', t('Forum Tour Description'));
-
-        $RegistrationFields = array();
-        $counter = 1;
-
-        foreach (c('ProfileExtender', array())['Fields'] as $key => $value) {
-            if ($value['OnRegister'] == 1) {
-                $RegistrationFields[$value['Name']] = $value['Label'];
-            }
-        }
-        $sender->setData('RegistrationFields', $RegistrationFields);
-        $sender->Render('settings', '', 'plugins/PostOnRegister');
+    /**
+     * Add the Dashboard menu item.
+     */
+    public function base_GetAppSettingsMenuItems_handler($Sender) {
+        $Menu = &$Sender->EventArguments['SideMenu'];
+        $Menu->addLink('Users', t('Post on register settings'), 'settings/postonregister', 'Garden.Settings.Manage');
     }
+
+    public function settingsController_PostOnRegister_create($Sender) {
+        $Sender->permission('Garden.Settings.Manage');
+        $Sender->addSideMenu('/dashboard/settings/postonregister');
+
+        $Sender->setData('Title', t('Post on register settings'));
+        // $sender->setData('Description', t('BLA'));
+
+        // $RegistrationFields = array();
+        // $counter = 1;
+
+        // foreach (c('ProfileExtender', array())['Fields'] as $key => $value) {
+        //     if ($value['OnRegister'] == 1) {
+        //         $RegistrationFields[$value['Name']] = $value['Label'];
+        //     }
+        // }
+
+        $Validation = new Gdn_Validation();
+        $ConfigurationModel = new Gdn_ConfigurationModel($Validation);
+        $ConfigurationModel->SetField(array('Plugins.PostOnRegister.RegisteredRoleID'));
+
+        $Sender->Form->SetModel($ConfigurationModel);
+
+        if($Sender->Form->AuthenticatedPostBack() === FALSE) {
+          $Sender->Form->SetData($ConfigurationModel->Data);
+        }
+        else {
+          if($Sender->Form->Save() !== FALSE) {
+            $Sender->InformMessage('<span class="InformSprite Sliders"></span>' . T('Vos changements ont été sauvegardés.'), 'HasSprite');
+          }
+        }
+        $Sender->Render('settings', '', 'plugins/PostOnRegister');
+    }
+
+    public function entryController_RegisterValidation_handler($sender) {
+        $dateString =$sender->Form->_FormValues['DateOfBirth_Year'].'-'.$sender->Form->_FormValues['DateOfBirth_Month'].'-'.$sender->Form->_FormValues['DateOfBirth_Day'];
+        $diff = abs(strtotime(date('Y-m-d')) - strtotime($dateString));
+        $GLOBALS['age'] = floor($diff / (365*60*60*24));
+    }
+
 
     // this is where the magic happen
     public function EntryController_registerBeforePassword_Handler($Sender, $Args) {
-
         // Check if user wanna join us
         echo '<div id="iWannaJoinNotif" class="registerNotification info">';
-        echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin"> Je souhaite rejoindre la guilde (une candidature sera automatiquement créée)';
+        echo '<label class="CheckBoxLabel" for="iWannaJoin">';
+        echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin"> Je souhaite rejoindre la guilde (une candidature sera automatiquement créée)</label>';
         echo '</div>';
 
         // The main form
@@ -49,27 +76,34 @@ class PostOnRegister extends Gdn_Plugin {
         echo '<div class="registerNotification mainNotification info">
         <h2>Remplissez attentivement les champs demandés !</h2>
         <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
-        <p>Les informations seront passées en revue par un modérateur puis utilisées pour créer votre post de candidature.</p>
+        <p>Les informations seront utilisées pour créer votre post de candidature automatiquement.</p>
+        <p><b>ATTENTION :</b> en créant un post de candidature, vous certifiez avoir lu et accepté <a href="/forum/page/presentation-de-la-guilde" target="_blank">la Charte du Consortium Horizon</a>.</p>
         </div>';
 
         // How did you find us ?
         echo '<div id="howDidYouFindUs">';
-        echo '<label for="howDidYouFindUs">Comment avez vous découvert le consortium horizon ?</label>';
+        echo '<label for="howDidYouFindUs">Comment avez vous découvert Le Consortium Horizon ?</label>';
         echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"></textarea>';
-        echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Plus de précisions peut-être ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
+        echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Besoin d\'aide ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
         echo '<div id="howDidYouFindUsOK" class="registerNotification success" style="display: none;">On apprécie toutes ces informations !</div>';
         echo '</div>';
 
         // Game list
-        echo '<label for="gamelist">Pour quel jeu postulez vous ?</label>';
-        echo '<select id="gamelist" name="gamelist">
-          <option value="Arma 3">Arma 3</option>
-          <option value="Albion Online">Albion Online</option>
-          <option value="Planetside 2">Planetside 2</option>
-          <option value="Star Citizen">Star Citizen</option>
-          <option value="Diplomatie">Diplomatie</option>
-          <option value="Autre">Autre</option>
-        </select>';
+        echo '<label for="gamelist">Pour quel jeu postulez-vous ?</label>';
+        echo '<select id="gamelist" name="gamelist">';
+            // Récupération des noms des catégories principales
+            $SQLSectionName = Gdn::sql()->query('
+                SELECT GDN_Category.Name
+                FROM GDN_Category
+                WHERE GDN_Category.ParentCategoryID = "1000002"
+                ORDER BY GDN_Category.Name ASC');
+            $SectionNameResultArray = $SQLSectionName->resultArray();
+            foreach ($SectionNameResultArray as $value) {
+                echo '<option value="'.$value[Name].'">'.$value[Name].'</option>';
+            }
+        echo '<option value="Diplomatie">Diplomatie</option>
+          <option value="Autre">Autre</option>';
+        echo '</select>';
 
         // Section autre
         echo '<div id="otherRegistrationSection" class="registrationSection" style="display: none;">';
@@ -100,7 +134,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // More about you
         echo '<div id="moreAboutYouSection">';
-        echo '<label for="moreAboutYou">Dites nous en plus sur vous (c\'est important !)</label>';
+        echo '<label for="moreAboutYou">Dites-nous en plus sur vous (c\'est important !)</label>';
         echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required"></textarea>';
         echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
@@ -110,11 +144,6 @@ class PostOnRegister extends Gdn_Plugin {
         echo '</div>';
     }
 
-    public function entryController_RegisterValidation_handler($sender) {
-        $dateString =$sender->Form->_FormValues['DateOfBirth_Year'].'-'.$sender->Form->_FormValues['DateOfBirth_Month'].'-'.$sender->Form->_FormValues['DateOfBirth_Day'];
-        $diff = abs(strtotime(date('Y-m-d')) - strtotime($dateString));
-        $GLOBALS['age'] = floor($diff / (365*60*60*24));
-    }
 
     public function userModel_afterRegister_handler($sender, $Args) {
         // Does the user wanna joind the guild ?
@@ -164,6 +193,8 @@ class PostOnRegister extends Gdn_Plugin {
             $user = $sender->GetID($userID);
             // Get UserName
             $name = GetValue('Name', $user, $Default = FALSE, $Remove = FALSE);
+            // Get DiscoveryText
+            $DiscoveryText = GetValue('DiscoveryText', $user, $Default = FALSE, $Remove = FALSE);
             // Get first visit date
             $date = Gdn_Format::ToDateTime();
             // Create new discussionModel
@@ -174,6 +205,7 @@ class PostOnRegister extends Gdn_Plugin {
             $Discussion['CategoryID'] = '9';
             // Discussion Format (BBcode)
             $Discussion['Format'] = 'BBCode';
+            //$Discussion['Format'] = 'Wysiwyg';
             // Discussion title
             $Discussion['Name'] = '[' . $game . '] ' . $name . ' [En attente de validation]';
 
@@ -188,9 +220,34 @@ class PostOnRegister extends Gdn_Plugin {
 
             }
 
+
+            $PingNames = '';
+            // Récupération des UserID, UserName, UserRole des membres gradés
+            $SQLUserName = Gdn::sql()->query('
+                SELECT GDN_UserRole.UserID, GDN_UserRole.RoleID, GDN_User.Name "UserName", GDN_Role.Name "RoleName"
+                FROM GDN_UserRole, GDN_User, GDN_Role
+                WHERE GDN_UserRole.RoleID = GDN_Role.RoleID AND GDN_UserRole.UserID = GDN_User.UserID
+                AND GDN_Role.Name != "Membre du Consortium"
+                AND GDN_Role.Name != "Candidat"
+                AND GDN_Role.Name != "Inscrit"
+                AND GDN_Role.Name != "Invité"
+                ORDER BY GDN_User.Name ASC');
+            // Le resultat de la requête est stockée dans un tableau
+            $UserNameResultArray = $SQLUserName->resultArray();
+            //echo '<pre>'; print_r($UserNameResultArray); echo '</pre>';      // debuggage
+
+            // Récupération des noms des Référents selon le jeu principal selectionné
+            foreach ($UserNameResultArray as $value) {
+                if (in_array('Référent '.$game, $value)) {
+                    //echo '<pre>'; print_r($value); echo '</pre>';      // debuggage
+                    $PingNames .= '@'.$value[UserName].' ';
+                }
+            }
+
+
+
             // Discussion content
             $Discussion['Body'] = '[b]Pour quel jeu en particulier postulez-vous dans la Guilde ?[/b]
-
             '
             . $game . $ps2Username
 
@@ -200,33 +257,46 @@ class PostOnRegister extends Gdn_Plugin {
 
             '
 
-            [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]
 
+            [b]Comment avez-eu connaissance du Consortium Horizon ?[/b]
             '
             . $howDidYouFindUs .
             '
 
-            [b]Quel âge avez vous ?[/b]
 
+            [b]Quel âge avez vous ?[/b]
             '
             . $GLOBALS['age'] .' ans.'.
             '
 
-            [b]Dites-en un peu plus sur vous :[/b]
 
+            [b]Dites-en un peu plus sur vous :[/b]
             '
-            . $moreAboutYou .
+            . $moreAboutYou . 
             '
+
+
+            [b]Pourquoi voulez-vous vous inscrire ?[/b]
+            '
+            . $DiscoveryText .
+            '
+
 
 
             ------------------------------------------------------------------------
 
-            [color=#0012ff][b]Rappel de Mr Robot[/b] -> tu peux te connecter à mumble en utilisant les informations suivantes :
+            '
+            . $PingNames .
+
+            '
+
+            [color=#0012ff][b]Rappel de Mr Robot[/b] -> tu peux te connecter à Mumble en utilisant les informations suivantes :
             - Adresse : mumble.consortium-horizon.com
             - Port : 64738
             - Username/mdp : les tiens sur le forum, une fois ta candidature validée[/color]
 
-            [color=#FF0000]En attente de validation par un modérateur[/color]';
+            [color=#FF0000]En attente de validation par un Référent/Modérateur[/color]';
+
             // Date of creation
             $Discussion['DateInserted'] = $date;
             // Date of last comment
@@ -238,7 +308,113 @@ class PostOnRegister extends Gdn_Plugin {
             // If everything is ok, refresh discussion count
             if ($DiscussionID) { $DiscussionModel->UpdateDiscussionCount($Discussion['CategoryID']) ;}
         }
+        else
+        {
+            //Put the registerd but not applicant role
+            // Get user ID from sender
+            $userID = $sender->EventArguments['UserID'];
+            // Retreive user object
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            //UserModel::GetRoles($userID)
+            $registeredRoleId = (int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]);
+            $arrayregisteredRoleId = array($registeredRoleId);
+            $UserModel = new UserModel();
+            $UserModel->saveRoles($userID,$arrayregisteredRoleId, true);
 
+        }
+
+    }
+
+    public function DiscussionController_BeforeDiscussionRender_Handler($Sender, $Args){
+        function declineUser($UserID) {
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            $UserModel = new UserModel();
+            // Make sure the $UserID is an applicant
+            $RoleData = $UserModel->GetRoles($UserID);
+            if ($RoleData->numRows() == 0) {
+                throw new Exception(t('ErrorRecordNotFound'));
+            } else {
+                $AppRoles = $RoleData->result(DATASET_TYPE_ARRAY);
+                $ApplicantFound = false;
+                foreach ($AppRoles as $AppRole) {
+                    if (in_array(val('RoleID', $AppRole), $applicantRoleIDs)) {
+                        $ApplicantFound = true;
+                    }
+                }
+            }
+
+            if ($ApplicantFound) {
+                // Retrieve the default role(s) for new users
+                $RoleIDs = array((int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]));
+                // Wipe out old & insert new roles for this user
+                $UserModel->SaveRoles($UserID, $RoleIDs, false);
+            }
+        }
+
+        if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
+            $Sender->ApplicantForm = new Gdn_Form();
+            if (property_exists($Sender, 'ApplicantForm') && $Sender->ApplicantForm && $Sender->ApplicantForm->authenticatedPostBack() === true) {
+                $Action = $Sender->ApplicantForm->getValue('Submit');
+                $UserID = $Sender->ApplicantForm->getValue('UserID');
+                try {
+                    if ($Action == t('Approve') ) {
+                        $Session = Gdn::session();
+                        $Email = new Gdn_Email();
+                        $UserModel = new UserModel();
+                        $Result = $UserModel->Approve($UserID, $Email);
+                        
+                    }
+                    if ($Action == t('Decline') ) {
+                        declineUser($UserID);
+                    }
+
+                } catch (Exception $ex) {
+                    $Result = false;
+                    $Sender->ApplicantForm->addError(strip_tags($ex->getMessage()));
+                }
+            }
+        }
+    }
+
+
+    public function DiscussionController_AfterDiscussionBody_Handler($Sender, $Args) {
+
+
+
+        if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
+
+            $Sender->ApplicantForm = new Gdn_Form();
+            $Discussion = $Args['Discussion'];
+            $DiscussionUserID = $Args['Discussion']->InsertUserID;
+            $RoleModel = new RoleModel();
+            $Roles = $RoleModel->getByUserID($DiscussionUserID)->resultArray();
+            //print_r($Roles);
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            $registeredRoleId = (int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]);
+            $isapplicant = false;
+            foreach($Roles as $role)
+            {
+                if (in_array ($role['RoleID'], $applicantRoleIDs) )
+                    $isapplicant = true;
+            }
+
+            if ($isapplicant)
+            {
+                
+                $Sender->ApplicantForm->AddHidden('DiscussionID', $Sender->DiscussionID);
+                $Sender->ApplicantForm->AddHidden('UserID', $DiscussionUserID);
+                echo $Sender->ApplicantForm->open(array('action' => url(Gdn::controller()->SelfUrl )));
+                echo $Sender->ApplicantForm->errors();
+
+                echo '<div class="ApproveDeclineButton">';
+                echo $Sender->ApplicantForm->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton_Approve'));
+                echo $Sender->ApplicantForm->button('Decline', array('Name' => 'Submit', 'class' => 'SmallButton_Decline'));
+                echo '</div>';
+                echo $Sender->ApplicantForm->close();
+            }
+
+
+        }
     }
 
     /**
@@ -252,4 +428,5 @@ class PostOnRegister extends Gdn_Plugin {
             $sender->AddJsFile('postonregister.js', 'plugins/PostOnRegister');
         }
     }
+
 }

@@ -1,19 +1,16 @@
-<h1><?= $this->Data('Title');
-var_dump($this->Data('RegistrationFields'));
- ?></h1>
-<div class="Info"><?= $this->Data('Description') ?></div>
-<div class="Wrap"><?= Anchor(T('Plugins.PostOnRegister.NewElement', 'New element'), 'settings/postonregisteraddedit', 'SmallButton') ?></div>
+<?php if(!defined("APPLICATION")) exit();
+/* Copyright 2013 Zachary Doll */
+echo Wrap(T($this->Data['Title']), 'h1');
 
-<?= $this->Form->Open() ?>
-<?= $this->Form->Errors();
-$test = array('vanillaelement' => t('Vanilla element'), 'customelement' => t('Custom Element'), 'dom' => t('DOM'));
+echo $this->Form->Open();
+echo $this->Form->Errors();
 
- ?>
-<div id="ForumTourEditContainer">
-  <div class>
-    <?= $this->Form->Label(T('Plugins.PostOnRegister.EditStepPositionMethod', 'Choose a fied'), 'RegistrationField') ?>
-    <?= $this->Form->DropDown('RegistrationField', $this->Data('RegistrationFields') , array('Value' => $this->Form->getValue('PositionMethod'))) ?>
-  </div>
-</div>
+echo Wrap(
+        Wrap(
+                $this->Form->Label(T('RegisteredRoleID'), 'Plugins.PostOnRegister.RegisteredRoleID') .
+                Wrap($this->Form->TextBox('Plugins.PostOnRegister.RegisteredRoleID') .
+                        T(' Role ID pour inscrit pas candidat'), 'div', array('class' => 'Info'), 'li') )
+                , 'ul');
 
-<?= $this->Form->Close('Save') ?>
+echo $this->Form->Close("Enregistrer");
+?>

@@ -19,20 +19,31 @@ if (!function_exists('WriteDiscussionEvent')) {
 }
 ?>
 
-<div class="Box BoxDiscussionEvents">
-  <?php echo PanelHeading('<i class="fa fa-calendar"></i> '.t('Upcoming Events')); ?>
-  <ul class="PanelInfo PanelDiscussionEvents DataList">
-    <li class="<?php echo CssClass($Discussion); ?>">
-    <?php
-      $DiscussionArray = $this->Data('DiscussionEvents')->Result();
-      if ($DiscussionArray != null) {
-        foreach ($DiscussionArray as $Discussion) {
-          WriteDiscussionEvent($Discussion);
-        }
-      } else {
-        echo 'Aucun évènement...';
-      }
-    ?>
-    </li>
-  </ul>
-</div>
+
+<?php
+  $RoleModel = new RoleModel();
+  $Roles = $RoleModel->getByUserID(Gdn::Session()->UserID)->resultArray();
+  foreach ($Roles as $value) {
+    if ($value['RoleID'] == 11) { // test si le user a le rôle "membre du consortium"
+?>
+      <div class="Box BoxDiscussionEvents">
+        <?php echo PanelHeading('<i class="fa fa-calendar"></i> '.t('Upcoming Events')); ?>
+        <ul class="PanelInfo PanelDiscussionEvents DataList">
+          <li class="<?php echo CssClass($Discussion); ?>">
+          <?php
+            $DiscussionArray = $this->Data('DiscussionEvents')->Result();
+            if ($DiscussionArray != null) {
+              foreach ($DiscussionArray as $Discussion) {
+                WriteDiscussionEvent($Discussion);
+              }
+            } else {
+              echo 'Aucun évènement...';
+            }
+          ?>
+          </li>
+        </ul>
+      </div>
+<?php
+    }
+  }
+?>

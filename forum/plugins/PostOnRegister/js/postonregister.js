@@ -55,25 +55,13 @@ $(document).ready(function() {
     });
 
     // How did you find us focus/blur actions
-    $( "#howDidYouFindUsInput" ).blur(function() {
-        var minLength = 5;
-        var goodLength = 10;
-
-        if($(this).val().split(/\s+/).length < minLength) {
-            $( "#howDidYouFindUsKO" ).fadeIn();
-            return false;
-        }
-        else if(goodLength < $(this).val().split(/\s+/).length) {
-            $( "#howDidYouFindUsOK" ).fadeIn();
-            return false;
-        }
-    });
-
     $( "#howDidYouFindUsInput" ).focus(function() {
-        $( "#howDidYouFindUsKO" ).fadeOut();
-        $( "#howDidYouFindUsOK" ).fadeOut();
+        $( "#howDidYouFindUsKO" ).fadeIn();
     });
-
+    $( "#howDidYouFindUsInput" ).blur(function() {
+        $( "#howDidYouFindUsKO" ).fadeOut();
+    });
+    
 
     // More about you focus/blur actions
     $( "#moreAboutYouInput" ).blur(function() {

@@ -165,15 +165,44 @@ Main Components
     border: 1px solid #ebccd1;
 }
 
-label[for=Form_DiscoveryText]::after
-{
-    margin-left: 10px;
-    content: "(à destination des administrateurs seulement)"
-}
-
-
 /*Small fix for some shitty CSS i didn't write*/
 #dashboard_entry_register .TextBoxWrapper .PasswordStrength {
     width: 100% !important;
     padding: 0;
+}
+
+
+.ApproveDeclineButton {
+    margin-top: 25px;
+    text-align: center;
+}
+
+
+.ApproveDeclineButton .SmallButton_Approve, .ApproveDeclineButton .SmallButton_Decline {
+    font-size: 16px;
+    color: white;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    padding: 4px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.ApproveDeclineButton .SmallButton_Approve {
+    background-color: #388E3C;
+    border: 1px solid #2E7D32;
+}
+.ApproveDeclineButton .SmallButton_Approve:hover {
+    background-color: #43A047;
+    border: 1px solid #388E3C;
+}
+
+.ApproveDeclineButton .SmallButton_Decline {
+    background-color: #D32F2F;
+    border: 1px solid #C62828;
+}
+.ApproveDeclineButton .SmallButton_Decline:hover {
+    background-color: #F44336;
+    border: 1px solid #E53935;
 }
