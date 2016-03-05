@@ -177,3 +177,32 @@ label[for=Form_DiscoveryText]::after
     width: 100% !important;
     padding: 0;
 }
+
+.SmallButton_Approve, .SmallButton_Decline {
+    font-size: 16px;
+    color: white;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    padding: 4px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.SmallButton_Approve {
+    background-color: #388E3C;
+    border: 1px solid #2E7D32;
+}
+.SmallButton_Approve:hover {
+    background-color: #43A047;
+    border: 1px solid #388E3C;
+}
+
+.SmallButton_Decline {
+    background-color: #D32F2F;
+    border: 1px solid #C62828;
+}
+.SmallButton_Decline:hover {
+    background-color: #F44336;
+    border: 1px solid #E53935;
+}
