@@ -319,7 +319,7 @@ class PostOnRegister extends Gdn_Plugin {
     }
 
 
-    public function DiscussionController_AfterPageTitle_Handler($Sender, $Args) {
+    public function DiscussionController_AfterDiscussionBody_Handler($Sender, $Args) {
         function declineUser($UserID) {
             $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
             $UserModel = new UserModel();
@@ -390,7 +390,7 @@ class PostOnRegister extends Gdn_Plugin {
                 
                 $Sender->ApplicantForm->AddHidden('DiscussionID', $Sender->DiscussionID);
                 $Sender->ApplicantForm->AddHidden('UserID', $DiscussionUserID);
-                echo $Sender->ApplicantForm->open(array('action' => url('/discussion/'.$Discussion->DiscussionID.'/'.Gdn::session()->TransientKey().'?Target='.urlencode(Gdn::controller()->SelfUrl) )));
+                echo $Sender->ApplicantForm->open(array('action' => url(Gdn::controller()->SelfUrl )));
                 echo $Sender->ApplicantForm->errors();
 
                 echo $Sender->ApplicantForm->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton'));
