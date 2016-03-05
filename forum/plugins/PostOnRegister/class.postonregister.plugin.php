@@ -393,8 +393,10 @@ class PostOnRegister extends Gdn_Plugin {
                 echo $Sender->ApplicantForm->open(array('action' => url(Gdn::controller()->SelfUrl )));
                 echo $Sender->ApplicantForm->errors();
 
+                echo '<div class="ApproveDeclineButton">';
                 echo $Sender->ApplicantForm->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton_Approve'));
                 echo $Sender->ApplicantForm->button('Decline', array('Name' => 'Submit', 'class' => 'SmallButton_Decline'));
+                echo '</div>';
                 echo $Sender->ApplicantForm->close();
             }
 

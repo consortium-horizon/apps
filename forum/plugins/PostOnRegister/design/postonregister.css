@@ -178,7 +178,14 @@ label[for=Form_DiscoveryText]::after
     padding: 0;
 }
 
-.SmallButton_Approve, .SmallButton_Decline {
+
+.ApproveDeclineButton {
+    margin-top: 25px;
+    text-align: center;
+}
+
+
+.ApproveDeclineButton .SmallButton_Approve, .ApproveDeclineButton .SmallButton_Decline {
     font-size: 16px;
     color: white;
     border-radius: 3px;
@@ -189,20 +196,20 @@ label[for=Form_DiscoveryText]::after
     cursor: pointer;
 }
 
-.SmallButton_Approve {
+.ApproveDeclineButton .SmallButton_Approve {
     background-color: #388E3C;
     border: 1px solid #2E7D32;
 }
-.SmallButton_Approve:hover {
+.ApproveDeclineButton .SmallButton_Approve:hover {
     background-color: #43A047;
     border: 1px solid #388E3C;
 }
 
-.SmallButton_Decline {
+.ApproveDeclineButton .SmallButton_Decline {
     background-color: #D32F2F;
     border: 1px solid #C62828;
 }
-.SmallButton_Decline:hover {
+.ApproveDeclineButton .SmallButton_Decline:hover {
     background-color: #F44336;
     border: 1px solid #E53935;
 }
