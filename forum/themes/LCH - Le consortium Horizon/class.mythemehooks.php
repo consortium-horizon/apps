@@ -29,7 +29,7 @@ class MyThemeThemeHooks implements Gdn_IPlugin {
        $Sender->AddJsFile('knockout.js');
        $Sender->AddJsFile('stickySidebar.js');
        $Sender->AddJsFile('init.js');
-       $Sender->AddJsFile('converse.min.js');
+       // $Sender->AddJsFile('converse.min.js');
     }
 
     //  add css?
