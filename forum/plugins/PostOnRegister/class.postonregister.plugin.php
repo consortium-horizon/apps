@@ -93,10 +93,10 @@ class PostOnRegister extends Gdn_Plugin {
         echo '<select id="gamelist" name="gamelist">';
             // Récupération des noms des catégories principales
             $SQLSectionName = Gdn::sql()->query('
-                SELECT gdn_category.Name
-                FROM gdn_category
-                WHERE gdn_category.ParentCategoryID = "1000002"
-                ORDER BY gdn_category.Name ASC');
+                SELECT GDN_Category.Name
+                FROM GDN_Category
+                WHERE GDN_Category.ParentCategoryID = "1000002"
+                ORDER BY GDN_Category.Name ASC');
             $SectionNameResultArray = $SQLSectionName->resultArray();
             foreach ($SectionNameResultArray as $value) {
                 echo '<option value="'.$value[Name].'">'.$value[Name].'</option>';
@@ -224,14 +224,14 @@ class PostOnRegister extends Gdn_Plugin {
             $PingNames = '';
             // Récupération des UserID, UserName, UserRole des membres gradés
             $SQLUserName = Gdn::sql()->query('
-                SELECT gdn_userrole.UserID, gdn_userrole.RoleID, gdn_user.Name "UserName", gdn_role.Name "RoleName"
-                FROM gdn_userrole, gdn_user, gdn_role
-                WHERE gdn_userrole.RoleID = gdn_role.RoleID AND gdn_userrole.UserID = gdn_user.UserID
-                AND gdn_role.Name != "Membre du Consortium"
-                AND gdn_role.Name != "Candidat"
-                AND gdn_role.Name != "Inscrit"
-                AND gdn_role.Name != "Invité"
-                ORDER BY gdn_user.Name ASC');
+                SELECT GDN_UserRole.UserID, GDN_UserRole.RoleID, GDN_User.Name "UserName", GDN_Role.Name "RoleName"
+                FROM GDN_UserRole, GDN_User, GDN_Role
+                WHERE GDN_UserRole.RoleID = GDN_Role.RoleID AND GDN_UserRole.UserID = GDN_User.UserID
+                AND GDN_Role.Name != "Membre du Consortium"
+                AND GDN_Role.Name != "Candidat"
+                AND GDN_Role.Name != "Inscrit"
+                AND GDN_Role.Name != "Invité"
+                ORDER BY GDN_User.Name ASC');
             // Le resultat de la requête est stockée dans un tableau
             $UserNameResultArray = $SQLUserName->resultArray();
             //echo '<pre>'; print_r($UserNameResultArray); echo '</pre>';      // debuggage
