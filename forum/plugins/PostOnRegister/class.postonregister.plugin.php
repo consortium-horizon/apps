@@ -318,8 +318,7 @@ class PostOnRegister extends Gdn_Plugin {
 
     }
 
-
-    public function DiscussionController_AfterDiscussionBody_Handler($Sender, $Args) {
+    public function DiscussionController_BeforeDiscussionRender_Handler($Sender, $Args){
         function declineUser($UserID) {
             $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
             $UserModel = new UserModel();
@@ -345,9 +344,7 @@ class PostOnRegister extends Gdn_Plugin {
             }
         }
 
-
         if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
-
             $Sender->ApplicantForm = new Gdn_Form();
             if (property_exists($Sender, 'ApplicantForm') && $Sender->ApplicantForm && $Sender->ApplicantForm->authenticatedPostBack() === true) {
                 $Action = $Sender->ApplicantForm->getValue('Submit');
@@ -369,7 +366,17 @@ class PostOnRegister extends Gdn_Plugin {
                     $Sender->ApplicantForm->addError(strip_tags($ex->getMessage()));
                 }
             }
-            
+        }
+    }
+
+
+    public function DiscussionController_AfterDiscussionBody_Handler($Sender, $Args) {
+
+
+
+        if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
+
+            $Sender->ApplicantForm = new Gdn_Form();
             $Discussion = $Args['Discussion'];
             $DiscussionUserID = $Args['Discussion']->InsertUserID;
             $RoleModel = new RoleModel();
