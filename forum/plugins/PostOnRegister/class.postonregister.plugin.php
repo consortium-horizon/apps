@@ -318,6 +318,90 @@ class PostOnRegister extends Gdn_Plugin {
 
     }
 
+
+    public function DiscussionController_AfterPageTitle_Handler($Sender, $Args) {
+        function declineUser($UserID) {
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            $UserModel = new UserModel();
+            // Make sure the $UserID is an applicant
+            $RoleData = $UserModel->GetRoles($UserID);
+            if ($RoleData->numRows() == 0) {
+                throw new Exception(t('ErrorRecordNotFound'));
+            } else {
+                $AppRoles = $RoleData->result(DATASET_TYPE_ARRAY);
+                $ApplicantFound = false;
+                foreach ($AppRoles as $AppRole) {
+                    if (in_array(val('RoleID', $AppRole), $applicantRoleIDs)) {
+                        $ApplicantFound = true;
+                    }
+                }
+            }
+
+            if ($ApplicantFound) {
+                // Retrieve the default role(s) for new users
+                $RoleIDs = array((int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]));
+                // Wipe out old & insert new roles for this user
+                $UserModel->SaveRoles($UserID, $RoleIDs, false);
+            }
+        }
+
+
+        if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
+
+            $Sender->ApplicantForm = new Gdn_Form();
+            if (property_exists($Sender, 'ApplicantForm') && $Sender->ApplicantForm && $Sender->ApplicantForm->authenticatedPostBack() === true) {
+                $Action = $Sender->ApplicantForm->getValue('Submit');
+                $UserID = $Sender->ApplicantForm->getValue('UserID');
+                try {
+                    if ($Action == 'Approve') {
+                        $Session = Gdn::session();
+                        $Email = new Gdn_Email();
+                        $UserModel = new UserModel();
+                        $Result = $UserModel->Approve($UserID, $Email);
+                        
+                    }
+                    if ($Action == 'Decline') {
+                        echo "Decline";
+                        declineUser($UserID);
+                    }
+
+                } catch (Exception $ex) {
+                    $Result = false;
+                    $Sender->ApplicantForm->addError(strip_tags($ex->getMessage()));
+                }
+            }
+            
+            $Discussion = $Args['Discussion'];
+            $DiscussionUserID = $Args['Discussion']->InsertUserID;
+            $RoleModel = new RoleModel();
+            $Roles = $RoleModel->getByUserID($DiscussionUserID)->resultArray();
+            //print_r($Roles);
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            $registeredRoleId = (int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]);
+            $isapplicant = false;
+            foreach($Roles as $role)
+            {
+                if (in_array ($role['RoleID'], $applicantRoleIDs) )
+                    $isapplicant = true;
+            }
+
+            if ($isapplicant)
+            {
+                
+                $Sender->ApplicantForm->AddHidden('DiscussionID', $Sender->DiscussionID);
+                $Sender->ApplicantForm->AddHidden('UserID', $DiscussionUserID);
+                echo $Sender->ApplicantForm->open(array('action' => url('/discussion/'.$Discussion->DiscussionID.'/'.Gdn::session()->TransientKey().'?Target='.urlencode(Gdn::controller()->SelfUrl) )));
+                echo $Sender->ApplicantForm->errors();
+
+                echo $Sender->ApplicantForm->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton'));
+                echo $Sender->ApplicantForm->button('Decline', array('Name' => 'Submit', 'class' => 'SmallButton'));
+                echo $Sender->ApplicantForm->close();
+            }
+
+
+        }
+    }
+
     /**
     * Load assets.
     */
