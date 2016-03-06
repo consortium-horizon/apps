@@ -21,6 +21,46 @@ class PostOnRegister extends Gdn_Plugin {
         $Menu->addLink('Users', t('Post on register settings'), 'settings/postonregister', 'Garden.Settings.Manage');
     }
 
+    public function UserController_Refuse_create($Sender, $UserID = '', $TransientKey = '') {
+        function declineUser($UserID) {
+            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+            $UserModel = new UserModel();
+            // Make sure the $UserID is an applicant
+            $RoleData = $UserModel->GetRoles($UserID);
+            if ($RoleData->numRows() == 0) {
+                throw new Exception(t('ErrorRecordNotFound'));
+            } else {
+                $AppRoles = $RoleData->result(DATASET_TYPE_ARRAY);
+                $ApplicantFound = false;
+                foreach ($AppRoles as $AppRole) {
+                    if (in_array(val('RoleID', $AppRole), $applicantRoleIDs)) {
+                        $ApplicantFound = true;
+                    }
+                }
+            }
+
+            if ($ApplicantFound) {
+                // Retrieve the default role(s) for new users
+                $RoleIDs = array((int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]));
+                // Wipe out old & insert new roles for this user
+                $UserModel->SaveRoles($UserID, $RoleIDs, false);
+                return true;
+            }
+            return false;
+        }
+
+        $Sender->permission('Garden.Users.Approve');
+        $Session = Gdn::session();
+        if ($Session->validateTransientKey($TransientKey)) {
+            if (declineUser($UserID)) {
+                $Sender->informMessage(t('Your changes have been saved.'));
+            }
+            else
+                $Sender->informMessage(t('FUCK'));
+        }
+        $Sender->applicants();
+    }    
+
     public function settingsController_PostOnRegister_create($Sender) {
         $Sender->permission('Garden.Settings.Manage');
         $Sender->addSideMenu('/dashboard/settings/postonregister');
