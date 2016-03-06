@@ -57,7 +57,8 @@ if ($NumApplicants == 0) { ?>
     </table>
     <div class="Info">
     <?php
-    echo $this->Form->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton'));
+    echo $this->Form->button(t('Approve'), array('Name' => 'Submit', 'class' => 'SmallButton'));
+    echo $this->Form->button(t('Decline'), array('Name' => 'Submit', 'class' => 'SmallButton'));
     echo $this->Form->button('Supprimer le compte', array('Name' => 'Submit', 'class' => 'SmallButton'));
     ?></div><?php
 }
