@@ -48,7 +48,7 @@ if ($NumApplicants == 0) { ?>
                     ?></td>
                 <td><?php
                     echo anchor(t('Approve'), '/user/approve/'.$User->UserID.'/'.$Session->TransientKey())
-                        .' | '.anchor('Refuser', '/user/decline/'.$User->UserID.'/'.$Session->TransientKey())
+                        .' | '.anchor(t('Decline'), '/user/decline/'.$User->UserID.'/'.$Session->TransientKey())
                         .' | '.anchor('Supprimer le compte', '/user/decline/'.$User->UserID.'/'.$Session->TransientKey());
                     ?></td>
             </tr>
