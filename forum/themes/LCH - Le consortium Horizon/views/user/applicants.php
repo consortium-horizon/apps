@@ -37,7 +37,7 @@ if ($NumApplicants == 0) { ?>
                 <td><?php echo $this->Form->CheckBox('Applicants[]', '', array('value' => $User->UserID)); ?></td>
                 <td class="Alt">
                     <?php
-                    printf(t('<strong>%1$s</strong> (%2$s) %3$s'), userAnchor($User, 'Username'), Gdn_Format::Email($User->Email), Gdn_Format::date($User->DateInserted));
+                    printf(t('<strong>%1$s</strong> (%2$s) %3$s - %4$s'), userAnchor($User, 'Username'), Gdn_Format::Email($User->Email), Gdn_Format::date($User->DateInserted), '<a href="/forum/profile/discussions/'.$User->UserID.'/'.$User->Name.'">Discussions</a>');
 
                     $this->EventArguments['User'] = $User;
                     $this->fireEvent("ApplicantInfo");
