@@ -259,6 +259,15 @@ body {
        max-width: 100%;
    }
 
+   .PageContent{
+        padding: 10px 20px;
+        @include box-shadow(0, 0, 3px, #D5D5D5, $inset: false);
+        background-color: white;
+        border-radius: 2px;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+   }
+
     // Category group
     .CategoryGroup {
         margin-bottom: 25px;

@@ -585,6 +585,16 @@ body {
 #Content img {
   max-width: 100%;
 }
+#Content .PageContent {
+  padding: 10px 20px;
+  -webkit-box-shadow: 0 0 3px #d5d5d5;
+  -moz-box-shadow: 0 0 3px #d5d5d5;
+  box-shadow: 0 0 3px #d5d5d5;
+  background-color: white;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+}
 #Content .CategoryGroup {
   margin-bottom: 25px;
 }
