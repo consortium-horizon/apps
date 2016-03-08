@@ -50,7 +50,7 @@
         <li class="dropdown">
           Guilde
           <ul>
-            <li><a href="{link path="/page/presentation-de-la-guilde"}">Charte</a></li>
+            <li><a href="{link path="/page/presentation-de-la-guilde"}">Présentation &amp; Charte</a></li>
             <li><a href="{link path="/organigramme"}">Organigramme</a></li>
           </ul>
         </li>
