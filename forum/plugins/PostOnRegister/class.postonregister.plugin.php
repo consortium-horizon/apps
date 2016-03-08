@@ -449,7 +449,7 @@ class PostOnRegister extends Gdn_Plugin {
                         $Result = $UserModel->Approve($UserID, $Email);
                         
                     }
-                    if ($Action == t('Decline') ) {
+                    if ($Action == t('Refuse') ) {
                         PostOnRegister::declineUser($UserID);
                     }
 
@@ -492,8 +492,8 @@ class PostOnRegister extends Gdn_Plugin {
                 echo $Sender->ApplicantForm->errors();
 
                 echo '<div class="ApproveDeclineButton">';
-                echo $Sender->ApplicantForm->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton_Approve'));
-                echo $Sender->ApplicantForm->button('Decline', array('Name' => 'Submit', 'class' => 'SmallButton_Decline'));
+                echo $Sender->ApplicantForm->button(t('Approve'), array('Name' => 'Submit', 'class' => 'SmallButton_Approve'));
+                echo $Sender->ApplicantForm->button(t('Refuse'), array('Name' => 'Submit', 'class' => 'SmallButton_Decline'));
                 echo '</div>';
                 echo $Sender->ApplicantForm->close();
             }
