@@ -13,6 +13,65 @@ $age="1984";
 
 
 class PostOnRegister extends Gdn_Plugin {
+
+    public static function declineUser($UserID) {
+        $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
+        $UserModel = new UserModel();
+        // Make sure the $UserID is an applicant
+        $RoleData = $UserModel->GetRoles($UserID);
+        if ($RoleData->numRows() == 0) {
+            throw new Exception(t('ErrorRecordNotFound'));
+        } else {
+            $AppRoles = $RoleData->result(DATASET_TYPE_ARRAY);
+            $ApplicantFound = false;
+            foreach ($AppRoles as $AppRole) {
+                if (in_array(val('RoleID', $AppRole), $applicantRoleIDs)) {
+                    $ApplicantFound = true;
+                }
+            }
+        }
+
+        if ($ApplicantFound) {
+            // Retrieve the default role(s) for new users
+            $RoleIDs = array((int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]));
+            // Wipe out old & insert new roles for Sender user
+            $UserModel->SaveRoles($UserID, $RoleIDs, false);
+            return true;
+        }
+        return false;
+    }
+
+    public static function handleApplicant($Sender, $Action, $UserID) {
+        $Sender->permission('Garden.Users.Approve');
+
+        //$this->_DeliveryType = DELIVERY_TYPE_BOOL;
+        if (!in_array($Action, array('Approve', 'Decline' )) || !is_numeric($UserID)) {
+            $Sender->Form->addError('ErrorInput');
+            $Result = false;
+        } else {
+            $Session = Gdn::session();
+            $UserModel = new UserModel();
+            if (is_numeric($UserID)) {
+                try {
+                    $Sender->EventArguments['UserID'] = $UserID;
+                    $Sender->fireEvent("Before{$Action}User");
+
+                    $Email = new Gdn_Email();
+                    $Result = $UserModel->$Action($UserID, $Email);
+
+                    // Re-calculate applicant count
+                    $RoleModel = new RoleModel();
+                    $RoleModel->GetApplicantCount(true);
+
+                    $Sender->fireEvent("After{$Action}User");
+                } catch (Exception $ex) {
+                    $Result = false;
+                    $Sender->Form->addError(strip_tags($ex->getMessage()));
+                }
+            }
+        }
+    }
+
     /**
      * Add the Dashboard menu item.
      */
@@ -20,6 +79,56 @@ class PostOnRegister extends Gdn_Plugin {
         $Menu = &$Sender->EventArguments['SideMenu'];
         $Menu->addLink('Users', t('Post on register settings'), 'settings/postonregister', 'Garden.Settings.Manage');
     }
+
+    public function UserController_applicants_create($Sender)
+    {
+        $Sender->permission('Garden.Users.Approve');
+        $Sender->addSideMenu('dashboard/user/applicants');
+        $Sender->addJsFile('jquery.gardencheckcolumn.js');
+        $Sender->title(t('Applicants'));
+
+        $Sender->fireEvent('BeforeApplicants');
+
+        if ($Sender->Form->authenticatedPostBack() === true) {
+            $Action = $Sender->Form->getValue('Submit');
+            $Applicants = $Sender->Form->getValue('Applicants');
+            $ApplicantCount = is_array($Applicants) ? count($Applicants) : 0;
+            print_r($Action);
+            if ($ApplicantCount > 0 && in_array($Action, array('Approve', 'Decline' ) )) {
+                $Session = Gdn::session();
+
+                for ($i = 0; $i < $ApplicantCount; ++$i) {
+                    echo "HandlerApplicant\n";
+                    PostOnRegister::handleApplicant($Sender, $Action, $Applicants[$i]);
+                }
+            }
+            if ($ApplicantCount > 0 && $Action == 'Refuse') {
+                $Session = Gdn::session();
+                for ($i = 0; $i < $ApplicantCount; ++$i) {
+                    PostOnRegister::declineUser($Applicants[$i]);
+                }
+            }
+        }
+        $UserModel = Gdn::userModel();
+        $Sender->UserData = $UserModel->GetApplicants();
+        $Sender->View = 'applicants';
+        $Sender->render();
+    }
+
+    public function UserController_Refuse_create($Sender, $UserID = '', $TransientKey = '') {
+
+
+        $Sender->permission('Garden.Users.Approve');
+        $Session = Gdn::session();
+        if ($Session->validateTransientKey($TransientKey)) {
+            if (PostOnRegister::declineUser($UserID)) {
+                $Sender->informMessage(t('Your changes have been saved.'));
+            }
+            else
+                $Sender->informMessage(t('FUCK'));
+        }
+        $Sender->applicants();
+    }    
 
     public function settingsController_PostOnRegister_create($Sender) {
         $Sender->permission('Garden.Settings.Manage');
@@ -326,30 +435,6 @@ class PostOnRegister extends Gdn_Plugin {
     }
 
     public function DiscussionController_BeforeDiscussionRender_Handler($Sender, $Args){
-        function declineUser($UserID) {
-            $applicantRoleIDs = RoleModel::getDefaultRoles(RoleModel::TYPE_APPLICANT);
-            $UserModel = new UserModel();
-            // Make sure the $UserID is an applicant
-            $RoleData = $UserModel->GetRoles($UserID);
-            if ($RoleData->numRows() == 0) {
-                throw new Exception(t('ErrorRecordNotFound'));
-            } else {
-                $AppRoles = $RoleData->result(DATASET_TYPE_ARRAY);
-                $ApplicantFound = false;
-                foreach ($AppRoles as $AppRole) {
-                    if (in_array(val('RoleID', $AppRole), $applicantRoleIDs)) {
-                        $ApplicantFound = true;
-                    }
-                }
-            }
-
-            if ($ApplicantFound) {
-                // Retrieve the default role(s) for new users
-                $RoleIDs = array((int) C('Plugins.PostOnRegister.RegisteredRoleID', $applicantRoleIDs[0]));
-                // Wipe out old & insert new roles for this user
-                $UserModel->SaveRoles($UserID, $RoleIDs, false);
-            }
-        }
 
         if (Gdn::Session()->checkPermission('Garden.Users.Approve')) {
             $Sender->ApplicantForm = new Gdn_Form();
@@ -364,8 +449,8 @@ class PostOnRegister extends Gdn_Plugin {
                         $Result = $UserModel->Approve($UserID, $Email);
                         
                     }
-                    if ($Action == t('Decline') ) {
-                        declineUser($UserID);
+                    if ($Action == t('Refuse') ) {
+                        PostOnRegister::declineUser($UserID);
                     }
 
                 } catch (Exception $ex) {
@@ -407,8 +492,8 @@ class PostOnRegister extends Gdn_Plugin {
                 echo $Sender->ApplicantForm->errors();
 
                 echo '<div class="ApproveDeclineButton">';
-                echo $Sender->ApplicantForm->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton_Approve'));
-                echo $Sender->ApplicantForm->button('Decline', array('Name' => 'Submit', 'class' => 'SmallButton_Decline'));
+                echo $Sender->ApplicantForm->button(t('Approve'), array('Name' => 'Submit', 'class' => 'SmallButton_Approve'));
+                echo $Sender->ApplicantForm->button(t('Refuse'), array('Name' => 'Submit', 'class' => 'SmallButton_Decline'));
                 echo '</div>';
                 echo $Sender->ApplicantForm->close();
             }

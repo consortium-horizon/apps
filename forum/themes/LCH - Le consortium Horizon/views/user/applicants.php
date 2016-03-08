@@ -48,16 +48,17 @@ if ($NumApplicants == 0) { ?>
                     ?></td>
                 <td><?php
                     echo anchor(t('Approve'), '/user/approve/'.$User->UserID.'/'.$Session->TransientKey())
-                        .' '.anchor('Supprimer le compte', '/user/decline/'.$User->UserID.'/'.$Session->TransientKey());
+                        .' | '.anchor(t('Refuse'), '/user/refuse/'.$User->UserID.'/'.$Session->TransientKey())
+                        .' | '.anchor(t('Decline'), '/user/decline/'.$User->UserID.'/'.$Session->TransientKey());
                     ?></td>
             </tr>
         <?php } ?>
         </tbody>
     </table>
     <div class="Info">
-    <?php
-    echo $this->Form->button('Approve', array('Name' => 'Submit', 'class' => 'SmallButton'));
-    echo $this->Form->button('Supprimer le compte', array('Name' => 'Submit', 'class' => 'SmallButton'));
-    ?></div><?php
+    <input type="submit" id="Form_Approve" name="Submit" value="Approve" class="SmallButton">
+    <input type="submit" id="Form_Refuse" name="Submit" value="Refuse" class="SmallButton">
+    <input type="submit" id="Form_Decline" name="Submit" value="Decline" class="SmallButton">
+    </div><?php
 }
 echo $this->Form->close();
