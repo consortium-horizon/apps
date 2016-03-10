@@ -155,7 +155,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 					echo $Sender->Form->label('<b>'.t('Remark').' : </b>', 'DiscussionEventRemark'), ' ';
 					echo $this->Form->TextBox('Remark').' ';
 					echo $this->Form->getHidden();
-					echo '<span class="Buttons"><input id="Form_Sinscrire" class="Button" type="submit" value="'.t('Subscribe').'" name="'.t('Subscribe').'"></span>';
+					echo '<span class="Buttons"><input id="Form_Sinscrire" class="Button DiscussionEventButton" type="submit" value="'.t('Subscribe').'" name="'.t('Subscribe').'"></span>';
 					//echo $this->Form->Close(t('Subscribe'));
 				}
 				else
