@@ -212,7 +212,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 				//$Name = 'moi';
 				$Name = Gdn::UserModel()->GetID($GuestID)->Name;
 				echo '<li>'.$Name;
-				if ($Remark != '') { echo ' - '.$Remark;};
+				if ($Remark != '') { echo ' <i>- '.$Remark.'</i>';};
 				echo '</li>';
 			}
 			echo '</ul><br/>';

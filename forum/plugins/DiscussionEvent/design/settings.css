@@ -69,6 +69,10 @@
   -webkit-border-radius: 3px;
 }
 
+.GuestList i {
+  color: #757575;
+}
+
 .DiscussionEventButton {
   margin-left: 15px;
   padding: 7px;
