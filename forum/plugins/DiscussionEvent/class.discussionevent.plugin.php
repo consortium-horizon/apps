@@ -152,10 +152,11 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 				if (!$Guests || !array_key_exists($UserId,$Guests) )
 				{
 					$this->Form->AddHidden('Type', 'Subscribe', true);
-					echo $Sender->Form->label(t('Remark'), 'DiscussionEventRemark'), ' ';
-					echo $this->Form->TextBox('Remark');
+					echo $Sender->Form->label('<b>'.t('Remark').' : </b>', 'DiscussionEventRemark'), ' ';
+					echo $this->Form->TextBox('Remark').' ';
 					echo $this->Form->getHidden();
-					echo $this->Form->Close(t('Subscribe'));
+					echo '<span class="Buttons"><input id="Form_Sinscrire" class="Button" type="submit" value="'.t('Subscribe').'" name="'.t('Subscribe').'"></span>';
+					//echo $this->Form->Close(t('Subscribe'));
 				}
 				else
 				{
@@ -204,13 +205,15 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 	public static function displayEventGuests($EventGuests) {
 		if ($EventGuests) {
 			echo '<br/>';
-			echo Wrap(t('Guests List'), 'h4', '');
+			echo Wrap(t('Guests List'), 'h4', ' class="GuestListTitle"');
 			echo '<ul class="DiscussionEvent GuestList">';
 			foreach($EventGuests as $GuestID => $Remark)
 			{
 				//$Name = 'moi';
 				$Name = Gdn::UserModel()->GetID($GuestID)->Name;
-				echo '<li>'.$Name.' - '.$Remark.'</li>';
+				echo '<li>'.$Name;
+				if ($Remark != '') { echo ' - '.$Remark;};
+				echo '</li>';
 			}
 			echo '</ul><br/>';
 		}
