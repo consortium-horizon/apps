@@ -52,3 +52,24 @@
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
 }
+
+.GuestListTitle {
+  text-transform: uppercase;
+}
+
+.GuestList {
+  margin-top: 3px;
+  padding: 10px;
+  font-size: 14px;
+  color: black;
+  background-color: #E3F2FD;
+  border: 1px solid #90CAF9;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+.Buttons .Button {
+  margin-left: 15px;
+  padding: 7px;
+}
