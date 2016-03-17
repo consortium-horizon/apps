@@ -22,3 +22,4 @@ $Definition['Guests List'] = 'Liste des participants';
 $Definition['Remark'] = 'Remarque (facultatif)';
 $Definition['Subscribe'] = 'S\'inscrire à l\'évènement';
 $Definition['Unsubscribe'] = 'Se désinscrire de l\'évènement';
+$Definition['Title'] = 'Inscription à l\'évènement';
