@@ -151,12 +151,13 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 			if ($UserId) {
 				if (!$Guests || !array_key_exists($UserId,$Guests) )
 				{
+					echo '<br><hr><br>';
+					echo Wrap(t('Title'), 'h4', ' class="GuestListTitle"');
 					$this->Form->AddHidden('Type', 'Subscribe', true);
 					echo $Sender->Form->label('<b>'.t('Remark').' : </b>', 'DiscussionEventRemark'), ' ';
 					echo $this->Form->TextBox('Remark').' ';
 					echo $this->Form->getHidden();
-					echo '<span class="Buttons"><input id="Form_Sinscrire" class="Button DiscussionEventButton" type="submit" value="'.t('Subscribe').'" name="'.t('Subscribe').'"></span>';
-					//echo $this->Form->Close(t('Subscribe'));
+					echo $this->Form->Close(t('Subscribe'));
 				}
 				else
 				{
@@ -204,7 +205,7 @@ class DiscussionEventPlugin extends Gdn_Plugin {
 
 	public static function displayEventGuests($EventGuests) {
 		if ($EventGuests) {
-			echo '<br/>';
+			echo '<br><hr><br>';
 			echo Wrap(t('Guests List'), 'h4', ' class="GuestListTitle"');
 			echo '<ul class="DiscussionEvent GuestList">';
 			foreach($EventGuests as $GuestID => $Remark)
