@@ -1,7 +1,7 @@
-<?php
+<?php if (!defined('APPLICATION')) exit;
 
 /**
- * API hooks for hooking into Garden and its applications.
+ * API hooks for hooking into Garden and its applications
  *
  * The API hooks handles hooking into different events throughout Garden and its
  * applications. More specifically, this class hooks into the dispatcher to
@@ -14,8 +14,10 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-final class APIHooks implements Gdn_IPlugin
+class APIHooks implements Gdn_IPlugin
 {
+    /* Methods */
+
     /**
      * Code to be run upon enabling the API
      *
@@ -25,28 +27,29 @@ final class APIHooks implements Gdn_IPlugin
      */
     public function setup()
     {
-        if (!c("API.Secret")) {
-            saveToConfig("API.Secret", APIAuth::generateUniqueID());
+        if (!c('API.Secret')) {
+            saveToConfig('API.Secret', APIAuth::generateUniqueID());
         }
 
         // Empty fallback array
         $ApplicationInfo = [];
 
         // Load the API application info
-        include paths(PATH_APPLICATIONS, "api/settings/about.php");
+        include paths(PATH_APPLICATIONS, 'api/settings/about.php');
 
-        $info = val("api", $ApplicationInfo, []);
-        $version = val("Version", $info, "Undefined");
+        $info    = val('api', $ApplicationInfo, []);
+        $version = val('Version', $info, 'Undefined');
 
-        saveToConfig("API.Version", $version);
+        saveToConfig('API.Version', $version);
     }
+
+    /* Event Handlers */
 
     /**
      * Map an API request to a resource
      *
      * @since  0.1.0
      * @access public
-     * @param  Gdn_Dispatcher $sender
      * @return void
      */
     public function Gdn_Dispatcher_beforeDispatch_handler($sender)
@@ -54,33 +57,31 @@ final class APIHooks implements Gdn_IPlugin
         $path = APIEngine::getRequestURI();
 
         // Set the call and resource paths if they exist
-        $call = val(0, $path);
+        $call     = val(0, $path);
         $resource = val(1, $path);
 
         // Abandon the dispatch if this isn't an API call with a valid resource
-        if ($call != "api" || !$resource) {
-            return;
-        }
+        if ($call != 'api' || !$resource) return;
 
         APIEngine::setRequestHeaders();
 
         try {
             // Mark the dispatch with the API version
-            $sender->API = c("API.Version", "Undefined");
+            $sender->API = c('API.Version', 'Undefined');
 
             // Attempt dispatching the API request
             APIEngine::dispatchRequest();
         } catch (Exception $exception) {
-            // As we can"t pass an object to WithControllerMethod(), we extract
+            // As we can't pass an object to WithControllerMethod(), we extract
             // the values we need manually before passing them on. The exception
             // message is Base64 encoded as WithControllerMethod() mangles
             // the formatting.
-            $code = $exception->getCode();
-            $message = base64_encode($exception->getMessage());
+            $code      = $exception->getCode();
+            $message   = base64_encode($exception->getMessage());
             $arguments = [$code, $message];
 
             // Call the Exception method if an exception is thrown
-            Gdn::request()->withControllerMethod("API", "Exception", $arguments);
+            Gdn::request()->withControllerMethod('API', 'Exception', $arguments);
         }
     }
 
@@ -97,41 +98,39 @@ final class APIHooks implements Gdn_IPlugin
      */
     public function SettingsController_API_create($sender)
     {
-        $sender->permission("Garden.Settings.Manage");
+        $sender->permission('Garden.Settings.Manage');
 
         $form = $sender->Form;
 
         if ($form->authenticatedPostBack()) {
-            $secret = c("API.Secret");
-            $regen = $form->buttonExists(t("API.Settings.Refresh.Label"));
+            $secret = c('API.Secret');
+            $regen  = $form->buttonExists(t('API.Settings.Refresh.Label'));
 
-            if ($regen) {
-                $secret = APIAuth::generateUniqueID();
-            }
+            if ($regen) $secret = APIAuth::generateUniqueID();
 
             $save = [];
-            $save["API.Secret"] = $secret;
+            $save['API.Secret'] = $secret;
 
             if ($form->errorCount() == 0) {
                 saveToConfig($save);
 
                 if ($regen) {
-                    $icon = "<span class=\"InformSprite Refresh\"></span>";
-                    $text = t("API.Settings.Refresh.Notification");
-                    $class = "Dismissable HasSprite";
+                    $icon  = '<span class="InformSprite Refresh"></span>';
+                    $text  = t('API.Settings.Refresh.Notification');
+                    $class = 'Dismissable HasSprite';
 
                     $sender->informMessage($icon . $text, $class);
                 }
             }
         } else {
             $data = [];
-            $data["Secret"] = c("API.Secret");
+            $data['Secret'] = c('API.Secret');
             $form->setData($data);
         }
 
         $sender->addSideMenu();
-        $sender->setData("Title", t("API.Settings.Title"));
-        $sender->render("API", "settings", "api");
+        $sender->setData('Title', t('API.Settings.Title'));
+        $sender->render('API', 'settings', 'api');
     }
 
     /**
@@ -144,12 +143,9 @@ final class APIHooks implements Gdn_IPlugin
      */
     public function Base_getAppSettingsMenuItems_handler($sender)
     {
-        $menu = $sender->EventArguments["SideMenu"];
-        $menu->addLink(
-            "Site Settings",
-            t("API.Settings.Title"),
-            "dashboard/settings/api",
-            "Garden.Settings.Manage"
+        $menu = $sender->EventArguments['SideMenu'];
+        $menu->addLink('Site Settings', t('API.Settings.Title'),
+            'dashboard/settings/api', 'Garden.Settings.Manage'
         );
     }
 }

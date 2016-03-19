@@ -1,7 +1,7 @@
-<?php
+<?php if (!defined('APPLICATION')) exit;
 
 /**
- * API authentication class.
+ * API authentication class
  *
  * @package   API
  * @since     0.1.0
@@ -31,41 +31,41 @@ final class APIAuth
      */
     public static function authenticateRequest()
     {
-        $username = getIncomingValue("username");
-        $email = getIncomingValue("email");
+        $username = getIncomingValue('username');
+        $email    = getIncomingValue('email');
 
         if (!$username && !$email) {
-            throw new Exception(t("API.Error.User.Missing"), 401);
+            throw new Exception(t('API.Error.User.Missing'), 401);
         }
 
         if (!$userID = static::getUserID($username, $email)) {
-            throw new Exception(t("API.Error.User.Invalid"), 401);
+            throw new Exception(t('API.Error.User.Invalid'), 401);
         }
 
-        if (!$timestamp = getIncomingValue("timestamp")) {
-            throw new Exception(t("API.Error.Timestamp.Missing"), 401);
+        if (!$timestamp = getIncomingValue('timestamp')) {
+            throw new Exception(t('API.Error.Timestamp.Missing'), 401);
         }
 
         // Make sure that request is still valid
-        if ((abs($timestamp - time())) > c("API.Expiration")) {
-            throw new Exception(t("API.Error.Timestamp.Invalid"), 401);
+        if ((abs($timestamp - time())) > c('API.Expiration')) {
+            throw new Exception(t('API.Error.Timestamp.Invalid'), 401);
         }
 
-        if (!$token = getIncomingValue("token")) {
-            throw new Exception(t("API.Error.Token.Missing"), 401);
+        if (!$token = getIncomingValue('token')) {
+            throw new Exception(t('API.Error.Token.Missing'), 401);
         }
 
         $parsedUrl = parse_url(Gdn::request()->pathAndQuery());
 
         // Turn the request query data into an array to be used in the token
         // generation
-        parse_str(val("query", $parsedUrl, []), $data);
+        parse_str(val('query', $parsedUrl, []), $data);
 
         // Unset the values we don't want to include in the token generation
-        unset($data["token"], $data["DeliveryType"], $data["DeliveryMethod"]);
+        unset($data['token'], $data['DeliveryType'], $data['DeliveryMethod']);
 
         if ($token != $signature = static::generateSignature($data)) {
-            throw new Exception(t("API.Error.Token.Invalid"), 401);
+            throw new Exception(t('API.Error.Token.Invalid'), 401);
         }
 
         // Now that the client has been thoroughly verified, start a session for
@@ -98,11 +98,11 @@ final class APIAuth
         // matter how the data was originally sorted
         ksort($data, SORT_STRING);
 
-        // Generate a signature by taking all the request data values (we"re not
+        // Generate a signature by taking all the request data values (we're not
         // interested in the keys), delimiting them with a dash (to avoid hash
         // collisions) and making it all lower case as to ensure consistent hash
         // generation
-        $signature = hash_hmac("sha256", strtolower(implode("-", $data)), c("API.Secret"));
+        $signature = hash_hmac('sha256', strtolower(implode('-', $data)), c('API.Secret'));
 
         return $signature;
     }
@@ -119,24 +119,24 @@ final class APIAuth
      */
     public static function generateUniqueID()
     {
-        return sprintf(
-            "%04x%04x-%04x-%04x-%04x-%04x%04x%04x",
+        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
             // 16 bits for "time_mid"
             mt_rand(0, 0xffff),
+
             // 16 bits for "time_hi_and_version",
             // four most significant bits holds version number 4
             mt_rand(0, 0x0fff) | 0x4000,
+
             // 16 bits, 8 bits for "clk_seq_hi_res"
             // 8 bits for "clk_seq_low"
             // Two most significant bits holds zero and one for variant DCE1.1
             mt_rand(0, 0x3fff) | 0x8000,
+
             // 48 bits for "node"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
         );
     }
 

@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('APPLICATION')) exit;
 
 /**
  * Roles API
@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-final class RolesAPI extends APIMapper
+class RolesAPI extends APIMapper
 {
     /**
      * Register API endpoints
@@ -22,29 +22,29 @@ final class RolesAPI extends APIMapper
      */
     public static function register($data)
     {
-        static::get("/", [
-            "controller" => "Role",
-            "authenticate" => true
+        static::get('/', [
+            'controller'   => 'Role',
+            'authenticate' => true
         ]);
 
-        static::get("/[i:RoleID]", [
-            "controller" => "Role",
-            "authenticate" => true
+        static::get('/[i:RoleID]', [
+            'controller'   => 'Role',
+            'authenticate' => true
         ]);
 
-        static::post("/", [
-            "controller" => "Role",
-            "method" => "add"
+        static::post('/', [
+            'controller' => 'Role',
+            'method'     => 'add'
         ]);
 
-        static::put("/[i:RoleID]", [
-            "controller" => "Role",
-            "method" => "edit"
+        static::put('/[i:RoleID]', [
+            'controller' => 'Role',
+            'method'     => 'edit'
         ]);
 
-        static::delete("/[i:RoleID]", [
-            "controller" => "Role",
-            "method" => "delete"
+        static::delete('/[i:RoleID]', [
+            'controller' => 'Role',
+            'method'     => 'delete'
         ]);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('APPLICATION')) exit;
 
 /**
  * Configuration API
@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-final class ConfigurationAPI extends APIMapper
+class ConfigurationAPI extends APIMapper
 {
     /**
      * Register API endpoints
@@ -22,11 +22,11 @@ final class ConfigurationAPI extends APIMapper
      */
     public static function register($data)
     {
-        static::get("/", [
-            "application" => "Dashboard",
-            "controller" => "Settings",
-            "method" => "configuration",
-            "authenticate" => true
+        static::get('/', [
+            'application'  => 'Dashboard',
+            'controller'   => 'Settings',
+            'method'       => 'configuration',
+            'authenticate' => true
         ]);
     }
 }

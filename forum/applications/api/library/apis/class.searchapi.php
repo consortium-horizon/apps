@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('APPLICATION')) exit;
 
 /**
  * Search API
@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-final class SearchAPI extends APIMapper
+class SearchAPI extends APIMapper
 {
     /**
      * Register API endpoints
@@ -22,8 +22,8 @@ final class SearchAPI extends APIMapper
      */
     public static function register($data)
     {
-        static::get("/", [
-            "controller" => "Search"
+        static::get('/', [
+            'controller' => 'Search'
         ]);
     }
 }
