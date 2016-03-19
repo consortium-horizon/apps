@@ -1,4 +1,4 @@
-<?php if (!defined('APPLICATION')) exit;
+<?php
 
 /**
  * Conversations API
@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-class ConversationsAPI extends APIMapper
+final class ConversationsAPI extends APIMapper
 {
     /**
      * Register API endpoints
@@ -22,39 +22,39 @@ class ConversationsAPI extends APIMapper
      */
     public static function register($data)
     {
-        static::get('/', [
-            'controller'   => 'Messages',
-            'method'       => 'all',
-            'authenticate' => true,
-            'arguments'    => [
-                'Page' => val('Page', $data)
+        static::get("/", [
+            "controller" => "Messages",
+            "method" => "all",
+            "authenticate" => true,
+            "arguments" => [
+                "Page" => val("Page", $data)
             ]
         ]);
 
-        static::get('/[i:ConversationID]', [
-            'controller'   => 'Messages',
-            'authenticate' => true,
-            'arguments'    => [
-                'Offset' => val('Offset', $data),
-                'Limit'  => val('Limit', $data)
+        static::get("/[i:ConversationID]", [
+            "controller" => "Messages",
+            "authenticate" => true,
+            "arguments" => [
+                "Offset" => val("Offset", $data),
+                "Limit" => val("Limit", $data)
             ]
         ]);
 
-        static::post('/', [
-            'controller' => 'Messages',
-            'method'     => 'add'
+        static::post("/", [
+            "controller" => "Messages",
+            "method" => "add"
         ]);
 
-        static::post('/[i:ConversationID]/messages', [
-            'controller' => 'Messages',
-            'method'     => 'addMessage'
+        static::post("/[i:ConversationID]/messages", [
+            "controller" => "Messages",
+            "method" => "addMessage"
         ]);
 
-        static::delete('/[i:ConversationID]', [
-            'controller' => 'Messages',
-            'method'     => 'clear',
-            'arguments'  => [
-                'TransientKey' => Gdn::session()->transientKey()
+        static::delete("/[i:ConversationID]", [
+            "controller" => "Messages",
+            "method" => "clear",
+            "arguments" => [
+                "TransientKey" => Gdn::session()->transientKey()
             ]
         ]);
     }

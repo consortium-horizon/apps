@@ -1,4 +1,4 @@
-<?php if (!defined('APPLICATION')) exit;
+<?php
 
 /**
  * API Controller
@@ -11,7 +11,7 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-class APIController extends Gdn_Controller
+final class APIController extends Gdn_Controller
 {
     /**
      * Render API exceptions
@@ -26,8 +26,8 @@ class APIController extends Gdn_Controller
         header("HTTP/1.0 ${code}", true, $code);
 
         $this->setData([
-            'Code'      => intval($code),
-            'Exception' => base64_decode(htmlspecialchars($message))
+            "Code" => intval($code),
+            "Exception" => base64_decode(htmlspecialchars($message))
         ]);
 
         $this->renderData();
@@ -46,7 +46,6 @@ class APIController extends Gdn_Controller
         header("Allow: ${methods}", true);
 
         $this->setData(json_decode(base64_decode($documentation), true));
-
         $this->renderData();
     }
 }
