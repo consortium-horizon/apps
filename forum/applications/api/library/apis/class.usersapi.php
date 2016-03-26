@@ -31,7 +31,8 @@ class UsersAPI extends APIMapper
         ]);
 
         static::get('/[i:UserID]', [
-            'controller' => 'Profile'
+            'controller' => 'Profile',
+            'method'     => 'get'
         ]);
 
         static::get('/summary', [
