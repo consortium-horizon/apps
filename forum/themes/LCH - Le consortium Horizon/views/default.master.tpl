@@ -52,6 +52,7 @@
           <ul>
             <li><a href="{link path="/page/presentation-de-la-guilde"}">Présentation &amp; Charte</a></li>
             <li><a href="{link path="/organigramme"}">Organigramme</a></li>
+            <li><a href="{link path="/page/outils-et-tutos"}">Outils &amp; Tutos</a></li>
           </ul>
         </li>
         <li class="dropdown">
