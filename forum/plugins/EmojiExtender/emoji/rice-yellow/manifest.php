@@ -39,6 +39,8 @@
             'unamused' => 'unamused.png',
             'wink' => 'wink.png',
             'yum' => 'yum.png',
+            'cigare' => 'cigare.png',
+            'sifflote' => 'sifflote.png',
         ),
     'aliases' =>
         array(
@@ -93,6 +95,8 @@
             ':sweat:' => 'sweat',
             ':unamused:' => 'unamused',
             ':yum:' => 'yum',
+            ':cigare:' => 'cigare',
+            ':sifflote:' => 'sifflote',
         ),
     'archive' =>
         array(
