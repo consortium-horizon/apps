@@ -1,0 +1,233 @@
+// Bootstrap 3 for Vanilla
+
+.NavBar {
+  background-color: #222222;
+  border-color: #080808;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #101010;
+  .SiteMenu a,
+  .MeBox-SignIn a,
+  .Username {
+    font-weight: normal;
+    line-height: 20px;
+    color: #999999;
+    font-size: 14px;
+    &:hover {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: transparent;
+    }
+  }
+  .Bullet {
+    color: #777777;
+  }
+  .Row {
+    position: relative;
+  }
+  .MeWrap {
+    float: right;
+  }
+  .SiteTitle a {
+    color: #999999;
+    font-weight: bold;
+    font-size: 21px;
+    letter-spacing: .1ex;
+    &:hover {
+      color: #ffffff;
+      text-decoration: none;
+    }
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.MeBox.Inline .Username {
+  vertical-align: middle;
+}
+
+.MeBox.Inline > .PhotoWrap {
+  float: left;
+}
+
+.BreadcrumbsWrapper {
+  padding: 8px;
+  margin-bottom: 20px;
+  list-style: none;
+  background-color: #f5f5f5;
+  @include border-radius(4px);
+  > li {
+    display: inline-block;
+  }
+  .Last a {
+    color: #999999;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.SiteSearch .InputBox {
+  float: right;
+  padding: 4px 25px 4px 5px;
+  border: 1px solid #dddddd;
+}
+
+.MenuItems,
+.Flyout {
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  @include border-radius(4px);
+  @include box-shadow(0 6px 12px rgba(0, 0, 0, 0.175));
+  background-clip: padding-box;
+  * {
+    @include transition(0.25s);
+  }
+  .SpEditProfile {
+    height: 16px;
+    width: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    border: solid 2px transparent;
+    margin: -2px;
+    display: inline-block;
+  }
+  ul li a {
+    clear: both;
+    font-weight: normal;
+    line-height: 1.428571429;
+    color: $mainColour;
+    white-space: nowrap;
+    &:hover,
+    &:focus {
+      color: #ffffff !important;
+      text-decoration: none !important;
+      background-color: #428bca !important;
+      background: #428bca;
+    }
+  }
+}
+
+.MenuItems a:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  background-color: #428bca !important;
+  background: #428bca;
+}
+
+.PopList .Item.Title a:hover,
+.PopList .Item.Title a:focus {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #000 !important;
+}
+
+#Menu {
+  margin: 2.5px;
+  display: none;
+  color: #ffffff;
+  padding: 2px 6px;
+  width: 26px;
+  text-align: center;
+  border: 1px solid #333333;
+  @include border-radius(4px);
+  &:hover {
+    background-color: #333333;
+    text-decoration: none;
+  }
+  .icon {
+    display: block;
+    width: 22px;
+    height: 2px;
+    @include border-radius(1px);
+    margin: 5px auto;
+    background-color: #ffffff;
+  }
+}
+
+.sidr {
+  display: none;
+  position: absolute;
+  position: fixed;
+  top: 0;
+  height: 100%;
+  z-index: 999999;
+  width: 260px;
+  background-color: #222222;
+  border-color: #080808;
+  padding-top: 10px;
+  li {
+    list-style: none;
+    a {
+      padding: 10px 15px;
+      font-weight: normal;
+      line-height: 20px;
+      color: #999999;
+      font-size: 14px;
+      list-style: none;
+      display: block;
+      &:hover {
+        color: #ffffff;
+        text-decoration: none;
+        background-color: #080808;
+      }
+    }
+  }
+  .SiteTitle {
+    padding: 7px 15px;
+    display: block;
+    border-bottom: 1px solid #101010;
+    margin-right: 0px;
+  }
+  .MeBoxMob {
+    padding: 10px 15px;
+    padding-top: 20px;
+  }
+  &.right {
+    left: auto;
+    right: -260px;
+  }
+  &.left {
+    left: -260px;
+    right: auto;
+  }
+  li {
+    & a:before {
+      background: url('../../../applications/dashboard/design/images/sprites-14-ffffff.png') 0 0 no-repeat;
+      display: inline-block;
+      height: 16px;
+      width: 16px;
+      vertical-align: middle;
+      content: "";
+      margin-right: 5px;
+    }
+    &.dashboard a:before {
+      background-position: -28px -101px;
+    }
+    &.discussions a:before {
+      background-position: -317px -101px;
+    }
+    &.activity a:before {
+      background-position: -339px -101px;
+    }
+    &.inbox a:before {
+      background-position: -122px -101px;
+    }
+    &.profile a:before {
+      background-position: -245px -29px;
+    }
+    &.signout a:before {
+      background-position: -221px -121px;
+    }
+    &.signout a.SignInPopup:before {
+      background-position: -196px -121px;
+    }
+  }
+}

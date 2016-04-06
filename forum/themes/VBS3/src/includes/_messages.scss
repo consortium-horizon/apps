@@ -1,0 +1,53 @@
+// Bootstrap 3 for Vanilla
+
+/** Messages **/
+.DismissMessage {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  @include border-radius(4px);
+  a.Dismiss {
+    color: inherit;
+    padding: 1px 4px;
+    text-shadow: none;
+    top: 0;
+    right: 0;
+  }
+}
+
+.Message a:hover {
+  text-decoration: underline;
+}
+
+.WarningMessage {
+  color: #b94a48 !important;
+  background-color: #f2dede !important;
+  border-color: #eed3d7 !important;
+}
+
+.InfoMessage {
+  color: #666666;
+  background-color: #f2f2f2;
+  border-color: #acacac;
+}
+
+.AlertMessage {
+  color: #c09853;
+  background-color: #fcf8e3;
+  border-color: #dec89b;
+}
+
+.CasualMessage {
+  color: #3a87ad;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+
+.Errors ul {
+  @include border-radius(4px);
+  @extend .WarningMessage;
+  li {
+    background: none !important;
+    color: #b94a48 !important;
+  }
+}

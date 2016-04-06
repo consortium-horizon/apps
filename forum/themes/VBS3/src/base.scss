@@ -1,0 +1,47 @@
+/**
+ * This theme was ported from Vanilla Forums Inc's hosted theme "Bootstrap" it has been modified to merge with Bootstrap 3 ( from 2.3 ) and has been designed for use on the OS model.
+ *
+ * @copyright Vanilla Forums
+ * @author Chris Ireland (Adapation)
+ */
+// Browser Hacks
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+@mixin border-radius($args...) {
+  -webkit-border-radius: $args;
+  -moz-border-radius: $args;
+  border-radius: $args;
+}
+
+@mixin box-shadow($args...) {
+  -webkit-box-shadow: $args;
+  -moz-box-shadow: $args;
+  box-shadow: $args;
+}
+
+// Variables 
+$mainFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$codeFont: Monaco, Menlo, Consolas, "Courier New", monospace;
+
+$mainColour: #333333;
+
+// Import Partials
+@import "includes/_head";
+@import "includes/_general";
+@import "includes/_grid";
+@import "includes/_forms";
+@import "includes/_buttons";
+@import "includes/_navigation";
+@import "includes/_sprites";
+@import "includes/_datalist";
+@import "includes/_panels";
+@import "includes/_messages";
+@import "includes/_popups";
+@import "includes/_pagers";
+
+@import "includes/_responsive";

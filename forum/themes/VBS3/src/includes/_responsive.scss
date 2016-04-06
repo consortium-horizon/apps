@@ -1,0 +1,179 @@
+// Bootstrap 3 for Vanilla
+
+@media (min-width: 1101px) {
+  .PhotoWrapLarge {
+    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    @include border-radius(4px);
+    @include transition(all 0.2s ease-in-out);
+  }
+  .ProfilePhotoLarge,
+  .PhotoWrap a.ChangePicture {
+    width: 250px;
+  }
+}
+
+@media (max-width: 1100px) {
+  #Panel {
+    width: 220px;
+  }
+  .ProfilePhotoLarge {
+    width: 220px;
+  }
+  #Body .ContentColumn {
+    margin-left: 240px;
+  }
+}
+
+@media (max-width: 612px) {
+  input.InputBox {
+    width: 235px;
+  }
+  .Tag {
+    font-size: 90%;
+  }
+  div.Popup {
+    .MultipleEntryMethods {
+      .Methods {
+        margin-left: 0px;
+        padding: 140px 0px 5px 0px;
+        b {
+          padding-bottom: 5px;
+        }
+      }
+      .MainForm {
+        width: inherit;
+      }
+    }
+  }
+  .FormWrapper .Button {
+    padding: 2px 4px;
+    margin-top: 5px;
+  }
+  td.CategoryName {
+    min-width: 55px;
+    font-size: 90%;
+  }
+  td.BigCount {
+    width: 65px;
+    font-size: 90%;
+  }
+  td.LatestPost {
+    font-size: 90%;
+  }
+  .Title {
+    min-height: 45px;
+  }
+  .NavBar {
+    padding: 3.5px 7px;
+    .Row {
+      display: none;
+    }
+    .MeWrap {
+      float: none;
+      border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+      margin: 2px 0;
+    }
+    .SiteTitle a {
+      display: block;
+      font-size: 18px;
+      line-height: 20px;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+  #Menu {
+    display: block;
+  }
+  .SiteMenu li {
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 20px;
+    &:hover {
+      background-color: #080808;
+    }
+  }
+  .SiteSearch .InputBox {
+    width: 100px;
+  }
+  .FlyoutLeft .OptionsMenu .Flyout {
+    right: inherit;
+    left: -12px;
+    &:before,
+    &:after {
+      left: 12px;
+      right: inherit;
+    }
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait), (max-width: 960px) {
+  #Panel {
+    display: none;
+  }
+  body.EditMode {
+    .DismissMessage {
+      display: none;
+    }
+    form.Thumbnail table td {
+      padding-right: 0px;
+    }
+    form.Thumbnail table thead td:nth-child(2) {
+      font-size: 70%;
+    }
+    #Panel {
+      display: block !important;
+      width: auto;
+      float: none;
+      .UserBox {
+        display: none;
+      }
+      .Box {
+        margin-bottom: 0px;
+        border: none;
+        @include box-shadow(none);
+        ul {
+          padding: 0px 0px 5px 0px;
+          li {
+            display: inline-block;
+            border: none;
+            margin: 0.25px;
+            &.Active {
+              background: none !important;
+              background-color: transparent !important;
+              a {
+                color: #ffffff;
+                font-weight: normal;
+                background-color: #428bca !important;
+              }
+            }
+            a {
+              @include border-radius(5px);
+              padding: 10px 15px;
+            }
+          }
+        }
+      }
+    }
+  }
+  #Content .BoxNewDiscussion {
+    display: block;
+    .Button {
+      padding: 3px 6px;
+    }
+  }
+  #Body .ContentColumn {
+    margin: 0;
+  }
+  .Row {
+    width: inherit;
+    margin: 0 20px;
+    min-width: inherit;
+  }
+  .NavBar .MeWrap {
+    right: 40px !important;
+  }
+}

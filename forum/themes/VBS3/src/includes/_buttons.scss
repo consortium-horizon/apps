@@ -1,0 +1,114 @@
+// Bootstrap 3 for Vanilla
+
+.Button,
+.NavButton {
+  background-image: none;
+  text-shadow: none;
+  @include box-shadow(none);
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.428571429;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  @include border-radius(4px);
+  color: $mainColour;
+  background-color: #ffffff;
+  border-color: #cccccc;
+  &:hover,
+  &:focus {
+    color: $mainColour;
+    text-decoration: none;
+    background-color: #ebebeb;
+    border-color: #adadad;
+  }
+  &:focus {
+    outline: thin dotted #333;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+    @include box-shadow(none);
+  }
+  &:active {
+    background-image: none;
+    outline: 0;
+    @include box-shadow(none);
+  }
+  &.Handle {
+    padding-left: 6px;
+    padding-right: 6px;
+    line-height: 16px;
+  }
+  &.Primary {
+    color: #ffffff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    &:hover,
+    &:focus {
+      color: #ffffff;
+      background-color: #47a447;
+      border-color: #398439;
+    }
+  }
+  &.Cancel {
+    color: #ffffff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    &:hover,
+    &:focus {
+      color: #ffffff;
+      background-color: #d2322d;
+      border-color: #ac2925;
+    }
+  }
+  &.PreviewButton {
+    color: #ffffff;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    &:hover,
+    &:focus {
+      color: #ffffff;
+      background-color: #39b3d7;
+      border-color: #269abc;
+    }
+  }
+}
+
+.BigButton {
+  padding: 9px 14px;
+  font-size: 15px;
+  line-height: normal;
+  @include border-radius(5px);
+}
+
+.ButtonGroup.Big .Button {
+  line-height: 1;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  max-width: 180px;
+}
+
+.Handle.Primary .Sprite {
+  border-color: white transparent transparent transparent;
+}
+
+.Open {
+  .Handle .Sprite {
+    margin-top: 2px;
+  }
+  .Handle.Primary .Sprite {
+    border-color: black transparent transparent transparent;
+  }
+}
+
+.NavButton > .SpEditProfile {
+  position: relative;
+  top: 2px;
+}
+
+.MessageForm .Button {
+  padding: 4px 6px !important;
+}

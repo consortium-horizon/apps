@@ -1,0 +1,90 @@
+// Bootstrap 3 for Vanilla
+
+#Panel .FilterMenu {
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  @include border-radius(4px);
+  @include box-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+  min-height: 20px;
+  li {
+    border: none !important;
+    padding: 0;
+    a {
+      display: block;
+      padding: 10px 15px;
+      line-height: 18px;
+      vertical-align: middle;
+      @include border-radius(0px);
+      &:hover {
+        background-color: #eeeeee;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.FilterMenu .Active a,
+.FilterMenu .Active a:hover,
+.PanelInfo .Active,
+.PanelInfo .Active a:hover {
+  color: #ffffff;
+  font-weight: normal;
+  background-color: #428bca !important;
+  text-decoration: none;
+}
+
+.PanelInfo .Active a {
+  color: #ffffff;
+}
+
+#Panel .SideMenu .PanelInfo li {
+  padding: 0;
+  a {
+    padding: 5px 10px;
+    display: block;
+    text-shadow: none;
+  }
+}
+
+#Content {
+  .BoxFilter h4 {
+    display: none;
+  }
+  .FilterMenu {
+    min-height: 20px;
+    margin-bottom: 20px;
+    padding: 0px;
+    @include border-radius(4px);
+    padding: 0px 10px;
+    li {
+      margin: 0px !important;
+      padding: 0px;
+      a {
+        border: 0px !important;
+        padding: 8px 16px !important;
+        margin: 0px !important;
+      }
+    }
+  }
+}
+
+.Count {
+  display: inline-block;
+  min-width: 10px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  background-color: #999999;
+  @include border-radius(10px);
+}
+
+.Active .Count {
+  color: #428bca;
+  background-color: #ffffff;
+}
