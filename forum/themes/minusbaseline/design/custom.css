@@ -1,3 +1,8 @@
+/* reduc banner img size */
+strong.SiteTitle > a > img {
+    height: 20px;
+}
+
 /*give the main row full width*/
 .Row {
 	margin: 0;
