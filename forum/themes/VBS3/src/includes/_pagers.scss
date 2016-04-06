@@ -1,0 +1,59 @@
+// Bootstrap 3 for Vanilla
+
+/*** Pagination ***/
+.PagerWrap {
+  margin: 10px 0;
+}
+
+.Pager a, .Pager span {
+  border: 1px solid #dddddd;
+  border-left-width: 0;
+  padding: 0 11px;
+  line-height: 28px;
+  margin: 0;
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.NumberedPager {
+  .Previous {
+    border-left-width: 1px;
+    @include border-radius(3px 0px 0px 3px);
+  }
+  .Next {
+    @include border-radius(0px 3px 3px 0px);
+  }
+}
+
+.PrevNextPager a {
+  border-width: 1px;
+  @include border-radius(3px);
+}
+
+.Pager a:hover, .Pager .Highlight {
+  background-color: #f5f5f5;
+}
+
+.Pager .Highlight {
+  color: #999999;
+}
+
+.PageControls {
+  min-height: 30px;
+}
+
+.MiniPager {
+  border: solid 1px #dddddd;
+  @include border-radius(2.5px);
+  line-height: 1;
+  font-size: 9px;
+  a {
+    display: inline-block;
+    margin: 0;
+    border-left: solid 1px #dddddd;
+    padding: 2px 5px;
+  }
+  &:first-child {
+    border-left: none;
+  }
+}

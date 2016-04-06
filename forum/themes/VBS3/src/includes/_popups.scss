@@ -1,0 +1,56 @@
+// Bootstrap 3 for Vanilla
+
+/** Popups **/
+div.Popup {
+  h1 {
+    margin: -10px -10px 15px;
+    padding: 9px 15px;
+    border-bottom: solid 1px #eeeeee;
+    font-size: 18px;
+    line-height: 27px;
+  }
+  .Buttons {
+    padding: 15px;
+    margin: 15px -10px -10px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+    #Form_OK {
+      color: #ffffff;
+      background-color: #5cb85c;
+      border-color: #4cae4c;
+      &:hover,
+      &:focus {
+        color: #ffffff;
+        background-color: #47a447;
+        border-color: #398439;
+      }
+    }
+  }
+  .Body {
+    position: relative;
+    background-color: #ffffff;
+    border: 1px solid #999999;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    @include border-radius(6px);
+    outline: none;
+    @include box-shadow(0 3px 9px rgba(0, 0, 0, 0.5));
+    background-clip: padding-box;
+  }
+  .Border {
+    background: none;
+  }
+}
+
+.Overlay {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+a.Close {
+  font-family: inherit;
+  top: 9px;
+  right: 15px;
+  opacity: .4;
+  &:hover {
+    opacity: 1;
+  }
+}

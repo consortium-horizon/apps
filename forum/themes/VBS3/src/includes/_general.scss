@@ -1,0 +1,63 @@
+// Bootstrap 3 for Vanilla
+
+body {
+  font-family: $mainFont;
+  color: $mainColour;
+}
+
+a,
+.FlyoutMenu a {
+  color: #428bca;
+  text-decoration: none;
+  &:hover,
+  &:focus {
+    color: #2a6496;
+    text-decoration: underline;
+  }
+  &:focus {
+    outline: thin dotted #333;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
+}
+
+h1 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.MenuItems {
+  font-size: 13px;
+  a {
+    line-height: 16px;
+    vertical-align: bottom;
+  }
+  .Sprite:after {
+    content: " ";
+  }
+}
+
+code,
+pre {
+  padding: 2px 4px;
+  font-size: 0.9em;
+  color: #c7254e;
+  white-space: nowrap;
+  background-color: #f9f2f4;
+  font-family: $codeFont;
+  @include border-radius(4px);
+}
+
+.PhotoWrap .ProfilePhotoMedium {
+  padding: 2px;
+  line-height: 1.428571429;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  @include border-radius(4px);
+  @include transition(all 0.2s ease-in-out);
+}

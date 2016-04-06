@@ -1,0 +1,391 @@
+/*give the main row full width*/
+.Row {
+	margin: 0;
+	width: auto;
+}
+/*fix the panel and move it out of the visible area*/
+#Panel {
+	display: none;
+	width: 300px;
+	position: absolute;
+	height: 100%;
+	padding-bottom: 60px;
+	overflow-y: auto;
+	z-index: 10;
+	top: -500px;
+	left: -310px;
+	border-right: 1px solid rgba(0, 0, 0, .4);
+	background: white;
+	box-sizing: border-box;
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-transform: translateZ(0);
+}
+/*prevent a horizontal scrollbar from appearing*/
+body {
+	overflow-x: hidden;
+	min-width: 320px;
+}
+
+body.HamburgerOpen {
+	overflow: hidden;
+}
+/*hide unneeded elements*/
+.BreadcrumbsWrapper,
+.DraftButton,
+.PreviewButton,
+.Profile #Panel > .PhotoWrapLarge,
+#Head .SiteSearch,
+.MeBox .Flyout:before,
+.MeBox .Flyout:after {
+	display: none;
+}
+
+#Body .ContentColumn {
+	margin: 0;
+	padding-top: 5px;
+}
+/*make the whole page slide to the right*/
+#Frame {
+	-webkit-transition: -webkit-transform .3s;
+	transition: transform .3s;
+	width: 100%;
+}
+
+body.HamburgerOpen #Frame {
+	-webkit-transform: translate(310px, 0px);
+	transform: translate(310px, 0);
+}
+/*make space in the Head for the menu*/
+body > #Frame > .Head {
+	padding-left: 60px;
+	margin-left: -10px;
+}
+/*move the panel to the right*/
+.PanelRight #Panel {
+	left: auto;
+	right: -310px;
+	border-right: none;
+	border-left: 1px solid rgba(0, 0, 0, .4);
+	z-index: 202;
+}
+
+.PanelRight a.Hamburger {
+	left: auto;
+	right: -10px;
+	border-width: 0 10px 0 0;
+}
+
+body.PanelRight.HamburgerOpen #Frame {
+	-webkit-transform: translate(-310px, 0px);
+	transform: translate(-310px, 0);
+}
+
+body.PanelRight > #Frame > .Head {
+	width: 100%;
+	padding-left: 10px;
+	margin-left: 0;
+}
+/*increase size of menu links*/
+.SiteMenu a {
+	font-size: 16px;
+}
+/*add padding to element that would otherwise be directly at the edge of the screen*/
+h1, h2, h3, h4, .Profile div.User, .UserBox, .Foot, .Empty, .P.PageDescription {
+	padding-left: 10px;
+}
+/*center the user info in the profile*/
+.Profile div.User {
+	text-align: center;
+}
+
+.Profile div.User h1.H {
+	text-align: left;
+}
+
+.Profile .PhotoWrapLarge {
+	width: 200px;
+	margin: 0 auto;
+}
+
+.ProfileOptions{
+	margin-right:10px;
+}
+
+/*hide the flyouts as they are replaced by a selectbox*/ 
+.ToggleFlyout ul.MenuItems {
+	display: none !important;
+}
+
+.ToggleFlyout {
+	display: inline-block;
+	overflow: hidden;
+}
+
+/*increase the size of the link to the full site*/
+#Foot .NoMobile a {
+	display: inline-block;
+	padding: 10px;
+	font-size: 16px;
+}
+/*the hamburger menu button*/
+a.Hamburger {
+	position: fixed;
+	backface-visibility: hidden;
+	top: 0;
+	left: 0;
+	z-index: 201;
+	font-size: 32px;
+	color: white;
+	text-decoration: none;
+	background: #38ABE3;
+	padding: 10px 5px 10px 10px;
+	margin-left: -10px;
+	border: solid rgba(0, 0, 0, .05);
+	border-width: 0 0 0 10px;
+	-webkit-transition: -webkit-transform .3s;
+	transition: transform .3s;
+}
+/*hide the button when the menu is hidden too...*/
+body.NoPanel .Hamburger,
+body.Entry .Hamburger,
+body.Conversations.add .Hamburger,
+body.Vanilla.Post .Hamburger {
+	display: none;
+}
+
+.NoPanel > #Frame > .Head,
+.Entry > #Frame > .Head,
+.Conversations.add > #Frame > .Head,
+.Vanilla.Post > #Frame > .Head {
+	padding-left: 5px;
+	margin-left: 0;
+}
+/* make the filtermenu links easier to click*/
+#Panel .FilterMenu li, .PanelInfo li {
+	padding: 0;
+}
+
+#Panel .FilterMenu li a, .PanelInfo li a {
+	padding: 5px 7px;
+	display: block;
+}
+/* add padding to elements in the panel*/
+.BoxButtons, #Panel .AddPeople, .MeBox, .GuestBox, .CategoryFilter {
+	padding: 0 7px;
+}
+
+#Panel > .BigButton {
+	margin-left: 7px;
+	margin-right: 7px;
+}
+
+#Panel .SiteSearch {
+	margin: 7px;
+}
+/*make the MeMenu flyout always take up the same space*/
+.MeBox .ToggleFlyout {
+	position: static;
+}
+
+.MeBox .Flyout {
+	width: 100%;
+	top: 70px;
+	left: 0;
+	border-width: 1px 0;
+	border-radius: 0;
+	z-index: 9999;
+}
+/*increase the size of the flyout items*/
+.MenuItems a, .MenuItems a:link {
+	line-height: 2em;
+	font-size: 1.2em;
+}
+
+.MenuItems a:hover {
+	background-color: #38ABE3 !important;
+}
+
+/*make the MeMenu Buttons easier to touch*/
+.FlyoutButton, a:hover .FlyoutButton {
+	color: #999;
+}
+
+.ToggleFlyout.Open .FlyoutButton {
+	background: #38ABE3;
+	color: white;
+}
+
+.MeButton .Sprite16 {
+	width: 36px;
+	height: 26px;
+	text-align: center;
+}
+/*this was created with icomoon, the original zip is in the fonts folder */
+@font-face {
+	font-family: 'minusbaseline';
+	src:url('fonts/minusbaseline.eot?vknwz2');
+	src:url('fonts/minusbaseline.eot?#iefixvknwz2') format('embedded-opentype'),
+		url('fonts/minusbaseline.woff?vknwz2') format('woff'),
+		url('fonts/minusbaseline.ttf?vknwz2') format('truetype'),
+		url('fonts/minusbaseline.svg?vknwz2#minusbaseline') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+/*use icon font for the MeMenu buttons and the cogwheels*/
+.MeButton .Sprite,
+.Hamburger,
+.OptionsTitle,
+.NavButton > .SpEditProfile,
+a.Bookmark {
+	font-family: 'minusbaseline';
+	background: none;
+	font-size: 24px;
+}
+/*MeButtons*/
+.MeButton .SpOptions:before, .OptionsTitle:before {
+	content: "\63";
+}
+
+.MeButton .SpNotifications:before {
+	content: "\67";
+}
+
+.MeButton .SpInbox:before {
+	content: "\65";
+}
+
+.MeButton .SpBookmarks:before,
+a.Bookmark:before,
+a.Bookmarked:before,
+a.Bookmarking:before {
+	content: "\73";
+}
+/*profile edit button*/
+.NavButton > .SpEditProfile {
+	line-height: 10px;
+}
+
+.NavButton > .SpEditProfile:before {
+	content: "\75";
+	font-size: 16px;
+	color: black;
+}
+/*option cogwheels and bookmark button*/
+.OptionsTitle, a.Bookmark {
+	text-indent: 0;
+	line-height: 1em;
+	margin: 0 3px;
+	height: 24px;
+	width: 24px;
+	color: rgba(0, 0, 0, .5);
+}
+
+a.Bookmark {
+	color: transparent;
+}
+
+a.Bookmark:before {
+	color: rgba(0, 0, 0, .2);
+}
+
+a.Bookmarked:before, a.Bookmarking:before {
+	color: gold;
+}
+/*discussionmeta*/
+.MItem {
+	margin: 0 3px;
+}
+
+.MItem:before {
+	font-family: 'minusbaseline';
+	font-size: 14px;
+}
+
+.MItem.ViewCount, .MItem.CommentCount, .MItem.LastCommentBy, .Meta-Discussion .MItem.Category {
+	font-size: 0;
+}
+
+.MItem.ViewCount .Number,
+.MItem.CommentCount .Number,
+.MItem.LastCommentBy a,
+.MItem.LastCommentDate {
+	font-size: 12px;
+}
+
+.MItem.ViewCount:before {
+	content: "\76\00a0";
+}
+
+.MItem.CommentCount:before {
+	content: "\62\00a0";
+}
+/*don't rely on :hover*/
+.Item .OptionsTitle {
+	visibility: visible;
+}
+/*pagers*/
+.Pager, .MorePager {
+	width: auto;
+	font-size: 16px;
+	line-height: 35px;
+	float:none;
+	margin:7px;
+}
+.BeforeCommentHeading {
+	float:none;
+}
+/*this needs to be removed as it adds an empty line on top of the pager*/
+.PageControls .PagerNub {
+	display: none;
+}
+/*hide most of the links...*/
+.Pager a, .Pager span {
+	margin: 0;
+	display: none;
+}
+/*...and only display the current, first, last, previous and next links
+display: table-cell; makes the links fill up equal space */
+.Pager .Highlight,
+.Pager .Previous,
+.Pager .Next,
+.Pager .FirstPage,
+.Pager .LastPage {
+	display: table-cell;
+	width: 1%;
+}
+.Pager a, .Pager span, .MorePager a {
+	text-align: center;
+	background: #F3F3F3;
+	border: solid #ddd;
+	border-width: 1px 0 1px 1px;
+}
+.Pager a:hover {
+	background: #eee;
+}
+.Pager a.Highlight {
+	background: white;
+}
+/*round off the corners on both ends*/
+.Pager .Previous {
+	border-radius: 2px 0 0 2px;
+}
+.Pager .Next {
+	border-right-width: 1px;
+	border-radius: 0 2px 2px 0;
+}
+/*PrevNextPager*/
+.Pager.PrevNextPager .Previous,
+.Pager.PrevNextPager .Next {
+	display: block;
+	text-align: center;
+	width: 48%;
+	float:left;
+}
+/*.MorePager*/
+.MorePager a {
+	display: block;
+	margin: 3px;
+	border-radius: 2px;
+	border-width: 1px;
+}

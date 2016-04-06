@@ -1,0 +1,176 @@
+// Bootstrap 3 for Vanilla
+
+/*** Datalist ***/
+.DataList {
+  border: solid 1px #dddddd;
+  &.Discussions .Item {
+    padding: 10px 170px 8px 12px;
+  }
+  .Item {
+    &:first-child {
+      border-top-right-radius: .5ex;
+      border-top-left-radius: .5ex;
+    }
+    &:last-child {
+      border-bottom: none;
+      border-bottom-right-radius: .5ex;
+      border-bottom-left-radius: .5ex;
+    }
+  }
+  &.Discussions {
+    .MCount, .HasNew {
+      position: absolute;
+      background: #f5f5f5;
+      background: rgba(0, 0, 0, 0.04);
+      color: #000;
+      width: 75px;
+      padding: 6px 2px;
+      margin: 0;
+      top: 6px;
+      text-align: center;
+      line-height: 1;
+      height: 38px;
+      @include border-radius(.5ex);
+    }
+    .MCount .Number, .HasNew .Number {
+      font-size: 20px;
+      font-weight: bold;
+      display: block;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .ViewCount {
+      right: 85px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .CommentCount {
+      right: 6px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      background: rgba(0, 0, 0, 0.07);
+    }
+    .HasNew {
+      right: 6px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      background: rgba(0, 0, 0, 0.07);
+      font-weight: normal;
+      font-size: 11px;
+    }
+  }
+  &.Discussions .Item.Read {
+    .MCount, .HasNew {
+      color: #777;
+    }
+  }
+}
+
+.CommentHeading {
+  min-height: 30px;
+  margin: 10px 0;
+}
+
+.CommentHeader {
+  margin-bottom: 15px;
+}
+
+.Item {
+  padding: 10px;
+  .AuthorInfo .MItem, .CommentInfo .MItem {
+    color: #777;
+  }
+  &.Read {
+    opacity: 1;
+    background: #f9f9f9;
+    a {
+      color: #777;
+    }
+  }
+  #latest {
+    margin: -50px;
+  }
+}
+
+.CategoryGroup + .CategoryGroup h2 {
+  margin-top: 15px;
+}
+
+/** DataTables **/
+.DataTable {
+  td {
+    border: 0;
+  }
+  tbody {
+    td {
+      border: solid 0px #dddddd;
+      border-bottom-width: 1px;
+    }
+    tr:first-child td {
+      border-top-width: 1px;
+    }
+    td {
+      &:first-child {
+        border-left-width: 1px;
+        padding-left: 10px;
+      }
+      &:last-child {
+        border-right-width: 1px;
+        padding-right: 10px;
+      }
+    }
+  }
+  td.CheckBoxColumn {
+    padding-left: 4px !important;
+    width: 20px;
+  }
+  tbody tr {
+    &:first-child td {
+      &:first-child {
+        border-top-left-radius: .5ex;
+      }
+      &:last-child {
+        border-top-right-radius: .5ex;
+      }
+    }
+    &:last-child td {
+      &:first-child {
+        border-bottom-left-radius: .5ex;
+      }
+      &:last-child {
+        border-bottom-right-radius: .5ex;
+      }
+    }
+  }
+}
+
+.Activities {
+  ul.DataList {
+    border: none;
+    @include border-radius(0);
+  }
+  .DataList .Item:first-child {
+    @include border-radius(0);
+  }
+}
+
+.Tag {
+  background: #999999;
+  padding: .2em .6em .3em;
+  font-weight: bold;
+  line-height: 1;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  @include border-radius(.25em);
+  a {
+    color: #ffffff;
+  }
+  &.Tag-Closed {
+    background: #d9534f;
+  }
+  &.Tag-Announcement {
+    background: #5bc0de;
+  }
+}
