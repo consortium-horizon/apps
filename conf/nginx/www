@@ -36,6 +36,8 @@ server {
       fastcgi_pass unix:/var/run/php5-fpm.sock;
       fastcgi_index index.php;
       include fastcgi_params;
+      fastcgi_cache MYAPP;
+      fastcgi_cache_valid 200 60m;
     }
   }
   location @forum { rewrite ^/forum/(.+)$ /forum/index.php?p=$1 last; }
@@ -93,6 +95,8 @@ server {
       fastcgi_pass unix:/var/run/php5-fpm.sock;
       fastcgi_index index.php;
       include fastcgi_params;
+      fastcgi_cache MYAPP;
+      fastcgi_cache_valid 200 60m;
     }
   }
 
