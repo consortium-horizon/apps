@@ -173,13 +173,14 @@ class PostOnRegister extends Gdn_Plugin {
     // this is where the magic happen
     public function EntryController_registerBeforePassword_Handler($Sender, $Args) {
         // Check if user wanna join us
-        echo '<div id="iWannaJoinNotif" class="registerNotification info">';
+        echo '<div id="iWannaJoinNotif" class="registerNotification info success">';
         echo '<label class="CheckBoxLabel" for="iWannaJoin">';
-        echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin"> Je souhaite rejoindre la guilde (une candidature sera automatiquement créée)</label>';
+        echo '<input type="checkbox" id="iWannaJoin" name="iWannaJoin" value="iWannaJoin" checked="checked"> Je souhaite rejoindre la guilde Le Consortium Horizon</label>';
+        echo 'Décocher cette case si vous souhaitez créer un compte diplomate ou visiteur.';
         echo '</div>';
 
         // The main form
-        echo '<div id="lchForm" style="display: none;">';
+        echo '<div id="lchForm">';
 
         // Some instructions
         echo '<div class="registerNotification mainNotification info">
