@@ -1,5 +1,3 @@
-fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=MYAPP:128m inactive=60m;
-fastcgi_cache_key "$scheme$request_method$host$request_uri";
 server {
   listen 80;
   listen [::]:80 ipv6only=on;
@@ -36,8 +34,6 @@ server {
       fastcgi_pass unix:/var/run/php5-fpm.sock;
       fastcgi_index index.php;
       include fastcgi_params;
-      fastcgi_cache MYAPP;
-      fastcgi_cache_valid 200 60m;
     }
   }
   location @forum { rewrite ^/forum/(.+)$ /forum/index.php?p=$1 last; }
@@ -95,8 +91,6 @@ server {
       fastcgi_pass unix:/var/run/php5-fpm.sock;
       fastcgi_index index.php;
       include fastcgi_params;
-      fastcgi_cache MYAPP;
-      fastcgi_cache_valid 200 60m;
     }
   }
 
@@ -128,8 +122,6 @@ server {
       fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
       fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
       include fastcgi_params;
-      fastcgi_cache MYAPP;
-      fastcgi_cache_valid 200 60m;
     }
   }
 }
