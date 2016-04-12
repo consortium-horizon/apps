@@ -201,6 +201,7 @@ class PostOnRegister extends Gdn_Plugin {
         // Game list
         echo '<label for="gamelist">Pour quel jeu postulez-vous ?</label>';
         echo '<select id="gamelist" name="gamelist">';
+        echo '<option value=""></option>';
             // Récupération des noms des catégories principales
             $SQLSectionName = Gdn::sql()->query('
                 SELECT GDN_Category.Name
