@@ -3,6 +3,24 @@
 <head>
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="manifest" href="manifest.json">
+  <!-- NProgress Stylesheet -->
+<link rel="stylesheet" type="text/css" href="//rawgithub.com/rstacruz/nprogress/master/nprogress.css">
+
+<!-- jQuery -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<!-- jQuery ScrollTo Plugin -->
+<script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
+
+<!-- jQuery NProgress Plugin -->
+<script src="//rawgithub.com/rstacruz/nprogress/master/nprogress.js"></script>
+
+<!-- History.js -->
+<script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>
+
+<!-- Ajaxify -->
+<!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
+<script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2" type="text/javascript"></script>
   {asset name="Head"}
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
