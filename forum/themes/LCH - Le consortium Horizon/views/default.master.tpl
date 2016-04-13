@@ -58,6 +58,7 @@
         <li class="dropdown">
           Réseaux sociaux
           <ul>
+            <li><a href="https://steamcommunity.com/groups/consortium-horizon" target="_blank">Steam</a></li>
             <li><a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" target="_blank">YouTube</a></li>
             <li><a href="https://www.twitch.tv/lchorizon" target="_blank">Twitch</a></li>
             <li><a href="https://www.facebook.com/LeConsortiumHorizon" target="_blank">Facebook</a></li>
