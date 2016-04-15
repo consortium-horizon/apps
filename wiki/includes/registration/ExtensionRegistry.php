@@ -12,6 +12,33 @@
 class ExtensionRegistry {
 
 	/**
+	 * "requires" key that applies to MediaWiki core/$wgVersion
+	 */
+	const MEDIAWIKI_CORE = 'MediaWiki';
+
+	/**
+	 * Version of the highest supported manifest version
+	 */
+	const MANIFEST_VERSION = 1;
+
+	/**
+	 * Version of the oldest supported manifest version
+	 */
+	const OLDEST_MANIFEST_VERSION = 1;
+
+	/**
+	 * Bump whenever the registration cache needs resetting
+	 */
+	const CACHE_VERSION = 1;
+
+	/**
+	 * Special key that defines the merge strategy
+	 *
+	 * @since 1.26
+	 */
+	const MERGE_STRATEGY = '_merge_strategy';
+
+	/**
 	 * @var BagOStuff
 	 */
 	protected $cache;
@@ -59,7 +86,7 @@ class ExtensionRegistry {
 		// we don't want to fail here if $wgObjectCaches is not configured
 		// properly for APC setup
 		try {
-			$this->cache = ObjectCache::newAccelerator( array() );
+			$this->cache = ObjectCache::newAccelerator();
 		} catch ( MWException $e ) {
 			$this->cache = new EmptyBagOStuff();
 		}
@@ -92,7 +119,7 @@ class ExtensionRegistry {
 		}
 
 		// See if this queue is in APC
-		$key = wfMemcKey( 'registration', md5( json_encode( $this->queued ) ) );
+		$key = wfMemcKey( 'registration', md5( json_encode( $this->queued ) ), self::CACHE_VERSION );
 		$data = $this->cache->get( $key );
 		if ( $data ) {
 			$this->exportExtractedData( $data );
@@ -109,6 +136,24 @@ class ExtensionRegistry {
 	}
 
 	/**
+	 * Get the current load queue. Not intended to be used
+	 * outside of the installer.
+	 *
+	 * @return array
+	 */
+	public function getQueue() {
+		return $this->queued;
+	}
+
+	/**
+	 * Clear the current load queue. Not intended to be used
+	 * outside of the installer.
+	 */
+	public function clearQueue() {
+		$this->queued = array();
+	}
+
+	/**
 	 * Process a queue of extensions and return their extracted data
 	 *
 	 * @param array $queue keys are filenames, values are ignored
@@ -116,20 +161,52 @@ class ExtensionRegistry {
 	 * @throws Exception
 	 */
 	public function readFromQueue( array $queue ) {
-		$data = array( 'globals' => array( 'wgAutoloadClasses' => array() ) );
+		global $wgVersion;
 		$autoloadClasses = array();
 		$processor = new ExtensionProcessor();
+		$incompatible = array();
+		$coreVersionParser = new CoreVersionChecker( $wgVersion );
 		foreach ( $queue as $path => $mtime ) {
 			$json = file_get_contents( $path );
+			if ( $json === false ) {
+				throw new Exception( "Unable to read $path, does it exist?" );
+			}
 			$info = json_decode( $json, /* $assoc = */ true );
 			if ( !is_array( $info ) ) {
 				throw new Exception( "$path is not a valid JSON file." );
+			}
+			if ( !isset( $info['manifest_version'] ) ) {
+				// For backwards-compatability, assume a version of 1
+				$info['manifest_version'] = 1;
+			}
+			$version = $info['manifest_version'];
+			if ( $version < self::OLDEST_MANIFEST_VERSION || $version > self::MANIFEST_VERSION ) {
+				throw new Exception( "$path: unsupported manifest_version: {$version}" );
 			}
 			$autoload = $this->processAutoLoader( dirname( $path ), $info );
 			// Set up the autoloader now so custom processors will work
 			$GLOBALS['wgAutoloadClasses'] += $autoload;
 			$autoloadClasses += $autoload;
-			$processor->extractInfo( $path, $info );
+			// Check any constraints against MediaWiki core
+			$requires = $processor->getRequirements( $info );
+			if ( isset( $requires[self::MEDIAWIKI_CORE] )
+				&& !$coreVersionParser->check( $requires[self::MEDIAWIKI_CORE] )
+			) {
+				// Doesn't match, mark it as incompatible.
+				$incompatible[] = "{$info['name']} is not compatible with the current "
+					. "MediaWiki core (version {$wgVersion}), it requires: ". $requires[self::MEDIAWIKI_CORE]
+					. '.';
+				continue;
+			}
+			// Compatible, read and extract info
+			$processor->extractInfo( $path, $info, $version );
+		}
+		if ( $incompatible ) {
+			if ( count( $incompatible ) === 1 ) {
+				throw new Exception( $incompatible[0] );
+			} else {
+				throw new Exception( implode( "\n", $incompatible ) );
+			}
 		}
 		$data = $processor->getExtractedInfo();
 		// Need to set this so we can += to it later
@@ -137,31 +214,54 @@ class ExtensionRegistry {
 		foreach ( $data['credits'] as $credit ) {
 			$data['globals']['wgExtensionCredits'][$credit['type']][] = $credit;
 		}
+		$data['globals']['wgExtensionCredits'][self::MERGE_STRATEGY] = 'array_merge_recursive';
 		$data['autoload'] = $autoloadClasses;
 		return $data;
 	}
 
 	protected function exportExtractedData( array $info ) {
 		foreach ( $info['globals'] as $key => $val ) {
-			if ( !isset( $GLOBALS[$key] ) || !$GLOBALS[$key] ) {
+			// If a merge strategy is set, read it and remove it from the value
+			// so it doesn't accidentally end up getting set.
+			// Need to check $val is an array for PHP 5.3 which will return
+			// true on isset( 'string'['foo'] ).
+			if ( isset( $val[self::MERGE_STRATEGY] ) && is_array( $val ) ) {
+				$mergeStrategy = $val[self::MERGE_STRATEGY];
+				unset( $val[self::MERGE_STRATEGY] );
+			} else {
+				$mergeStrategy = 'array_merge';
+			}
+
+			// Optimistic: If the global is not set, or is an empty array, replace it entirely.
+			// Will be O(1) performance.
+			if ( !isset( $GLOBALS[$key] ) || ( is_array( $GLOBALS[$key] ) && !$GLOBALS[$key] ) ) {
 				$GLOBALS[$key] = $val;
-			} elseif ( $key === 'wgHooks' || $key === 'wgExtensionCredits' ) {
-				// Special case $wgHooks and $wgExtensionCredits, which require a recursive merge.
-				// Ideally it would have been taken care of in the first if block though.
-				$GLOBALS[$key] = array_merge_recursive( $GLOBALS[$key], $val );
-			} elseif ( $key === 'wgGroupPermissions' ) {
-				// First merge individual groups
-				foreach ( $GLOBALS[$key] as $name => &$groupVal ) {
-					if ( isset( $val[$name] ) ) {
-						$groupVal += $val[$name];
-					}
-				}
-				// Now merge groups that didn't exist yet
-				$GLOBALS[$key] += $val;
-			} elseif ( is_array( $GLOBALS[$key] ) && is_array( $val ) ) {
-				$GLOBALS[$key] = array_merge( $val, $GLOBALS[$key] );
-			} // else case is a config setting where it has already been overriden, so don't set it
+				continue;
+			}
+
+			if ( !is_array( $GLOBALS[$key] ) || !is_array( $val ) ) {
+				// config setting that has already been overridden, don't set it
+				continue;
+			}
+
+			switch ( $mergeStrategy ) {
+				case 'array_merge_recursive':
+					$GLOBALS[$key] = array_merge_recursive( $GLOBALS[$key], $val );
+					break;
+				case 'array_plus_2d':
+					$GLOBALS[$key] = wfArrayPlus2d( $GLOBALS[$key], $val );
+					break;
+				case 'array_plus':
+					$GLOBALS[$key] += $val;
+					break;
+				case 'array_merge':
+					$GLOBALS[$key] = array_merge( $val, $GLOBALS[$key] );
+					break;
+				default:
+					throw new UnexpectedValueException( "Unknown merge strategy '$mergeStrategy'" );
+			}
 		}
+
 		foreach ( $info['defines'] as $name => $val ) {
 			define( $name, $val );
 		}

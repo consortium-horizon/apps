@@ -20,7 +20,7 @@
  */
 
 /**
- * Prepare and edit in shared cache so that it can be reused on edit
+ * Prepare an edit in shared cache so that it can be reused on edit
  *
  * This endpoint can be called via AJAX as the user focuses on the edit
  * summary box. By the time of submission, the parse may have already
@@ -112,6 +112,7 @@ class ApiStashEdit extends ApiBase {
 		if ( $user->pingLimiter( 'stashedit' ) ) {
 			$status = 'ratelimited';
 		} elseif ( $wgMemc->lock( $key, 0, 30 ) ) {
+			/** @noinspection PhpUnusedLocalVariableInspection */
 			$unlocker = new ScopedCallback( function() use ( $key ) {
 				global $wgMemc;
 				$wgMemc->unlock( $key );
@@ -276,36 +277,55 @@ class ApiStashEdit extends ApiBase {
 		}
 
 		$dbr = wfGetDB( DB_SLAVE );
-		// Check that no templates used in the output changed...
-		$cWhr = array(); // conditions to find changes/creations
-		$dWhr = array(); // conditions to find deletions
+
+		$templates = array(); // conditions to find changes/creations
+		$templateUses = 0; // expected existing templates
 		foreach ( $editInfo->output->getTemplateIds() as $ns => $stuff ) {
 			foreach ( $stuff as $dbkey => $revId ) {
-				$cWhr[] = array( 'page_namespace' => $ns, 'page_title' => $dbkey,
-					'page_latest != ' . intval( $revId ) );
-				$dWhr[] = array( 'page_namespace' => $ns, 'page_title' => $dbkey );
+				$templates[(string)$ns][$dbkey] = (int)$revId;
+				++$templateUses;
 			}
 		}
-		$change = $dbr->selectField( 'page', '1', $dbr->makeList( $cWhr, LIST_OR ), __METHOD__ );
-		$n = $dbr->selectField( 'page', 'COUNT(*)', $dbr->makeList( $dWhr, LIST_OR ), __METHOD__ );
-		if ( $change || $n != count( $dWhr ) ) {
-			wfDebugLog( 'StashEdit', "Stale cache for key '$key'; template changed." );
-			return false;
+		// Check that no templates used in the output changed...
+		if ( count( $templates ) ) {
+			$res = $dbr->select(
+				'page',
+				array( 'ns' => 'page_namespace', 'dbk' => 'page_title', 'page_latest' ),
+				$dbr->makeWhereFrom2d( $templates, 'page_namespace', 'page_title' ),
+				__METHOD__
+			);
+			$changed = false;
+			foreach ( $res as $row ) {
+				$changed = $changed || ( $row->page_latest != $templates[$row->ns][$row->dbk] );
+			}
+
+			if ( $changed || $res->numRows() != $templateUses ) {
+				wfDebugLog( 'StashEdit', "Stale cache for key '$key'; template changed." );
+				return false;
+			}
 		}
 
-		// Check that no files used in the output changed...
-		$cWhr = array(); // conditions to find changes/creations
-		$dWhr = array(); // conditions to find deletions
+		$files = array(); // conditions to find changes/creations
 		foreach ( $editInfo->output->getFileSearchOptions() as $name => $options ) {
-			$cWhr[] = array( 'img_name' => $dbkey,
-				'img_sha1 != ' . $dbr->addQuotes( strval( $options['sha1'] ) ) );
-			$dWhr[] = array( 'img_name' => $dbkey );
+			$files[$name] = (string)$options['sha1'];
 		}
-		$change = $dbr->selectField( 'image', '1', $dbr->makeList( $cWhr, LIST_OR ), __METHOD__ );
-		$n = $dbr->selectField( 'image', 'COUNT(*)', $dbr->makeList( $dWhr, LIST_OR ), __METHOD__ );
-		if ( $change || $n != count( $dWhr ) ) {
-			wfDebugLog( 'StashEdit', "Stale cache for key '$key'; file changed." );
-			return false;
+		// Check that no files used in the output changed...
+		if ( count( $files ) ) {
+			$res = $dbr->select(
+				'image',
+				array( 'name' => 'img_name', 'img_sha1' ),
+				array( 'img_name' => array_keys( $files ) ),
+				__METHOD__
+			);
+			$changed = false;
+			foreach ( $res as $row ) {
+				$changed = $changed || ( $row->img_sha1 != $files[$row->name] );
+			}
+
+			if ( $changed || $res->numRows() != count( $files ) ) {
+				wfDebugLog( 'StashEdit', "Stale cache for key '$key'; file changed." );
+				return false;
+			}
 		}
 
 		wfDebugLog( 'StashEdit', "Cache hit for key '$key'." );
@@ -331,7 +351,7 @@ class ApiStashEdit extends ApiBase {
 			$content->getDefaultFormat(),
 			sha1( $content->serialize( $content->getDefaultFormat() ) ),
 			$user->getId() ?: md5( $user->getName() ), // account for user parser options
-			$user->getId() ? $user->getTouched() : '-' // handle preference change races
+			$user->getId() ? $user->getDBTouched() : '-' // handle preference change races
 		) ) );
 
 		return wfMemcKey( 'prepared-edit', md5( $title->getPrefixedDBkey() ), $hash );
@@ -380,7 +400,7 @@ class ApiStashEdit extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string'
 			),
 			'text' => array(
-				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_TYPE => 'text',
 				ApiBase::PARAM_REQUIRED => true
 			),
 			'contentmodel' => array(

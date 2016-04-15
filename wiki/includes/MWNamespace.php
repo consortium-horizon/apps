@@ -210,6 +210,8 @@ class MWNamespace {
 		if ( $namespaces === null || $rebuild ) {
 			global $wgExtraNamespaces, $wgCanonicalNamespaceNames;
 			$namespaces = array( NS_MAIN => '' ) + $wgCanonicalNamespaceNames;
+			// Add extension namespaces
+			$namespaces += ExtensionRegistry::getInstance()->getAttribute( 'ExtensionNamespaces' );
 			if ( is_array( $wgExtraNamespaces ) ) {
 				$namespaces += $wgExtraNamespaces;
 			}
@@ -294,6 +296,18 @@ class MWNamespace {
 	public static function isContent( $index ) {
 		global $wgContentNamespaces;
 		return $index == NS_MAIN || in_array( $index, $wgContentNamespaces );
+	}
+
+	/**
+	 * Might pages in this namespace require the use of the Signature button on
+	 * the edit toolbar?
+	 *
+	 * @param int $index Index to check
+	 * @return bool
+	 */
+	public static function wantSignatures( $index ) {
+		global $wgExtraSignatureNamespaces;
+		return self::isTalk( $index ) || in_array( $index, $wgExtraSignatureNamespaces );
 	}
 
 	/**

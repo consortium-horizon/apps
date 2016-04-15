@@ -523,9 +523,9 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		}
 
 		if ( $meta ) {
-			wfSuppressWarnings();
+			MediaWiki\suppressWarnings();
 			$metadata = unserialize( $file->getMetadata() );
-			wfRestoreWarnings();
+			MediaWiki\restoreWarnings();
 			if ( $metadata && $version !== 'latest' ) {
 				$metadata = $file->convertMetadataVersion( $metadata, $version );
 			}
@@ -592,7 +592,10 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		$retval = array();
 		if ( is_array( $metadata ) ) {
 			foreach ( $metadata as $key => $value ) {
-				$r = array( 'name' => $key );
+				$r = array(
+					'name' => $key,
+					ApiResult::META_BC_BOOLS => array( 'value' ),
+				);
 				if ( is_array( $value ) ) {
 					$r['value'] = self::processMetaData( $value, $result );
 				} else {
@@ -795,6 +798,6 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Properties#imageinfo_.2F_ii';
+		return 'https://www.mediawiki.org/wiki/API:Imageinfo';
 	}
 }

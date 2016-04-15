@@ -43,6 +43,10 @@ class EmailConfirmation extends UnlistedSpecialPage {
 	 * @throws UserNotLoggedIn
 	 */
 	function execute( $code ) {
+		// Ignore things like master queries/connections on GET requests.
+		// It's very convenient to just allow formless link usage.
+		Profiler::instance()->getTransactionProfiler()->resetExpectations();
+
 		$this->setHeaders();
 
 		$this->checkReadOnly();
@@ -120,7 +124,7 @@ class EmailConfirmation extends UnlistedSpecialPage {
 	 * @param string $code Confirmation code
 	 */
 	function attemptConfirm( $code ) {
-		$user = User::newFromConfirmationCode( $code );
+		$user = User::newFromConfirmationCode( $code, User::READ_LATEST );
 		if ( !is_object( $user ) ) {
 			$this->getOutput()->addWikiMsg( 'confirmemail_invalid' );
 
@@ -151,6 +155,10 @@ class EmailInvalidation extends UnlistedSpecialPage {
 	}
 
 	function execute( $code ) {
+		// Ignore things like master queries/connections on GET requests.
+		// It's very convenient to just allow formless link usage.
+		Profiler::instance()->getTransactionProfiler()->resetExpectations();
+
 		$this->setHeaders();
 		$this->checkReadOnly();
 		$this->checkPermissions();
@@ -164,7 +172,7 @@ class EmailInvalidation extends UnlistedSpecialPage {
 	 * @param string $code Confirmation code
 	 */
 	function attemptInvalidate( $code ) {
-		$user = User::newFromConfirmationCode( $code );
+		$user = User::newFromConfirmationCode( $code, User::READ_LATEST );
 		if ( !is_object( $user ) ) {
 			$this->getOutput()->addWikiMsg( 'confirmemail_invalid' );
 

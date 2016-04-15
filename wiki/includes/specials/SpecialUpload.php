@@ -152,6 +152,8 @@ class SpecialUpload extends SpecialPage {
 	 * @throws UserBlockedError
 	 */
 	public function execute( $par ) {
+		$this->useTransactionalTimeLimit();
+
 		$this->setHeaders();
 		$this->outputHeader();
 
@@ -357,7 +359,7 @@ class SpecialUpload extends SpecialPage {
 		$sessionKey = $this->mUpload->stashSession();
 
 		$warningHtml = '<h2>' . $this->msg( 'uploadwarning' )->escaped() . "</h2>\n"
-			. '<ul class="warning">';
+			. '<div class="warningbox"><ul>';
 		foreach ( $warnings as $warning => $args ) {
 			if ( $warning == 'badfilename' ) {
 				$this->mDesiredDestName = Title::makeTitle( NS_FILE, $args )->getText();
@@ -385,7 +387,7 @@ class SpecialUpload extends SpecialPage {
 			}
 			$warningHtml .= $msg;
 		}
-		$warningHtml .= "</ul>\n";
+		$warningHtml .= "</ul></div>\n";
 		$warningHtml .= $this->msg( 'uploadwarning-text' )->parseAsBlock();
 
 		$form = $this->getUploadForm( $warningHtml, $sessionKey, /* $hideIgnoreWarning */ true );
@@ -458,6 +460,14 @@ class SpecialUpload extends SpecialPage {
 			if ( $this->showUploadWarning( $warnings ) ) {
 				return;
 			}
+		}
+
+		// This is as late as we can throttle, after expected issues have been handled
+		if ( UploadBase::isThrottled( $this->getUser() ) ) {
+			$this->showRecoverableUploadError(
+				$this->msg( 'actionthrottledtext' )->escaped()
+			);
+			return;
 		}
 
 		// Get the page text if this is not a reupload
@@ -787,6 +797,10 @@ class UploadForm extends HTMLForm {
 	protected $mMaxUploadSize = array();
 
 	public function __construct( array $options = array(), IContextSource $context = null ) {
+		if ( $context instanceof IContextSource ) {
+			$this->setContext( $context );
+		}
+
 		$this->mWatch = !empty( $options['watch'] );
 		$this->mForReUpload = !empty( $options['forreupload'] );
 		$this->mSessionKey = isset( $options['sessionkey'] ) ? $options['sessionkey'] : '';
@@ -813,8 +827,8 @@ class UploadForm extends HTMLForm {
 
 		# Add a link to edit MediaWik:Licenses
 		if ( $this->getUser()->isAllowed( 'editinterface' ) ) {
-			$licensesLink = Linker::link(
-				Title::makeTitle( NS_MEDIAWIKI, 'Licenses' ),
+			$licensesLink = Linker::linkKnown(
+				$this->msg( 'licenses' )->inContentLanguage()->getTitle(),
 				$this->msg( 'licenses-edit' )->escaped(),
 				array(),
 				array( 'action' => 'edit' )

@@ -73,7 +73,7 @@ class RefreshLinks extends Maintenance {
 	private function doRefreshLinks( $start, $newOnly = false,
 		$end = null, $redirectsOnly = false, $oldRedirectsOnly = false
 	) {
-		global $wgParser, $wgUseTidy;
+		global $wgParser;
 
 		$reportingInterval = 100;
 		$dbr = wfGetDB( DB_SLAVE );
@@ -83,13 +83,10 @@ class RefreshLinks extends Maintenance {
 		}
 
 		// Give extensions a chance to optimize settings
-		wfRunHooks( 'MaintenanceRefreshLinksInit', array( $this ) );
+		Hooks::run( 'MaintenanceRefreshLinksInit', array( $this ) );
 
 		# Don't generate extension images (e.g. Timeline)
 		$wgParser->clearTagHooks();
-
-		# Don't use HTML tidy
-		$wgUseTidy = false;
 
 		$what = $redirectsOnly ? "redirects" : "links";
 
@@ -327,13 +324,14 @@ class RefreshLinks extends Maintenance {
 
 		foreach ( $linksTables as $table => $field ) {
 			$this->output( "    $table: 0" );
+			$tableStart = $start;
 			$counter = 0;
 			do {
 				$ids = $dbr->selectFieldValues(
 					$table,
 					$field,
 					array(
-						self::intervalCond( $dbr, $field, $start, $end ),
+						self::intervalCond( $dbr, $field, $tableStart, $end ),
 						"$field NOT IN ({$dbr->selectSQLText( 'page', 'page_id' )})",
 					),
 					__METHOD__,
@@ -343,17 +341,15 @@ class RefreshLinks extends Maintenance {
 				$numIds = count( $ids );
 				if ( $numIds ) {
 					$counter += $numIds;
-					wfWaitForSlaves();
 					$dbw->delete( $table, array( $field => $ids ), __METHOD__ );
 					$this->output( ", $counter" );
-					$start = $ids[$numIds - 1] + 1;
+					$tableStart = $ids[$numIds - 1] + 1;
+					wfWaitForSlaves();
 				}
 
-			} while ( $numIds >= $batchSize && ( $end === null || $start <= $end ) );
+			} while ( $numIds >= $batchSize && ( $end === null || $tableStart <= $end ) );
 
 			$this->output( " deleted.\n" );
-
-			wfWaitForSlaves();
 		}
 	}
 
