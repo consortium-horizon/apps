@@ -506,7 +506,7 @@ class DiscussionModel extends VanillaModel {
         $this->EventArguments['Wheres'] = &$Wheres;
         $this->fireEvent('BeforeGetUnread'); // @see 'BeforeGetCount' for consistency in results vs. counts
 
-        $IncludeAnnouncements = false;
+        $IncludeAnnouncements = true;
         if (strtolower(val('Announce', $Wheres)) == 'all') {
             $IncludeAnnouncements = true;
             unset($Wheres['Announce']);
@@ -541,6 +541,11 @@ class DiscussionModel extends VanillaModel {
 
         // Change discussions returned based on additional criteria
         $this->AddDiscussionColumns($Data);
+        $Result = &$Data->result();
+        foreach ($Result as $valueKey => &$Discussion) {
+            if ($Discussion->CountUnreadComments == 0)
+                unset($Result[$valueKey]);
+        }
 
         // Join in the users.
         Gdn::userModel()->joinUsers($Data, array('FirstUserID', 'LastUserID'));
