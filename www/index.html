@@ -1,174 +1,244 @@
-<!doctype html>
-<html lang="fr" class="no-js">
-<head>
-	<meta charset="UTF-8">
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>le Consortium Horizon</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<META NAME="Keywords" CONTENT="Guilde, Francophone, Planetside 2, Arma 3, Star Citizen, Wildstar, LCH, LCTH, Skyforge, Jeux vidéos, Communauté, équipe, Albion Online, Forum, Wiki, Nouvelles">
+	<meta name="description" content="Le Consortium Horizon: La guilde dont vous êtes le héros" />
+	<meta name="keywords" content="conrostium, horizon, guildre, français, fr, jeux, vidéos, communauté, gaming" />
+	<meta name="author" content="LCH - Le Consortium Horizon" />
 
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+  <!--
+	//////////////////////////////////////////////////////
 
-	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/slider.css"> <!-- Resource style -->
-	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+	Bon on va pas se mentir ce truc vient en grande partie de codrops,
+	parce que j'avais la flemme de coder un énième système de grid en CSS
+	avec le framework du moment.
 
-	<title>Le consortium horizon</title>
-</head>
-<body data-hijacking="on" data-animation="parallax">
+	Le reste des features ont été trouvées par ci et par la. Au diable l'innovation !
 
-	<!-- home section  -->
-	<section class="cd-section section-1 visible">
+	//////////////////////////////////////////////////////
+	 -->
 
-		<!-- container -->
-		<div class="container">
+	<link rel="shortcut icon" href="favicon.ico">
 
-			<!-- slider -->
-			<div class="cd-hero">
-				<ul class="cd-hero-slider autoplay">
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,600,400italic,700' rel='stylesheet' type='text/css'>
 
-					<!-- home item -->
-					<li class="selected">
-						<div class="cd-full-width">
-							<img src="img/logo.png" id="logo-consortium">
-							<h2>La Guilde dont <strong>vous</strong> êtes le héros</h2>
-							<p>La communauté française ouverte à tous, à partir de 18 ans.</p>
-							<p>
-								<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Devenir membre</a>
-								<a href="http://www.consortium-horizon.com/forum/page/presentation-de-la-guilde" class="cd-btn cd-next secondary">En savoir plus</a>
-							</p>
-						</div> <!-- .cd-full-width -->
-					</li>
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Flexslider -->
+	<link rel="stylesheet" href="css/flexslider.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Magnific Popup -->
+	<link rel="stylesheet" href="css/magnific-popup.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
 
-					<!-- albion item -->
-					<li>
-						<div class="cd-full-width">
-							<h2>Albion Online</h2>
-							<p>Farmer c'est bien, mais en groupe c'est mieux !</p>
-							<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Rejoindre la guilde</a>
-						</div> <!-- .cd-full-width -->
-					</li>
+	<link rel="stylesheet" href="css/blue.css">
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
 
-					<!-- arma item -->
-					<li>
-						<div class="cd-full-width">
-							<h2>Arma 3</h2>
-							<p>Opérations réalistes et campagnes scénarisées.</p>
-							<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Postuler</a>
-							<a href="http://www.consortium-horizon.com/forum/categories/diplomatie" class="cd-btn secondary">Contactez nos diplomates</a>
-						</div> <!-- .cd-full-width -->
-					</li>
+	</head>
 
-					<!-- planetside 2 item -->
-					<li>
-						<div class="cd-half-width">
-							<h2>Planetside 2</h2>
-							<p>Rigoureux et méthodiques, si le jeu d'équipe vous intéresse, le Consortium est fait pour vous !</p>
-							<p>
-								<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Devenir LCTH</a>
-							</p>
-						</div> <!-- .cd-half-width -->
+	<body>
 
-						<div class="cd-half-width cd-img-container">
-							<img src="img/char_ps2.png" alt="planetside 2">
-						</div> <!-- .cd-half-width.cd-img-container -->
-					</li>
+	<!-- Loader -->
+	<div class="fh5co-loader"></div>
 
-					<!-- star citizen item -->
-					<li>
-						<div class="cd-half-width cd-img-container">
-							<img src="img/char_sc.png" alt="star citizen">
-						</div> <!-- .cd-half-width.cd-img-container -->
-
-						<div class="cd-half-width">
-							<h2>Star Citizen</h2>
-							<p>La tête dans les étoiles, partez vers de nouveaux horizons !</p>
-							<p>
-								<a href="http://www.consortium-horizon.com/forum/categories/candidature" class="cd-btn">Rejoindre le Consortium</a>
-							</p>
-						</div> <!-- .cd-half-width -->
-					</li>
-				</ul> <!-- .cd-hero-slider -->
-
-				<div class="cd-slider-nav">
-					<nav>
-						<span class="cd-marker item-1"></span>
-
-						<ul>
-							<li class="selected"><a href="#0">Accueil</a></li>
-							<li><a href="#0">Albion Online</a></li>
-							<li><a href="#0">Arma 3</a></li>
-							<li><a href="#0">Planetside 2</a></li>
-							<li><a href="#0">Star Citizen</a></li>
-						</ul>
-					</nav>
-				</div> <!-- .cd-slider-nav -->
-			</div> <!-- .cd-hero -->
-
-			<!-- links -->
-			<div class="links">
-				<div onclick="location.href='https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ';" class="links-youtube">
-					<a href="https://www.youtube.com/channel/UCEk_pNq59GlK2PNW6zNAZqQ" class="Button Button--solid">Sur Youtube</a>
-					<div class="subtitle"><p>Découvrez nos vidéos originales !</p></div>
-				</div>
-				<div onclick="location.href='https://www.consortium-horizon.com/wiki/Accueil';" class="links-wiki">
-					<a href="https://www.consortium-horizon.com/wiki/Accueil" class="Button Button--solid">Notre Wiki</a>
-					<div class="subtitle"><p>Des infos, des guides, tout ce qu'il vous faut.</p></div>
-				</div>
-				<div onclick="location.href='http://www.consortium-horizon.com/forum/';" class="links-forum">
-					<a href="http://www.consortium-horizon.com/forum/" class="Button Button--solid">Le Forum</a>
-					<div class="subtitle"><p>Pour communiquer y'a pas mieux !</p></div>
-				</div>
+	<div id="fh5co-page">
+		<section id="fh5co-header">
+			<div class="container">
+				<nav role="navigation">
+					<ul class="pull-left left-menu">
+						<li><a class="btn btn-primary" href="http://www.consortium-horizon.com/forum/">Forum</a></li>
+					</ul>
+					<ul class="pull-right right-menu">
+						<li><a href="http://www.consortium-horizon.com/forum/entry/">Se connecter</a></li>
+						<li class="fh5co-cta-btn"><a href="http://www.consortium-horizon.com/forum/entry/register">S'inscrire</a></li>
+					</ul>
+				</nav>
 			</div>
-		</div>
-	</section>
+		</section>
+		<!-- #fh5co-header -->
 
-	<!-- news and details section  -->
-	<section class="cd-section section-2">
-
-		<!-- main container -->
-		<div class="container">
-
-				<!-- details container -->
-				<div class="details">
-
-					<!-- actual content -->
-					<div class="content">
-						<img src="img/logo.png" id="logo-below">
-						<p>Créé en 2013, le Consortium Horizon est une guilde multi-jeux francophone.
-						Notre crédo reflète notre manière de jouer: toujours privilégier la bonne humeur et
-						l'ambiance amicale devant le reste. Ainsi, le seul pré-requis pour nos membres est de faire preuve de motivation et d'entrain
-						pour rejoindre la communauté.</p>
-						<p>Nous utilisons notre forum pour communiquer à l'écrit, et mumble pour les discussions vocales.</p>
-						<p>Il est fortement conseillé aux membres qui souhaitent s'investir de se manifester, car nous mettons en effet à disposition divers
-						outils rédactionnels, tutoriels pour le montage vidéo et autres astuces pour leur permmettre de créer et partage du contenu personnalisé.</p>
-						<p>Si vous cherchez une communauté mature, dynamique et ou la bonne ambiance est assurée, ne vous tracassez plus !</p>
-						<a href="http://www.consortium-horizon.com/forum/" class="Button Button--solid">Accéder au forum</a>
-						<a href="mumble://mumble.consortium-horizon.com:64738/?version=1.2.0" class="Button Button--solid">Rejoignez nous sur mumble !</a>
+		<section id="fh5co-hero" class="js-fullheight" style="background-image: url(images/hero_bg.jpg);" data-next="yes">
+			<div class="fh5co-overlay"></div>
+			<div class="container">
+				<div class="fh5co-intro js-fullheight">
+					<div class="fh5co-intro-text">
+						<div class="fh5co-center-position">
+							<img src="images/logo_big.png" style="max-height:35vh;" alt="Logo" />
+							<h2 class="animate-box">La guilde dont VOUS êtes le héros</h2>
+							<p class="animate-box"><a href="http://www.consortium-horizon.com/forum/entry/register" target="_blank" class="btn btn-primary">Rejoindre la communauté</a></p>
+						</div>
 					</div>
 				</div>
+			</div>
+			<div class="fh5co-learn-more animate-box">
+				<a href="#" class="scroll-btn">
+					<span class="text">En savoir plus</span>
+					<span class="arrow"><i class="icon-chevron-down"></i></span>
+				</a>
+			</div>
+		</section>
+		<!-- END #fh5co-hero -->
 
-				<!-- will be populated with js -->
-				<section class="newsContainer" central>
-	        <section style="height: 100%;" news></section>
-					<div style="clear:both;"></div>
-	      </section>
+		<section id="fh5co-projects">
+			<div class="container">
+				<div class="row row-bottom-padded-md">
+					<div class="col-md-6 col-md-offset-3 text-center">
+						<h2 class="fh5co-lead animate-box">A quoi jouons nous ?</h2>
+						<p class="fh5co-sub-lead animate-box">Difficile de résumer tant la liste est longue ! Mais entre deux discussions sur notre (fabuleux) forum, voici une liste non exhaustive !</p>
+					</div>
+				</div>
+				<div class="row">
 
-		</div>
-	</section>
+					<div class="col-md-4 col-sm-6 col-xxs-12 animate-box">
+						<a href="images/arma.jpg" class="fh5co-project-item image-popup">
+							<img src="images/arma.jpg" alt="Image" class="img-responsive">
+							<div class="fh5co-text">
+								<h2>Arma 3</h2>
+								<p>Opérations réalistes et campagnes scénarisées à la sauce maison. Que demander de mieux ?</p>
+							</div>
+						</a>
+					</div>
 
-	<nav>
-		<ul class="cd-vertical-nav">
-			<li><a href="#0" class="cd-prev inactive">Next</a></li>
-			<li><a href="#0" class="cd-next">Prev</a></li>
-		</ul>
-	</nav> <!-- .cd-vertical-nav -->
-<script src="js/jquery-2.1.4.js"></script>
-<script src="js/velocity.min.js"></script>
-<script src="js/velocity.ui.min.js"></script>
-<script src="js/main.js"></script>
-<script src="js/rss.js"></script>
-<script src="js/moment.js"></script>
-<script src="js/slick.js"></script>
-<script src="js/slider.js"></script> <!-- Resource jQuery -->
-</body>
+					<div class="col-md-4 col-sm-6 col-xxs-12 animate-box">
+						<a href="images/eve.jpg" class="fh5co-project-item image-popup">
+							<img src="images/eve.jpg" alt="Image" class="img-responsive">
+							<div class="fh5co-text">
+								<h2>Eve Online</h2>
+								<p>Internet spaceships is very serious buisness. Et en anglais dans le texte s'il vous plaît !</p>
+							</div>
+						</a>
+					</div>
+
+					<div class="col-md-4 col-sm-6 col-xxs-12 animate-box">
+						<a href="images/planetside-2.jpg" class="fh5co-project-item image-popup">
+							<img src="images/planetside-2.jpg" alt="Image" class="img-responsive">
+							<div class="fh5co-text">
+								<h2>Planetside 2</h2>
+								<p>Rigoureux et méthodiques, si le jeu d'équipe vous intéresse, le Consortium est fait pour vous !</p>
+							</div>
+						</a>
+					</div>
+
+					<div class="col-md-4 col-sm-6 col-xxs-12 animate-box">
+						<a href="images/skyforge.jpg" class="fh5co-project-item image-popup">
+							<img src="images/skyforge.jpg" alt="Image" class="img-responsive">
+							<div class="fh5co-text">
+								<h2>Skyforge</h2>
+								<p>Entrer dans la peau d'un dieu, c'est plutôt alléchant non ?</p>
+							</div>
+						</a>
+					</div>
+
+					<div class="col-md-4 col-sm-6 col-xxs-12 animate-box">
+						<a href="images/sc.jpg" class="fh5co-project-item image-popup">
+							<img src="images/sc.jpg" alt="Image" class="img-responsive">
+							<div class="fh5co-text">
+								<h2>Star Citizen</h2>
+								<p>La tête dans les étoiles, partez avec nous vers de nouveaux horizons !</p>
+							</div>
+						</a>
+					</div>
+
+					<div class="col-md-4 col-sm-6 col-xxs-12 animate-box">
+						<a href="images/indie.jpg" class="fh5co-project-item image-popup">
+							<img src="images/indie.jpg" alt="Image" class="img-responsive">
+							<div class="fh5co-text">
+								<h2>Nos petits jeux</h2>
+								<p>Nos coups de coeur du moments, les jeux indés, et tous le reste !</p>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- END #fh5co-projects -->
+
+		<section id="fh5co-features-2">
+			<div class="container">
+				<div class="col-md-6 col-md-push-6">
+					<figure class="fh5co-feature-image animate-box">
+						<img src="images/macbook.png" alt="Free HTML5 Bootstrap Template by FREEHTML5.co">
+					</figure>
+				</div>
+				<div class="col-md-6 col-md-pull-6">
+					<span class="fh5co-label animate-box">Rejoignez</span>
+					<h2 class="fh5co-lead animate-box">Une communauté de joueurs</h2>
+					<div class="fh5co-feature">
+						<div class="fh5co-icon animate-box"><i class="icon-check2"></i></div>
+						<div class="fh5co-text animate-box">
+							<h3>Mature</h3>
+							<p>Réservé au personnes majeures, le Consortium Horizon est une communauté de joueurs matures et réfléchis ... bon peut être pas autant mais chhht il ne faut pas le dire.</p>
+						</div>
+					</div>
+					<div class="fh5co-feature">
+						<div class="fh5co-icon animate-box"><i class="icon-check2"></i></div>
+						<div class="fh5co-text animate-box">
+							<h3>Casual friendly</h3>
+							<p>Pas fichu de mettre une balle dans ta cible ? Pas le temps de jouer plus de 5 minutes par semaine ? Ce genre de détails nous importe peu, du moment que tu sois motivé !</p>
+						</div>
+					</div>
+					<div class="fh5co-feature">
+						<div class="fh5co-icon animate-box"><i class="icon-check2"></i></div>
+						<div class="fh5co-text animate-box">
+							<h3>Ou règne la bonne entente</h3>
+							<p>Au delà de la performance, des disponibilités et de envies de chacun, la bonne humeur et l'entente cordiale sont deux piliers de notre communauté. Vous allez vous aimez les uns les autres bordel de merde ?!</p>
+						</div>
+					</div>
+
+					<div class="fh5co-btn-action animate-box">
+						<a href="http://www.consortium-horizon.com/forum/entry/register" class="btn btn-primary btn-cta">Inscrivez-vous !</a>
+					</div>
+
+				</div>
+			</div>
+		</section>
+		<!-- END #fh5co-features-2 -->
+
+		<footer id="fh5co-footer">
+			<div class="fh5co-copyright animate-box">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<p class="fh5co-left"><small>&copy; 2016 <a href="index.html">Le Consortium Horizon</a>. All Rights Reserved (Si si on vous jure).</small></p>
+							<p class="fh5co-right"><small class="fh5co-right">Designed by Mr Vlad' (lol il a rien fait en fait)</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<!-- END #fh5co-footer -->
+	</div>
+	<!-- END #fh5co-page -->
+
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Flexslider -->
+	<script src="js/jquery.flexslider-min.js"></script>
+	<!-- Magnific Popup -->
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/magnific-popup-options.js"></script>
+
+	<!-- Main JS (Do not remove) -->
+	<script src="js/main.js"></script>
+	</body>
 </html>
