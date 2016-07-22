@@ -94,7 +94,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
                       },
                       application: {
                         network: {
-                          autoconnect: false
+                          autoconnect: true
                         },
                         interface: {
                           showpane: true,
