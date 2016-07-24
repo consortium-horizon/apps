@@ -101,7 +101,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
                           animate: true
                         },
                         groupchat: {
-                            open: ["bar@chat.consortium-horizon.com"]
+                            suggest: ["bar@chat.consortium-horizon.com"]
                         }
                       }
                     });
