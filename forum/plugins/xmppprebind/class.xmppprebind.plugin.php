@@ -82,7 +82,7 @@ class XMPPPrebindPlugin extends Gdn_Plugin
                 $Sender->addJsFile('mini.js', 'plugins/xmppprebind');
                 $js = '
 
-
+                  MINI_SHOWPANE = false;
                   jQuery(document).ready(function() {
                     JAPPIX_STATIC = "/forum/plugins/xmppprebind/";
                     HOST_BOSH = "https://www.consortium-horizon.com/http-bind/";
@@ -97,11 +97,11 @@ class XMPPPrebindPlugin extends Gdn_Plugin
                           autoconnect: true
                         },
                         interface: {
-                          showpane: true,
+                          showpane: false,
                           animate: true
                         },
                         groupchat: {
-                            suggest: ["bar@chat.consortium-horizon.com"]
+                            open: ["bar@chat.consortium-horizon.com"]
                         }
                       }
                     });
