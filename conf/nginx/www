@@ -1,7 +1,7 @@
 server {
   listen 80;
   listen [::]:80 ipv6only=on;
-  listen 443 ssl spdy;
+  # listen 443 ssl spdy;
 
   server_name www.consortium-horizon.com;
 
@@ -88,7 +88,8 @@ server {
 
     location ~* \.php$ {
       fastcgi_split_path_info ^(.+\.php)(/.+)$;
-      fastcgi_pass unix:/var/run/php5-fpm.sock;
+      # fastcgi_pass unix:/var/run/php5-fpm.sock;
+      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
       fastcgi_index index.php;
       include fastcgi_params;
     }

@@ -25,6 +25,14 @@ a:hover, a:focus {
 	text-decoration: underline;
 }
 
+a:lang(ar),
+a:lang(kk-arab),
+a:lang(mzn),
+a:lang(ps),
+a:lang(ur) {
+	text-decoration: none;
+}
+
 a.stub {
 	color: #772233;
 }
@@ -62,6 +70,10 @@ a.new:visited, #p-personal a.new:visited {
 
 .mw-body a.external:active {
 	color: #b63;
+}
+
+.mw-body a.external.free {
+	word-wrap: break-word;
 }
 
 /* Inline Elements */
@@ -194,11 +206,14 @@ code {
 	padding: 1px 4px;
 }
 
-pre, .mw-code {
+pre,
+.mw-code {
 	color: black;
 	background-color: #f9f9f9;
 	border: 1px solid #ddd;
 	padding: 1em;
+	/* Wrap lines in overflow. T2260, T103780 */
+	white-space: pre-wrap;
 }
 
 /* Tables */
@@ -235,10 +250,6 @@ textarea {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
-}
-
-select {
-	vertical-align: top;
 }
 
 /* Emulate Center */

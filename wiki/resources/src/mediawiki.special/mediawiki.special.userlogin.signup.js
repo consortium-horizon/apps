@@ -65,7 +65,7 @@
 				ususers: username // '|' in usernames is handled below
 			} )
 				.done( function ( resp ) {
-					var userinfo = resp.query.users[0];
+					var userinfo = resp.query.users[ 0 ];
 
 					if ( resp.query.users.length !== 1 ) {
 						// Happens if the user types '|' into the field
@@ -123,7 +123,7 @@
 						.empty()
 						.append(
 							// Ugh…
-							// @todo Change the HTML structure in includes/templates/Usercreate.php
+							// TODO Change the HTML structure in includes/templates/Usercreate.php
 							$( '<strong>' ).text( mw.message( 'createacct-error' ).text() ),
 							$( '<br>' ),
 							document.createTextNode( message )

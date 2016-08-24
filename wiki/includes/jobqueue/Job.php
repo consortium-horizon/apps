@@ -32,11 +32,11 @@ abstract class Job implements IJobSpecification {
 	/** @var string */
 	public $command;
 
-	/** @var array|bool Array of job parameters or false if none */
+	/** @var array Array of job parameters */
 	public $params;
 
 	/** @var array Additional queue metadata */
-	public $metadata = array();
+	public $metadata = [];
 
 	/** @var Title */
 	protected $title;
@@ -46,6 +46,9 @@ abstract class Job implements IJobSpecification {
 
 	/** @var string Text for error that occurred last */
 	protected $error;
+
+	/** @var callable[] */
+	protected $teardownCallbacks = [];
 
 	/**
 	 * Run the job
@@ -58,18 +61,23 @@ abstract class Job implements IJobSpecification {
 	 *
 	 * @param string $command Job command
 	 * @param Title $title Associated title
-	 * @param array|bool $params Job parameters
+	 * @param array $params Job parameters
 	 * @throws MWException
 	 * @return Job
 	 */
-	public static function factory( $command, Title $title, $params = false ) {
+	public static function factory( $command, Title $title, $params = [] ) {
 		global $wgJobClasses;
+
 		if ( isset( $wgJobClasses[$command] ) ) {
 			$class = $wgJobClasses[$command];
 
-			return new $class( $title, $params );
+			$job = new $class( $title, $params );
+			$job->command = $command;
+
+			return $job;
 		}
-		throw new MWException( "Invalid job command `{$command}`" );
+
+		throw new InvalidArgumentException( "Invalid job command '{$command}'" );
 	}
 
 	/**
@@ -80,10 +88,14 @@ abstract class Job implements IJobSpecification {
 	public function __construct( $command, $title, $params = false ) {
 		$this->command = $command;
 		$this->title = $title;
-		$this->params = $params;
+		$this->params = is_array( $params ) ? $params : []; // sanity
 
 		// expensive jobs may set this to true
 		$this->removeDuplicates = false;
+
+		if ( !isset( $this->params['requestId'] ) ) {
+			$this->params['requestId'] = WebRequest::getRequestId();
+		}
 	}
 
 	/**
@@ -135,6 +147,36 @@ abstract class Job implements IJobSpecification {
 	}
 
 	/**
+	 * @return int|null UNIX timestamp of when the job was queued, or null
+	 * @since 1.26
+	 */
+	public function getQueuedTimestamp() {
+		return isset( $this->metadata['timestamp'] )
+			? wfTimestampOrNull( TS_UNIX, $this->metadata['timestamp'] )
+			: null;
+	}
+
+	/**
+	 * @return string|null Id of the request that created this job. Follows
+	 *  jobs recursively, allowing to track the id of the request that started a
+	 *  job when jobs insert jobs which insert other jobs.
+	 * @since 1.27
+	 */
+	public function getRequestId() {
+		return isset( $this->params['requestId'] )
+			? $this->params['requestId']
+			: null;
+	}
+
+	/**
+	 * @return int|null UNIX timestamp of when the job was runnable, or null
+	 * @since 1.26
+	 */
+	public function getReadyTimestamp() {
+		return $this->getReleaseTimestamp() ?: $this->getQueuedTimestamp();
+	}
+
+	/**
 	 * Whether the queue should reject insertion of this job if a duplicate exists
 	 *
 	 * This can be used to avoid duplicated effort or combined with delayed jobs to
@@ -176,18 +218,20 @@ abstract class Job implements IJobSpecification {
 	 * @since 1.21
 	 */
 	public function getDeduplicationInfo() {
-		$info = array(
+		$info = [
 			'type' => $this->getType(),
 			'namespace' => $this->getTitle()->getNamespace(),
 			'title' => $this->getTitle()->getDBkey(),
 			'params' => $this->getParams()
-		);
+		];
 		if ( is_array( $info['params'] ) ) {
 			// Identical jobs with different "root" jobs should count as duplicates
 			unset( $info['params']['rootJobSignature'] );
 			unset( $info['params']['rootJobTimestamp'] );
 			// Likewise for jobs with different delay times
 			unset( $info['params']['jobReleaseTimestamp'] );
+			// Identical jobs from different requests should count as duplicates
+			unset( $info['params']['requestId'] );
 			// Queues pack and hash this array, so normalize the order
 			ksort( $info['params'] );
 		}
@@ -196,18 +240,30 @@ abstract class Job implements IJobSpecification {
 	}
 
 	/**
+	 * Get "root job" parameters for a task
+	 *
+	 * This is used to no-op redundant jobs, including child jobs of jobs,
+	 * as long as the children inherit the root job parameters. When a job
+	 * with root job parameters and "rootJobIsSelf" set is pushed, the
+	 * deduplicateRootJob() method is automatically called on it. If the
+	 * root job is only virtual and not actually pushed (e.g. the sub-jobs
+	 * are inserted directly), then call deduplicateRootJob() directly.
+	 *
 	 * @see JobQueue::deduplicateRootJob()
+	 *
 	 * @param string $key A key that identifies the task
 	 * @return array Map of:
+	 *   - rootJobIsSelf    : true
 	 *   - rootJobSignature : hash (e.g. SHA1) that identifies the task
 	 *   - rootJobTimestamp : TS_MW timestamp of this instance of the task
 	 * @since 1.21
 	 */
 	public static function newRootJobParams( $key ) {
-		return array(
+		return [
+			'rootJobIsSelf'    => true,
 			'rootJobSignature' => sha1( $key ),
 			'rootJobTimestamp' => wfTimestampNow()
-		);
+		];
 	}
 
 	/**
@@ -216,14 +272,14 @@ abstract class Job implements IJobSpecification {
 	 * @since 1.21
 	 */
 	public function getRootJobParams() {
-		return array(
+		return [
 			'rootJobSignature' => isset( $this->params['rootJobSignature'] )
 				? $this->params['rootJobSignature']
 				: null,
 			'rootJobTimestamp' => isset( $this->params['rootJobTimestamp'] )
 				? $this->params['rootJobTimestamp']
 				: null
-		);
+		];
 	}
 
 	/**
@@ -234,6 +290,33 @@ abstract class Job implements IJobSpecification {
 	public function hasRootJobParams() {
 		return isset( $this->params['rootJobSignature'] )
 			&& isset( $this->params['rootJobTimestamp'] );
+	}
+
+	/**
+	 * @see JobQueue::deduplicateRootJob()
+	 * @return bool Whether this is job is a root job
+	 */
+	public function isRootJob() {
+		return $this->hasRootJobParams() && !empty( $this->params['rootJobIsSelf'] );
+	}
+
+	/**
+	 * @param callable $callback
+	 * @since 1.27
+	 */
+	protected function addTeardownCallback( $callback ) {
+		$this->teardownCallbacks[] = $callback;
+	}
+
+	/**
+	 * Do any final cleanup after run(), deferred updates, and all DB commits happen
+	 *
+	 * @since 1.27
+	 */
+	public function teardown() {
+		foreach ( $this->teardownCallbacks as $callback ) {
+			call_user_func( $callback );
+		}
 	}
 
 	/**
@@ -250,14 +333,6 @@ abstract class Job implements IJobSpecification {
 	 * @return string
 	 */
 	public function toString() {
-		$truncFunc = function ( $value ) {
-			$value = (string)$value;
-			if ( mb_strlen( $value ) > 1024 ) {
-				$value = "string(" . mb_strlen( $value ) . ")";
-			}
-			return $value;
-		};
-
 		$paramString = '';
 		if ( $this->params ) {
 			foreach ( $this->params as $key => $value ) {
@@ -265,16 +340,16 @@ abstract class Job implements IJobSpecification {
 					$paramString .= ' ';
 				}
 				if ( is_array( $value ) ) {
-					$filteredValue = array();
+					$filteredValue = [];
 					foreach ( $value as $k => $v ) {
-						if ( is_scalar( $v ) ) {
-							$filteredValue[$k] = $truncFunc( $v );
+						$json = FormatJson::encode( $v );
+						if ( $json === false || mb_strlen( $json ) > 512 ) {
+							$filteredValue[$k] = gettype( $v ) . '(...)';
 						} else {
-							$filteredValue = null;
-							break;
+							$filteredValue[$k] = $v;
 						}
 					}
-					if ( $filteredValue && count( $filteredValue ) < 10 ) {
+					if ( count( $filteredValue ) <= 10 ) {
 						$value = FormatJson::encode( $filteredValue );
 					} else {
 						$value = "array(" . count( $value ) . ")";
@@ -283,7 +358,12 @@ abstract class Job implements IJobSpecification {
 					$value = "object(" . get_class( $value ) . ")";
 				}
 
-				$paramString .= "$key={$truncFunc( $value )}";
+				$flatValue = (string)$value;
+				if ( mb_strlen( $value ) > 1024 ) {
+					$flatValue = "string(" . mb_strlen( $value ) . ")";
+				}
+
+				$paramString .= "$key={$flatValue}";
 			}
 		}
 

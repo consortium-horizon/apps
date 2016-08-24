@@ -27,11 +27,10 @@ use Psr\Log\NullLogger;
  * instances. A NullLogger silently discards all log events sent to it.
  *
  * Usage:
- * @code
- * $wgMWLoggerDefaultSpi = array(
- *   'class' => '\\MediaWiki\\Logger\\NullSpi',
- * );
- * @endcode
+ *
+ *     $wgMWLoggerDefaultSpi = array(
+ *         'class' => '\\MediaWiki\\Logger\\NullSpi',
+ *     );
  *
  * @see \MediaWiki\Logger\LoggerFactory
  * @since 1.25
@@ -45,11 +44,9 @@ class NullSpi implements Spi {
 	 */
 	protected $singleton;
 
-
 	public function __construct() {
 		$this->singleton = new NullLogger();
 	}
-
 
 	/**
 	 * Get a logger instance.

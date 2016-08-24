@@ -29,7 +29,7 @@ class UnusedCategoriesPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() {
+	public function isExpensive() {
 		return true;
 	}
 
@@ -37,21 +37,21 @@ class UnusedCategoriesPage extends QueryPage {
 		return $this->msg( 'unusedcategoriestext' )->parseAsBlock();
 	}
 
-	function getQueryInfo() {
-		return array(
-			'tables' => array( 'page', 'categorylinks' ),
-			'fields' => array(
+	public function getQueryInfo() {
+		return [
+			'tables' => [ 'page', 'categorylinks' ],
+			'fields' => [
 				'namespace' => 'page_namespace',
 				'title' => 'page_title',
 				'value' => 'page_title'
-			),
-			'conds' => array(
+			],
+			'conds' => [
 				'cl_from IS NULL',
 				'page_namespace' => NS_CATEGORY,
 				'page_is_redirect' => 0
-			),
-			'join_conds' => array( 'categorylinks' => array( 'LEFT JOIN', 'cl_to = page_title' ) )
-		);
+			],
+			'join_conds' => [ 'categorylinks' => [ 'LEFT JOIN', 'cl_to = page_title' ] ]
+		];
 	}
 
 	/**

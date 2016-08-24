@@ -33,6 +33,10 @@ class SpecialLockdb extends FormSpecialPage {
 		parent::__construct( 'Lockdb', 'siteadmin' );
 	}
 
+	public function doesWrites() {
+		return true;
+	}
+
 	public function requiresWrite() {
 		return false;
 	}
@@ -46,18 +50,18 @@ class SpecialLockdb extends FormSpecialPage {
 	}
 
 	protected function getFormFields() {
-		return array(
-			'Reason' => array(
+		return [
+			'Reason' => [
 				'type' => 'textarea',
 				'rows' => 4,
 				'vertical-label' => true,
 				'label-message' => 'enterlockreason',
-			),
-			'Confirm' => array(
+			],
+			'Confirm' => [
 				'type' => 'toggle',
 				'label-message' => 'lockconfirm',
-			),
-		);
+			],
+		];
 	}
 
 	protected function alterForm( HTMLForm $form ) {
@@ -73,9 +77,9 @@ class SpecialLockdb extends FormSpecialPage {
 			return Status::newFatal( 'locknoconfirm' );
 		}
 
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$fp = fopen( $this->getConfig()->get( 'ReadOnlyFile' ), 'w' );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 
 		if ( false === $fp ) {
 			# This used to show a file not found error, but the likeliest reason for fopen()

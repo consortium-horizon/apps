@@ -74,38 +74,61 @@ abstract class RevDelList extends RevisionListBase {
 	}
 
 	/**
+	 * Indicate whether any item in this list is suppressed
+	 * @since 1.25
+	 * @return bool
+	 */
+	public function areAnySuppressed() {
+		$bit = $this->getSuppressBit();
+
+		// @codingStandardsIgnoreStart Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
+		for ( $this->reset(); $this->current(); $this->next() ) {
+			// @codingStandardsIgnoreEnd
+			$item = $this->current();
+			if ( $item->getBits() & $bit ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Set the visibility for the revisions in this list. Logging and
 	 * transactions are done here.
 	 *
 	 * @param array $params Associative array of parameters. Members are:
-	 *     value:         The integer value to set the visibility to
+	 *     value:         ExtractBitParams() bitfield array
 	 *     comment:       The log comment.
 	 *     perItemStatus: Set if you want per-item status reports
 	 * @return Status
 	 * @since 1.23 Added 'perItemStatus' param
 	 */
-	public function setVisibility( $params ) {
+	public function setVisibility( array $params ) {
 		$bitPars = $params['value'];
 		$comment = $params['comment'];
 		$perItemStatus = isset( $params['perItemStatus'] ) ? $params['perItemStatus'] : false;
 
-		$this->res = false;
+		// CAS-style checks are done on the _deleted fields so the select
+		// does not need to use FOR UPDATE nor be in the atomic section
 		$dbw = wfGetDB( DB_MASTER );
-		$this->doQuery( $dbw );
-		$dbw->begin( __METHOD__ );
+		$this->res = $this->doQuery( $dbw );
+
+		$dbw->startAtomic( __METHOD__ );
+
 		$status = Status::newGood();
 		$missing = array_flip( $this->ids );
 		$this->clearFileOps();
-		$idsForLog = array();
-		$authorIds = $authorIPs = array();
+		$idsForLog = [];
+		$authorIds = $authorIPs = [];
 
 		if ( $perItemStatus ) {
-			$status->itemStatuses = array();
+			$status->itemStatuses = [];
 		}
 
 		// @codingStandardsIgnoreStart Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
 		for ( $this->reset(); $this->current(); $this->next() ) {
 			// @codingStandardsIgnoreEnd
+			/** @var $item RevDelItem */
 			$item = $this->current();
 			unset( $missing[$item->getId()] );
 
@@ -197,7 +220,8 @@ abstract class RevDelList extends RevisionListBase {
 		}
 
 		// Log it
-		$this->updateLog( array(
+		// @FIXME: $newBits/$oldBits set in for loop, makes IDE warnings too
+		$this->updateLog( [
 			'title' => $this->title,
 			'count' => $successCount,
 			'newBits' => $newBits,
@@ -206,11 +230,16 @@ abstract class RevDelList extends RevisionListBase {
 			'ids' => $idsForLog,
 			'authorIds' => $authorIds,
 			'authorIPs' => $authorIPs
-		) );
-		$dbw->commit( __METHOD__ );
+		] );
 
 		// Clear caches
-		$status->merge( $this->doPostCommitUpdates() );
+		$that = $this;
+		$dbw->onTransactionIdle( function() use ( $that ) {
+			$that->doPostCommitUpdates();
+		} );
+
+		$dbw->endAtomic( __METHOD__ );
+
 		return $status;
 	}
 
@@ -241,7 +270,7 @@ abstract class RevDelList extends RevisionListBase {
 		if ( !$field ) {
 			throw new MWException( "Bad log URL param type!" );
 		}
-		// Put things hidden from sysops in the oversight log
+		// Put things hidden from sysops in the suppression log
 		if ( ( $params['newBits'] | $params['oldBits'] ) & $this->getSuppressBit() ) {
 			$logType = 'suppress';
 		} else {
@@ -256,11 +285,11 @@ abstract class RevDelList extends RevisionListBase {
 		$logEntry->setParameters( $logParams );
 		$logEntry->setPerformer( $this->getUser() );
 		// Allow for easy searching of deletion log items for revision/log items
-		$logEntry->setRelations( array(
+		$logEntry->setRelations( [
 			$field => $params['ids'],
 			'target_author_id' => $params['authorIds'],
 			'target_author_ip' => $params['authorIPs'],
-		) );
+		] );
 		$logId = $logEntry->insert();
 		$logEntry->publish( $logId );
 	}
@@ -279,12 +308,12 @@ abstract class RevDelList extends RevisionListBase {
 	 * @return array
 	 */
 	public function getLogParams( $params ) {
-		return array(
+		return [
 			'4::type' => $this->getType(),
 			'5::ids' => $params['ids'],
 			'6::ofield' => $params['oldBits'],
 			'7::nfield' => $params['newBits'],
-		);
+		];
 	}
 
 	/**

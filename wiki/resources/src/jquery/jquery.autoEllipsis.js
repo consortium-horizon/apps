@@ -10,11 +10,13 @@ var
 	// Use a separate cache when match highlighting is enabled
 	matchTextCache = {};
 
+// Due to <https://github.com/jscs-dev/jscs-jsdoc/issues/136>
+// jscs:disable jsDoc
 /**
  * Automatically truncate the plain text contents of an element and add an ellipsis
  *
  * @param {Object} options
- * @param {'center'|'left'|'right'} [options.position='center'] Where to remove text.
+ * @param {'left'|'center'|'right'} [options.position='center'] Where to remove text.
  * @param {boolean} [options.tooltip=false] Whether to show a tooltip with the remainder
  * of the text.
  * @param {boolean} [options.restoreText=false] Whether to save the text for restoring
@@ -69,16 +71,16 @@ $.fn.autoEllipsis = function ( options ) {
 		// Try cache
 		if ( options.matchText ) {
 			if ( !( text in matchTextCache ) ) {
-				matchTextCache[text] = {};
+				matchTextCache[ text ] = {};
 			}
-			if ( !( options.matchText in matchTextCache[text] ) ) {
-				matchTextCache[text][options.matchText] = {};
+			if ( !( options.matchText in matchTextCache[ text ] ) ) {
+				matchTextCache[ text ][ options.matchText ] = {};
 			}
-			if ( !( w in matchTextCache[text][options.matchText] ) ) {
-				matchTextCache[text][options.matchText][w] = {};
+			if ( !( w in matchTextCache[ text ][ options.matchText ] ) ) {
+				matchTextCache[ text ][ options.matchText ][ w ] = {};
 			}
-			if ( options.position in matchTextCache[text][options.matchText][w] ) {
-				$container.html( matchTextCache[text][options.matchText][w][options.position] );
+			if ( options.position in matchTextCache[ text ][ options.matchText ][ w ] ) {
+				$container.html( matchTextCache[ text ][ options.matchText ][ w ][ options.position ] );
 				if ( options.tooltip ) {
 					$container.attr( 'title', text );
 				}
@@ -86,13 +88,13 @@ $.fn.autoEllipsis = function ( options ) {
 			}
 		} else {
 			if ( !( text in cache ) ) {
-				cache[text] = {};
+				cache[ text ] = {};
 			}
-			if ( !( w in cache[text] ) ) {
-				cache[text][w] = {};
+			if ( !( w in cache[ text ] ) ) {
+				cache[ text ][ w ] = {};
 			}
-			if ( options.position in cache[text][w] ) {
-				$container.html( cache[text][w][options.position] );
+			if ( options.position in cache[ text ][ w ] ) {
+				$container.html( cache[ text ][ w ][ options.position ] );
 				if ( options.tooltip ) {
 					$container.attr( 'title', text );
 				}
@@ -120,19 +122,19 @@ $.fn.autoEllipsis = function ( options ) {
 					break;
 				case 'center':
 					// TODO: Use binary search like for 'right'
-					i = [Math.round( trimmableText.length / 2 ), Math.round( trimmableText.length / 2 )];
+					i = [ Math.round( trimmableText.length / 2 ), Math.round( trimmableText.length / 2 ) ];
 					// Begin with making the end shorter
 					side = 1;
-					while ( $trimmableText.outerWidth() + pw > w && i[0] > 0 ) {
-						$trimmableText.text( trimmableText.slice( 0, i[0] ) + '...' + trimmableText.slice( i[1] ) );
+					while ( $trimmableText.outerWidth() + pw > w && i[ 0 ] > 0 ) {
+						$trimmableText.text( trimmableText.slice( 0, i[ 0 ] ) + '...' + trimmableText.slice( i[ 1 ] ) );
 						// Alternate between trimming the end and begining
 						if ( side === 0 ) {
 							// Make the begining shorter
-							i[0]--;
+							i[ 0 ]--;
 							side = 1;
 						} else {
 							// Make the end shorter
-							i[1]++;
+							i[ 1 ]++;
 							side = 0;
 						}
 					}
@@ -152,13 +154,14 @@ $.fn.autoEllipsis = function ( options ) {
 		}
 		if ( options.matchText ) {
 			$container.highlightText( options.matchText );
-			matchTextCache[text][options.matchText][w][options.position] = $container.html();
+			matchTextCache[ text ][ options.matchText ][ w ][ options.position ] = $container.html();
 		} else {
-			cache[text][w][options.position] = $container.html();
+			cache[ text ][ w ][ options.position ] = $container.html();
 		}
 
 	} );
 };
+// jscs:enable jsDoc
 
 /**
  * @class jQuery

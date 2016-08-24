@@ -19,8 +19,10 @@
  * @author Aaron Schulz
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
- * Prepare and edit in shared cache so that it can be reused on edit
+ * Prepare an edit in shared cache so that it can be reused on edit
  *
  * This endpoint can be called via AJAX as the user focuses on the edit
  * summary box. By the time of submission, the parse may have already
@@ -38,9 +40,9 @@ class ApiStashEdit extends ApiBase {
 	const ERROR_CACHE = 'error_cache';
 	const ERROR_UNCACHEABLE = 'uncacheable';
 
-	public function execute() {
-		global $wgMemc;
+	const PRESUME_FRESH_TTL_SEC = 5;
 
+	public function execute() {
 		$user = $this->getUser();
 		$params = $this->extractRequestParams();
 
@@ -50,7 +52,7 @@ class ApiStashEdit extends ApiBase {
 		if ( !ContentHandler::getForModelID( $params['contentmodel'] )
 			->isSupportedFormat( $params['contentformat'] )
 		) {
-			$this->dieUsage( "Unsupported content model/format", 'badmodelformat' );
+			$this->dieUsage( 'Unsupported content model/format', 'badmodelformat' );
 		}
 
 		// Trim and fix newlines so the key SHA1's match (see RequestContext::getText())
@@ -77,7 +79,7 @@ class ApiStashEdit extends ApiBase {
 				$baseRev->getId()
 			);
 			if ( !$editContent ) {
-				$this->dieUsage( "Could not merge updated section.", 'replacefailed' );
+				$this->dieUsage( 'Could not merge updated section.', 'replacefailed' );
 			}
 			if ( $currentRev->getId() == $baseRev->getId() ) {
 				// Base revision was still the latest; nothing to merge
@@ -99,29 +101,29 @@ class ApiStashEdit extends ApiBase {
 
 		if ( !$content ) { // merge3() failed
 			$this->getResult()->addValue( null,
-				$this->getModuleName(), array( 'status' => 'editconflict' ) );
+				$this->getModuleName(), [ 'status' => 'editconflict' ] );
 			return;
 		}
 
 		// The user will abort the AJAX request by pressing "save", so ignore that
 		ignore_user_abort( true );
 
+		// Use the master DB for fast blocking locks
+		$dbw = wfGetDB( DB_MASTER );
+
 		// Get a key based on the source text, format, and user preferences
 		$key = self::getStashKey( $title, $content, $user );
 		// De-duplicate requests on the same key
 		if ( $user->pingLimiter( 'stashedit' ) ) {
 			$status = 'ratelimited';
-		} elseif ( $wgMemc->lock( $key, 0, 30 ) ) {
-			$unlocker = new ScopedCallback( function() use ( $key ) {
-				global $wgMemc;
-				$wgMemc->unlock( $key );
-			} );
+		} elseif ( $dbw->lock( $key, __METHOD__, 1 ) ) {
 			$status = self::parseAndStash( $page, $content, $user );
+			$dbw->unlock( $key, __METHOD__ );
 		} else {
 			$status = 'busy';
 		}
 
-		$this->getResult()->addValue( null, $this->getModuleName(), array( 'status' => $status ) );
+		$this->getResult()->addValue( null, $this->getModuleName(), [ 'status' => $status ] );
 	}
 
 	/**
@@ -132,7 +134,8 @@ class ApiStashEdit extends ApiBase {
 	 * @since 1.25
 	 */
 	public static function parseAndStash( WikiPage $page, Content $content, User $user ) {
-		global $wgMemc;
+		$cache = ObjectCache::getLocalClusterInstance();
+		$logger = LoggerFactory::getInstance( 'StashEdit' );
 
 		$format = $content->getDefaultFormat();
 		$editInfo = $page->prepareContentForEdit( $content, null, $user, $format, false );
@@ -140,21 +143,25 @@ class ApiStashEdit extends ApiBase {
 		if ( $editInfo && $editInfo->output ) {
 			$key = self::getStashKey( $page->getTitle(), $content, $user );
 
+			// Let extensions add ParserOutput metadata or warm other caches
+			Hooks::run( 'ParserOutputStashForEdit', [ $page, $content, $editInfo->output ] );
+
 			list( $stashInfo, $ttl ) = self::buildStashValue(
 				$editInfo->pstContent, $editInfo->output, $editInfo->timestamp
 			);
 
 			if ( $stashInfo ) {
-				$ok = $wgMemc->set( $key, $stashInfo, $ttl );
+				$ok = $cache->set( $key, $stashInfo, $ttl );
 				if ( $ok ) {
-					wfDebugLog( 'StashEdit', "Cached parser output for key '$key'." );
+
+					$logger->debug( "Cached parser output for key '$key'." );
 					return self::ERROR_NONE;
 				} else {
-					wfDebugLog( 'StashEdit', "Failed to cache parser output for key '$key'." );
+					$logger->error( "Failed to cache parser output for key '$key'." );
 					return self::ERROR_CACHE;
 				}
 			} else {
-				wfDebugLog( 'StashEdit', "Uncacheable parser output for key '$key'." );
+				$logger->info( "Uncacheable parser output for key '$key'." );
 				return self::ERROR_UNCACHEABLE;
 			}
 		}
@@ -172,7 +179,7 @@ class ApiStashEdit extends ApiBase {
 	 * will do nothing. Provided the values are cacheable, they will be stored
 	 * in memcached so that final edit submission might make use of them.
 	 *
-	 * @param Article|WikiPage $page Page title
+	 * @param Page|Article|WikiPage $page Page title
 	 * @param Content $content Proposed page content
 	 * @param Content $pstContent The result of preSaveTransform() on $content
 	 * @param ParserOutput $pOut The result of getParserOutput() on $pstContent
@@ -185,7 +192,8 @@ class ApiStashEdit extends ApiBase {
 		Page $page, Content $content, Content $pstContent, ParserOutput $pOut,
 		ParserOptions $pstOpts, ParserOptions $pOpts, $timestamp
 	) {
-		global $wgMemc;
+		$cache = ObjectCache::getLocalClusterInstance();
+		$logger = LoggerFactory::getInstance( 'StashEdit' );
 
 		// getIsPreview() controls parser function behavior that references things
 		// like user/revision that don't exists yet. The user/text should already
@@ -207,22 +215,22 @@ class ApiStashEdit extends ApiBase {
 		$canonicalPOpts->setIsPreview( true ); // force match
 		$canonicalPOpts->setTimestamp( $pOpts->getTimestamp() ); // force match
 		if ( !$pOpts->matches( $canonicalPOpts ) ) {
-			wfDebugLog( 'StashEdit', "Uncacheable preview output for key '$key' (options)." );
+			$logger->info( "Uncacheable preview output for key '$key' (options)." );
 			return false;
 		}
 
 		// Build a value to cache with a proper TTL
 		list( $stashInfo, $ttl ) = self::buildStashValue( $pstContent, $pOut, $timestamp );
 		if ( !$stashInfo ) {
-			wfDebugLog( 'StashEdit', "Uncacheable parser output for key '$key' (rev/TTL)." );
+			$logger->info( "Uncacheable parser output for key '$key' (rev/TTL)." );
 			return false;
 		}
 
-		$ok = $wgMemc->set( $key, $stashInfo, $ttl );
+		$ok = $cache->set( $key, $stashInfo, $ttl );
 		if ( !$ok ) {
-			wfDebugLog( 'StashEdit', "Failed to cache preview parser output for key '$key'." );
+			$logger->error( "Failed to cache preview parser output for key '$key'." );
 		} else {
-			wfDebugLog( 'StashEdit', "Cached preview output for key '$key'." );
+			$logger->debug( "Cached preview output for key '$key'." );
 		}
 
 		return $ok;
@@ -246,69 +254,98 @@ class ApiStashEdit extends ApiBase {
 	 * @return stdClass|bool Returns false on cache miss
 	 */
 	public static function checkCache( Title $title, Content $content, User $user ) {
-		global $wgMemc;
+		$cache = ObjectCache::getLocalClusterInstance();
+		$logger = LoggerFactory::getInstance( 'StashEdit' );
+		$stats = RequestContext::getMain()->getStats();
 
 		$key = self::getStashKey( $title, $content, $user );
-		$editInfo = $wgMemc->get( $key );
+		$editInfo = $cache->get( $key );
 		if ( !is_object( $editInfo ) ) {
 			$start = microtime( true );
 			// We ignore user aborts and keep parsing. Block on any prior parsing
-			// so as to use it's results and make use of the time spent parsing.
-			if ( $wgMemc->lock( $key, 30, 30 ) ) {
-				$editInfo = $wgMemc->get( $key );
-				$wgMemc->unlock( $key );
+			// so as to use its results and make use of the time spent parsing.
+			// Skip this logic if there no master connection in case this method
+			// is called on an HTTP GET request for some reason.
+			$lb = wfGetLB();
+			$dbw = $lb->getAnyOpenConnection( $lb->getWriterIndex() );
+			if ( $dbw && $dbw->lock( $key, __METHOD__, 30 ) ) {
+				$editInfo = $cache->get( $key );
+				$dbw->unlock( $key, __METHOD__ );
 			}
-			$sec = microtime( true ) - $start;
-			if ( $sec > .01 ) {
-				wfDebugLog( 'StashEdit', "Waited $sec seconds on '$key'." );
-			}
+
+			$timeMs = 1000 * max( 0, microtime( true ) - $start );
+			$stats->timing( 'editstash.lock_wait_time', $timeMs );
 		}
 
 		if ( !is_object( $editInfo ) || !$editInfo->output ) {
-			wfDebugLog( 'StashEdit', "No cache value for key '$key'." );
+			$stats->increment( 'editstash.cache_misses.no_stash' );
+			$logger->debug( "No cache value for key '$key'." );
 			return false;
 		}
 
-		$time = wfTimestamp( TS_UNIX, $editInfo->output->getTimestamp() );
-		if ( ( time() - $time ) <= 3 ) {
-			wfDebugLog( 'StashEdit', "Timestamp-based cache hit for key '$key'." );
+		$age = time() - wfTimestamp( TS_UNIX, $editInfo->output->getCacheTime() );
+		if ( $age <= self::PRESUME_FRESH_TTL_SEC ) {
+			$stats->increment( 'editstash.cache_hits.presumed_fresh' );
+			$logger->debug( "Timestamp-based cache hit for key '$key' (age: $age sec)." );
 			return $editInfo; // assume nothing changed
 		}
 
 		$dbr = wfGetDB( DB_SLAVE );
-		// Check that no templates used in the output changed...
-		$cWhr = array(); // conditions to find changes/creations
-		$dWhr = array(); // conditions to find deletions
+
+		$templates = []; // conditions to find changes/creations
+		$templateUses = 0; // expected existing templates
 		foreach ( $editInfo->output->getTemplateIds() as $ns => $stuff ) {
 			foreach ( $stuff as $dbkey => $revId ) {
-				$cWhr[] = array( 'page_namespace' => $ns, 'page_title' => $dbkey,
-					'page_latest != ' . intval( $revId ) );
-				$dWhr[] = array( 'page_namespace' => $ns, 'page_title' => $dbkey );
+				$templates[(string)$ns][$dbkey] = (int)$revId;
+				++$templateUses;
 			}
 		}
-		$change = $dbr->selectField( 'page', '1', $dbr->makeList( $cWhr, LIST_OR ), __METHOD__ );
-		$n = $dbr->selectField( 'page', 'COUNT(*)', $dbr->makeList( $dWhr, LIST_OR ), __METHOD__ );
-		if ( $change || $n != count( $dWhr ) ) {
-			wfDebugLog( 'StashEdit', "Stale cache for key '$key'; template changed." );
-			return false;
+		// Check that no templates used in the output changed...
+		if ( count( $templates ) ) {
+			$res = $dbr->select(
+				'page',
+				[ 'ns' => 'page_namespace', 'dbk' => 'page_title', 'page_latest' ],
+				$dbr->makeWhereFrom2d( $templates, 'page_namespace', 'page_title' ),
+				__METHOD__
+			);
+			$changed = false;
+			foreach ( $res as $row ) {
+				$changed = $changed || ( $row->page_latest != $templates[$row->ns][$row->dbk] );
+			}
+
+			if ( $changed || $res->numRows() != $templateUses ) {
+				$stats->increment( 'editstash.cache_misses.proven_stale' );
+				$logger->info( "Stale cache for key '$key'; template changed. (age: $age sec)" );
+				return false;
+			}
 		}
 
-		// Check that no files used in the output changed...
-		$cWhr = array(); // conditions to find changes/creations
-		$dWhr = array(); // conditions to find deletions
+		$files = []; // conditions to find changes/creations
 		foreach ( $editInfo->output->getFileSearchOptions() as $name => $options ) {
-			$cWhr[] = array( 'img_name' => $dbkey,
-				'img_sha1 != ' . $dbr->addQuotes( strval( $options['sha1'] ) ) );
-			$dWhr[] = array( 'img_name' => $dbkey );
+			$files[$name] = (string)$options['sha1'];
 		}
-		$change = $dbr->selectField( 'image', '1', $dbr->makeList( $cWhr, LIST_OR ), __METHOD__ );
-		$n = $dbr->selectField( 'image', 'COUNT(*)', $dbr->makeList( $dWhr, LIST_OR ), __METHOD__ );
-		if ( $change || $n != count( $dWhr ) ) {
-			wfDebugLog( 'StashEdit', "Stale cache for key '$key'; file changed." );
-			return false;
+		// Check that no files used in the output changed...
+		if ( count( $files ) ) {
+			$res = $dbr->select(
+				'image',
+				[ 'name' => 'img_name', 'img_sha1' ],
+				[ 'img_name' => array_keys( $files ) ],
+				__METHOD__
+			);
+			$changed = false;
+			foreach ( $res as $row ) {
+				$changed = $changed || ( $row->img_sha1 != $files[$row->name] );
+			}
+
+			if ( $changed || $res->numRows() != count( $files ) ) {
+				$stats->increment( 'editstash.cache_misses.proven_stale' );
+				$logger->info( "Stale cache for key '$key'; file changed. (age: $age sec)" );
+				return false;
+			}
 		}
 
-		wfDebugLog( 'StashEdit', "Cache hit for key '$key'." );
+		$stats->increment( 'editstash.cache_hits.proven_fresh' );
+		$logger->debug( "Verified cache hit for key '$key' (age: $age sec)." );
 
 		return $editInfo;
 	}
@@ -326,13 +363,13 @@ class ApiStashEdit extends ApiBase {
 	 * @return string
 	 */
 	protected static function getStashKey( Title $title, Content $content, User $user ) {
-		$hash = sha1( implode( ':', array(
+		$hash = sha1( implode( ':', [
 			$content->getModel(),
 			$content->getDefaultFormat(),
 			sha1( $content->serialize( $content->getDefaultFormat() ) ),
 			$user->getId() ?: md5( $user->getName() ), // account for user parser options
-			$user->getId() ? $user->getTouched() : '-' // handle preference change races
-		) ) );
+			$user->getId() ? $user->getDBTouched() : '-' // handle preference change races
+		] ) );
 
 		return wfMemcKey( 'prepared-edit', md5( $title->getPrefixedDBkey() ), $hash );
 	}
@@ -356,57 +393,61 @@ class ApiStashEdit extends ApiBase {
 
 		if ( $ttl > 0 && !$parserOutput->getFlag( 'vary-revision' ) ) {
 			// Only store what is actually needed
-			$stashInfo = (object)array(
+			$stashInfo = (object)[
 				'pstContent' => $pstContent,
 				'output'     => $parserOutput,
 				'timestamp'  => $timestamp
-			);
-			return array( $stashInfo, $ttl );
+			];
+			return [ $stashInfo, $ttl ];
 		}
 
-		return array( null, 0 );
+		return [ null, 0 ];
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'title' => array(
+		return [
+			'title' => [
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
-			),
-			'section' => array(
+			],
+			'section' => [
 				ApiBase::PARAM_TYPE => 'string',
-			),
-			'sectiontitle' => array(
+			],
+			'sectiontitle' => [
 				ApiBase::PARAM_TYPE => 'string'
-			),
-			'text' => array(
-				ApiBase::PARAM_TYPE => 'string',
+			],
+			'text' => [
+				ApiBase::PARAM_TYPE => 'text',
 				ApiBase::PARAM_REQUIRED => true
-			),
-			'contentmodel' => array(
+			],
+			'contentmodel' => [
 				ApiBase::PARAM_TYPE => ContentHandler::getContentModels(),
 				ApiBase::PARAM_REQUIRED => true
-			),
-			'contentformat' => array(
+			],
+			'contentformat' => [
 				ApiBase::PARAM_TYPE => ContentHandler::getAllContentFormats(),
 				ApiBase::PARAM_REQUIRED => true
-			),
-			'baserevid' => array(
+			],
+			'baserevid' => [
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_REQUIRED => true
-			)
-		);
+			]
+		];
 	}
 
-	function needsToken() {
+	public function needsToken() {
 		return 'csrf';
 	}
 
-	function mustBePosted() {
+	public function mustBePosted() {
 		return true;
 	}
 
-	function isInternal() {
+	public function isWriteMode() {
+		return true;
+	}
+
+	public function isInternal() {
 		return true;
 	}
 }

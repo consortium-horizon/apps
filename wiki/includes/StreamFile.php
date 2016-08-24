@@ -38,15 +38,15 @@ class StreamFile {
 	 * @throws MWException
 	 * @return bool Success
 	 */
-	public static function stream( $fname, $headers = array(), $sendErrors = true ) {
+	public static function stream( $fname, $headers = [], $sendErrors = true ) {
 
 		if ( FileBackend::isStoragePath( $fname ) ) { // sanity
 			throw new MWException( __FUNCTION__ . " given storage path '$fname'." );
 		}
 
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$stat = stat( $fname );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 
 		$res = self::prepareForStream( $fname, $stat, $headers, $sendErrors );
 		if ( $res == self::NOT_MODIFIED ) {
@@ -74,11 +74,11 @@ class StreamFile {
 	 * @return int|bool READY_STREAM, NOT_MODIFIED, or false on failure
 	 */
 	public static function prepareForStream(
-		$path, $info, $headers = array(), $sendErrors = true
+		$path, $info, $headers = [], $sendErrors = true
 	) {
 		if ( !is_array( $info ) ) {
 			if ( $sendErrors ) {
-				header( 'HTTP/1.0 404 Not Found' );
+				HttpStatus::header( 404 );
 				header( 'Cache-Control: no-cache' );
 				header( 'Content-Type: text/html; charset=utf-8' );
 				$encFile = htmlspecialchars( $path );
@@ -126,7 +126,7 @@ class StreamFile {
 			$modsince = preg_replace( '/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE'] );
 			if ( wfTimestamp( TS_UNIX, $info['mtime'] ) <= strtotime( $modsince ) ) {
 				ini_set( 'zlib.output_compression', 0 );
-				header( "HTTP/1.0 304 Not Modified" );
+				HttpStatus::header( 304 );
 				return self::NOT_MODIFIED; // ok
 			}
 		}

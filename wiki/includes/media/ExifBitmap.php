@@ -30,11 +30,11 @@
 class ExifBitmapHandler extends BitmapHandler {
 	const BROKEN_FILE = '-1'; // error extracting metadata
 	const OLD_BROKEN_FILE = '0'; // outdated error extracting metadata.
+	const SRGB_ICC_PROFILE_NAME = 'IEC 61966-2.1 Default RGB colour space - sRGB';
 
 	function convertMetadataVersion( $metadata, $version = 1 ) {
 		// basically flattens arrays.
-		$version = explode( ';', $version, 2 );
-		$version = intval( $version[0] );
+		$version = intval( explode( ';', $version, 2 )[0] );
 		if ( $version < 1 || $version >= 2 ) {
 			return $metadata;
 		}
@@ -100,16 +100,16 @@ class ExifBitmapHandler extends BitmapHandler {
 		if ( $metadata === self::BROKEN_FILE ) {
 			return self::METADATA_GOOD;
 		}
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$exif = unserialize( $metadata );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 		if ( !isset( $exif['MEDIAWIKI_EXIF_VERSION'] )
 			|| $exif['MEDIAWIKI_EXIF_VERSION'] != Exif::version()
 		) {
 			if ( isset( $exif['MEDIAWIKI_EXIF_VERSION'] )
 				&& $exif['MEDIAWIKI_EXIF_VERSION'] == 1
 			) {
-				//back-compatible but old
+				// back-compatible but old
 				wfDebug( __METHOD__ . ": back-compat version\n" );
 
 				return self::METADATA_COMPATIBLE;
@@ -145,12 +145,12 @@ class ExifBitmapHandler extends BitmapHandler {
 		) {
 			// So we don't try and display metadata from PagedTiffHandler
 			// for example when using InstantCommons.
-			return array();
+			return [];
 		}
 
 		$exif = unserialize( $metadata );
 		if ( !$exif ) {
-			return array();
+			return [];
 		}
 		unset( $exif['MEDIAWIKI_EXIF_VERSION'] );
 
@@ -224,9 +224,9 @@ class ExifBitmapHandler extends BitmapHandler {
 		if ( !$data ) {
 			return 0;
 		}
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$data = unserialize( $data );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 		if ( isset( $data['Orientation'] ) ) {
 			# See http://sylvana.net/jpegcrop/exif_orientation.html
 			switch ( $data['Orientation'] ) {
@@ -242,5 +242,76 @@ class ExifBitmapHandler extends BitmapHandler {
 		}
 
 		return 0;
+	}
+
+	protected function transformImageMagick( $image, $params ) {
+		global $wgUseTinyRGBForJPGThumbnails;
+
+		$ret = parent::transformImageMagick( $image, $params );
+
+		if ( $ret ) {
+			return $ret;
+		}
+
+		if ( $params['mimeType'] === 'image/jpeg' && $wgUseTinyRGBForJPGThumbnails ) {
+			// T100976 If the profile embedded in the JPG is sRGB, swap it for the smaller
+			// (and free) TinyRGB
+
+			$this->swapICCProfile(
+				$params['dstPath'],
+				self::SRGB_ICC_PROFILE_NAME,
+				realpath( __DIR__ ) . '/tinyrgb.icc'
+			);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Swaps an embedded ICC profile for another, if found.
+	 * Depends on exiftool, no-op if not installed.
+	 * @param string $filepath File to be manipulated (will be overwritten)
+	 * @param string $oldProfileString Exact name of color profile to look for
+	 *  (the one that will be replaced)
+	 * @param string $profileFilepath ICC profile file to apply to the file
+	 * @since 1.26
+	 * @return bool
+	 */
+	public function swapICCProfile( $filepath, $oldProfileString, $profileFilepath ) {
+		global $wgExiftool;
+
+		if ( !$wgExiftool || !is_executable( $wgExiftool ) ) {
+			return false;
+		}
+
+		$cmd = wfEscapeShellArg( $wgExiftool,
+			'-DeviceModelDesc',
+			'-S',
+			'-T',
+			$filepath
+		);
+
+		$output = wfShellExecWithStderr( $cmd, $retval );
+
+		if ( $retval !== 0 || strcasecmp( trim( $output ), $oldProfileString ) !== 0 ) {
+			// We can't establish that this file has the expected ICC profile, don't process it
+			return false;
+		}
+
+		$cmd = wfEscapeShellArg( $wgExiftool,
+			'-overwrite_original',
+			'-icc_profile<=' . $profileFilepath,
+			$filepath
+		);
+
+		$output = wfShellExecWithStderr( $cmd, $retval );
+
+		if ( $retval !== 0 ) {
+			$this->logErrorForExternalProcess( $retval, $output, $cmd );
+
+			return false;
+		}
+
+		return true;
 	}
 }

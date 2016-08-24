@@ -37,10 +37,10 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	protected $tablePrefix;
 
 	/** @var array */
-	protected $fileFactory = array( 'ForeignDBFile', 'newFromTitle' );
+	protected $fileFactory = [ 'ForeignDBFile', 'newFromTitle' ];
 
 	/** @var array */
-	protected $fileFromRowFactory = array( 'ForeignDBFile', 'newFromRow' );
+	protected $fileFromRowFactory = [ 'ForeignDBFile', 'newFromRow' ];
 
 	/**
 	 * @param array|null $info
@@ -53,17 +53,27 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	}
 
 	/**
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	function getMasterDB() {
-		return wfGetDB( DB_MASTER, array(), $this->wiki );
+		return wfGetDB( DB_MASTER, [], $this->wiki );
 	}
 
 	/**
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	function getSlaveDB() {
-		return wfGetDB( DB_SLAVE, array(), $this->wiki );
+		return wfGetDB( DB_SLAVE, [], $this->wiki );
+	}
+
+	/**
+	 * @return Closure
+	 */
+	protected function getDBFactory() {
+		$wiki = $this->wiki;
+		return function( $index ) use ( $wiki ) {
+			return wfGetDB( $index, [], $wiki );
+		};
 	}
 
 	function hasSharedCache() {

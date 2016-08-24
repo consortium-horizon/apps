@@ -115,7 +115,7 @@
 		 *     addButtons( [ { .. }, { .. }, { .. } ] );
 		 *     addButtons( { .. }, { .. } );
 		 *
-		 * @param {Object|Array...} [buttons] An array of button objects or the first
+		 * @param {...Object|Array} [buttons] An array of button objects or the first
 		 *  button object in a list of variadic arguments.
 		 */
 		addButtons: function ( buttons ) {
@@ -174,7 +174,7 @@
 		$toolbar = $( '#toolbar' );
 
 		for ( i = 0; i < queue.length; i++ ) {
-			button = queue[i];
+			button = queue[ i ];
 			if ( $.isArray( button ) ) {
 				// Forwarded arguments array from mw.toolbar.addButton
 				insertButton.apply( toolbar, button );

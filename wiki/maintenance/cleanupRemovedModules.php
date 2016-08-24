@@ -34,24 +34,17 @@ class CleanupRemovedModules extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = 'Remove cache entries for removed ResourceLoader modules from the database';
+		$this->addDescription(
+			'Remove cache entries for removed ResourceLoader modules from the database' );
 		$this->addOption( 'batchsize', 'Delete rows in batches of this size. Default: 500', false, true );
-		$this->addOption(
-			'max-slave-lag',
-			'If the slave lag exceeds this many seconds, wait until it drops below this value. '
-				. 'Default: 5',
-			false,
-			true
-		);
 	}
 
 	public function execute() {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->getDB( DB_MASTER );
 		$rl = new ResourceLoader( ConfigFactory::getDefaultInstance()->makeConfig( 'main' ) );
 		$moduleNames = $rl->getModuleNames();
-		$moduleList = implode( ', ', array_map( array( $dbw, 'addQuotes' ), $moduleNames ) );
+		$moduleList = implode( ', ', array_map( [ $dbw, 'addQuotes' ], $moduleNames ) );
 		$limit = max( 1, intval( $this->getOption( 'batchsize', 500 ) ) );
-		$maxlag = intval( $this->getOption( 'max-slave-lag', 5 ) );
 
 		$this->output( "Cleaning up module_deps table...\n" );
 		$i = 1;
@@ -63,34 +56,7 @@ class CleanupRemovedModules extends Maintenance {
 			$numRows = $dbw->affectedRows();
 			$this->output( "Batch $i: $numRows rows\n" );
 			$i++;
-			wfWaitForSlaves( $maxlag );
-		} while ( $numRows > 0 );
-		$this->output( "done\n" );
-
-		$this->output( "Cleaning up msg_resource table...\n" );
-		$i = 1;
-
-		$mrRes = $dbw->tableName( 'msg_resource' );
-		do {
-			$where = $moduleList ? "mr_resource NOT IN ($moduleList)" : '1=1';
-			$dbw->query( "DELETE FROM $mrRes WHERE $where LIMIT $limit", __METHOD__ );
-			$numRows = $dbw->affectedRows();
-			$this->output( "Batch $i: $numRows rows\n" );
-			$i++;
-			wfWaitForSlaves( $maxlag );
-		} while ( $numRows > 0 );
-		$this->output( "done\n" );
-
-		$this->output( "Cleaning up msg_resource_links table...\n" );
-		$i = 1;
-		$msgResLinks = $dbw->tableName( 'msg_resource_links' );
-		do {
-			$where = $moduleList ? "mrl_resource NOT IN ($moduleList)" : '1=1';
-			$dbw->query( "DELETE FROM $msgResLinks WHERE $where LIMIT $limit", __METHOD__ );
-			$numRows = $dbw->affectedRows();
-			$this->output( "Batch $i: $numRows rows\n" );
-			$i++;
-			wfWaitForSlaves( $maxlag );
+			wfWaitForSlaves();
 		} while ( $numRows > 0 );
 		$this->output( "done\n" );
 	}

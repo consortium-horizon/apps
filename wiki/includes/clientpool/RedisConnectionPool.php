@@ -22,6 +22,10 @@
  * @author Aaron Schulz
  */
 
+use MediaWiki\Logger\LoggerFactory;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+
 /**
  * Helper class to manage Redis connections.
  *
@@ -35,7 +39,7 @@
  * @ingroup Redis
  * @since 1.21
  */
-class RedisConnectionPool {
+class RedisConnectionPool implements LoggerAwareInterface {
 	/**
 	 * @name Pool settings.
 	 * Settings there are shared for any connection made in this pool.
@@ -58,24 +62,34 @@ class RedisConnectionPool {
 	protected $idlePoolSize = 0;
 
 	/** @var array (server name => ((connection info array),...) */
-	protected $connections = array();
+	protected $connections = [];
 	/** @var array (server name => UNIX timestamp) */
-	protected $downServers = array();
+	protected $downServers = [];
 
 	/** @var array (pool ID => RedisConnectionPool) */
-	protected static $instances = array();
+	protected static $instances = [];
 
 	/** integer; seconds to cache servers as "down". */
 	const SERVER_DOWN_TTL = 30;
 
 	/**
+	 * @var LoggerInterface
+	 */
+	protected $logger;
+
+	/**
 	 * @param array $options
-	 * @throws MWException
+	 * @throws Exception
 	 */
 	protected function __construct( array $options ) {
 		if ( !class_exists( 'Redis' ) ) {
-			throw new MWException( __CLASS__ . ' requires a Redis client library. ' .
+			throw new Exception( __CLASS__ . ' requires a Redis client library. ' .
 				'See https://www.mediawiki.org/wiki/Redis#Setup' );
+		}
+		if ( isset( $options['logger'] ) ) {
+			$this->setLogger( $options['logger'] );
+		} else {
+			$this->setLogger( LoggerFactory::getInstance( 'redis' ) );
 		}
 		$this->connectTimeout = $options['connectTimeout'];
 		$this->readTimeout = $options['readTimeout'];
@@ -88,8 +102,16 @@ class RedisConnectionPool {
 		} elseif ( $options['serializer'] === 'none' ) {
 			$this->serializer = Redis::SERIALIZER_NONE;
 		} else {
-			throw new MWException( "Invalid serializer specified." );
+			throw new InvalidArgumentException( "Invalid serializer specified." );
 		}
+	}
+
+	/**
+	 * @param LoggerInterface $logger
+	 * @return null
+	 */
+	public function setLogger( LoggerInterface $logger ) {
+		$this->logger = $logger;
 	}
 
 	/**
@@ -136,10 +158,20 @@ class RedisConnectionPool {
 		// Initialize the object at the hash as needed...
 		if ( !isset( self::$instances[$id] ) ) {
 			self::$instances[$id] = new self( $options );
-			wfDebug( "Creating a new " . __CLASS__ . " instance with id $id.\n" );
+			LoggerFactory::getInstance( 'redis' )->debug(
+				"Creating a new " . __CLASS__ . " instance with id $id."
+			);
 		}
 
 		return self::$instances[$id];
+	}
+
+	/**
+	 * Destroy all singleton() instances
+	 * @since 1.27
+	 */
+	public static function destroySingletons() {
+		self::$instances = [];
 	}
 
 	/**
@@ -161,8 +193,11 @@ class RedisConnectionPool {
 				unset( $this->downServers[$server] );
 			} else {
 				// Server is dead
-				wfDebug( "server $server is marked down for another " .
-					( $this->downServers[$server] - $now ) . " seconds, can't get connection\n" );
+				$this->logger->debug(
+					'Server "{redis_server}" is marked down for another ' .
+					( $this->downServers[$server] - $now ) . 'seconds',
+					[ 'redis_server' => $server ]
+				);
 
 				return false;
 			}
@@ -175,7 +210,9 @@ class RedisConnectionPool {
 					$connection['free'] = false;
 					--$this->idlePoolSize;
 
-					return new RedisConnRef( $this, $server, $connection['conn'] );
+					return new RedisConnRef(
+						$this, $server, $connection['conn'], $this->logger
+					);
 				}
 			}
 		}
@@ -189,8 +226,10 @@ class RedisConnectionPool {
 		} else {
 			// TCP connection
 			$hostPort = IP::splitHostAndPort( $server );
-			if ( !$hostPort ) {
-				throw new MWException( __CLASS__ . ": invalid configured server \"$server\"" );
+			if ( !$server || !$hostPort ) {
+				throw new InvalidArgumentException(
+					__CLASS__ . ": invalid configured server \"$server\""
+				);
 			}
 			list( $host, $port ) = $hostPort;
 			if ( $port === false ) {
@@ -206,7 +245,10 @@ class RedisConnectionPool {
 				$result = $conn->connect( $host, $port, $this->connectTimeout );
 			}
 			if ( !$result ) {
-				wfDebugLog( 'redis', "Could not connect to server $server" );
+				$this->logger->error(
+					'Could not connect to server "{redis_server}"',
+					[ 'redis_server' => $server ]
+				);
 				// Mark server down for some time to avoid further timeouts
 				$this->downServers[$server] = time() + self::SERVER_DOWN_TTL;
 
@@ -214,12 +256,21 @@ class RedisConnectionPool {
 			}
 			if ( $this->password !== null ) {
 				if ( !$conn->auth( $this->password ) ) {
-					wfDebugLog( 'redis', "Authentication error connecting to $server" );
+					$this->logger->error(
+						'Authentication error connecting to "{redis_server}"',
+						[ 'redis_server' => $server ]
+					);
 				}
 			}
 		} catch ( RedisException $e ) {
 			$this->downServers[$server] = time() + self::SERVER_DOWN_TTL;
-			wfDebugLog( 'redis', "Redis exception connecting to $server: " . $e->getMessage() );
+			$this->logger->error(
+				'Redis exception connecting to "{redis_server}"',
+				[
+					'redis_server' => $server,
+					'exception' => $e,
+				]
+			);
 
 			return false;
 		}
@@ -227,9 +278,9 @@ class RedisConnectionPool {
 		if ( $conn ) {
 			$conn->setOption( Redis::OPT_READ_TIMEOUT, $this->readTimeout );
 			$conn->setOption( Redis::OPT_SERIALIZER, $this->serializer );
-			$this->connections[$server][] = array( 'conn' => $conn, 'free' => false );
+			$this->connections[$server][] = [ 'conn' => $conn, 'free' => false ];
 
-			return new RedisConnRef( $this, $server, $conn );
+			return new RedisConnRef( $this, $server, $conn, $this->logger );
 		} else {
 			return false;
 		}
@@ -290,7 +341,7 @@ class RedisConnectionPool {
 	 * @deprecated since 1.23
 	 */
 	public function handleException( $server, RedisConnRef $cref, RedisException $e ) {
-		return $this->handleError( $cref, $e );
+		$this->handleError( $cref, $e );
 	}
 
 	/**
@@ -304,7 +355,13 @@ class RedisConnectionPool {
 	 */
 	public function handleError( RedisConnRef $cref, RedisException $e ) {
 		$server = $cref->getServer();
-		wfDebugLog( 'redis', "Redis exception on server $server: " . $e->getMessage() . "\n" );
+		$this->logger->error(
+			'Redis exception on server "{redis_server}"',
+			[
+				'redis_server' => $server,
+				'exception' => $e,
+			]
+		);
 		foreach ( $this->connections[$server] as $key => $connection ) {
 			if ( $cref->isConnIdentical( $connection['conn'] ) ) {
 				$this->idlePoolSize -= $connection['free'] ? 1 : 0;
@@ -333,7 +390,10 @@ class RedisConnectionPool {
 	public function reauthenticateConnection( $server, Redis $conn ) {
 		if ( $this->password !== null ) {
 			if ( !$conn->auth( $this->password ) ) {
-				wfDebugLog( 'redis', "Authentication error connecting to $server" );
+				$this->logger->error(
+					'Authentication error connecting to "{redis_server}"',
+					[ 'redis_server' => $server ]
+				);
 
 				return false;
 			}
@@ -382,14 +442,23 @@ class RedisConnRef {
 	protected $lastError; // string
 
 	/**
+	 * @var LoggerInterface
+	 */
+	protected $logger;
+
+	/**
 	 * @param RedisConnectionPool $pool
 	 * @param string $server
 	 * @param Redis $conn
+	 * @param LoggerInterface $logger
 	 */
-	public function __construct( RedisConnectionPool $pool, $server, Redis $conn ) {
+	public function __construct(
+		RedisConnectionPool $pool, $server, Redis $conn, LoggerInterface $logger
+	) {
 		$this->pool = $pool;
 		$this->server = $server;
 		$this->conn = $conn;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -423,12 +492,15 @@ class RedisConnRef {
 
 		$conn->clearLastError();
 		try {
-			$res = call_user_func_array( array( $conn, $name ), $arguments );
+			$res = call_user_func_array( [ $conn, $name ], $arguments );
 			if ( preg_match( '/^ERR operation not permitted\b/', $conn->getLastError() ) ) {
 				$this->pool->reauthenticateConnection( $this->server, $conn );
 				$conn->clearLastError();
-				$res = call_user_func_array( array( $conn, $name ), $arguments );
-				wfDebugLog( 'redis', "Used automatic re-authentication for method '$name'." );
+				$res = call_user_func_array( [ $conn, $name ], $arguments );
+				$this->logger->info(
+					"Used automatic re-authentication for method '$name'.",
+					[ 'redis_server' => $this->server ]
+				);
 			}
 		} catch ( RedisException $e ) {
 			$this->pool->resetTimeout( $conn ); // restore
@@ -465,17 +537,29 @@ class RedisConnRef {
 			$this->pool->reauthenticateConnection( $server, $conn );
 			$conn->clearLastError();
 			$res = $conn->eval( $script, $params, $numKeys );
-			wfDebugLog( 'redis', "Used automatic re-authentication for Lua script $sha1." );
+			$this->logger->info(
+				"Used automatic re-authentication for Lua script '$sha1'.",
+				[ 'redis_server' => $server ]
+			);
 		}
 		// If the script is not in cache, use eval() to retry and cache it
 		if ( preg_match( '/^NOSCRIPT/', $conn->getLastError() ) ) {
 			$conn->clearLastError();
 			$res = $conn->eval( $script, $params, $numKeys );
-			wfDebugLog( 'redis', "Used eval() for Lua script $sha1." );
+			$this->logger->info(
+				"Used eval() for Lua script '$sha1'.",
+				[ 'redis_server' => $server ]
+			);
 		}
 
 		if ( $conn->getLastError() ) { // script bug?
-			wfDebugLog( 'redis', "Lua script error on server $server: " . $conn->getLastError() );
+			$this->logger->error(
+				'Lua script error on server "{redis_server}": {lua_error}',
+				[
+					'redis_server' => $server,
+					'lua_error' => $conn->getLastError()
+				]
+			);
 		}
 
 		$this->lastError = $conn->getLastError() ?: $this->lastError;

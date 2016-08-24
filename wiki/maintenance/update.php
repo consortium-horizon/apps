@@ -4,7 +4,6 @@
  * Run all updaters.
  *
  * This is used when the database schema is modified and we need to apply patches.
- * It is kept compatible with php 4 parsing so that it can give out a meaningful error.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +36,7 @@ require_once __DIR__ . '/Maintenance.php';
 class UpdateMediaWiki extends Maintenance {
 	function __construct() {
 		parent::__construct();
-		$this->mDescription = "MediaWiki database updater";
+		$this->addDescription( 'MediaWiki database updater' );
 		$this->addOption( 'skip-compat-checks', 'Skips compatibility checks, mostly for developers' );
 		$this->addOption( 'quick', 'Skip 5 second countdown before starting' );
 		$this->addOption( 'doshared', 'Also update shared tables' );
@@ -58,13 +57,11 @@ class UpdateMediaWiki extends Maintenance {
 	}
 
 	function getDbType() {
-		/* If we used the class constant PHP4 would give a parser error here */
-		return 2; /* Maintenance::DB_ADMIN */
+		return Maintenance::DB_ADMIN;
 	}
 
 	function compatChecks() {
-		// Avoid syntax error in PHP4
-		$minimumPcreVersion = constant( 'Installer::MINIMUM_PCRE_VERSION' );
+		$minimumPcreVersion = Installer::MINIMUM_PCRE_VERSION;
 
 		list( $pcreVersion ) = explode( ' ', PCRE_VERSION, 2 );
 		if ( version_compare( $pcreVersion, $minimumPcreVersion, '<' ) ) {
@@ -84,6 +81,13 @@ class UpdateMediaWiki extends Maintenance {
 				"and can cause hidden data corruption in MediaWiki and other web apps.\n" .
 				"Upgrade to libxml2 2.7.3 or later.\n" .
 				"ABORTING (see https://bugs.php.net/bug.php?id=45996).\n",
+				true );
+		}
+
+		if ( !function_exists( 'mb_strlen' ) ) {
+			$this->error(
+				"MediaWiki now requires the mbstring PHP extension, your system doesn't have it.\n"
+				. "ABORTING.\n",
 				true );
 		}
 	}
@@ -115,19 +119,22 @@ class UpdateMediaWiki extends Maintenance {
 			}
 		}
 
-		$wgLang = Language::factory( 'en' );
+		$lang = Language::factory( 'en' );
+		// Set global language to ensure localised errors are in English (bug 20633)
+		RequestContext::getMain()->setLanguage( $lang );
+		$wgLang = $lang; // BackCompat
 
 		define( 'MW_UPDATER', true );
 
 		$this->output( "MediaWiki {$wgVersion} Updater\n\n" );
 
-		wfWaitForSlaves( 5 ); // let's not kill databases, shall we? ;) --tor
+		wfWaitForSlaves();
 
 		if ( !$this->hasOption( 'skip-compat-checks' ) ) {
 			$this->compatChecks();
 		} else {
 			$this->output( "Skipping compatibility checks, proceed at your own risk (Ctrl+C to abort)\n" );
-			wfCountdown( 5 );
+			wfCountDown( 5 );
 		}
 
 		// Check external dependencies are up to date
@@ -142,7 +149,7 @@ class UpdateMediaWiki extends Maintenance {
 
 		# Attempt to connect to the database as a privileged user
 		# This will vomit up an error if there are permissions problems
-		$db = wfGetDB( DB_MASTER );
+		$db = $this->getDB( DB_MASTER );
 
 		$this->output( "Going to run database updates for " . wfWikiID() . "\n" );
 		if ( $db->getType() === 'sqlite' ) {
@@ -156,11 +163,11 @@ class UpdateMediaWiki extends Maintenance {
 			wfCountDown( 5 );
 		}
 
-		$time1 = new MWTimestamp();
+		$time1 = microtime( true );
 
 		$shared = $this->hasOption( 'doshared' );
 
-		$updates = array( 'core', 'extensions' );
+		$updates = [ 'core', 'extensions' ];
 		if ( !$this->hasOption( 'schema' ) ) {
 			if ( $this->hasOption( 'noschema' ) ) {
 				$updates[] = 'noschema';
@@ -168,14 +175,14 @@ class UpdateMediaWiki extends Maintenance {
 			$updates[] = 'stats';
 		}
 
-		$updater = DatabaseUpdater::newForDb( $db, $shared, $this );
+		$updater = DatabaseUpdater::newForDB( $db, $shared, $this );
 		$updater->doUpdates( $updates );
 
 		foreach ( $updater->getPostDatabaseUpdateMaintenance() as $maint ) {
 			$child = $this->runChild( $maint );
 
 			// LoggedUpdateMaintenance is checking the updatelog itself
-			$isLoggedUpdate = is_a( $child, 'LoggedUpdateMaintenance' );
+			$isLoggedUpdate = $child instanceof LoggedUpdateMaintenance;
 
 			if ( !$isLoggedUpdate && $updater->updateRowExists( $maint ) ) {
 				continue;
@@ -192,9 +199,10 @@ class UpdateMediaWiki extends Maintenance {
 			$updater->purgeCache();
 		}
 
-		$time2 = new MWTimestamp();
-		$timeDiff = $time2->diff( $time1 );
-		$this->output( "\nDone in " . $timeDiff->format( "%i:%S" ) . ".\n" );
+		$time2 = microtime( true );
+
+		$timeDiff = $lang->formatTimePeriod( $time2 - $time1 );
+		$this->output( "\nDone in $timeDiff.\n" );
 	}
 
 	function afterFinalSetup() {
@@ -203,12 +211,12 @@ class UpdateMediaWiki extends Maintenance {
 		# Don't try to access the database
 		# This needs to be disabled early since extensions will try to use the l10n
 		# cache from $wgExtensionFunctions (bug 20471)
-		$wgLocalisationCacheConf = array(
+		$wgLocalisationCacheConf = [
 			'class' => 'LocalisationCache',
 			'storeClass' => 'LCStoreNull',
 			'storeDirectory' => false,
 			'manualRecache' => false,
-		);
+		];
 	}
 }
 

@@ -33,7 +33,7 @@
 				];
 
 				for ( i = 0, l = selectors.length; i < l; i++ ) {
-					$node = $( selectors[i] );
+					$node = $( selectors[ i ] );
 					if ( $node.length ) {
 						return $node.first();
 					}
@@ -56,6 +56,18 @@
 			return encodeURIComponent( str )
 				.replace( /!/g, '%21' ).replace( /'/g, '%27' ).replace( /\(/g, '%28' )
 				.replace( /\)/g, '%29' ).replace( /\*/g, '%2A' ).replace( /~/g, '%7E' );
+		},
+
+		/**
+		 * Encode the string like Sanitizer::escapeId in PHP
+		 *
+		 * @param {string} str String to be encoded.
+		 */
+		escapeId: function ( str ) {
+			str = String( str );
+			return util.rawurlencode( str.replace( / /g, '_' ) )
+				.replace( /%3A/g, ':' )
+				.replace( /%/g, '.' );
 		},
 
 		/**
@@ -82,25 +94,46 @@
 				.replace( /%29/g, ')' )
 				.replace( /%2C/g, ',' )
 				.replace( /%2F/g, '/' )
+				.replace( /%7E/g, '~' )
 				.replace( /%3A/g, ':' );
 		},
 
 		/**
 		 * Get the link to a page name (relative to `wgServer`),
 		 *
-		 * @param {string|null} [str=wgPageName] Page name
+		 * @param {string|null} [pageName=wgPageName] Page name
 		 * @param {Object} [params] A mapping of query parameter names to values,
 		 *  e.g. `{ action: 'edit' }`
-		 * @return {string} Url of the page with name of `str`
+		 * @return {string} Url of the page with name of `pageName`
 		 */
-		getUrl: function ( str, params ) {
-			var url = mw.config.get( 'wgArticlePath' ).replace(
-				'$1',
-				util.wikiUrlencode( typeof str === 'string' ? str : mw.config.get( 'wgPageName' ) )
-			);
+		getUrl: function ( pageName, params ) {
+			var titleFragmentStart, url, query,
+				fragment = '',
+				title = typeof pageName === 'string' ? pageName : mw.config.get( 'wgPageName' );
 
-			if ( params && !$.isEmptyObject( params ) ) {
-				url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' ) + $.param( params );
+			// Find any fragment
+			titleFragmentStart = title.indexOf( '#' );
+			if ( titleFragmentStart !== -1 ) {
+				fragment = title.slice( titleFragmentStart + 1 );
+				// Exclude the fragment from the page name
+				title = title.slice( 0, titleFragmentStart );
+			}
+
+			// Produce query string
+			if ( params ) {
+				query = $.param( params );
+			}
+			if ( query ) {
+				url = title
+					? util.wikiScript() + '?title=' + util.wikiUrlencode( title ) + '&' + query
+					: util.wikiScript() + '?' + query;
+			} else {
+				url = mw.config.get( 'wgArticlePath' ).replace( '$1', util.wikiUrlencode( title ) );
+			}
+
+			// Append the encoded fragment
+			if ( fragment.length ) {
+				url += '#' + util.escapeId( fragment );
 			}
 
 			return url;
@@ -111,8 +144,8 @@
 		 * For index.php use `mw.config.get( 'wgScript' )`.
 		 *
 		 * @since 1.18
-		 * @param str string Name of script (eg. 'api'), defaults to 'index'
-		 * @return string Address to script (eg. '/w/api.php' )
+		 * @param {string} str Name of script (e.g. 'api'), defaults to 'index'
+		 * @return {string} Address to script (e.g. '/w/api.php' )
 		 */
 		wikiScript: function ( str ) {
 			str = str || 'index';
@@ -121,8 +154,7 @@
 			} else if ( str === 'load' ) {
 				return mw.config.get( 'wgLoadScript' );
 			} else {
-				return mw.config.get( 'wgScriptPath' ) + '/' + str +
-					mw.config.get( 'wgScriptExtension' );
+				return mw.config.get( 'wgScriptPath' ) + '/' + str + '.php';
 			}
 		},
 
@@ -159,12 +191,12 @@
 				url = location.href;
 			}
 			// Get last match, stop at hash
-			var	re = new RegExp( '^[^#]*[&?]' + $.escapeRE( param ) + '=([^&#]*)' ),
+			var	re = new RegExp( '^[^#]*[&?]' + mw.RegExp.escape( param ) + '=([^&#]*)' ),
 				m = re.exec( url );
 			if ( m ) {
 				// Beware that decodeURIComponent is not required to understand '+'
 				// by spec, as encodeURIComponent does not produce it.
-				return decodeURIComponent( m[1].replace( /\+/g, '%20' ) );
+				return decodeURIComponent( m[ 1 ].replace( /\+/g, '%20' ) );
 			}
 			return null;
 		},
@@ -205,9 +237,19 @@
 		 * (e.g. `'#foobar'`) for that item.
 		 *
 		 *     mw.util.addPortletLink(
-		 *         'p-tb', 'http://mediawiki.org/',
-		 *         'MediaWiki.org', 't-mworg', 'Go to MediaWiki.org ', 'm', '#t-print'
+		 *         'p-tb', 'https://www.mediawiki.org/',
+		 *         'mediawiki.org', 't-mworg', 'Go to mediawiki.org', 'm', '#t-print'
 		 *     );
+		 *
+		 *     var node = mw.util.addPortletLink(
+		 *         'p-tb',
+		 *         new mw.Title( 'Special:Example' ).getUrl(),
+		 *         'Example'
+		 *     );
+		 *     $( node ).on( 'click', function ( e ) {
+		 *         console.log( 'Example' );
+		 *         e.preventDefault();
+		 *     } );
 		 *
 		 * @param {string} portlet ID of the target portlet ( 'p-cactions' or 'p-personal' etc.)
 		 * @param {string} href Link URL
@@ -298,7 +340,7 @@
 					// Error: Invalid nextnode
 					nextnode = undefined;
 				}
-				if ( nextnode && ( nextnode.length !== 1 || nextnode[0].parentNode !== $ul[0] ) ) {
+				if ( nextnode && ( nextnode.length !== 1 || nextnode[ 0 ].parentNode !== $ul[ 0 ] ) ) {
 					// Error: nextnode must resolve to a single node
 					// Error: nextnode must have the associated <ul> as its parent
 					nextnode = undefined;
@@ -317,7 +359,7 @@
 			// to get a localized access key label (bug 67946).
 			$link.updateTooltipAccessKeys();
 
-			return $item[0];
+			return $item[ 0 ];
 		},
 
 		/**

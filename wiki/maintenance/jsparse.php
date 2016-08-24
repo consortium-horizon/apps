@@ -33,7 +33,7 @@ class JSParseHelper extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Runs parsing/syntax checks on JavaScript files";
+		$this->addDescription( 'Runs parsing/syntax checks on JavaScript files' );
 		$this->addArg( 'file(s)', 'JavaScript file to test', false );
 	}
 
@@ -47,9 +47,9 @@ class JSParseHelper extends Maintenance {
 
 		$parser = new JSParser();
 		foreach ( $files as $filename ) {
-			wfSuppressWarnings();
+			MediaWiki\suppressWarnings();
 			$js = file_get_contents( $filename );
-			wfRestoreWarnings();
+			MediaWiki\restoreWarnings();
 			if ( $js === false ) {
 				$this->output( "$filename ERROR: could not read file\n" );
 				$this->errs++;

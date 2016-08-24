@@ -3,7 +3,7 @@
  */
 ( function ( mw, $ ) {
 	$( function () {
-		var idleTimeout = 4000,
+		var idleTimeout = 3000,
 			api = new mw.Api(),
 			pending = null,
 			$form = $( '#editform' ),
@@ -44,7 +44,7 @@
 				pending.abort();
 			}
 
-			api.getToken( 'edit' ).then( stashEdit );
+			api.getToken( 'csrf' ).then( stashEdit );
 		}
 
 		function onKeyPress( e ) {

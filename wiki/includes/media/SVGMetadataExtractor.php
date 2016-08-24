@@ -53,9 +53,9 @@ class SVGReader {
 	private $mDebug = false;
 
 	/** @var array */
-	private $metadata = array();
-	private $languages = array();
-	private $languagePrefixes = array();
+	private $metadata = [];
+	private $languages = [];
+	private $languagePrefixes = [];
 
 	/**
 	 * Constructor
@@ -108,17 +108,17 @@ class SVGReader {
 		// Because we cut off the end of the svg making an invalid one. Complicated
 		// try catch thing to make sure warnings get restored. Seems like there should
 		// be a better way.
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		try {
 			$this->read();
 		} catch ( Exception $e ) {
 			// Note, if this happens, the width/height will be taken to be 0x0.
 			// Should we consider it the default 512x512 instead?
-			wfRestoreWarnings();
+			MediaWiki\restoreWarnings();
 			libxml_disable_entity_loader( $oldDisable );
 			throw $e;
 		}
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 		libxml_disable_entity_loader( $oldDisable );
 	}
 
@@ -229,7 +229,7 @@ class SVGReader {
 		}
 		// @todo Find and store type of xml snippet. metadata['metadataType'] = "rdf"
 		if ( method_exists( $this->reader, 'readInnerXML' ) ) {
-			$this->metadata[$metafield] = trim( $this->reader->readInnerXML() );
+			$this->metadata[$metafield] = trim( $this->reader->readInnerXml() );
 		} else {
 			throw new MWException( "The PHP XMLReader extension does not come " .
 				"with readInnerXML() method. Your libxml is probably out of " .
@@ -262,7 +262,6 @@ class SVGReader {
 			} elseif ( $this->reader->namespaceURI == self::NS_SVG
 				&& $this->reader->nodeType == XMLReader::ELEMENT
 			) {
-
 				$sysLang = $this->reader->getAttribute( 'systemLanguage' );
 				if ( !is_null( $sysLang ) && $sysLang !== '' ) {
 					// See http://www.w3.org/TR/SVG/struct.html#SystemLanguageAttribute
@@ -318,16 +317,6 @@ class SVGReader {
 		if ( $this->mDebug ) {
 			wfDebug( "SVGReader: $data\n" );
 		}
-	}
-
-	// @todo FIXME: Unused, remove?
-	private function warn( $data ) {
-		wfDebug( "SVGReader: $data\n" );
-	}
-
-	// @todo FIXME: Unused, remove?
-	private function notice( $data ) {
-		wfDebug( "SVGReader WARN: $data\n" );
 	}
 
 	/**
@@ -387,7 +376,7 @@ class SVGReader {
 	 * @return float Length in pixels
 	 */
 	static function scaleSVGUnit( $length, $viewportSize = 512 ) {
-		static $unitLength = array(
+		static $unitLength = [
 			'px' => 1.0,
 			'pt' => 1.25,
 			'pc' => 15.0,
@@ -397,8 +386,8 @@ class SVGReader {
 			'em' => 16.0, // fake it?
 			'ex' => 12.0, // fake it?
 			'' => 1.0, // "User units" pixels by default
-		);
-		$matches = array();
+		];
+		$matches = [];
 		if ( preg_match( '/^\s*(\d+(?:\.\d+)?)(em|ex|px|pt|pc|cm|mm|in|%|)\s*$/', $length, $matches ) ) {
 			$length = floatval( $matches[1] );
 			$unit = $matches[2];

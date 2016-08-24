@@ -2,135 +2,152 @@
 
 class ResourceLoaderStartUpModuleTest extends ResourceLoaderTestCase {
 
+	// Version hash for a blank file module.
+	// Result of ResourceLoader::makeHash(), ResourceLoaderTestModule
+	// and ResourceLoaderFileModule::getDefinitionSummary().
+	protected static $blankVersion = 'GqV9IPpY';
+
+	protected static function expandPlaceholders( $text ) {
+		return strtr( $text, [
+			'{blankVer}' => self::$blankVersion
+		] );
+	}
+
 	public static function provideGetModuleRegistrations() {
-		return array(
-			array( array(
+		return [
+			[ [
 				'msg' => 'Empty registry',
-				'modules' => array(),
+				'modules' => [],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php"
-} );mw.loader.register( [] );'
-			) ),
-			array( array(
+} );
+mw.loader.register( [] );'
+			] ],
+			[ [
 				'msg' => 'Basic registry',
-				'modules' => array(
+				'modules' => [
 					'test.blank' => new ResourceLoaderTestModule(),
-				),
+				],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.blank",
-        1388534400
+        "{blankVer}"
     ]
 ] );',
-			) ),
-			array( array(
+			] ],
+			[ [
 				'msg' => 'Group signature',
-				'modules' => array(
+				'modules' => [
 					'test.blank' => new ResourceLoaderTestModule(),
-					'test.group.foo' => new ResourceLoaderTestModule( array( 'group' => 'x-foo' ) ),
-					'test.group.bar' => new ResourceLoaderTestModule( array( 'group' => 'x-bar' ) ),
-				),
+					'test.group.foo' => new ResourceLoaderTestModule( [ 'group' => 'x-foo' ] ),
+					'test.group.bar' => new ResourceLoaderTestModule( [ 'group' => 'x-bar' ] ),
+				],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.blank",
-        1388534400
+        "{blankVer}"
     ],
     [
         "test.group.foo",
-        1388534400,
+        "{blankVer}",
         [],
         "x-foo"
     ],
     [
         "test.group.bar",
-        1388534400,
+        "{blankVer}",
         [],
         "x-bar"
     ]
 ] );'
-			) ),
-			array( array(
+			] ],
+			[ [
 				'msg' => 'Different target (non-test should not be registered)',
-				'modules' => array(
+				'modules' => [
 					'test.blank' => new ResourceLoaderTestModule(),
-					'test.target.foo' => new ResourceLoaderTestModule( array( 'targets' => array( 'x-foo' ) ) ),
-				),
+					'test.target.foo' => new ResourceLoaderTestModule( [ 'targets' => [ 'x-foo' ] ] ),
+				],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.blank",
-        1388534400
+        "{blankVer}"
     ]
 ] );'
-			) ),
-			array( array(
+			] ],
+			[ [
 				'msg' => 'Foreign source',
-				'sources' => array(
-					'example' => array(
+				'sources' => [
+					'example' => [
 						'loadScript' => 'http://example.org/w/load.php',
 						'apiScript' => 'http://example.org/w/api.php',
-					),
-				),
-				'modules' => array(
-					'test.blank' => new ResourceLoaderTestModule( array( 'source' => 'example' ) ),
-				),
+					],
+				],
+				'modules' => [
+					'test.blank' => new ResourceLoaderTestModule( [ 'source' => 'example' ] ),
+				],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php",
     "example": "http://example.org/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.blank",
-        1388534400,
+        "{blankVer}",
         [],
         null,
         "example"
     ]
 ] );'
-			) ),
-			array( array(
+			] ],
+			[ [
 				'msg' => 'Conditional dependency function',
-				'modules' => array(
+				'modules' => [
 					'test.x.core' => new ResourceLoaderTestModule(),
-					'test.x.polyfill' => new ResourceLoaderTestModule( array(
+					'test.x.polyfill' => new ResourceLoaderTestModule( [
 						'skipFunction' => 'return true;'
-					) ),
-					'test.y.polyfill' => new ResourceLoaderTestModule( array(
+					] ),
+					'test.y.polyfill' => new ResourceLoaderTestModule( [
 						'skipFunction' =>
 							'return !!(' .
 							'    window.JSON &&' .
 							'    JSON.parse &&' .
 							'    JSON.stringify' .
 							');'
-					) ),
-					'test.z.foo' => new ResourceLoaderTestModule( array(
-						'dependencies' => array(
+					] ),
+					'test.z.foo' => new ResourceLoaderTestModule( [
+						'dependencies' => [
 							'test.x.core',
 							'test.x.polyfill',
 							'test.y.polyfill',
-						),
-					) ),
-				),
+						],
+					] ),
+				],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.x.core",
-        1388534400
+        "{blankVer}"
     ],
     [
         "test.x.polyfill",
-        1388534400,
+        "{blankVer}",
         [],
         null,
         null,
@@ -138,7 +155,7 @@ mw.loader.addSource( {
     ],
     [
         "test.y.polyfill",
-        1388534400,
+        "{blankVer}",
         [],
         null,
         null,
@@ -146,7 +163,7 @@ mw.loader.addSource( {
     ],
     [
         "test.z.foo",
-        1388534400,
+        "{blankVer}",
         [
             0,
             1,
@@ -154,104 +171,105 @@ mw.loader.addSource( {
         ]
     ]
 ] );',
-			) ),
-			array( array(
+			] ],
+			[ [
 				// This may seem like an edge case, but a plain MediaWiki core install
 				// with a few extensions installed is likely far more complex than this
 				// even, not to mention an install like Wikipedia.
 				// TODO: Make this even more realistic.
 				'msg' => 'Advanced (everything combined)',
-				'sources' => array(
-					'example' => array(
+				'sources' => [
+					'example' => [
 						'loadScript' => 'http://example.org/w/load.php',
 						'apiScript' => 'http://example.org/w/api.php',
-					),
-				),
-				'modules' => array(
+					],
+				],
+				'modules' => [
 					'test.blank' => new ResourceLoaderTestModule(),
 					'test.x.core' => new ResourceLoaderTestModule(),
-					'test.x.util' => new ResourceLoaderTestModule( array(
-						'dependencies' => array(
+					'test.x.util' => new ResourceLoaderTestModule( [
+						'dependencies' => [
 							'test.x.core',
-						),
-					) ),
-					'test.x.foo' => new ResourceLoaderTestModule( array(
-						'dependencies' => array(
+						],
+					] ),
+					'test.x.foo' => new ResourceLoaderTestModule( [
+						'dependencies' => [
 							'test.x.core',
-						),
-					) ),
-					'test.x.bar' => new ResourceLoaderTestModule( array(
-						'dependencies' => array(
+						],
+					] ),
+					'test.x.bar' => new ResourceLoaderTestModule( [
+						'dependencies' => [
 							'test.x.core',
 							'test.x.util',
-						),
-					) ),
-					'test.x.quux' => new ResourceLoaderTestModule( array(
-						'dependencies' => array(
+						],
+					] ),
+					'test.x.quux' => new ResourceLoaderTestModule( [
+						'dependencies' => [
 							'test.x.foo',
 							'test.x.bar',
 							'test.x.util',
 							'test.x.unknown',
-						),
-					) ),
-					'test.group.foo.1' => new ResourceLoaderTestModule( array(
+						],
+					] ),
+					'test.group.foo.1' => new ResourceLoaderTestModule( [
 						'group' => 'x-foo',
-					) ),
-					'test.group.foo.2' => new ResourceLoaderTestModule( array(
+					] ),
+					'test.group.foo.2' => new ResourceLoaderTestModule( [
 						'group' => 'x-foo',
-					) ),
-					'test.group.bar.1' => new ResourceLoaderTestModule( array(
+					] ),
+					'test.group.bar.1' => new ResourceLoaderTestModule( [
 						'group' => 'x-bar',
-					) ),
-					'test.group.bar.2' => new ResourceLoaderTestModule( array(
+					] ),
+					'test.group.bar.2' => new ResourceLoaderTestModule( [
 						'group' => 'x-bar',
 						'source' => 'example',
-					) ),
-					'test.target.foo' => new ResourceLoaderTestModule( array(
-						'targets' => array( 'x-foo' ),
-					) ),
-					'test.target.bar' => new ResourceLoaderTestModule( array(
+					] ),
+					'test.target.foo' => new ResourceLoaderTestModule( [
+						'targets' => [ 'x-foo' ],
+					] ),
+					'test.target.bar' => new ResourceLoaderTestModule( [
 						'source' => 'example',
-						'targets' => array( 'x-foo' ),
-					) ),
-				),
+						'targets' => [ 'x-foo' ],
+					] ),
+				],
 				'out' => '
 mw.loader.addSource( {
     "local": "/w/load.php",
     "example": "http://example.org/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.blank",
-        1388534400
+        "{blankVer}"
     ],
     [
         "test.x.core",
-        1388534400
+        "{blankVer}"
     ],
     [
         "test.x.util",
-        1388534400,
+        "{blankVer}",
         [
             1
         ]
     ],
     [
         "test.x.foo",
-        1388534400,
+        "{blankVer}",
         [
             1
         ]
     ],
     [
         "test.x.bar",
-        1388534400,
+        "{blankVer}",
         [
             2
         ]
     ],
     [
         "test.x.quux",
-        1388534400,
+        "{blankVer}",
         [
             3,
             4,
@@ -260,32 +278,32 @@ mw.loader.addSource( {
     ],
     [
         "test.group.foo.1",
-        1388534400,
+        "{blankVer}",
         [],
         "x-foo"
     ],
     [
         "test.group.foo.2",
-        1388534400,
+        "{blankVer}",
         [],
         "x-foo"
     ],
     [
         "test.group.bar.1",
-        1388534400,
+        "{blankVer}",
         [],
         "x-bar"
     ],
     [
         "test.group.bar.2",
-        1388534400,
+        "{blankVer}",
         [],
         "x-bar",
         "example"
     ]
 ] );'
-			) ),
-		);
+			] ],
+		];
 	}
 
 	/**
@@ -302,34 +320,34 @@ mw.loader.addSource( {
 
 		$context = $this->getResourceLoaderContext();
 		$rl = $context->getResourceLoader();
-
 		$rl->register( $case['modules'] );
-
 		$module = new ResourceLoaderStartUpModule();
+		$out = ltrim( $case['out'], "\n" );
+
 		$this->assertEquals(
-			ltrim( $case['out'], "\n" ),
+			self::expandPlaceholders( $out ),
 			$module->getModuleRegistrations( $context ),
 			$case['msg']
 		);
 	}
 
 	public static function provideRegistrations() {
-		return array(
-			array( array(
+		return [
+			[ [
 				'test.blank' => new ResourceLoaderTestModule(),
-				'test.min' => new ResourceLoaderTestModule( array(
+				'test.min' => new ResourceLoaderTestModule( [
 					'skipFunction' =>
 						'return !!(' .
 						'    window.JSON &&' .
 						'    JSON.parse &&' .
 						'    JSON.stringify' .
 						');',
-					'dependencies' => array(
+					'dependencies' => [
 						'test.blank',
-					),
-				) ),
-			) )
-		);
+					],
+				] ),
+			] ]
+		];
 	}
 	/**
 	 * @dataProvider provideRegistrations
@@ -341,13 +359,15 @@ mw.loader.addSource( {
 		$rl = $context->getResourceLoader();
 		$rl->register( $modules );
 		$module = new ResourceLoaderStartUpModule();
+		$out = 'mw.loader.addSource({"local":"/w/load.php"});' . "\n"
+		. 'mw.loader.register(['
+		. '["test.blank","{blankVer}"],'
+		. '["test.min","{blankVer}",[0],null,null,'
+		. '"return!!(window.JSON\u0026\u0026JSON.parse\u0026\u0026JSON.stringify);"'
+		. ']]);';
+
 		$this->assertEquals(
-'mw.loader.addSource({"local":"/w/load.php"});'
-. 'mw.loader.register(['
-. '["test.blank",1388534400],'
-. '["test.min",1388534400,[0],null,null,'
-. '"return!!(window.JSON\u0026\u0026JSON.parse\u0026\u0026JSON.stringify);"'
-. ']]);',
+			self::expandPlaceholders( $out ),
 			$module->getModuleRegistrations( $context ),
 			'Minified output'
 		);
@@ -361,17 +381,18 @@ mw.loader.addSource( {
 		$rl = $context->getResourceLoader();
 		$rl->register( $modules );
 		$module = new ResourceLoaderStartUpModule();
-		$this->assertEquals(
+		$out =
 'mw.loader.addSource( {
     "local": "/w/load.php"
-} );mw.loader.register( [
+} );
+mw.loader.register( [
     [
         "test.blank",
-        1388534400
+        "{blankVer}"
     ],
     [
         "test.min",
-        1388534400,
+        "{blankVer}",
         [
             0
         ],
@@ -379,7 +400,10 @@ mw.loader.addSource( {
         null,
         "return !!(    window.JSON \u0026\u0026    JSON.parse \u0026\u0026    JSON.stringify);"
     ]
-] );',
+] );';
+
+		$this->assertEquals(
+			self::expandPlaceholders( $out ),
 			$module->getModuleRegistrations( $context ),
 			'Unminified output'
 		);

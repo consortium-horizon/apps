@@ -68,19 +68,24 @@
 		if ( val === undefined || val === null || val === '' ) {
 			return '';
 		}
+
 		return pre + ( raw ? val : mw.Uri.encode( val ) ) + post;
 	}
 
 	/**
 	 * Regular expressions to parse many common URIs.
 	 *
+	 * As they are gnarly, they have been moved to separate files to allow us to format them in the
+	 * 'extended' regular expression format (which JavaScript normally doesn't support). The subset of
+	 * features handled is minimal, but just the free whitespace gives us a lot.
+	 *
 	 * @private
 	 * @static
 	 * @property {Object} parser
 	 */
 	var parser = {
-		strict: /^(?:([^:\/?#]+):)?(?:\/\/(?:(?:([^:@\/?#]*)(?::([^:@\/?#]*))?)?@)?([^:\/?#]*)(?::(\d*))?)?((?:[^?#\/]*\/)*[^?#]*)(?:\?([^#]*))?(?:#(.*))?/,
-		loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?(?:(?:([^:@\/?#]*)(?::([^:@\/?#]*))?)?@)?([^:\/?#]*)(?::(\d*))?((?:\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?[^?#\/]*)(?:\?([^#]*))?(?:#(.*))?/
+		strict: mw.template.get( 'mediawiki.Uri', 'strict.regexp' ).render(),
+		loose: mw.template.get( 'mediawiki.Uri', 'loose.regexp' ).render()
 	},
 
 	/**
@@ -152,12 +157,11 @@
 		}() );
 
 		/**
-		 * @class mw.Uri
-		 * @constructor
-		 *
 		 * Construct a new URI object. Throws error if arguments are illegal/impossible, or
 		 * otherwise don't parse.
 		 *
+		 * @class mw.Uri
+		 * @constructor
 		 * @param {Object|string} [uri] URI string, or an Object with appropriate properties (especially
 		 *  another URI object to clone). Object must have non-blank `protocol`, `host`, and `path`
 		 *  properties. If omitted (or set to `undefined`, `null` or empty string), then an object
@@ -188,10 +192,10 @@
 						// Only copy direct properties, not inherited ones
 						if ( uri.hasOwnProperty( prop ) ) {
 							// Deep copy object properties
-							if ( $.isArray( uri[prop] ) || $.isPlainObject( uri[prop] ) ) {
-								this[prop] = $.extend( true, {}, uri[prop] );
+							if ( $.isArray( uri[ prop ] ) || $.isPlainObject( uri[ prop ] ) ) {
+								this[ prop ] = $.extend( true, {}, uri[ prop ] );
 							} else {
-								this[prop] = uri[prop];
+								this[ prop ] = uri[ prop ];
 							}
 						}
 					}
@@ -216,7 +220,7 @@
 					this.port = defaultUri.port;
 				}
 			}
-			if ( this.path && this.path.charAt( 0 ) !== '/' ) {
+			if ( this.path && this.path[ 0 ] !== '/' ) {
 				// A real relative URL, relative to defaultUri.path. We can't really handle that since we cannot
 				// figure out whether the last path component of defaultUri.path is a directory or a file.
 				throw new Error( 'Bad constructor arguments' );
@@ -269,7 +273,8 @@
 			 */
 			parse: function ( str, options ) {
 				var q, matches,
-					uri = this;
+					uri = this,
+					hasOwn = Object.prototype.hasOwnProperty;
 
 				// Apply parser regex and set all properties based on the result
 				matches = parser[ options.strictMode ? 'strict' : 'loose' ].exec( str );
@@ -291,7 +296,7 @@
 
 							// If overrideKeys, always (re)set top level value.
 							// If not overrideKeys but this key wasn't set before, then we set it as well.
-							if ( options.overrideKeys || q[ k ] === undefined ) {
+							if ( options.overrideKeys || !hasOwn.call( q, k ) ) {
 								q[ k ] = v;
 
 							// Use arrays if overrideKeys is false and key was already seen before

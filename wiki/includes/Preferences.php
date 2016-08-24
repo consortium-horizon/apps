@@ -19,6 +19,8 @@
  *
  * @file
  */
+use MediaWiki\Auth\AuthManager;
+use MediaWiki\Auth\PasswordAuthenticationRequest;
 
 /**
  * We're now using the HTMLForm object with some customisation to generate the
@@ -50,20 +52,20 @@ class Preferences {
 	protected static $defaultPreferences = null;
 
 	/** @var array */
-	protected static $saveFilters = array(
-		'timecorrection' => array( 'Preferences', 'filterTimezoneInput' ),
-		'cols' => array( 'Preferences', 'filterIntval' ),
-		'rows' => array( 'Preferences', 'filterIntval' ),
-		'rclimit' => array( 'Preferences', 'filterIntval' ),
-		'wllimit' => array( 'Preferences', 'filterIntval' ),
-		'searchlimit' => array( 'Preferences', 'filterIntval' ),
-	);
+	protected static $saveFilters = [
+		'timecorrection' => [ 'Preferences', 'filterTimezoneInput' ],
+		'cols' => [ 'Preferences', 'filterIntval' ],
+		'rows' => [ 'Preferences', 'filterIntval' ],
+		'rclimit' => [ 'Preferences', 'filterIntval' ],
+		'wllimit' => [ 'Preferences', 'filterIntval' ],
+		'searchlimit' => [ 'Preferences', 'filterIntval' ],
+	];
 
 	// Stuff that shouldn't be saved as a preference.
-	private static $saveBlacklist = array(
+	private static $saveBlacklist = [
 		'realname',
 		'emailaddress',
-	);
+	];
 
 	/**
 	 * @return array
@@ -83,7 +85,7 @@ class Preferences {
 			return self::$defaultPreferences;
 		}
 
-		$defaultPreferences = array();
+		$defaultPreferences = [];
 
 		self::profilePreferences( $user, $context, $defaultPreferences );
 		self::skinPreferences( $user, $context, $defaultPreferences );
@@ -96,7 +98,7 @@ class Preferences {
 		self::searchPreferences( $user, $context, $defaultPreferences );
 		self::miscPreferences( $user, $context, $defaultPreferences );
 
-		Hooks::run( 'GetPreferences', array( $user, &$defaultPreferences ) );
+		Hooks::run( 'GetPreferences', [ $user, &$defaultPreferences ] );
 
 		self::loadPreferenceValues( $user, $context, $defaultPreferences );
 		self::$defaultPreferences = $defaultPreferences;
@@ -112,26 +114,26 @@ class Preferences {
 	 * @return array|null
 	 */
 	static function loadPreferenceValues( $user, $context, &$defaultPreferences ) {
-		## Remove preferences that wikis don't want to use
+		# # Remove preferences that wikis don't want to use
 		foreach ( $context->getConfig()->get( 'HiddenPrefs' ) as $pref ) {
 			if ( isset( $defaultPreferences[$pref] ) ) {
 				unset( $defaultPreferences[$pref] );
 			}
 		}
 
-		## Make sure that form fields have their parent set. See bug 41337.
-		$dummyForm = new HTMLForm( array(), $context );
+		# # Make sure that form fields have their parent set. See bug 41337.
+		$dummyForm = new HTMLForm( [], $context );
 
 		$disable = !$user->isAllowed( 'editmyoptions' );
 
-		## Prod in defaults from the user
+		$defaultOptions = User::getDefaultOptions();
+		# # Prod in defaults from the user
 		foreach ( $defaultPreferences as $name => &$info ) {
 			$prefFromUser = self::getOptionFromUser( $name, $info, $user );
 			if ( $disable && !in_array( $name, self::$saveBlacklist ) ) {
 				$info['disabled'] = 'disabled';
 			}
 			$field = HTMLForm::loadInputFromParameters( $name, $info, $dummyForm ); // For validation
-			$defaultOptions = User::getDefaultOptions();
 			$globalDefault = isset( $defaultOptions[$name] )
 				? $defaultOptions[$name]
 				: null;
@@ -169,7 +171,7 @@ class Preferences {
 				( isset( $info['class'] ) && $info['class'] == 'HTMLMultiSelectField' ) ) {
 			$options = HTMLFormField::flattenOptions( $info['options'] );
 			$prefix = isset( $info['prefix'] ) ? $info['prefix'] : $name;
-			$val = array();
+			$val = [];
 
 			foreach ( $options as $value ) {
 				if ( $user->getOption( "$prefix$value" ) ) {
@@ -184,7 +186,7 @@ class Preferences {
 			$columns = HTMLFormField::flattenOptions( $info['columns'] );
 			$rows = HTMLFormField::flattenOptions( $info['rows'] );
 			$prefix = isset( $info['prefix'] ) ? $info['prefix'] : $name;
-			$val = array();
+			$val = [];
 
 			foreach ( $columns as $column ) {
 				foreach ( $rows as $row ) {
@@ -205,24 +207,25 @@ class Preferences {
 	 * @return void
 	 */
 	static function profilePreferences( $user, IContextSource $context, &$defaultPreferences ) {
-		global $wgAuth, $wgContLang, $wgParser;
+		global $wgContLang, $wgParser;
 
+		$authManager = AuthManager::singleton();
 		$config = $context->getConfig();
 		// retrieving user name for GENDER and misc.
 		$userName = $user->getName();
 
-		## User info #####################################
+		# # User info #####################################
 		// Information panel
-		$defaultPreferences['username'] = array(
+		$defaultPreferences['username'] = [
 			'type' => 'info',
-			'label-message' => array( 'username', $userName ),
+			'label-message' => [ 'username', $userName ],
 			'default' => $userName,
 			'section' => 'personal/info',
-		);
+		];
 
 		# Get groups to which the user belongs
 		$userEffectiveGroups = $user->getEffectiveGroups();
-		$userGroups = $userMembers = array();
+		$userGroups = $userMembers = [];
 		foreach ( $userEffectiveGroups as $ueg ) {
 			if ( $ueg == '*' ) {
 				// Skip the default * group, seems useless here
@@ -239,7 +242,7 @@ class Preferences {
 
 		$lang = $context->getLanguage();
 
-		$defaultPreferences['usergroups'] = array(
+		$defaultPreferences['usergroups'] = [
 			'type' => 'info',
 			'label' => $context->msg( 'prefs-memberingroups' )->numParams(
 				count( $userGroups ) )->params( $userName )->parse(),
@@ -248,23 +251,23 @@ class Preferences {
 				->escaped(),
 			'raw' => true,
 			'section' => 'personal/info',
-		);
+		];
 
 		$editCount = Linker::link( SpecialPage::getTitleFor( "Contributions", $userName ),
 			$lang->formatNum( $user->getEditCount() ) );
 
-		$defaultPreferences['editcount'] = array(
+		$defaultPreferences['editcount'] = [
 			'type' => 'info',
 			'raw' => true,
 			'label-message' => 'prefs-edits',
 			'default' => $editCount,
 			'section' => 'personal/info',
-		);
+		];
 
 		if ( $user->getRegistration() ) {
 			$displayUser = $context->getUser();
 			$userRegistration = $user->getRegistration();
-			$defaultPreferences['registrationdate'] = array(
+			$defaultPreferences['registrationdate'] = [
 				'type' => 'info',
 				'label-message' => 'prefs-registration',
 				'default' => $context->msg(
@@ -274,43 +277,46 @@ class Preferences {
 					$lang->userTime( $userRegistration, $displayUser )
 				)->parse(),
 				'section' => 'personal/info',
-			);
+			];
 		}
 
 		$canViewPrivateInfo = $user->isAllowed( 'viewmyprivateinfo' );
 		$canEditPrivateInfo = $user->isAllowed( 'editmyprivateinfo' );
 
 		// Actually changeable stuff
-		$defaultPreferences['realname'] = array(
+		$defaultPreferences['realname'] = [
 			// (not really "private", but still shouldn't be edited without permission)
-			'type' => $canEditPrivateInfo && $wgAuth->allowPropChange( 'realname' ) ? 'text' : 'info',
+			'type' => $canEditPrivateInfo && $authManager->allowsPropertyChange( 'realname' )
+				? 'text' : 'info',
 			'default' => $user->getRealName(),
 			'section' => 'personal/info',
 			'label-message' => 'yourrealname',
 			'help-message' => 'prefs-help-realname',
-		);
+		];
 
-		if ( $canEditPrivateInfo && $wgAuth->allowPasswordChange() ) {
+		if ( $canEditPrivateInfo && $authManager->allowsAuthenticationDataChange(
+			new PasswordAuthenticationRequest(), false )->isGood()
+		) {
 			$link = Linker::link( SpecialPage::getTitleFor( 'ChangePassword' ),
-				$context->msg( 'prefs-resetpass' )->escaped(), array(),
-				array( 'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText() ) );
+				$context->msg( 'prefs-resetpass' )->escaped(), [],
+				[ 'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText() ] );
 
-			$defaultPreferences['password'] = array(
+			$defaultPreferences['password'] = [
 				'type' => 'info',
 				'raw' => true,
 				'default' => $link,
 				'label-message' => 'yourpassword',
 				'section' => 'personal/info',
-			);
+			];
 		}
 		// Only show prefershttps if secure login is turned on
 		if ( $config->get( 'SecureLogin' ) && wfCanIPUseHTTPS( $context->getRequest()->getIP() ) ) {
-			$defaultPreferences['prefershttps'] = array(
+			$defaultPreferences['prefershttps'] = [
 				'type' => 'toggle',
 				'label-message' => 'tog-prefershttps',
 				'help-message' => 'prefs-help-prefershttps',
 				'section' => 'personal/info'
-			);
+			];
 		}
 
 		// Language
@@ -321,31 +327,31 @@ class Preferences {
 		}
 		ksort( $languages );
 
-		$options = array();
+		$options = [];
 		foreach ( $languages as $code => $name ) {
 			$display = wfBCP47( $code ) . ' - ' . $name;
 			$options[$display] = $code;
 		}
-		$defaultPreferences['language'] = array(
+		$defaultPreferences['language'] = [
 			'type' => 'select',
 			'section' => 'personal/i18n',
 			'options' => $options,
 			'label-message' => 'yourlanguage',
-		);
+		];
 
-		$defaultPreferences['gender'] = array(
+		$defaultPreferences['gender'] = [
 			'type' => 'radio',
 			'section' => 'personal/i18n',
-			'options' => array(
+			'options' => [
 				$context->msg( 'parentheses' )
 					->params( $context->msg( 'gender-unknown' )->plain() )
 					->escaped() => 'unknown',
 				$context->msg( 'gender-female' )->escaped() => 'female',
 				$context->msg( 'gender-male' )->escaped() => 'male',
-			),
+			],
 			'label-message' => 'yourgender',
 			'help-message' => 'prefs-help-gender',
-		);
+		];
 
 		// see if there are multiple language variants to choose from
 		if ( !$config->get( 'DisableLangConversion' ) ) {
@@ -357,29 +363,29 @@ class Preferences {
 						continue;
 					}
 
-					$variantArray = array();
+					$variantArray = [];
 					foreach ( $variants as $v ) {
 						$v = str_replace( '_', '-', strtolower( $v ) );
 						$variantArray[$v] = $lang->getVariantname( $v, false );
 					}
 
-					$options = array();
+					$options = [];
 					foreach ( $variantArray as $code => $name ) {
 						$display = wfBCP47( $code ) . ' - ' . $name;
 						$options[$display] = $code;
 					}
 
-					$defaultPreferences['variant'] = array(
+					$defaultPreferences['variant'] = [
 						'label-message' => 'yourvariant',
 						'type' => 'select',
 						'options' => $options,
 						'section' => 'personal/i18n',
 						'help-message' => 'prefs-help-variant',
-					);
+					];
 				} else {
-					$defaultPreferences["variant-$langCode"] = array(
+					$defaultPreferences["variant-$langCode"] = [
 						'type' => 'api',
-					);
+					];
 				}
 			}
 		}
@@ -389,11 +395,11 @@ class Preferences {
 		$toggles = $wgContLang->getExtraUserToggles();
 
 		foreach ( $toggles as $toggle ) {
-			$defaultPreferences[$toggle] = array(
+			$defaultPreferences[$toggle] = [
 				'type' => 'toggle',
 				'section' => 'personal/i18n',
 				'label-message' => "tog-$toggle",
-			);
+			];
 		}
 
 		// show a preview of the old signature first
@@ -404,30 +410,30 @@ class Preferences {
 			ParserOptions::newFromContext( $context )
 		);
 		$oldsigHTML = $context->getOutput()->parseInline( $oldsigWikiText, true, true );
-		$defaultPreferences['oldsig'] = array(
+		$defaultPreferences['oldsig'] = [
 			'type' => 'info',
 			'raw' => true,
 			'label-message' => 'tog-oldsig',
 			'default' => $oldsigHTML,
 			'section' => 'personal/signature',
-		);
-		$defaultPreferences['nickname'] = array(
-			'type' => $wgAuth->allowPropChange( 'nickname' ) ? 'text' : 'info',
+		];
+		$defaultPreferences['nickname'] = [
+			'type' => $authManager->allowsPropertyChange( 'nickname' ) ? 'text' : 'info',
 			'maxlength' => $config->get( 'MaxSigChars' ),
 			'label-message' => 'yournick',
-			'validation-callback' => array( 'Preferences', 'validateSignature' ),
+			'validation-callback' => [ 'Preferences', 'validateSignature' ],
 			'section' => 'personal/signature',
-			'filter-callback' => array( 'Preferences', 'cleanSignature' ),
-		);
-		$defaultPreferences['fancysig'] = array(
+			'filter-callback' => [ 'Preferences', 'cleanSignature' ],
+		];
+		$defaultPreferences['fancysig'] = [
 			'type' => 'toggle',
 			'label-message' => 'tog-fancysig',
 			// show general help about signature at the bottom of the section
 			'help-message' => 'prefs-help-signature',
 			'section' => 'personal/signature'
-		);
+		];
 
-		## Email stuff
+		# # Email stuff
 
 		if ( $config->get( 'EnableEmail' ) ) {
 			if ( $canViewPrivateInfo ) {
@@ -441,12 +447,12 @@ class Preferences {
 				}
 
 				$emailAddress = $user->getEmail() ? htmlspecialchars( $user->getEmail() ) : '';
-				if ( $canEditPrivateInfo && $wgAuth->allowPropChange( 'emailaddress' ) ) {
+				if ( $canEditPrivateInfo && $authManager->allowsPropertyChange( 'emailaddress' ) ) {
 					$link = Linker::link(
 						SpecialPage::getTitleFor( 'ChangeEmail' ),
 						$context->msg( $user->getEmail() ? 'prefs-changeemail' : 'prefs-setemail' )->escaped(),
-						array(),
-						array( 'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText() ) );
+						[],
+						[ 'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText() ] );
 
 					$emailAddress .= $emailAddress == '' ? $link : (
 						$context->msg( 'word-separator' )->escaped()
@@ -454,7 +460,7 @@ class Preferences {
 					);
 				}
 
-				$defaultPreferences['emailaddress'] = array(
+				$defaultPreferences['emailaddress'] = [
 					'type' => 'info',
 					'raw' => true,
 					'default' => $emailAddress,
@@ -462,7 +468,7 @@ class Preferences {
 					'section' => 'personal/email',
 					'help-messages' => $helpMessages,
 					# 'cssclass' chosen below
-				);
+				];
 			}
 
 			$disableEmailPrefs = false;
@@ -499,7 +505,7 @@ class Preferences {
 				}
 
 				if ( $canViewPrivateInfo ) {
-					$defaultPreferences['emailauthentication'] = array(
+					$defaultPreferences['emailauthentication'] = [
 						'type' => 'info',
 						'raw' => true,
 						'section' => 'personal/email',
@@ -507,58 +513,59 @@ class Preferences {
 						'default' => $emailauthenticated,
 						# Apply the same CSS class used on the input to the message:
 						'cssclass' => $emailauthenticationclass,
-					);
-					$defaultPreferences['emailaddress']['cssclass'] = $emailauthenticationclass;
+					];
 				}
 			}
 
 			if ( $config->get( 'EnableUserEmail' ) && $user->isAllowed( 'sendemail' ) ) {
-				$defaultPreferences['disablemail'] = array(
+				$defaultPreferences['disablemail'] = [
 					'type' => 'toggle',
 					'invert' => true,
 					'section' => 'personal/email',
 					'label-message' => 'allowemail',
 					'disabled' => $disableEmailPrefs,
-				);
-				$defaultPreferences['ccmeonemails'] = array(
+				];
+				$defaultPreferences['ccmeonemails'] = [
 					'type' => 'toggle',
 					'section' => 'personal/email',
 					'label-message' => 'tog-ccmeonemails',
 					'disabled' => $disableEmailPrefs,
-				);
+				];
 			}
 
 			if ( $config->get( 'EnotifWatchlist' ) ) {
-				$defaultPreferences['enotifwatchlistpages'] = array(
+				$defaultPreferences['enotifwatchlistpages'] = [
 					'type' => 'toggle',
 					'section' => 'personal/email',
 					'label-message' => 'tog-enotifwatchlistpages',
 					'disabled' => $disableEmailPrefs,
-				);
+				];
 			}
 			if ( $config->get( 'EnotifUserTalk' ) ) {
-				$defaultPreferences['enotifusertalkpages'] = array(
+				$defaultPreferences['enotifusertalkpages'] = [
 					'type' => 'toggle',
 					'section' => 'personal/email',
 					'label-message' => 'tog-enotifusertalkpages',
 					'disabled' => $disableEmailPrefs,
-				);
+				];
 			}
 			if ( $config->get( 'EnotifUserTalk' ) || $config->get( 'EnotifWatchlist' ) ) {
-				$defaultPreferences['enotifminoredits'] = array(
-					'type' => 'toggle',
-					'section' => 'personal/email',
-					'label-message' => 'tog-enotifminoredits',
-					'disabled' => $disableEmailPrefs,
-				);
+				if ( $config->get( 'EnotifMinorEdits' ) ) {
+					$defaultPreferences['enotifminoredits'] = [
+						'type' => 'toggle',
+						'section' => 'personal/email',
+						'label-message' => 'tog-enotifminoredits',
+						'disabled' => $disableEmailPrefs,
+					];
+				}
 
 				if ( $config->get( 'EnotifRevealEditorAddress' ) ) {
-					$defaultPreferences['enotifrevealaddr'] = array(
+					$defaultPreferences['enotifrevealaddr'] = [
 						'type' => 'toggle',
 						'section' => 'personal/email',
 						'label-message' => 'tog-enotifrevealaddr',
 						'disabled' => $disableEmailPrefs,
-					);
+					];
 				}
 			}
 		}
@@ -571,17 +578,17 @@ class Preferences {
 	 * @return void
 	 */
 	static function skinPreferences( $user, IContextSource $context, &$defaultPreferences ) {
-		## Skin #####################################
+		# # Skin #####################################
 
 		// Skin selector, if there is at least one valid skin
 		$skinOptions = self::generateSkinOptions( $user, $context );
 		if ( $skinOptions ) {
-			$defaultPreferences['skin'] = array(
+			$defaultPreferences['skin'] = [
 				'type' => 'radio',
 				'options' => $skinOptions,
 				'label' => '&#160;',
 				'section' => 'rendering/skin',
-			);
+			];
 		}
 
 		$config = $context->getConfig();
@@ -591,7 +598,7 @@ class Preferences {
 		# This code is basically copied from generateSkinOptions().  It'd
 		# be nice to somehow merge this back in there to avoid redundancy.
 		if ( $allowUserCss || $allowUserJs ) {
-			$linkTools = array();
+			$linkTools = [];
 			$userName = $user->getName();
 
 			if ( $allowUserCss ) {
@@ -604,13 +611,13 @@ class Preferences {
 				$linkTools[] = Linker::link( $jsPage, $context->msg( 'prefs-custom-js' )->escaped() );
 			}
 
-			$defaultPreferences['commoncssjs'] = array(
+			$defaultPreferences['commoncssjs'] = [
 				'type' => 'info',
 				'raw' => true,
 				'default' => $context->getLanguage()->pipeList( $linkTools ),
 				'label-message' => 'prefs-common-css-js',
 				'section' => 'rendering/skin',
-			);
+			];
 		}
 	}
 
@@ -620,19 +627,19 @@ class Preferences {
 	 * @param array $defaultPreferences
 	 */
 	static function filesPreferences( $user, IContextSource $context, &$defaultPreferences ) {
-		## Files #####################################
-		$defaultPreferences['imagesize'] = array(
+		# # Files #####################################
+		$defaultPreferences['imagesize'] = [
 			'type' => 'select',
 			'options' => self::getImageSizes( $context ),
 			'label-message' => 'imagemaxsize',
 			'section' => 'rendering/files',
-		);
-		$defaultPreferences['thumbsize'] = array(
+		];
+		$defaultPreferences['thumbsize'] = [
 			'type' => 'select',
 			'options' => self::getThumbSizes( $context ),
 			'label-message' => 'thumbsize',
 			'section' => 'rendering/files',
-		);
+		];
 	}
 
 	/**
@@ -642,40 +649,41 @@ class Preferences {
 	 * @return void
 	 */
 	static function datetimePreferences( $user, IContextSource $context, &$defaultPreferences ) {
-		## Date and time #####################################
+		# # Date and time #####################################
 		$dateOptions = self::getDateOptions( $context );
 		if ( $dateOptions ) {
-			$defaultPreferences['date'] = array(
+			$defaultPreferences['date'] = [
 				'type' => 'radio',
 				'options' => $dateOptions,
 				'label' => '&#160;',
 				'section' => 'rendering/dateformat',
-			);
+			];
 		}
 
 		// Info
 		$now = wfTimestampNow();
 		$lang = $context->getLanguage();
-		$nowlocal = Xml::element( 'span', array( 'id' => 'wpLocalTime' ),
-			$lang->time( $now, true ) );
-		$nowserver = $lang->time( $now, false ) .
+		$nowlocal = Xml::element( 'span', [ 'id' => 'wpLocalTime' ],
+			$lang->userTime( $now, $user ) );
+		$nowserver = $lang->userTime( $now, $user,
+				[ 'format' => false, 'timecorrection' => false ] ) .
 			Html::hidden( 'wpServerTime', (int)substr( $now, 8, 2 ) * 60 + (int)substr( $now, 10, 2 ) );
 
-		$defaultPreferences['nowserver'] = array(
+		$defaultPreferences['nowserver'] = [
 			'type' => 'info',
 			'raw' => 1,
 			'label-message' => 'servertime',
 			'default' => $nowserver,
 			'section' => 'rendering/timeoffset',
-		);
+		];
 
-		$defaultPreferences['nowlocal'] = array(
+		$defaultPreferences['nowlocal'] = [
 			'type' => 'info',
 			'raw' => 1,
 			'label-message' => 'localtime',
 			'default' => $nowlocal,
 			'section' => 'rendering/timeoffset',
-		);
+		];
 
 		// Grab existing pref.
 		$tzOffset = $user->getOption( 'timecorrection' );
@@ -698,14 +706,14 @@ class Preferences {
 			}
 		}
 
-		$defaultPreferences['timecorrection'] = array(
+		$defaultPreferences['timecorrection'] = [
 			'class' => 'HTMLSelectOrOtherField',
 			'label-message' => 'timezonelegend',
 			'options' => $tzOptions,
 			'default' => $tzSetting,
 			'size' => 20,
 			'section' => 'rendering/timeoffset',
-		);
+		];
 	}
 
 	/**
@@ -714,56 +722,60 @@ class Preferences {
 	 * @param array $defaultPreferences
 	 */
 	static function renderingPreferences( $user, IContextSource $context, &$defaultPreferences ) {
-		## Diffs ####################################
-		$defaultPreferences['diffonly'] = array(
+		# # Diffs ####################################
+		$defaultPreferences['diffonly'] = [
 			'type' => 'toggle',
 			'section' => 'rendering/diffs',
 			'label-message' => 'tog-diffonly',
-		);
-		$defaultPreferences['norollbackdiff'] = array(
+		];
+		$defaultPreferences['norollbackdiff'] = [
 			'type' => 'toggle',
 			'section' => 'rendering/diffs',
 			'label-message' => 'tog-norollbackdiff',
-		);
+		];
 
-		## Page Rendering ##############################
+		# # Page Rendering ##############################
 		if ( $context->getConfig()->get( 'AllowUserCssPrefs' ) ) {
-			$defaultPreferences['underline'] = array(
+			$defaultPreferences['underline'] = [
 				'type' => 'select',
-				'options' => array(
+				'options' => [
 					$context->msg( 'underline-never' )->text() => 0,
 					$context->msg( 'underline-always' )->text() => 1,
 					$context->msg( 'underline-default' )->text() => 2,
-				),
+				],
 				'label-message' => 'tog-underline',
 				'section' => 'rendering/advancedrendering',
-			);
+			];
 		}
 
-		$stubThresholdValues = array( 50, 100, 500, 1000, 2000, 5000, 10000 );
-		$stubThresholdOptions = array( $context->msg( 'stub-threshold-disabled' )->text() => 0 );
+		$stubThresholdValues = [ 50, 100, 500, 1000, 2000, 5000, 10000 ];
+		$stubThresholdOptions = [ $context->msg( 'stub-threshold-disabled' )->text() => 0 ];
 		foreach ( $stubThresholdValues as $value ) {
 			$stubThresholdOptions[$context->msg( 'size-bytes', $value )->text()] = $value;
 		}
 
-		$defaultPreferences['stubthreshold'] = array(
+		$defaultPreferences['stubthreshold'] = [
 			'type' => 'select',
 			'section' => 'rendering/advancedrendering',
 			'options' => $stubThresholdOptions,
-			'label-raw' => $context->msg( 'stub-threshold' )->text(), // Raw HTML message. Yay?
-		);
+			// This is not a raw HTML message; label-raw is needed for the manual <a></a>
+			'label-raw' => $context->msg( 'stub-threshold' )->rawParams(
+				'<a href="#" class="stub">' .
+				$context->msg( 'stub-threshold-sample-link' )->parse() .
+				'</a>' )->parse(),
+		];
 
-		$defaultPreferences['showhiddencats'] = array(
+		$defaultPreferences['showhiddencats'] = [
 			'type' => 'toggle',
 			'section' => 'rendering/advancedrendering',
 			'label-message' => 'tog-showhiddencats'
-		);
+		];
 
-		$defaultPreferences['numberheadings'] = array(
+		$defaultPreferences['numberheadings'] = [
 			'type' => 'toggle',
 			'section' => 'rendering/advancedrendering',
 			'label-message' => 'tog-numberheadings',
-		);
+		];
 	}
 
 	/**
@@ -772,83 +784,83 @@ class Preferences {
 	 * @param array $defaultPreferences
 	 */
 	static function editingPreferences( $user, IContextSource $context, &$defaultPreferences ) {
-		## Editing #####################################
-		$defaultPreferences['editsectiononrightclick'] = array(
+		# # Editing #####################################
+		$defaultPreferences['editsectiononrightclick'] = [
 			'type' => 'toggle',
 			'section' => 'editing/advancedediting',
 			'label-message' => 'tog-editsectiononrightclick',
-		);
-		$defaultPreferences['editondblclick'] = array(
+		];
+		$defaultPreferences['editondblclick'] = [
 			'type' => 'toggle',
 			'section' => 'editing/advancedediting',
 			'label-message' => 'tog-editondblclick',
-		);
+		];
 
 		if ( $context->getConfig()->get( 'AllowUserCssPrefs' ) ) {
-			$defaultPreferences['editfont'] = array(
+			$defaultPreferences['editfont'] = [
 				'type' => 'select',
 				'section' => 'editing/editor',
 				'label-message' => 'editfont-style',
-				'options' => array(
+				'options' => [
 					$context->msg( 'editfont-default' )->text() => 'default',
 					$context->msg( 'editfont-monospace' )->text() => 'monospace',
 					$context->msg( 'editfont-sansserif' )->text() => 'sans-serif',
 					$context->msg( 'editfont-serif' )->text() => 'serif',
-				)
-			);
+				]
+			];
 		}
-		$defaultPreferences['cols'] = array(
+		$defaultPreferences['cols'] = [
 			'type' => 'int',
 			'label-message' => 'columns',
 			'section' => 'editing/editor',
 			'min' => 4,
 			'max' => 1000,
-		);
-		$defaultPreferences['rows'] = array(
+		];
+		$defaultPreferences['rows'] = [
 			'type' => 'int',
 			'label-message' => 'rows',
 			'section' => 'editing/editor',
 			'min' => 4,
 			'max' => 1000,
-		);
+		];
 		if ( $user->isAllowed( 'minoredit' ) ) {
-			$defaultPreferences['minordefault'] = array(
+			$defaultPreferences['minordefault'] = [
 				'type' => 'toggle',
 				'section' => 'editing/editor',
 				'label-message' => 'tog-minordefault',
-			);
+			];
 		}
-		$defaultPreferences['forceeditsummary'] = array(
+		$defaultPreferences['forceeditsummary'] = [
 			'type' => 'toggle',
 			'section' => 'editing/editor',
 			'label-message' => 'tog-forceeditsummary',
-		);
-		$defaultPreferences['useeditwarning'] = array(
+		];
+		$defaultPreferences['useeditwarning'] = [
 			'type' => 'toggle',
 			'section' => 'editing/editor',
 			'label-message' => 'tog-useeditwarning',
-		);
-		$defaultPreferences['showtoolbar'] = array(
+		];
+		$defaultPreferences['showtoolbar'] = [
 			'type' => 'toggle',
 			'section' => 'editing/editor',
 			'label-message' => 'tog-showtoolbar',
-		);
+		];
 
-		$defaultPreferences['previewonfirst'] = array(
+		$defaultPreferences['previewonfirst'] = [
 			'type' => 'toggle',
 			'section' => 'editing/preview',
 			'label-message' => 'tog-previewonfirst',
-		);
-		$defaultPreferences['previewontop'] = array(
+		];
+		$defaultPreferences['previewontop'] = [
 			'type' => 'toggle',
 			'section' => 'editing/preview',
 			'label-message' => 'tog-previewontop',
-		);
-		$defaultPreferences['uselivepreview'] = array(
+		];
+		$defaultPreferences['uselivepreview'] = [
 			'type' => 'toggle',
 			'section' => 'editing/preview',
 			'label-message' => 'tog-uselivepreview',
-		);
+		];
 
 	}
 
@@ -860,8 +872,8 @@ class Preferences {
 	static function rcPreferences( $user, IContextSource $context, &$defaultPreferences ) {
 		$config = $context->getConfig();
 		$rcMaxAge = $config->get( 'RCMaxAge' );
-		## RecentChanges #####################################
-		$defaultPreferences['rcdays'] = array(
+		# # RecentChanges #####################################
+		$defaultPreferences['rcdays'] = [
 			'type' => 'float',
 			'label-message' => 'recentchangesdays',
 			'section' => 'rc/displayrc',
@@ -869,46 +881,54 @@ class Preferences {
 			'max' => ceil( $rcMaxAge / ( 3600 * 24 ) ),
 			'help' => $context->msg( 'recentchangesdays-max' )->numParams(
 				ceil( $rcMaxAge / ( 3600 * 24 ) ) )->escaped()
-		);
-		$defaultPreferences['rclimit'] = array(
+		];
+		$defaultPreferences['rclimit'] = [
 			'type' => 'int',
 			'label-message' => 'recentchangescount',
 			'help-message' => 'prefs-help-recentchangescount',
 			'section' => 'rc/displayrc',
-		);
-		$defaultPreferences['usenewrc'] = array(
+		];
+		$defaultPreferences['usenewrc'] = [
 			'type' => 'toggle',
 			'label-message' => 'tog-usenewrc',
 			'section' => 'rc/advancedrc',
-		);
-		$defaultPreferences['hideminor'] = array(
+		];
+		$defaultPreferences['hideminor'] = [
 			'type' => 'toggle',
 			'label-message' => 'tog-hideminor',
 			'section' => 'rc/advancedrc',
-		);
+		];
+
+		if ( $config->get( 'RCWatchCategoryMembership' ) ) {
+			$defaultPreferences['hidecategorization'] = [
+				'type' => 'toggle',
+				'label-message' => 'tog-hidecategorization',
+				'section' => 'rc/advancedrc',
+			];
+		}
 
 		if ( $user->useRCPatrol() ) {
-			$defaultPreferences['hidepatrolled'] = array(
+			$defaultPreferences['hidepatrolled'] = [
 				'type' => 'toggle',
 				'section' => 'rc/advancedrc',
 				'label-message' => 'tog-hidepatrolled',
-			);
+			];
 		}
 
 		if ( $user->useNPPatrol() ) {
-			$defaultPreferences['newpageshidepatrolled'] = array(
+			$defaultPreferences['newpageshidepatrolled'] = [
 				'type' => 'toggle',
 				'section' => 'rc/advancedrc',
 				'label-message' => 'tog-newpageshidepatrolled',
-			);
+			];
 		}
 
 		if ( $config->get( 'RCShowWatchingUsers' ) ) {
-			$defaultPreferences['shownumberswatching'] = array(
+			$defaultPreferences['shownumberswatching'] = [
 				'type' => 'toggle',
 				'section' => 'rc/advancedrc',
 				'label-message' => 'tog-shownumberswatching',
-			);
+			];
 		}
 	}
 
@@ -921,14 +941,14 @@ class Preferences {
 		$config = $context->getConfig();
 		$watchlistdaysMax = ceil( $config->get( 'RCMaxAge' ) / ( 3600 * 24 ) );
 
-		## Watchlist #####################################
+		# # Watchlist #####################################
 		if ( $user->isAllowed( 'editmywatchlist' ) ) {
-			$editWatchlistLinks = array();
-			$editWatchlistModes = array(
-				'edit' => array( 'EditWatchlist', false ),
-				'raw' => array( 'EditWatchlist', 'raw' ),
-				'clear' => array( 'EditWatchlist', 'clear' ),
-			);
+			$editWatchlistLinks = [];
+			$editWatchlistModes = [
+				'edit' => [ 'EditWatchlist', false ],
+				'raw' => [ 'EditWatchlist', 'raw' ],
+				'clear' => [ 'EditWatchlist', 'clear' ],
+			];
 			foreach ( $editWatchlistModes as $editWatchlistMode => $mode ) {
 				// Messages: prefs-editwatchlist-edit, prefs-editwatchlist-raw, prefs-editwatchlist-clear
 				$editWatchlistLinks[] = Linker::linkKnown(
@@ -937,16 +957,16 @@ class Preferences {
 				);
 			}
 
-			$defaultPreferences['editwatchlist'] = array(
+			$defaultPreferences['editwatchlist'] = [
 				'type' => 'info',
 				'raw' => true,
 				'default' => $context->getLanguage()->pipeList( $editWatchlistLinks ),
 				'label-message' => 'prefs-editwatchlist-label',
 				'section' => 'watchlist/editwatchlist',
-			);
+			];
 		}
 
-		$defaultPreferences['watchlistdays'] = array(
+		$defaultPreferences['watchlistdays'] = [
 			'type' => 'float',
 			'min' => 0,
 			'max' => $watchlistdaysMax,
@@ -954,59 +974,72 @@ class Preferences {
 			'help' => $context->msg( 'prefs-watchlist-days-max' )->numParams(
 				$watchlistdaysMax )->escaped(),
 			'label-message' => 'prefs-watchlist-days',
-		);
-		$defaultPreferences['wllimit'] = array(
+		];
+		$defaultPreferences['wllimit'] = [
 			'type' => 'int',
 			'min' => 0,
 			'max' => 1000,
 			'label-message' => 'prefs-watchlist-edits',
 			'help' => $context->msg( 'prefs-watchlist-edits-max' )->escaped(),
 			'section' => 'watchlist/displaywatchlist',
-		);
-		$defaultPreferences['extendwatchlist'] = array(
+		];
+		$defaultPreferences['extendwatchlist'] = [
 			'type' => 'toggle',
 			'section' => 'watchlist/advancedwatchlist',
 			'label-message' => 'tog-extendwatchlist',
-		);
-		$defaultPreferences['watchlisthideminor'] = array(
+		];
+		$defaultPreferences['watchlisthideminor'] = [
 			'type' => 'toggle',
 			'section' => 'watchlist/advancedwatchlist',
 			'label-message' => 'tog-watchlisthideminor',
-		);
-		$defaultPreferences['watchlisthidebots'] = array(
+		];
+		$defaultPreferences['watchlisthidebots'] = [
 			'type' => 'toggle',
 			'section' => 'watchlist/advancedwatchlist',
 			'label-message' => 'tog-watchlisthidebots',
-		);
-		$defaultPreferences['watchlisthideown'] = array(
+		];
+		$defaultPreferences['watchlisthideown'] = [
 			'type' => 'toggle',
 			'section' => 'watchlist/advancedwatchlist',
 			'label-message' => 'tog-watchlisthideown',
-		);
-		$defaultPreferences['watchlisthideanons'] = array(
+		];
+		$defaultPreferences['watchlisthideanons'] = [
 			'type' => 'toggle',
 			'section' => 'watchlist/advancedwatchlist',
 			'label-message' => 'tog-watchlisthideanons',
-		);
-		$defaultPreferences['watchlisthideliu'] = array(
+		];
+		$defaultPreferences['watchlisthideliu'] = [
 			'type' => 'toggle',
 			'section' => 'watchlist/advancedwatchlist',
 			'label-message' => 'tog-watchlisthideliu',
-		);
+		];
+		$defaultPreferences['watchlistreloadautomatically'] = [
+			'type' => 'toggle',
+			'section' => 'watchlist/advancedwatchlist',
+			'label-message' => 'tog-watchlistreloadautomatically',
+		];
+
+		if ( $config->get( 'RCWatchCategoryMembership' ) ) {
+			$defaultPreferences['watchlisthidecategorization'] = [
+				'type' => 'toggle',
+				'section' => 'watchlist/advancedwatchlist',
+				'label-message' => 'tog-watchlisthidecategorization',
+			];
+		}
 
 		if ( $user->useRCPatrol() ) {
-			$defaultPreferences['watchlisthidepatrolled'] = array(
+			$defaultPreferences['watchlisthidepatrolled'] = [
 				'type' => 'toggle',
 				'section' => 'watchlist/advancedwatchlist',
 				'label-message' => 'tog-watchlisthidepatrolled',
-			);
+			];
 		}
 
-		$watchTypes = array(
+		$watchTypes = [
 			'edit' => 'watchdefault',
 			'move' => 'watchmoves',
 			'delete' => 'watchdeletion'
-		);
+		];
 
 		// Kinda hacky
 		if ( $user->isAllowed( 'createpage' ) || $user->isAllowed( 'createtalk' ) ) {
@@ -1017,30 +1050,34 @@ class Preferences {
 			$watchTypes['rollback'] = 'watchrollback';
 		}
 
+		if ( $user->isAllowed( 'upload' ) ) {
+			$watchTypes['upload'] = 'watchuploads';
+		}
+
 		foreach ( $watchTypes as $action => $pref ) {
 			if ( $user->isAllowed( $action ) ) {
 				// Messages:
-				// tog-watchdefault, tog-watchmoves, tog-watchdeletion, tog-watchcreations
+				// tog-watchdefault, tog-watchmoves, tog-watchdeletion, tog-watchcreations, tog-watchuploads
 				// tog-watchrollback
-				$defaultPreferences[$pref] = array(
+				$defaultPreferences[$pref] = [
 					'type' => 'toggle',
 					'section' => 'watchlist/advancedwatchlist',
 					'label-message' => "tog-$pref",
-				);
+				];
 			}
 		}
 
 		if ( $config->get( 'EnableAPI' ) ) {
-			$defaultPreferences['watchlisttoken'] = array(
+			$defaultPreferences['watchlisttoken'] = [
 				'type' => 'api',
-			);
-			$defaultPreferences['watchlisttoken-info'] = array(
+			];
+			$defaultPreferences['watchlisttoken-info'] = [
 				'type' => 'info',
 				'section' => 'watchlist/tokenwatchlist',
 				'label-message' => 'prefs-watchlist-token',
 				'default' => $user->getTokenFromOption( 'watchlisttoken' ),
 				'help-message' => 'prefs-help-watchlist-token2',
-			);
+			];
 		}
 	}
 
@@ -1051,9 +1088,9 @@ class Preferences {
 	 */
 	static function searchPreferences( $user, IContextSource $context, &$defaultPreferences ) {
 		foreach ( MWNamespace::getValidNamespaces() as $n ) {
-			$defaultPreferences['searchNs' . $n] = array(
+			$defaultPreferences['searchNs' . $n] = [
 				'type' => 'api',
-			);
+			];
 		}
 	}
 
@@ -1069,7 +1106,7 @@ class Preferences {
 	 * @return array Text/links to display as key; $skinkey as value
 	 */
 	static function generateSkinOptions( $user, IContextSource $context ) {
-		$ret = array();
+		$ret = [];
 
 		$mptitle = Title::newMainPage();
 		$previewtext = $context->msg( 'skin-preview' )->escaped();
@@ -1094,7 +1131,7 @@ class Preferences {
 
 		$foundDefault = false;
 		foreach ( $validSkinNames as $skinkey => $sn ) {
-			$linkTools = array();
+			$linkTools = [];
 
 			# Mark the default skin
 			if ( strcasecmp( $skinkey, $defaultSkin ) === 0 ) {
@@ -1103,7 +1140,7 @@ class Preferences {
 			}
 
 			# Create preview link
-			$mplink = htmlspecialchars( $mptitle->getLocalURL( array( 'useskin' => $skinkey ) ) );
+			$mplink = htmlspecialchars( $mptitle->getLocalURL( [ 'useskin' => $skinkey ] ) );
 			$linkTools[] = "<a target='_blank' href=\"$mplink\">$previewtext</a>";
 
 			# Create links to user CSS/JS pages
@@ -1126,7 +1163,7 @@ class Preferences {
 		if ( !$foundDefault ) {
 			// If the default skin is not available, things are going to break horribly because the
 			// default value for skin selector will not be a valid value. Let's just not show it then.
-			return array();
+			return [];
 		}
 
 		return $ret;
@@ -1140,7 +1177,7 @@ class Preferences {
 		$lang = $context->getLanguage();
 		$dateopts = $lang->getDatePreferences();
 
-		$ret = array();
+		$ret = [];
 
 		if ( $dateopts ) {
 			if ( !in_array( 'default', $dateopts ) ) {
@@ -1172,7 +1209,7 @@ class Preferences {
 	 * @return array
 	 */
 	static function getImageSizes( IContextSource $context ) {
-		$ret = array();
+		$ret = [];
 		$pixels = $context->msg( 'unit-pixel' )->text();
 
 		foreach ( $context->getConfig()->get( 'ImageLimits' ) as $index => $limits ) {
@@ -1188,7 +1225,7 @@ class Preferences {
 	 * @return array
 	 */
 	static function getThumbSizes( IContextSource $context ) {
-		$ret = array();
+		$ret = [];
 		$pixels = $context->msg( 'unit-pixel' )->text();
 
 		foreach ( $context->getConfig()->get( 'ThumbLimits' ) as $index => $size ) {
@@ -1209,7 +1246,7 @@ class Preferences {
 		global $wgParser;
 		$maxSigChars = $form->getConfig()->get( 'MaxSigChars' );
 		if ( mb_strlen( $signature ) > $maxSigChars ) {
-			return Xml::element( 'span', array( 'class' => 'error' ),
+			return Xml::element( 'span', [ 'class' => 'error' ],
 				$form->msg( 'badsiglength' )->numParams( $maxSigChars )->text() );
 		} elseif ( isset( $alldata['fancysig'] ) &&
 				$alldata['fancysig'] &&
@@ -1217,7 +1254,7 @@ class Preferences {
 		) {
 			return Xml::element(
 				'span',
-				array( 'class' => 'error' ),
+				[ 'class' => 'error' ],
 				$form->msg( 'badsig' )->text()
 			);
 		} else {
@@ -1248,13 +1285,13 @@ class Preferences {
 	 * @param IContextSource $context
 	 * @param string $formClass
 	 * @param array $remove Array of items to remove
-	 * @return HtmlForm
+	 * @return PreferencesForm|HtmlForm
 	 */
 	static function getFormObject(
 		$user,
 		IContextSource $context,
 		$formClass = 'PreferencesForm',
-		array $remove = array()
+		array $remove = []
 	) {
 		$formDescriptor = Preferences::getPreferences( $user, $context );
 		if ( count( $remove ) ) {
@@ -1276,11 +1313,12 @@ class Preferences {
 
 		$htmlForm->setModifiedUser( $user );
 		$htmlForm->setId( 'mw-prefs-form' );
+		$htmlForm->setAutocomplete( 'off' );
 		$htmlForm->setSubmitText( $context->msg( 'saveprefs' )->text() );
 		# Used message keys: 'accesskey-preferences-save', 'tooltip-preferences-save'
 		$htmlForm->setSubmitTooltip( 'preferences-save' );
 		$htmlForm->setSubmitID( 'prefsubmit' );
-		$htmlForm->setSubmitCallback( array( 'Preferences', 'tryFormSubmit' ) );
+		$htmlForm->setSubmitCallback( [ 'Preferences', 'tryFormSubmit' ] );
 
 		return $htmlForm;
 	}
@@ -1290,15 +1328,22 @@ class Preferences {
 	 * @return array
 	 */
 	static function getTimezoneOptions( IContextSource $context ) {
-		$opt = array();
+		$opt = [];
 
 		$localTZoffset = $context->getConfig()->get( 'LocalTZoffset' );
+		$timeZoneList = self::getTimeZoneList( $context->getLanguage() );
+
 		$timestamp = MWTimestamp::getLocalInstance();
 		// Check that the LocalTZoffset is the same as the local time zone offset
 		if ( $localTZoffset == $timestamp->format( 'Z' ) / 60 ) {
+			$timezoneName = $timestamp->getTimezone()->getName();
+			// Localize timezone
+			if ( isset( $timeZoneList[$timezoneName] ) ) {
+				$timezoneName = $timeZoneList[$timezoneName]['name'];
+			}
 			$server_tz_msg = $context->msg(
 				'timezoneuseserverdefault',
-				$timestamp->getTimezone()->getName()
+				$timezoneName
 			)->text();
 		} else {
 			$tzstring = sprintf(
@@ -1312,49 +1357,12 @@ class Preferences {
 		$opt[$context->msg( 'timezoneuseoffset' )->text()] = 'other';
 		$opt[$context->msg( 'guesstimezone' )->text()] = 'guess';
 
-		if ( function_exists( 'timezone_identifiers_list' ) ) {
-			# Read timezone list
-			$tzs = timezone_identifiers_list();
-			sort( $tzs );
-
-			$tzRegions = array();
-			$tzRegions['Africa'] = $context->msg( 'timezoneregion-africa' )->text();
-			$tzRegions['America'] = $context->msg( 'timezoneregion-america' )->text();
-			$tzRegions['Antarctica'] = $context->msg( 'timezoneregion-antarctica' )->text();
-			$tzRegions['Arctic'] = $context->msg( 'timezoneregion-arctic' )->text();
-			$tzRegions['Asia'] = $context->msg( 'timezoneregion-asia' )->text();
-			$tzRegions['Atlantic'] = $context->msg( 'timezoneregion-atlantic' )->text();
-			$tzRegions['Australia'] = $context->msg( 'timezoneregion-australia' )->text();
-			$tzRegions['Europe'] = $context->msg( 'timezoneregion-europe' )->text();
-			$tzRegions['Indian'] = $context->msg( 'timezoneregion-indian' )->text();
-			$tzRegions['Pacific'] = $context->msg( 'timezoneregion-pacific' )->text();
-			asort( $tzRegions );
-
-			$prefill = array_fill_keys( array_values( $tzRegions ), array() );
-			$opt = array_merge( $opt, $prefill );
-
-			$now = date_create( 'now' );
-
-			foreach ( $tzs as $tz ) {
-				$z = explode( '/', $tz, 2 );
-
-				# timezone_identifiers_list() returns a number of
-				# backwards-compatibility entries. This filters them out of the
-				# list presented to the user.
-				if ( count( $z ) != 2 || !array_key_exists( $z[0], $tzRegions ) ) {
-					continue;
-				}
-
-				# Localize region
-				$z[0] = $tzRegions[$z[0]];
-
-				$minDiff = floor( timezone_offset_get( timezone_open( $tz ), $now ) / 60 );
-
-				$display = str_replace( '_', ' ', $z[0] . '/' . $z[1] );
-				$value = "ZoneInfo|$minDiff|$tz";
-
-				$opt[$z[0]][$display] = $value;
+		foreach ( $timeZoneList as $timeZoneInfo ) {
+			$region = $timeZoneInfo['region'];
+			if ( !isset( $opt[$region] ) ) {
+				$opt[$region] = [];
 			}
+			$opt[$region][$timeZoneInfo['name']] = $timeZoneInfo['timecorrection'];
 		}
 		return $opt;
 	}
@@ -1393,7 +1401,7 @@ class Preferences {
 				}
 
 				# Max is +14:00 and min is -12:00, see:
-				# http://en.wikipedia.org/wiki/Timezone
+				# https://en.wikipedia.org/wiki/Timezone
 				$minDiff = min( $minDiff, 840 );  # 14:00
 				$minDiff = max( $minDiff, - 720 ); # -12:00
 				return 'Offset|' . $minDiff;
@@ -1408,8 +1416,6 @@ class Preferences {
 	 * @return bool|Status|string
 	 */
 	static function tryFormSubmit( $formData, $form ) {
-		global $wgAuth;
-
 		$user = $form->getModifiedUser();
 		$hiddenPrefs = $form->getConfig()->get( 'HiddenPrefs' );
 		$result = true;
@@ -1428,6 +1434,7 @@ class Preferences {
 
 		// Fortunately, the realname field is MUCH simpler
 		// (not really "private", but still shouldn't be edited without permission)
+
 		if ( !in_array( 'realname', $hiddenPrefs )
 			&& $user->isAllowed( 'editmyprivateinfo' )
 			&& array_key_exists( 'realname', $formData )
@@ -1457,11 +1464,11 @@ class Preferences {
 				$user->setOption( $key, $value );
 			}
 
-			Hooks::run( 'PreferencesFormPreSave', array( $formData, $form, $user, &$result ) );
-			$user->saveSettings();
+			Hooks::run( 'PreferencesFormPreSave', [ $formData, $form, $user, &$result ] );
 		}
 
-		$wgAuth->updateExternalDB( $user );
+		MediaWiki\Auth\AuthManager::callLegacyAuthPlugin( 'updateExternalDB', [ $user ] );
+		$user->saveSettings();
 
 		return $result;
 	}
@@ -1475,7 +1482,7 @@ class Preferences {
 		$res = self::tryFormSubmit( $formData, $form );
 
 		if ( $res ) {
-			$urlOptions = array( 'success' => 1 );
+			$urlOptions = [];
 
 			if ( $res === 'eauth' ) {
 				$urlOptions['eauth'] = 1;
@@ -1485,10 +1492,76 @@ class Preferences {
 
 			$url = $form->getTitle()->getFullURL( $urlOptions );
 
-			$form->getContext()->getOutput()->redirect( $url );
+			$context = $form->getContext();
+			// Set session data for the success message
+			$context->getRequest()->setSessionData( 'specialPreferencesSaveSuccess', 1 );
+
+			$context->getOutput()->redirect( $url );
 		}
 
 		return Status::newGood();
+	}
+
+	/**
+	 * Get a list of all time zones
+	 * @param Language $language Language used for the localized names
+	 * @return array A list of all time zones. The system name of the time zone is used as key and
+	 *  the value is an array which contains localized name, the timecorrection value used for
+	 *  preferences and the region
+	 * @since 1.26
+	 */
+	public static function getTimeZoneList( Language $language ) {
+		$identifiers = DateTimeZone::listIdentifiers();
+		if ( $identifiers === false ) {
+			return [];
+		}
+		sort( $identifiers );
+
+		$tzRegions = [
+			'Africa' => wfMessage( 'timezoneregion-africa' )->inLanguage( $language )->text(),
+			'America' => wfMessage( 'timezoneregion-america' )->inLanguage( $language )->text(),
+			'Antarctica' => wfMessage( 'timezoneregion-antarctica' )->inLanguage( $language )->text(),
+			'Arctic' => wfMessage( 'timezoneregion-arctic' )->inLanguage( $language )->text(),
+			'Asia' => wfMessage( 'timezoneregion-asia' )->inLanguage( $language )->text(),
+			'Atlantic' => wfMessage( 'timezoneregion-atlantic' )->inLanguage( $language )->text(),
+			'Australia' => wfMessage( 'timezoneregion-australia' )->inLanguage( $language )->text(),
+			'Europe' => wfMessage( 'timezoneregion-europe' )->inLanguage( $language )->text(),
+			'Indian' => wfMessage( 'timezoneregion-indian' )->inLanguage( $language )->text(),
+			'Pacific' => wfMessage( 'timezoneregion-pacific' )->inLanguage( $language )->text(),
+		];
+		asort( $tzRegions );
+
+		$timeZoneList = [];
+
+		$now = new DateTime();
+
+		foreach ( $identifiers as $identifier ) {
+			$parts = explode( '/', $identifier, 2 );
+
+			// DateTimeZone::listIdentifiers() returns a number of
+			// backwards-compatibility entries. This filters them out of the
+			// list presented to the user.
+			if ( count( $parts ) !== 2 || !array_key_exists( $parts[0], $tzRegions ) ) {
+				continue;
+			}
+
+			// Localize region
+			$parts[0] = $tzRegions[$parts[0]];
+
+			$dateTimeZone = new DateTimeZone( $identifier );
+			$minDiff = floor( $dateTimeZone->getOffset( $now ) / 60 );
+
+			$display = str_replace( '_', ' ', $parts[0] . '/' . $parts[1] );
+			$value = "ZoneInfo|$minDiff|$identifier";
+
+			$timeZoneList[$identifier] = [
+				'name' => $display,
+				'timecorrection' => $value,
+				'region' => $parts[0],
+			];
+		}
+
+		return $timeZoneList;
 	}
 }
 
@@ -1524,7 +1597,7 @@ class PreferencesForm extends HTMLForm {
 	 * @return array()
 	 */
 	public function getExtraSuccessRedirectParameters() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -1532,7 +1605,7 @@ class PreferencesForm extends HTMLForm {
 	 * @return string
 	 */
 	function wrapForm( $html ) {
-		$html = Xml::tags( 'div', array( 'id' => 'preferences' ), $html );
+		$html = Xml::tags( 'div', [ 'id' => 'preferences' ], $html );
 
 		return parent::wrapForm( $html );
 	}
@@ -1542,7 +1615,7 @@ class PreferencesForm extends HTMLForm {
 	 */
 	function getButtons() {
 
-		$attrs = array( 'id' => 'mw-prefs-restoreprefs' );
+		$attrs = [ 'id' => 'mw-prefs-restoreprefs' ];
 
 		if ( !$this->getModifiedUser()->isAllowedAny( 'editmyprivateinfo', 'editmyoptions' ) ) {
 			return '';
@@ -1554,9 +1627,9 @@ class PreferencesForm extends HTMLForm {
 			$t = SpecialPage::getTitleFor( 'Preferences', 'reset' );
 
 			$html .= "\n" . Linker::link( $t, $this->msg( 'restoreprefs' )->escaped(),
-				Html::buttonAttributes( $attrs, array( 'mw-ui-quiet' ) ) );
+				Html::buttonAttributes( $attrs, [ 'mw-ui-quiet' ] ) );
 
-			$html = Xml::tags( 'div', array( 'class' => 'mw-prefs-buttons' ), $html );
+			$html = Xml::tags( 'div', [ 'class' => 'mw-prefs-buttons' ], $html );
 		}
 
 		return $html;
@@ -1599,7 +1672,15 @@ class PreferencesForm extends HTMLForm {
 	 */
 	function getLegend( $key ) {
 		$legend = parent::getLegend( $key );
-		Hooks::run( 'PreferencesGetLegend', array( $this, $key, &$legend ) );
+		Hooks::run( 'PreferencesGetLegend', [ $this, $key, &$legend ] );
 		return $legend;
+	}
+
+	/**
+	 * Get the keys of each top level preference section.
+	 * @return array of section keys
+	 */
+	function getPreferenceSections() {
+		return array_keys( array_filter( $this->mFieldTree, 'is_array' ) );
 	}
 }

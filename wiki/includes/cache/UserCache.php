@@ -25,8 +25,8 @@
  * @since 1.20
  */
 class UserCache {
-	protected $cache = array(); // (uid => property => value)
-	protected $typesCached = array(); // (uid => cache type => 1)
+	protected $cache = []; // (uid => property => value)
+	protected $typesCached = []; // (uid => cache type => 1)
 
 	/**
 	 * @return UserCache
@@ -53,7 +53,7 @@ class UserCache {
 	public function getProp( $userId, $prop ) {
 		if ( !isset( $this->cache[$userId][$prop] ) ) {
 			wfDebug( __METHOD__ . ": querying DB for prop '$prop' for user ID '$userId'.\n" );
-			$this->doQuery( array( $userId ) ); // cache miss
+			$this->doQuery( [ $userId ] ); // cache miss
 		}
 
 		return isset( $this->cache[$userId][$prop] )
@@ -79,10 +79,10 @@ class UserCache {
 	 * @param array $options Option flags; include 'userpage' and 'usertalk'
 	 * @param string $caller The calling method
 	 */
-	public function doQuery( array $userIds, $options = array(), $caller = '' ) {
+	public function doQuery( array $userIds, $options = [], $caller = '' ) {
 
-		$usersToCheck = array();
-		$usersToQuery = array();
+		$usersToCheck = [];
+		$usersToQuery = [];
 
 		$userIds = array_unique( $userIds );
 
@@ -101,9 +101,9 @@ class UserCache {
 		// Lookup basic info for users not yet loaded...
 		if ( count( $usersToQuery ) ) {
 			$dbr = wfGetDB( DB_SLAVE );
-			$table = array( 'user' );
-			$conds = array( 'user_id' => $usersToQuery );
-			$fields = array( 'user_name', 'user_real_name', 'user_registration', 'user_id' );
+			$table = [ 'user' ];
+			$conds = [ 'user_id' => $usersToQuery ];
+			$fields = [ 'user_name', 'user_real_name', 'user_registration', 'user_id' ];
 
 			$comment = __METHOD__;
 			if ( strval( $caller ) !== '' ) {
@@ -123,11 +123,11 @@ class UserCache {
 		$lb = new LinkBatch();
 		foreach ( $usersToCheck as $userId => $name ) {
 			if ( $this->queryNeeded( $userId, 'userpage', $options ) ) {
-				$lb->add( NS_USER, str_replace( ' ', '_', $row->user_name ) );
+				$lb->add( NS_USER, $name );
 				$this->typesCached[$userId]['userpage'] = 1;
 			}
 			if ( $this->queryNeeded( $userId, 'usertalk', $options ) ) {
-				$lb->add( NS_USER_TALK, str_replace( ' ', '_', $row->user_name ) );
+				$lb->add( NS_USER_TALK, $name );
 				$this->typesCached[$userId]['usertalk'] = 1;
 			}
 		}

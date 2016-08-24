@@ -1,27 +1,22 @@
 <?php
 
 /**
+ * @group Database
  * @group Parser
  */
 class TagHookTest extends MediaWikiTestCase {
 	public static function provideValidNames() {
-		return array(
-			array( 'foo' ),
-			array( 'foo-bar' ),
-			array( 'foo_bar' ),
-			array( 'FOO-BAR' ),
-			array( 'foo bar' )
-		);
+		return [
+			[ 'foo' ],
+			[ 'foo-bar' ],
+			[ 'foo_bar' ],
+			[ 'FOO-BAR' ],
+			[ 'foo bar' ]
+		];
 	}
 
 	public static function provideBadNames() {
-		return array( array( "foo<bar" ), array( "foo>bar" ), array( "foo\nbar" ), array( "foo\rbar" ) );
-	}
-
-	protected function setUp() {
-		parent::setUp();
-
-		$this->setMwGlobals( 'wgAlwaysUseTidy', false );
+		return [ [ "foo<bar" ], [ "foo>bar" ], [ "foo\nbar" ], [ "foo\rbar" ] ];
 	}
 
 	/**
@@ -32,7 +27,7 @@ class TagHookTest extends MediaWikiTestCase {
 		global $wgParserConf, $wgContLang;
 		$parser = new Parser( $wgParserConf );
 
-		$parser->setHook( $tag, array( $this, 'tagCallback' ) );
+		$parser->setHook( $tag, [ $this, 'tagCallback' ] );
 		$parserOutput = $parser->parse(
 			"Foo<$tag>Bar</$tag>Baz",
 			Title::newFromText( 'Test' ),
@@ -52,7 +47,7 @@ class TagHookTest extends MediaWikiTestCase {
 		global $wgParserConf, $wgContLang;
 		$parser = new Parser( $wgParserConf );
 
-		$parser->setHook( $tag, array( $this, 'tagCallback' ) );
+		$parser->setHook( $tag, [ $this, 'tagCallback' ] );
 		$parser->parse(
 			"Foo<$tag>Bar</$tag>Baz",
 			Title::newFromText( 'Test' ),
@@ -69,7 +64,7 @@ class TagHookTest extends MediaWikiTestCase {
 		global $wgParserConf, $wgContLang;
 		$parser = new Parser( $wgParserConf );
 
-		$parser->setFunctionTagHook( $tag, array( $this, 'functionTagCallback' ), 0 );
+		$parser->setFunctionTagHook( $tag, [ $this, 'functionTagCallback' ], 0 );
 		$parserOutput = $parser->parse(
 			"Foo<$tag>Bar</$tag>Baz",
 			Title::newFromText( 'Test' ),
@@ -89,7 +84,11 @@ class TagHookTest extends MediaWikiTestCase {
 		global $wgParserConf, $wgContLang;
 		$parser = new Parser( $wgParserConf );
 
-		$parser->setFunctionTagHook( $tag, array( $this, 'functionTagCallback' ), Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionTagHook(
+			$tag,
+			[ $this, 'functionTagCallback' ],
+			Parser::SFH_OBJECT_ARGS
+		);
 		$parser->parse(
 			"Foo<$tag>Bar</$tag>Baz",
 			Title::newFromText( 'Test' ),

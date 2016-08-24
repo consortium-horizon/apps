@@ -6,7 +6,7 @@
  * @author Moriel Schottlender, 2015
  * @since 1.19
  */
-/*jshint es3:false */
+/*jshint esversion:5 */
 /*global OO*/
 ( function ( mw, $ ) {
 	/**
@@ -22,8 +22,8 @@
 	 * dialog box. Submitting that dialog box appends its contents to a
 	 * wiki page that you specify, as a new section.
 	 *
-	 * This feature works with classic MediaWiki pages
-	 * and is not compatible with LiquidThreads or Flow.
+	 * This feature works with any content model that defines a
+	 * `mw.messagePoster.MessagePoster`.
 	 *
 	 * Minimal usage example:
 	 *
@@ -38,9 +38,10 @@
 	 * @param {Object} [config] Configuration object
 	 * @cfg {mw.Title} [title="Feedback"] The title of the page where you collect
 	 *  feedback.
+	 * @cfg {string} [apiUrl] api.php URL if the feedback page is on another wiki
 	 * @cfg {string} [dialogTitleMessageKey="feedback-dialog-title"] Message key for the
 	 *  title of the dialog box
-	 * @cfg {mw.Uri|string} [bugsLink="//phabricator.wikimedia.org/maniphest/task/create/"] URL where
+	 * @cfg {mw.Uri|string} [bugsLink="//phabricator.wikimedia.org/maniphest/task/edit/form/1/"] URL where
 	 *  bugs can be posted
 	 * @cfg {mw.Uri|string} [bugsListLink="//phabricator.wikimedia.org/maniphest/query/advanced"] URL
 	 *  where bugs can be listed
@@ -57,10 +58,10 @@
 		// Feedback page title
 		this.feedbackPageTitle = config.title || new mw.Title( 'Feedback' );
 
-		this.messagePosterPromise = mw.messagePoster.factory.create( this.feedbackPageTitle );
+		this.messagePosterPromise = mw.messagePoster.factory.create( this.feedbackPageTitle, config.apiUrl );
 
 		// Links
-		this.bugsTaskSubmissionLink = config.bugsLink || '//phabricator.wikimedia.org/maniphest/task/create/';
+		this.bugsTaskSubmissionLink = config.bugsLink || '//phabricator.wikimedia.org/maniphest/task/edit/form/1/';
 		this.bugsTaskListLink = config.bugsListLink || '//phabricator.wikimedia.org/maniphest/query/advanced';
 
 		// Terms of use
@@ -86,6 +87,7 @@
 	 * Respond to dialog submit event. If the information was
 	 * submitted, either successfully or with an error, open
 	 * a MessageDialog to thank the user.
+	 *
 	 * @param {string} [status] A status of the end of operation
 	 *  of the main feedback dialog. Empty if the dialog was
 	 *  dismissed with no action or the user followed the button
@@ -97,16 +99,13 @@
 			case 'submitted':
 				dialogConfig = {
 					title: mw.msg( 'feedback-thanks-title' ),
-					message: $( '<span>' ).append(
-						mw.message(
-							'feedback-thanks',
-							this.feedbackPageTitle.getNameText(),
-							$( '<a>' )
-								.attr( {
-									target: '_blank',
-									href: this.feedbackPageTitle.getUrl()
-								} )
-						).parse()
+					message: $( '<span>' ).msg(
+						'feedback-thanks',
+						this.feedbackPageTitle.getNameText(),
+						$( '<a>' ).attr( {
+							target: '_blank',
+							href: this.feedbackPageTitle.getUrl()
+						} )
 					),
 					actions: [
 						{
@@ -199,7 +198,7 @@
 	 */
 	mw.Feedback.Dialog = function mwFeedbackDialog( config ) {
 		// Parent constructor
-		mw.Feedback.Dialog.super.call( this, config );
+		mw.Feedback.Dialog.parent.call( this, config );
 
 		this.status = '';
 		this.feedbackPageTitle = null;
@@ -239,7 +238,7 @@
 			feedbackFieldsetLayout, termsOfUseLabel;
 
 		// Parent method
-		mw.Feedback.Dialog.super.prototype.initialize.call( this );
+		mw.Feedback.Dialog.parent.prototype.initialize.call( this );
 
 		this.feedbackPanel = new OO.ui.PanelLayout( {
 			scrollable: false,
@@ -255,6 +254,7 @@
 			classes: [ 'mw-feedbackDialog-welcome-message' ]
 		} );
 		this.feedbackSubjectInput = new OO.ui.TextInputWidget( {
+			indicator: 'required',
 			multiline: false
 		} );
 		this.feedbackMessageInput = new OO.ui.TextInputWidget( {
@@ -309,10 +309,7 @@
 					!this.useragentMandatory ||
 					this.useragentCheckbox.isSelected()
 				) &&
-				(
-					!!this.feedbackMessageInput.getValue() ||
-					!!this.feedbackSubjectInput.getValue()
-				)
+				this.feedbackSubjectInput.getValue()
 			);
 
 		this.actions.setAbilities( { submit:  isValid } );
@@ -329,7 +326,7 @@
 	 * @inheritdoc
 	 */
 	mw.Feedback.Dialog.prototype.getSetupProcess = function ( data ) {
-		return mw.Feedback.Dialog.super.prototype.getSetupProcess.call( this, data )
+		return mw.Feedback.Dialog.parent.prototype.getSetupProcess.call( this, data )
 			.next( function () {
 				var plainMsg, parsedMsg,
 					settings = data.settings;
@@ -381,7 +378,7 @@
 	 * @inheritdoc
 	 */
 	mw.Feedback.Dialog.prototype.getReadyProcess = function ( data ) {
-		return mw.Feedback.Dialog.super.prototype.getReadyProcess.call( this, data )
+		return mw.Feedback.Dialog.parent.prototype.getReadyProcess.call( this, data )
 			.next( function () {
 				this.feedbackSubjectInput.focus();
 			}, this );
@@ -431,7 +428,7 @@
 			}, this );
 		}
 		// Fallback to parent handler
-		return mw.Feedback.Dialog.super.prototype.getActionProcess.call( this, action );
+		return mw.Feedback.Dialog.parent.prototype.getActionProcess.call( this, action );
 	};
 
 	/**
@@ -472,7 +469,7 @@
 	 * @inheritdoc
 	 */
 	mw.Feedback.Dialog.prototype.getTeardownProcess = function ( data ) {
-		return mw.Feedback.Dialog.super.prototype.getTeardownProcess.call( this, data )
+		return mw.Feedback.Dialog.parent.prototype.getTeardownProcess.call( this, data )
 			.first( function () {
 				this.emit( 'submit', this.status, this.feedbackPageName, this.feedbackPageUrl );
 				// Cleanup
@@ -486,6 +483,7 @@
 
 	/**
 	 * Set the bug report link
+	 *
 	 * @param {string} link Link to the external bug report form
 	 */
 	mw.Feedback.Dialog.prototype.setBugReportLink = function ( link ) {
@@ -494,7 +492,8 @@
 
 	/**
 	 * Get the bug report link
-	 * @returns {string} Link to the external bug report form
+	 *
+	 * @return {string} Link to the external bug report form
 	 */
 	mw.Feedback.Dialog.prototype.getBugReportLink = function () {
 		return this.bugReportLink;

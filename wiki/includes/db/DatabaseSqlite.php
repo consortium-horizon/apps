@@ -25,7 +25,7 @@
 /**
  * @ingroup Database
  */
-class DatabaseSqlite extends DatabaseBase {
+class DatabaseSqlite extends Database {
 	/** @var bool Whether full text is enabled */
 	private static $fulltextEnabled = null;
 
@@ -64,16 +64,16 @@ class DatabaseSqlite extends DatabaseBase {
 		$this->dbDir = isset( $p['dbDirectory'] ) ? $p['dbDirectory'] : $wgSQLiteDataDir;
 
 		if ( isset( $p['dbFilePath'] ) ) {
-			$this->mFlags = isset( $p['flags'] ) ? $p['flags'] : 0;
-			// Standalone .sqlite file mode
+			parent::__construct( $p );
+			// Standalone .sqlite file mode.
+			// Super doesn't open when $user is false, but we can work with $dbName,
+			// which is derived from the file path in this case.
 			$this->openFile( $p['dbFilePath'] );
-			// @FIXME: clean up base constructor so this can call super instead
-			$this->mTrxAtomicLevels = new SplStack;
 		} else {
 			$this->mDBname = $p['dbname'];
-			// Stock wiki mode using standard file names per DB
+			// Stock wiki mode using standard file names per DB.
 			parent::__construct( $p );
-			// parent doesn't open when $user is false, but we can work with $dbName
+			// Super doesn't open when $user is false, but we can work with $dbName
 			if ( $p['dbname'] && !$this->isOpen() ) {
 				if ( $this->open( $p['host'], $p['user'], $p['password'], $p['dbname'] ) ) {
 					if ( $wgSharedDB ) {
@@ -85,13 +85,13 @@ class DatabaseSqlite extends DatabaseBase {
 
 		$this->trxMode = isset( $p['trxMode'] ) ? strtoupper( $p['trxMode'] ) : null;
 		if ( $this->trxMode &&
-			!in_array( $this->trxMode, array( 'DEFERRED', 'IMMEDIATE', 'EXCLUSIVE' ) )
+			!in_array( $this->trxMode, [ 'DEFERRED', 'IMMEDIATE', 'EXCLUSIVE' ] )
 		) {
 			$this->trxMode = null;
 			wfWarn( "Invalid SQLite transaction mode provided." );
 		}
 
-		$this->lockMgr = new FSLockManager( array( 'lockDirectory' => "{$this->dbDir}/locks" ) );
+		$this->lockMgr = new FSLockManager( [ 'lockDirectory' => "{$this->dbDir}/locks" ] );
 	}
 
 	/**
@@ -103,10 +103,12 @@ class DatabaseSqlite extends DatabaseBase {
 	 * @return DatabaseSqlite
 	 * @since 1.25
 	 */
-	public static function newStandaloneInstance( $filename, array $p = array() ) {
+	public static function newStandaloneInstance( $filename, array $p = [] ) {
 		$p['dbFilePath'] = $filename;
+		$p['schema'] = false;
+		$p['tablePrefix'] = '';
 
-		return new self( $p );
+		return DatabaseBase::factory( 'sqlite', $p );
 	}
 
 	/**
@@ -162,7 +164,7 @@ class DatabaseSqlite extends DatabaseBase {
 		try {
 			if ( $this->mFlags & DBO_PERSISTENT ) {
 				$this->mConn = new PDO( "sqlite:$fileName", '', '',
-					array( PDO::ATTR_PERSISTENT => true ) );
+					[ PDO::ATTR_PERSISTENT => true ] );
 			} else {
 				$this->mConn = new PDO( "sqlite:$fileName", '', '' );
 			}
@@ -282,7 +284,7 @@ class DatabaseSqlite extends DatabaseBase {
 	 * @return bool
 	 */
 	function isWriteQuery( $sql ) {
-		return parent::isWriteQuery( $sql ) && !preg_match( '/^ATTACH\b/i', $sql );
+		return parent::isWriteQuery( $sql ) && !preg_match( '/^(ATTACH|PRAGMA)\b/i', $sql );
 	}
 
 	/**
@@ -427,7 +429,7 @@ class DatabaseSqlite extends DatabaseBase {
 	 * @param string $index
 	 * @return string
 	 */
-	function indexName( $index ) {
+	protected function indexName( $index ) {
 		return $index;
 	}
 
@@ -510,7 +512,7 @@ class DatabaseSqlite extends DatabaseBase {
 		if ( $res->numRows() == 0 ) {
 			return false;
 		}
-		$info = array();
+		$info = [];
 		foreach ( $res as $row ) {
 			$info[] = $row->name;
 		}
@@ -526,10 +528,10 @@ class DatabaseSqlite extends DatabaseBase {
 	 */
 	function indexUnique( $table, $index, $fname = __METHOD__ ) {
 		$row = $this->selectRow( 'sqlite_master', '*',
-			array(
+			[
 				'type' => 'index',
 				'name' => $this->indexName( $index ),
-			), $fname );
+			], $fname );
 		if ( !$row || !isset( $row->sql ) ) {
 			return null;
 		}
@@ -605,7 +607,7 @@ class DatabaseSqlite extends DatabaseBase {
 	 * @param array $options
 	 * @return bool
 	 */
-	function insert( $table, $a, $fname = __METHOD__, $options = array() ) {
+	function insert( $table, $a, $fname = __METHOD__, $options = [] ) {
 		if ( !count( $a ) ) {
 			return true;
 		}
@@ -797,15 +799,21 @@ class DatabaseSqlite extends DatabaseBase {
 			return (int)$s;
 		} elseif ( strpos( $s, "\0" ) !== false ) {
 			// SQLite doesn't support \0 in strings, so use the hex representation as a workaround.
-			// This is a known limitation of SQLite's mprintf function which PDO should work around,
-			// but doesn't. I have reported this to php.net as bug #63419:
+			// This is a known limitation of SQLite's mprintf function which PDO
+			// should work around, but doesn't. I have reported this to php.net as bug #63419:
 			// https://bugs.php.net/bug.php?id=63419
 			// There was already a similar report for SQLite3::escapeString, bug #62361:
 			// https://bugs.php.net/bug.php?id=62361
 			// There is an additional bug regarding sorting this data after insert
 			// on older versions of sqlite shipped with ubuntu 12.04
-			// https://bugzilla.wikimedia.org/show_bug.cgi?id=72367
-			wfDebugLog( __CLASS__, __FUNCTION__ . ': Quoting value containing null byte. For consistency all binary data should have been first processed with self::encodeBlob()' );
+			// https://phabricator.wikimedia.org/T74367
+			wfDebugLog(
+				__CLASS__,
+				__FUNCTION__ .
+					': Quoting value containing null byte. ' .
+					'For consistency all binary data should have been ' .
+					'first processed with self::encodeBlob()'
+			);
 			return "x'" . bin2hex( $s ) . "'";
 		} else {
 			return $this->mConn->quote( $s );
@@ -907,11 +915,11 @@ class DatabaseSqlite extends DatabaseBase {
 			}
 		}
 
-		return $this->lockMgr->lock( array( $lockName ), LockManager::LOCK_EX, $timeout )->isOK();
+		return $this->lockMgr->lock( [ $lockName ], LockManager::LOCK_EX, $timeout )->isOK();
 	}
 
 	public function unlock( $lockName, $method ) {
-		return $this->lockMgr->unlock( array( $lockName ), LockManager::LOCK_EX )->isOK();
+		return $this->lockMgr->unlock( [ $lockName ], LockManager::LOCK_EX )->isOK();
 	}
 
 	/**
@@ -925,11 +933,11 @@ class DatabaseSqlite extends DatabaseBase {
 	}
 
 	public function buildGroupConcatField(
-		$delim, $table, $field, $conds = '', $join_conds = array()
+		$delim, $table, $field, $conds = '', $join_conds = []
 	) {
 		$fld = "group_concat($field," . $this->addQuotes( $delim ) . ')';
 
-		return '(' . $this->selectSQLText( $table, $fld, $conds, null, array(), $join_conds ) . ')';
+		return '(' . $this->selectSQLText( $table, $fld, $conds, null, [], $join_conds ) . ')';
 	}
 
 	/**
@@ -962,7 +970,36 @@ class DatabaseSqlite extends DatabaseBase {
 			}
 		}
 
-		return $this->query( $sql, $fname );
+		$res = $this->query( $sql, $fname );
+
+		// Take over indexes
+		$indexList = $this->query( 'PRAGMA INDEX_LIST(' . $this->addQuotes( $oldName ) . ')' );
+		foreach ( $indexList as $index ) {
+			if ( strpos( $index->name, 'sqlite_autoindex' ) === 0 ) {
+				continue;
+			}
+
+			if ( $index->unique ) {
+				$sql = 'CREATE UNIQUE INDEX';
+			} else {
+				$sql = 'CREATE INDEX';
+			}
+			// Try to come up with a new index name, given indexes have database scope in SQLite
+			$indexName = $newName . '_' . $index->name;
+			$sql .= ' ' . $indexName . ' ON ' . $newName;
+
+			$indexInfo = $this->query( 'PRAGMA INDEX_INFO(' . $this->addQuotes( $index->name ) . ')' );
+			$fields = [];
+			foreach ( $indexInfo as $indexInfoRow ) {
+				$fields[$indexInfoRow->seqno] = $indexInfoRow->name;
+			}
+
+			$sql .= '(' . implode( ',', $fields ) . ')';
+
+			$this->query( $sql );
+		}
+
+		return $res;
 	}
 
 	/**
@@ -980,7 +1017,7 @@ class DatabaseSqlite extends DatabaseBase {
 			"type='table'"
 		);
 
-		$endArray = array();
+		$endArray = [];
 
 		foreach ( $result as $table ) {
 			$vars = get_object_vars( $table );
@@ -995,6 +1032,14 @@ class DatabaseSqlite extends DatabaseBase {
 
 		return $endArray;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function __toString() {
+		return 'SQLite ' . (string)$this->mConn->getAttribute( PDO::ATTR_SERVER_VERSION );
+	}
+
 } // end DatabaseSqlite class
 
 /**

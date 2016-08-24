@@ -33,28 +33,92 @@ class ApiQueryUserInfo extends ApiQueryBase {
 
 	const WL_UNREAD_LIMIT = 1000;
 
-	private $prop = array();
+	private $params = [];
+	private $prop = [];
 
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'ui' );
 	}
 
 	public function execute() {
-		$params = $this->extractRequestParams();
+		$this->params = $this->extractRequestParams();
 		$result = $this->getResult();
 
-		if ( !is_null( $params['prop'] ) ) {
-			$this->prop = array_flip( $params['prop'] );
+		if ( !is_null( $this->params['prop'] ) ) {
+			$this->prop = array_flip( $this->params['prop'] );
 		}
 
 		$r = $this->getCurrentUserInfo();
 		$result->addValue( 'query', $this->getModuleName(), $r );
 	}
 
+	/**
+	 * Get basic info about a given block
+	 * @param Block $block
+	 * @return array Array containing several keys:
+	 *  - blockid - ID of the block
+	 *  - blockedby - username of the blocker
+	 *  - blockedbyid - user ID of the blocker
+	 *  - blockreason - reason provided for the block
+	 *  - blockedtimestamp - timestamp for when the block was placed/modified
+	 *  - blockexpiry - expiry time of the block
+	 */
+	public static function getBlockInfo( Block $block ) {
+		global $wgContLang;
+		$vals = [];
+		$vals['blockid'] = $block->getId();
+		$vals['blockedby'] = $block->getByName();
+		$vals['blockedbyid'] = $block->getBy();
+		$vals['blockreason'] = $block->mReason;
+		$vals['blockedtimestamp'] = wfTimestamp( TS_ISO_8601, $block->mTimestamp );
+		$vals['blockexpiry'] = $wgContLang->formatExpiry(
+			$block->getExpiry(), TS_ISO_8601, 'infinite'
+		);
+		return $vals;
+	}
+
+	/**
+	 * Get central user info
+	 * @param Config $config
+	 * @param User $user
+	 * @param string|null $attachedWiki
+	 * @return array Central user info
+	 *  - centralids: Array mapping non-local Central ID provider names to IDs
+	 *  - attachedlocal: Array mapping Central ID provider names to booleans
+	 *    indicating whether the local user is attached.
+	 *  - attachedwiki: Array mapping Central ID provider names to booleans
+	 *    indicating whether the user is attached to $attachedWiki.
+	 */
+	public static function getCentralUserInfo( Config $config, User $user, $attachedWiki = null ) {
+		$providerIds = array_keys( $config->get( 'CentralIdLookupProviders' ) );
+
+		$ret = [
+			'centralids' => [],
+			'attachedlocal' => [],
+		];
+		ApiResult::setArrayType( $ret['centralids'], 'assoc' );
+		ApiResult::setArrayType( $ret['attachedlocal'], 'assoc' );
+		if ( $attachedWiki ) {
+			$ret['attachedwiki'] = [];
+			ApiResult::setArrayType( $ret['attachedwiki'], 'assoc' );
+		}
+
+		$name = $user->getName();
+		foreach ( $providerIds as $providerId ) {
+			$provider = CentralIdLookup::factory( $providerId );
+			$ret['centralids'][$providerId] = $provider->centralIdFromName( $name );
+			$ret['attachedlocal'][$providerId] = $provider->isAttached( $user );
+			if ( $attachedWiki ) {
+				$ret['attachedwiki'][$providerId] = $provider->isAttached( $user, $attachedWiki );
+			}
+		}
+
+		return $ret;
+	}
+
 	protected function getCurrentUserInfo() {
 		$user = $this->getUser();
-		$result = $this->getResult();
-		$vals = array();
+		$vals = [];
 		$vals['id'] = intval( $user->getId() );
 		$vals['name'] = $user->getName();
 
@@ -62,18 +126,8 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			$vals['anon'] = true;
 		}
 
-		if ( isset( $this->prop['blockinfo'] ) ) {
-			if ( $user->isBlocked() ) {
-				$block = $user->getBlock();
-				$vals['blockid'] = $block->getId();
-				$vals['blockedby'] = $block->getByName();
-				$vals['blockedbyid'] = $block->getBy();
-				$vals['blockreason'] = $user->blockedFor();
-				$vals['blockedtimestamp'] = wfTimestamp( TS_ISO_8601, $block->mTimestamp );
-				$vals['blockexpiry'] = $block->getExpiry() === 'infinity'
-					? 'infinite'
-					: wfTimestamp( TS_ISO_8601, $block->getExpiry() );
-			}
+		if ( isset( $this->prop['blockinfo'] ) && $user->isBlocked() ) {
+			$vals = array_merge( $vals, self::getBlockInfo( $user->getBlock() ) );
 		}
 
 		if ( isset( $this->prop['hasmsg'] ) ) {
@@ -135,7 +189,9 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			$vals['ratelimits'] = $this->getRateLimits();
 		}
 
-		if ( isset( $this->prop['realname'] ) && !in_array( 'realname', $this->getConfig()->get( 'HiddenPrefs' ) ) ) {
+		if ( isset( $this->prop['realname'] ) &&
+			!in_array( 'realname', $this->getConfig()->get( 'HiddenPrefs' ) )
+		) {
 			$vals['realname'] = $user->getRealName();
 		}
 
@@ -158,9 +214,9 @@ class ApiQueryUserInfo extends ApiQueryBase {
 
 		if ( isset( $this->prop['acceptlang'] ) ) {
 			$langs = $this->getRequest()->getAcceptLang();
-			$acceptLang = array();
+			$acceptLang = [];
 			foreach ( $langs as $lang => $val ) {
-				$r = array( 'q' => $val );
+				$r = [ 'q' => $val ];
 				ApiResult::setContentValue( $r, 'code', $lang );
 				$acceptLang[] = $r;
 			}
@@ -169,33 +225,31 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		}
 
 		if ( isset( $this->prop['unreadcount'] ) ) {
-			$dbr = $this->getQuery()->getNamedDB( 'watchlist', DB_SLAVE, 'watchlist' );
-
-			$count = $dbr->selectRowCount(
-				'watchlist',
-				'1',
-				array(
-					'wl_user' => $user->getId(),
-					'wl_notificationtimestamp IS NOT NULL',
-				),
-				__METHOD__,
-				array( 'LIMIT' => self::WL_UNREAD_LIMIT )
+			$unreadNotifications = WatchedItemStore::getDefaultInstance()->countUnreadNotifications(
+				$user,
+				self::WL_UNREAD_LIMIT
 			);
 
-			if ( $count >= self::WL_UNREAD_LIMIT ) {
+			if ( $unreadNotifications === true ) {
 				$vals['unreadcount'] = self::WL_UNREAD_LIMIT . '+';
 			} else {
-				$vals['unreadcount'] = $count;
+				$vals['unreadcount'] = $unreadNotifications;
 			}
+		}
+
+		if ( isset( $this->prop['centralids'] ) ) {
+			$vals += self::getCentralUserInfo(
+				$this->getConfig(), $this->getUser(), $this->params['attachedwiki']
+			);
 		}
 
 		return $vals;
 	}
 
 	protected function getRateLimits() {
-		$retval = array(
+		$retval = [
 			ApiResult::META_TYPE => 'assoc',
-		);
+		];
 
 		$user = $this->getUser();
 		if ( !$user->isPingLimitable() ) {
@@ -203,7 +257,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		}
 
 		// Find out which categories we belong to
-		$categories = array();
+		$categories = [];
 		if ( $user->isAnon() ) {
 			$categories[] = 'anon';
 		} else {
@@ -232,11 +286,10 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'prop' => array(
-				ApiBase::PARAM_DFLT => null,
+		return [
+			'prop' => [
 				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => array(
+				ApiBase::PARAM_TYPE => [
 					'blockinfo',
 					'hasmsg',
 					'groups',
@@ -252,26 +305,30 @@ class ApiQueryUserInfo extends ApiQueryBase {
 					'acceptlang',
 					'registrationdate',
 					'unreadcount',
-				),
-				ApiBase::PARAM_HELP_MSG => array(
-					'apihelp-query+userinfo-param-prop',
-					self::WL_UNREAD_LIMIT - 1,
-					self::WL_UNREAD_LIMIT . '+',
-				),
-			)
-		);
+					'centralids',
+				],
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [
+					'unreadcount' => [
+						'apihelp-query+userinfo-paramvalue-prop-unreadcount',
+						self::WL_UNREAD_LIMIT - 1,
+						self::WL_UNREAD_LIMIT . '+',
+					],
+				],
+			],
+			'attachedwiki' => null,
+		];
 	}
 
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=query&meta=userinfo'
 				=> 'apihelp-query+userinfo-example-simple',
 			'action=query&meta=userinfo&uiprop=blockinfo|groups|rights|hasmsg'
 				=> 'apihelp-query+userinfo-example-data',
-		);
+		];
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Meta#userinfo_.2F_ui';
+		return 'https://www.mediawiki.org/wiki/API:Userinfo';
 	}
 }

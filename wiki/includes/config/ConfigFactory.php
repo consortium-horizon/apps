@@ -32,43 +32,22 @@ class ConfigFactory {
 	 * Map of config name => callback
 	 * @var array
 	 */
-	protected $factoryFunctions = array();
+	protected $factoryFunctions = [];
 
 	/**
 	 * Config objects that have already been created
 	 * name => Config object
 	 * @var array
 	 */
-	protected $configs = array();
+	protected $configs = [];
 
 	/**
-	 * @var ConfigFactory
+	 * @deprecated since 1.27, use MediaWikiServices::getConfigFactory() instead.
+	 *
+	 * @return ConfigFactory
 	 */
-	private static $self;
-
 	public static function getDefaultInstance() {
-		if ( !self::$self ) {
-			self::$self = new self;
-			global $wgConfigRegistry;
-			foreach ( $wgConfigRegistry as $name => $callback ) {
-				self::$self->register( $name, $callback );
-			}
-		}
-		return self::$self;
-	}
-
-	/**
-	 * Destroy the default instance
-	 * Should only be called inside unit tests
-	 * @throws MWException
-	 * @codeCoverageIgnore
-	 */
-	public static function destroyDefaultInstance() {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException( __METHOD__ . ' was called outside of unit tests' );
-		}
-
-		self::$self = null;
+		return \MediaWiki\MediaWikiServices::getInstance()->getConfigFactory();
 	}
 
 	/**

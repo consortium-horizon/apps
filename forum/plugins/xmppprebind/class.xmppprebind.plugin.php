@@ -63,5 +63,53 @@ class XMPPPrebindPlugin extends Gdn_Plugin
         echo json_encode($sessionInfo);
     }
 
+    public function assetModel_styleCss_handler($Sender) {
+        $Sender->addCssFile('mini.css', 'plugins/xmppprebind');
+    }
+
+    public function base_render_before($Sender, $Args) {
+        $Session = Gdn::Session();
+            if ($Session->IsValid()) {
+                $UserName = Gdn::Session()->User->Name;
+                $UserID = Gdn::Session()->UserID;
+
+                $SecretKey = "Secret";
+                $Secret = $this->GetUserMeta($UserID, $SecretKey, NULL, true);
+                if (!$Secret || empty($Secret)){
+                    $Secret = md5(uniqid(rand(), true));
+                    $this->SetUserMeta($UserID, $SecretKey, $Secret );
+                }
+                $Sender->addJsFile('mini.js', 'plugins/xmppprebind');
+                $js = '
+
+                  MINI_SHOWPANE = false;
+                  jQuery(document).ready(function() {
+                    JAPPIX_STATIC = "/forum/plugins/xmppprebind/";
+                    HOST_BOSH = "https://www.consortium-horizon.com/http-bind/";
+                    JappixMini.launch({
+                      connection: {
+                        user: \''.$UserName.'\',
+                        password: \''.$Secret.'\',
+                        domain: \'consortium-horizon.com\'
+                      },
+                      application: {
+                        network: {
+                          autoconnect: true
+                        },
+                        interface: {
+                          showpane: false,
+                          animate: true
+                        },
+                        groupchat: {
+                            open: ["bar@chat.consortium-horizon.com"]
+                        }
+                      }
+                    });
+                  });
+                ';
+                $Sender->Head->addTag('script', array('type' => 'text/javascript', '_sort' => 100), $js);
+
+            }
+    }
 
 }

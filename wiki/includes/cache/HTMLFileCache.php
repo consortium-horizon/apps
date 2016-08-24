@@ -48,6 +48,7 @@ class HTMLFileCache extends FileCacheBase {
 	 * @throws MWException
 	 */
 	public function __construct( $title, $action ) {
+		parent::__construct();
 		$allowedTypes = self::cacheablePageActions();
 		if ( !in_array( $action, $allowedTypes ) ) {
 			throw new MWException( 'Invalid file cache type given.' );
@@ -64,7 +65,7 @@ class HTMLFileCache extends FileCacheBase {
 	 * @return array
 	 */
 	protected static function cacheablePageActions() {
-		return array( 'view', 'history' );
+		return [ 'view', 'history' ];
 	}
 
 	/**
@@ -95,12 +96,12 @@ class HTMLFileCache extends FileCacheBase {
 	 * @return bool
 	 */
 	public static function useFileCache( IContextSource $context ) {
-		global $wgUseFileCache, $wgShowIPinHeader, $wgDebugToolbar, $wgContLang;
+		global $wgUseFileCache, $wgDebugToolbar, $wgContLang;
 		if ( !$wgUseFileCache ) {
 			return false;
 		}
-		if ( $wgShowIPinHeader || $wgDebugToolbar ) {
-			wfDebug( "HTML file cache skipped. Either \$wgShowIPinHeader and/or \$wgDebugToolbar on\n" );
+		if ( $wgDebugToolbar ) {
+			wfDebug( "HTML file cache skipped. \$wgDebugToolbar on\n" );
 
 			return false;
 		}
@@ -131,7 +132,7 @@ class HTMLFileCache extends FileCacheBase {
 			return false;
 		}
 		// Allow extensions to disable caching
-		return Hooks::run( 'HTMLFileCache::useFileCache', array( $context ) );
+		return Hooks::run( 'HTMLFileCache::useFileCache', [ $context ] );
 	}
 
 	/**
@@ -177,7 +178,7 @@ class HTMLFileCache extends FileCacheBase {
 			return $text;
 		}
 
-		wfDebug( __METHOD__ . "()\n", 'log' );
+		wfDebug( __METHOD__ . "()\n", 'private' );
 
 		$now = wfTimestampNow();
 		if ( $this->useGzip() ) {

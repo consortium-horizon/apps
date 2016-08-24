@@ -35,6 +35,15 @@ class ApiFormatJson extends ApiFormatBase {
 	public function __construct( ApiMain $main, $format ) {
 		parent::__construct( $main, $format );
 		$this->isRaw = ( $format === 'rawfm' );
+
+		if ( $this->getMain()->getCheck( 'callback' ) ) {
+			# T94015: jQuery appends a useless '_' parameter in jsonp mode.
+			# Mark the parameter as used in that case to avoid a warning that's
+			# outside the control of the end user.
+			# (and do it here because ApiMain::reportUnusedParams() gets called
+			# before our ::execute())
+			$this->getMain()->markParamsUsed( '_' );
+		}
 	}
 
 	public function getMimeType() {
@@ -45,13 +54,6 @@ class ApiFormatJson extends ApiFormatBase {
 		}
 
 		return 'application/json';
-	}
-
-	/**
-	 * @deprecated since 1.25
-	 */
-	public function getNeedsRawData() {
-		return $this->isRaw;
 	}
 
 	/**
@@ -69,29 +71,30 @@ class ApiFormatJson extends ApiFormatBase {
 		$opt = 0;
 		if ( $this->isRaw ) {
 			$opt |= FormatJson::ALL_OK;
-			$transform = array();
+			$transform = [];
 		} else {
 			switch ( $params['formatversion'] ) {
 				case 1:
 					$opt |= $params['utf8'] ? FormatJson::ALL_OK : FormatJson::XMLMETA_OK;
-					$transform = array(
-						'BC' => array(),
-						'Types' => array( 'AssocAsObject' => true ),
+					$transform = [
+						'BC' => [],
+						'Types' => [ 'AssocAsObject' => true ],
 						'Strip' => 'all',
-					);
+					];
 					break;
 
 				case 2:
 				case 'latest':
 					$opt |= $params['ascii'] ? FormatJson::XMLMETA_OK : FormatJson::ALL_OK;
-					$transform = array(
-						'Types' => array( 'AssocAsObject' => true ),
+					$transform = [
+						'Types' => [ 'AssocAsObject' => true ],
 						'Strip' => 'all',
-					);
+					];
 					break;
 
 				default:
-					$this->dieUsage( __METHOD__ . ': Unknown value for \'formatversion\'', 'unknownformatversion' );
+					$this->dieUsage( __METHOD__ .
+						': Unknown value for \'formatversion\'', 'unknownformatversion' );
 			}
 		}
 		$data = $this->getResult()->getResultData( null, $transform );
@@ -100,9 +103,9 @@ class ApiFormatJson extends ApiFormatBase {
 		// Bug 66776: wfMangleFlashPolicy() is needed to avoid a nasty bug in
 		// Flash, but what it does isn't friendly for the API, so we need to
 		// work around it.
-		if ( preg_match( '/\<\s*cross-domain-policy\s*\>/i', $json ) ) {
+		if ( preg_match( '/\<\s*cross-domain-policy(?=\s|\>)/i', $json ) ) {
 			$json = preg_replace(
-				'/\<(\s*cross-domain-policy\s*)\>/i', '\\u003C$1\\u003E', $json
+				'/\<(\s*cross-domain-policy(?=\s|\>))/i', '\\u003C$1', $json
 			);
 		}
 
@@ -118,27 +121,27 @@ class ApiFormatJson extends ApiFormatBase {
 
 	public function getAllowedParams() {
 		if ( $this->isRaw ) {
-			return array();
+			return parent::getAllowedParams();
 		}
 
-		$ret = array(
-			'callback' => array(
+		$ret = parent::getAllowedParams() + [
+			'callback' => [
 				ApiBase::PARAM_HELP_MSG => 'apihelp-json-param-callback',
-			),
-			'utf8' => array(
+			],
+			'utf8' => [
 				ApiBase::PARAM_DFLT => false,
 				ApiBase::PARAM_HELP_MSG => 'apihelp-json-param-utf8',
-			),
-			'ascii' => array(
+			],
+			'ascii' => [
 				ApiBase::PARAM_DFLT => false,
 				ApiBase::PARAM_HELP_MSG => 'apihelp-json-param-ascii',
-			),
-			'formatversion' => array(
-				ApiBase::PARAM_TYPE => array( 1, 2, 'latest' ),
+			],
+			'formatversion' => [
+				ApiBase::PARAM_TYPE => [ 1, 2, 'latest' ],
 				ApiBase::PARAM_DFLT => 1,
 				ApiBase::PARAM_HELP_MSG => 'apihelp-json-param-formatversion',
-			),
-		);
+			],
+		];
 		return $ret;
 	}
 }

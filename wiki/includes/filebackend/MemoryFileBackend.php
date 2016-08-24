@@ -33,7 +33,11 @@
  */
 class MemoryFileBackend extends FileBackendStore {
 	/** @var array Map of (file path => (data,mtime) */
-	protected $files = array();
+	protected $files = [];
+
+	public function getFeatures() {
+		return self::ATTR_UNICODE_PATHS;
+	}
 
 	public function isPathUsableInternal( $storagePath ) {
 		return true;
@@ -49,10 +53,10 @@ class MemoryFileBackend extends FileBackendStore {
 			return $status;
 		}
 
-		$this->files[$dst] = array(
+		$this->files[$dst] = [
 			'data' => $params['content'],
 			'mtime' => wfTimestamp( TS_MW, time() )
-		);
+		];
 
 		return $status;
 	}
@@ -67,19 +71,19 @@ class MemoryFileBackend extends FileBackendStore {
 			return $status;
 		}
 
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$data = file_get_contents( $params['src'] );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 		if ( $data === false ) { // source doesn't exist?
 			$status->fatal( 'backend-fail-store', $params['src'], $params['dst'] );
 
 			return $status;
 		}
 
-		$this->files[$dst] = array(
+		$this->files[$dst] = [
 			'data' => $data,
 			'mtime' => wfTimestamp( TS_MW, time() )
-		);
+		];
 
 		return $status;
 	}
@@ -109,10 +113,10 @@ class MemoryFileBackend extends FileBackendStore {
 			return $status;
 		}
 
-		$this->files[$dst] = array(
+		$this->files[$dst] = [
 			'data' => $this->files[$src]['data'],
 			'mtime' => wfTimestamp( TS_MW, time() )
-		);
+		];
 
 		return $status;
 	}
@@ -147,17 +151,17 @@ class MemoryFileBackend extends FileBackendStore {
 		}
 
 		if ( isset( $this->files[$src] ) ) {
-			return array(
+			return [
 				'mtime' => $this->files[$src]['mtime'],
 				'size' => strlen( $this->files[$src]['data'] ),
-			);
+			];
 		}
 
 		return false;
 	}
 
 	protected function doGetLocalCopyMulti( array $params ) {
-		$tmpFiles = array(); // (path => TempFSFile)
+		$tmpFiles = []; // (path => TempFSFile)
 		foreach ( $params['srcs'] as $srcPath ) {
 			$src = $this->resolveHashKey( $srcPath );
 			if ( $src === null || !isset( $this->files[$src] ) ) {
@@ -206,7 +210,7 @@ class MemoryFileBackend extends FileBackendStore {
 	}
 
 	public function getDirectoryListInternal( $container, $dir, array $params ) {
-		$dirs = array();
+		$dirs = [];
 		$prefix = rtrim( "$container/$dir", '/' ) . '/';
 		$prefixLen = strlen( $prefix );
 		foreach ( $this->files as $path => $data ) {
@@ -235,7 +239,7 @@ class MemoryFileBackend extends FileBackendStore {
 	}
 
 	public function getFileListInternal( $container, $dir, array $params ) {
-		$files = array();
+		$files = [];
 		$prefix = rtrim( "$container/$dir", '/' ) . '/';
 		$prefixLen = strlen( $prefix );
 		foreach ( $this->files as $path => $data ) {

@@ -1,6 +1,5 @@
 # Custom tags for JSDuck 5.x
 # See also:
-# - https://github.com/senchalabs/jsduck/wiki/Tags
 # - https://github.com/senchalabs/jsduck/wiki/Custom-tags
 # - https://github.com/senchalabs/jsduck/wiki/Custom-tags/7f5c32e568eab9edc8e3365e935bcb836cb11f1d
 require 'jsduck/tag/tag'
@@ -66,7 +65,7 @@ class SeeTag < CommonTag
     <<-EOHTML
       <h3 class="pa">Related</h3>
       <ul>
-      #{ context[@tagname].map { |tag| tag[:doc] }.join("\n") }
+      #{context[@tagname].map { |tag| tag[:doc] }.join("\n")}
       </ul>
     EOHTML
   end
@@ -102,7 +101,7 @@ class ContextTag < CommonTag
   def to_html(context)
     <<-EOHTML
       <h3 class="pa">Context</h3>
-      #{ context[@tagname].last[:doc] }
+      #{context[@tagname].last[:doc]}
     EOHTML
   end
 

@@ -21,7 +21,9 @@
 namespace MediaWiki\Logger;
 
 use DateTimeZone;
+use Exception;
 use MWDebug;
+use MWExceptionHandler;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 use UDPTransport;
@@ -52,12 +54,12 @@ class LegacyLogger extends AbstractLogger {
 	protected $channel;
 
 	/**
-	 * Convert Psr\Log\LogLevel constants into int for sane comparisons
+	 * Convert \Psr\Log\LogLevel constants into int for sane comparisons
 	 * These are the same values that Monlog uses
 	 *
-	 * @var array
+	 * @var array $levelMapping
 	 */
-	protected static $levelMapping = array(
+	protected static $levelMapping = [
 		LogLevel::DEBUG => 100,
 		LogLevel::INFO => 200,
 		LogLevel::NOTICE => 250,
@@ -66,8 +68,7 @@ class LegacyLogger extends AbstractLogger {
 		LogLevel::CRITICAL => 500,
 		LogLevel::ALERT => 550,
 		LogLevel::EMERGENCY => 600,
-	);
-
+	];
 
 	/**
 	 * @param string $channel
@@ -83,23 +84,24 @@ class LegacyLogger extends AbstractLogger {
 	 * @param string $message
 	 * @param array $context
 	 */
-	public function log( $level, $message, array $context = array() ) {
+	public function log( $level, $message, array $context = [] ) {
 		if ( self::shouldEmit( $this->channel, $message, $level, $context ) ) {
 			$text = self::format( $this->channel, $message, $context );
 			$destination = self::destination( $this->channel, $message, $context );
 			self::emit( $text, $destination );
 		}
-		// Add to debug toolbar
-		MWDebug::debugMsg( $message, array( 'channel' => $this->channel ) + $context );
+		if ( !isset( $context['private'] ) || !$context['private'] ) {
+			// Add to debug toolbar if not marked as "private"
+			MWDebug::debugMsg( $message, [ 'channel' => $this->channel ] + $context );
+		}
 	}
-
 
 	/**
 	 * Determine if the given message should be emitted or not.
 	 *
 	 * @param string $channel
 	 * @param string $message
-	 * @param string|int $level Psr\Log\LogEvent constant or Monlog level int
+	 * @param string|int $level \Psr\Log\LogEvent constant or Monlog level int
 	 * @param array $context
 	 * @return bool True if message should be sent to disk/network, false
 	 * otherwise
@@ -115,6 +117,13 @@ class LegacyLogger extends AbstractLogger {
 		} elseif ( $channel === 'wfErrorLog' ) {
 			// All messages on the wfErrorLog channel should be emitted.
 			$shouldEmit = true;
+
+		} elseif ( $channel === 'wfDebug' ) {
+			// wfDebug messages are emitted if a catch all logging file has
+			// been specified. Checked explicitly so that 'private' flagged
+			// messages are not discarded by unset $wgDebugLogGroups channel
+			// handling below.
+			$shouldEmit = $wgDebugLogFile != '';
 
 		} elseif ( isset( $wgDebugLogGroups[$channel] ) ) {
 			$logConfig = $wgDebugLogGroups[$channel];
@@ -152,7 +161,6 @@ class LegacyLogger extends AbstractLogger {
 		return $shouldEmit;
 	}
 
-
 	/**
 	 * Format a message.
 	 *
@@ -167,7 +175,7 @@ class LegacyLogger extends AbstractLogger {
 	 * @return string
 	 */
 	public static function format( $channel, $message, $context ) {
-		global $wgDebugLogGroups;
+		global $wgDebugLogGroups, $wgLogExceptionBacktrace;
 
 		if ( $channel === 'wfDebug' ) {
 			$text = self::formatAsWfDebug( $channel, $message, $context );
@@ -181,7 +189,7 @@ class LegacyLogger extends AbstractLogger {
 		} elseif ( $channel === 'profileoutput' ) {
 			// Legacy wfLogProfilingData formatitng
 			$forward = '';
-			if ( isset( $context['forwarded_for'] )) {
+			if ( isset( $context['forwarded_for'] ) ) {
 				$forward = " forwarded for {$context['forwarded_for']}";
 			}
 			if ( isset( $context['client_ip'] ) ) {
@@ -215,9 +223,27 @@ class LegacyLogger extends AbstractLogger {
 			$text = self::formatAsWfDebugLog( $channel, $message, $context );
 		}
 
+		// Append stacktrace of exception if available
+		if ( $wgLogExceptionBacktrace && isset( $context['exception'] ) ) {
+			$e = $context['exception'];
+			$backtrace = false;
+
+			if ( $e instanceof Exception ) {
+				$backtrace = MWExceptionHandler::getRedactedTrace( $e );
+
+			} elseif ( is_array( $e ) && isset( $e['trace'] ) ) {
+				// Exception has already been unpacked as structured data
+				$backtrace = $e['trace'];
+			}
+
+			if ( $backtrace ) {
+				$text .= MWExceptionHandler::prettyPrintTrace( $backtrace ) .
+					"\n";
+			}
+		}
+
 		return self::interpolate( $text, $context );
 	}
-
 
 	/**
 	 * Format a message as `wfDebug()` would have formatted it.
@@ -240,7 +266,6 @@ class LegacyLogger extends AbstractLogger {
 		return "{$text}\n";
 	}
 
-
 	/**
 	 * Format a message as `wfLogDBError()` would have formatted it.
 	 *
@@ -253,17 +278,11 @@ class LegacyLogger extends AbstractLogger {
 		global $wgDBerrorLogTZ;
 		static $cachedTimezone = null;
 
-		if ( $wgDBerrorLogTZ && !$cachedTimezone ) {
+		if ( !$cachedTimezone ) {
 			$cachedTimezone = new DateTimeZone( $wgDBerrorLogTZ );
 		}
 
-		// Workaround for https://bugs.php.net/bug.php?id=52063
-		// Can be removed when min PHP > 5.3.6
-		if ( $cachedTimezone === null ) {
-			$d = date_create( 'now' );
-		} else {
-			$d = date_create( 'now', $cachedTimezone );
-		}
+		$d = date_create( 'now', $cachedTimezone );
 		$date = $d->format( 'D M j G:i:s T Y' );
 
 		$host = wfHostname();
@@ -272,7 +291,6 @@ class LegacyLogger extends AbstractLogger {
 		$text = "{$date}\t{$host}\t{$wiki}\t{$message}\n";
 		return $text;
 	}
-
 
 	/**
 	 * Format a message as `wfDebugLog() would have formatted it.
@@ -289,7 +307,6 @@ class LegacyLogger extends AbstractLogger {
 		return $text;
 	}
 
-
 	/**
 	 * Interpolate placeholders in logging message.
 	 *
@@ -299,15 +316,73 @@ class LegacyLogger extends AbstractLogger {
 	 */
 	public static function interpolate( $message, array $context ) {
 		if ( strpos( $message, '{' ) !== false ) {
-			$replace = array();
+			$replace = [];
 			foreach ( $context as $key => $val ) {
-				$replace['{' . $key . '}'] = $val;
+				$replace['{' . $key . '}'] = self::flatten( $val );
 			}
 			$message = strtr( $message, $replace );
 		}
 		return $message;
 	}
 
+	/**
+	 * Convert a logging context element to a string suitable for
+	 * interpolation.
+	 *
+	 * @param mixed $item
+	 * @return string
+	 */
+	protected static function flatten( $item ) {
+		if ( null === $item ) {
+			return '[Null]';
+		}
+
+		if ( is_bool( $item ) ) {
+			return $item ? 'true' : 'false';
+		}
+
+		if ( is_float( $item ) ) {
+			if ( is_infinite( $item ) ) {
+				return ( $item > 0 ? '' : '-' ) . 'INF';
+			}
+			if ( is_nan( $item ) ) {
+				return 'NaN';
+			}
+			return $item;
+		}
+
+		if ( is_scalar( $item ) ) {
+			return (string)$item;
+		}
+
+		if ( is_array( $item ) ) {
+			return '[Array(' . count( $item ) . ')]';
+		}
+
+		if ( $item instanceof \DateTime ) {
+			return $item->format( 'c' );
+		}
+
+		if ( $item instanceof Exception ) {
+			return '[Exception ' . get_class( $item ) . '( ' .
+				$item->getFile() . ':' . $item->getLine() . ') ' .
+				$item->getMessage() . ']';
+		}
+
+		if ( is_object( $item ) ) {
+			if ( method_exists( $item, '__toString' ) ) {
+				return (string)$item;
+			}
+
+			return '[Object ' . get_class( $item ) . ']';
+		}
+
+		if ( is_resource( $item ) ) {
+			return '[Resource ' . get_resource_type( $item ) . ']';
+		}
+
+		return '[Unknown ' . gettype( $item ) . ']';
+	}
 
 	/**
 	 * Select the appropriate log output destination for the given log event.
@@ -349,7 +424,6 @@ class LegacyLogger extends AbstractLogger {
 		return $destination;
 	}
 
-
 	/**
 	* Log to a file without getting "file size exceeded" signals.
 	*
@@ -365,7 +439,7 @@ class LegacyLogger extends AbstractLogger {
 			$transport = UDPTransport::newFromString( $file );
 			$transport->emit( $text );
 		} else {
-			wfSuppressWarnings();
+			\MediaWiki\suppressWarnings();
 			$exists = file_exists( $file );
 			$size = $exists ? filesize( $file ) : false;
 			if ( !$exists ||
@@ -373,7 +447,7 @@ class LegacyLogger extends AbstractLogger {
 			) {
 				file_put_contents( $file, $text, FILE_APPEND );
 			}
-			wfRestoreWarnings();
+			\MediaWiki\restoreWarnings();
 		}
 	}
 

@@ -1,13 +1,17 @@
 /*!
- * OOjs UI v0.11.3
+ * OOjs UI v0.17.1
  * https://www.mediawiki.org/wiki/OOjs_UI
  *
- * Copyright 2011–2015 OOjs Team and other contributors.
+ * Copyright 2011–2016 OOjs UI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2015-05-12T12:15:37Z
+ * Date: 2016-05-03T22:58:02Z
  */
+( function ( OO ) {
+
+'use strict';
+
 /**
  * @class
  * @extends OO.ui.Theme
@@ -16,7 +20,7 @@
  */
 OO.ui.MediaWikiTheme = function OoUiMediaWikiTheme() {
 	// Parent constructor
-	OO.ui.MediaWikiTheme.super.call( this );
+	OO.ui.MediaWikiTheme.parent.call( this );
 };
 
 /* Setup */
@@ -30,7 +34,7 @@ OO.inheritClass( OO.ui.MediaWikiTheme, OO.ui.Theme );
  */
 OO.ui.MediaWikiTheme.prototype.getElementClasses = function ( element ) {
 	// Parent method
-	var variant,
+	var variant, isFramed, isActive,
 		variants = {
 			warning: false,
 			invert: false,
@@ -39,14 +43,21 @@ OO.ui.MediaWikiTheme.prototype.getElementClasses = function ( element ) {
 			destructive: false
 		},
 		// Parent method
-		classes = OO.ui.MediaWikiTheme.super.prototype.getElementClasses.call( this, element ),
-		isFramed;
+		classes = OO.ui.MediaWikiTheme.parent.prototype.getElementClasses.call( this, element );
 
 	if ( element.supports( [ 'hasFlag' ] ) ) {
 		isFramed = element.supports( [ 'isFramed' ] ) && element.isFramed();
-		if ( isFramed && ( element.isDisabled() || element.hasFlag( 'primary' ) ) ) {
+		isActive = element.supports( [ 'isActive' ] ) && element.isActive();
+		if (
+			( isFramed && ( isActive || element.isDisabled() || element.hasFlag( 'primary' ) ) )
+		) {
+			// Button with a dark background, use white icon
 			variants.invert = true;
+		} else if ( !isFramed && element.isDisabled() ) {
+			// Frameless disabled button, always use black icon regardless of flags
+			variants.invert = false;
 		} else {
+			// Any other kind of button, use the right colored icon if available
 			variants.progressive = element.hasFlag( 'progressive' );
 			variants.constructive = element.hasFlag( 'constructive' );
 			variants.destructive = element.hasFlag( 'destructive' );
@@ -64,3 +75,5 @@ OO.ui.MediaWikiTheme.prototype.getElementClasses = function ( element ) {
 /* Instantiation */
 
 OO.ui.theme = new OO.ui.MediaWikiTheme();
+
+}( OO ) );

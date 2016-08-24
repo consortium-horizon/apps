@@ -32,7 +32,7 @@ class TextContentHandler extends ContentHandler {
 
 	// @codingStandardsIgnoreStart bug 57585
 	public function __construct( $modelId = CONTENT_MODEL_TEXT,
-		$formats = array( CONTENT_FORMAT_TEXT ) ) {
+		$formats = [ CONTENT_FORMAT_TEXT ] ) {
 		parent::__construct( $modelId, $formats );
 	}
 	// @codingStandardsIgnoreEnd
@@ -132,6 +132,15 @@ class TextContentHandler extends ContentHandler {
 	public function makeEmptyContent() {
 		$class = $this->getContentClass();
 		return new $class( '' );
+	}
+
+	/**
+	 * @see ContentHandler::supportsDirectEditing
+	 *
+	 * @return bool Default is true for TextContent and derivatives.
+	 */
+	public function supportsDirectEditing() {
+		return true;
 	}
 
 }

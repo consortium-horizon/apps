@@ -70,7 +70,7 @@ class MWException extends Exception {
 	 * @param array $args Arguments to pass to the callback functions
 	 * @return string|null String to output or null if any hook has been called
 	 */
-	public function runHooks( $name, $args = array() ) {
+	public function runHooks( $name, $args = [] ) {
 		global $wgExceptionHooks;
 
 		if ( !isset( $wgExceptionHooks ) || !is_array( $wgExceptionHooks ) ) {
@@ -84,7 +84,7 @@ class MWException extends Exception {
 		}
 
 		$hooks = $wgExceptionHooks[$name];
-		$callargs = array_merge( array( $this ), $args );
+		$callargs = array_merge( [ $this ], $args );
 
 		foreach ( $hooks as $hook ) {
 			if (
@@ -141,7 +141,7 @@ class MWException extends Exception {
 			nl2br( htmlspecialchars( MWExceptionHandler::getRedactedTraceAsString( $this ) ) ) .
 			"</p>\n";
 		} else {
-			$logId = MWExceptionHandler::getLogId( $this );
+			$logId = WebRequest::getRequestId();
 			$type = get_class( $this );
 			return "<div class=\"errorbox\">" .
 			'[' . $logId . '] ' .
@@ -238,8 +238,7 @@ class MWException extends Exception {
 		} elseif ( self::isCommandLine() ) {
 			MWExceptionHandler::printError( $this->getText() );
 		} else {
-			self::header( 'HTTP/1.1 500 MediaWiki exception' );
-			self::header( 'Status: 500 MediaWiki exception' );
+			self::statusHeader( 500 );
 			self::header( "Content-Type: $wgMimeType; charset=utf-8" );
 
 			$this->reportHTML();
@@ -264,6 +263,11 @@ class MWException extends Exception {
 	private static function header( $header ) {
 		if ( !headers_sent() ) {
 			header( $header );
+		}
+	}
+	private static function statusHeader( $code ) {
+		if ( !headers_sent() ) {
+			HttpStatus::header( $code );
 		}
 	}
 }

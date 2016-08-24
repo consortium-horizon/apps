@@ -25,6 +25,27 @@
  * @ingroup Search
  */
 class SearchResultSet {
+
+	/**
+	 * Types of interwiki results
+	 */
+	/**
+	 * Results that are displayed only together with existing main wiki results
+	 * @var int
+	 */
+	const SECONDARY_RESULTS = 0;
+	/**
+	 * Results that can displayed even if no existing main wiki results exist
+	 * @var int
+	 */
+	const INLINE_RESULTS = 1;
+
+	protected $containedSyntax = false;
+
+	public function __construct( $containedSyntax = false ) {
+		$this->containedSyntax = $containedSyntax;
+	}
+
 	/**
 	 * Fetch an array of regular expression fragments for matching
 	 * the search terms as parsed by this engine in a text extract.
@@ -33,7 +54,7 @@ class SearchResultSet {
 	 * @return array
 	 */
 	function termMatches() {
-		return array();
+		return [];
 	}
 
 	function numRows() {
@@ -55,6 +76,33 @@ class SearchResultSet {
 	}
 
 	/**
+	 * Some search modes will run an alternative query that it thinks gives
+	 * a better result than the provided search. Returns true if this has
+	 * occured.
+	 *
+	 * @return bool
+	 */
+	function hasRewrittenQuery() {
+		return false;
+	}
+
+	/**
+	 * @return string|null The search the query was internally rewritten to,
+	 *  or null when the result of the original query was returned.
+	 */
+	function getQueryAfterRewrite() {
+		return null;
+	}
+
+	/**
+	 * @return string|null Same as self::getQueryAfterRewrite(), but in HTML
+	 *  and with changes highlighted. Null when the query was not rewritten.
+	 */
+	function getQueryAfterRewriteSnippet() {
+		return null;
+	}
+
+	/**
 	 * Some search modes return a suggested alternate term if there are
 	 * no exact hits. Returns true if there is one on this set.
 	 *
@@ -65,7 +113,7 @@ class SearchResultSet {
 	}
 
 	/**
-	 * @return string Suggested query, null if none
+	 * @return string|null Suggested query, null if none
 	 */
 	function getSuggestionQuery() {
 		return null;
@@ -81,9 +129,9 @@ class SearchResultSet {
 	/**
 	 * Return a result set of hits on other (multiple) wikis associated with this one
 	 *
-	 * @return SearchResultSet
+	 * @return SearchResultSet[]
 	 */
-	function getInterwikiResults() {
+	function getInterwikiResults( $type = self::SECONDARY_RESULTS ) {
 		return null;
 	}
 
@@ -92,8 +140,8 @@ class SearchResultSet {
 	 *
 	 * @return bool
 	 */
-	function hasInterwikiResults() {
-		return $this->getInterwikiResults() != null;
+	function hasInterwikiResults( $type = self::SECONDARY_RESULTS ) {
+		return false;
 	}
 
 	/**
@@ -104,6 +152,12 @@ class SearchResultSet {
 	 */
 	function next() {
 		return false;
+	}
+
+	/**
+	 * Rewind result set back to begining
+	 */
+	function rewind() {
 	}
 
 	/**
@@ -120,92 +174,6 @@ class SearchResultSet {
 	 * @return bool
 	 */
 	public function searchContainedSyntax() {
-		return false;
-	}
-}
-
-/**
- * This class is used for different SQL-based search engines shipped with MediaWiki
- * @ingroup Search
- */
-class SqlSearchResultSet extends SearchResultSet {
-	protected $resultSet;
-	protected $terms;
-	protected $totalHits;
-
-	function __construct( $resultSet, $terms, $total = null ) {
-		$this->resultSet = $resultSet;
-		$this->terms = $terms;
-		$this->totalHits = $total;
-	}
-
-	function termMatches() {
-		return $this->terms;
-	}
-
-	function numRows() {
-		if ( $this->resultSet === false ) {
-			return false;
-		}
-
-		return $this->resultSet->numRows();
-	}
-
-	function next() {
-		if ( $this->resultSet === false ) {
-			return false;
-		}
-
-		$row = $this->resultSet->fetchObject();
-		if ( $row === false ) {
-			return false;
-		}
-
-		return SearchResult::newFromTitle(
-			Title::makeTitle( $row->page_namespace, $row->page_title )
-		);
-	}
-
-	function free() {
-		if ( $this->resultSet === false ) {
-			return false;
-		}
-
-		$this->resultSet->free();
-	}
-
-	function getTotalHits() {
-		if ( !is_null( $this->totalHits ) ) {
-			return $this->totalHits;
-		} else {
-			// Special:Search expects a number here.
-			return $this->numRows();
-		}
-	}
-}
-
-/**
- * A SearchResultSet wrapper for SearchEngine::getNearMatch
- */
-class SearchNearMatchResultSet extends SearchResultSet {
-	private $fetched = false;
-
-	/**
-	 * @param Title|null $match Title if matched, else null
-	 */
-	public function __construct( $match ) {
-		$this->result = $match;
-	}
-
-	public function numRows() {
-		return $this->result ? 1 : 0;
-	}
-
-	public function next() {
-		if ( $this->fetched || !$this->result ) {
-			return false;
-		}
-		$this->fetched = true;
-		return SearchResult::newFromTitle( $this->result );
+		return $this->containedSyntax;
 	}
 }

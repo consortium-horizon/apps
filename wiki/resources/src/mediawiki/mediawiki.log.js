@@ -22,7 +22,7 @@
 	 * messages to that, instead of the console.
 	 *
 	 * @member mw.log
-	 * @param {string...} msg Messages to output to console.
+	 * @param {...string} msg Messages to output to console.
 	 */
 	mw.log = function () {
 		// Turn arguments into an array
@@ -79,6 +79,7 @@
 
 	// Restore original methods
 	mw.log.warn = original.warn;
+	mw.log.error = original.error;
 	mw.log.deprecate = original.deprecate;
 
 }( mediaWiki, jQuery ) );

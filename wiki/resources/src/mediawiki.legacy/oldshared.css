@@ -122,8 +122,6 @@ div.magnify a {
 	/* Use same SVG support hack as mediawiki.legacy's shared.css */
 	background: url(images/magnify-clip-ltr.png) center center no-repeat;
 	/* @embed */
-	background-image: -webkit-linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
-	/* @embed */
 	background-image: linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
 	/* Don't annoy people who copy-paste everything too much */
 	-moz-user-select: none;
@@ -168,7 +166,6 @@ img {
 	padding: 5px;
 	font-size: 95%;
 	text-align: center;
-	display: -moz-inline-block;
 	display: inline-block;
 	display: table;
 
@@ -213,11 +210,6 @@ table.toc td {
 	margin: 0 0 0 2em;
 }
 
-#toc .toctoggle,
-.toc .toctoggle {
-	font-size: 94%;
-}
-
 .error {
 	color: red;
 	font-size: larger;
@@ -255,14 +247,6 @@ div.htmlform-tip {
 	font-size: 94%;
 	margin-top: 0.4em;
 	color: #666;
-}
-
-fieldset.prefsection {
-	margin-top: 1em;
-}
-
-fieldset.operaprefsection {
-	margin-left: 15em;
 }
 
 /* emulate center */
@@ -319,10 +303,6 @@ div.gallerybox {
 
 span.comment {
 	font-style: italic;
-}
-
-span.changedby {
-	font-size: 95%;
 }
 
 .previewnote {

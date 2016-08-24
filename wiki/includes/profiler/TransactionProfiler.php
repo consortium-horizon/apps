@@ -25,6 +25,7 @@
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\NullLogger;
+
 /**
  * Helper class that detects high-contention DB queries via profiling calls
  *
@@ -39,27 +40,29 @@ class TransactionProfiler implements LoggerAwareInterface {
 	protected $eventThreshold = .25;
 
 	/** @var array transaction ID => (write start time, list of DBs involved) */
-	protected $dbTrxHoldingLocks = array();
+	protected $dbTrxHoldingLocks = [];
 	/** @var array transaction ID => list of (query name, start time, end time) */
-	protected $dbTrxMethodTimes = array();
+	protected $dbTrxMethodTimes = [];
 
 	/** @var array */
-	protected $hits = array(
+	protected $hits = [
 		'writes'      => 0,
 		'queries'     => 0,
 		'conns'       => 0,
 		'masterConns' => 0
-	);
+	];
 	/** @var array */
-	protected $expect = array(
-		'writes'      => INF,
-		'queries'     => INF,
-		'conns'       => INF,
-		'masterConns' => INF,
-		'maxAffected' => INF
-	);
+	protected $expect = [
+		'writes'         => INF,
+		'queries'        => INF,
+		'conns'          => INF,
+		'masterConns'    => INF,
+		'maxAffected'    => INF,
+		'readQueryTime'  => INF,
+		'writeQueryTime' => INF
+	];
 	/** @var array */
-	protected $expectBy = array();
+	protected $expectBy = [];
 
 	/**
 	 * @var LoggerInterface
@@ -77,7 +80,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	/**
 	 * Set performance expectations
 	 *
-	 * With conflicting expect, the most specific ones will be used
+	 * With conflicting expectations, the most narrow ones will be used
 	 *
 	 * @param string $event (writes,queries,conns,mConns)
 	 * @param integer $value Maximum count of the event
@@ -90,6 +93,21 @@ class TransactionProfiler implements LoggerAwareInterface {
 			: $value;
 		if ( $this->expect[$event] == $value ) {
 			$this->expectBy[$event] = $fname;
+		}
+	}
+
+	/**
+	 * Set multiple performance expectations
+	 *
+	 * With conflicting expectations, the most narrow ones will be used
+	 *
+	 * @param array $expects Map of (event => limit)
+	 * @param $fname
+	 * @since 1.26
+	 */
+	public function setExpectations( array $expects, $fname ) {
+		foreach ( $expects as $event => $value ) {
+			$this->setExpectation( $event, $value, $fname );
 		}
 	}
 
@@ -107,7 +125,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 			$val = INF;
 		}
 		unset( $val );
-		$this->expectBy = array();
+		$this->expectBy = [];
 	}
 
 	/**
@@ -143,11 +161,11 @@ class TransactionProfiler implements LoggerAwareInterface {
 		if ( isset( $this->dbTrxHoldingLocks[$name] ) ) {
 			$this->logger->info( "Nested transaction for '$name' - out of sync." );
 		}
-		$this->dbTrxHoldingLocks[$name] = array(
+		$this->dbTrxHoldingLocks[$name] = [
 			'start' => microtime( true ),
-			'conns' => array(), // all connections involved
-		);
-		$this->dbTrxMethodTimes[$name] = array();
+			'conns' => [], // all connections involved
+		];
+		$this->dbTrxMethodTimes[$name] = [];
 
 		foreach ( $this->dbTrxHoldingLocks as $name => &$info ) {
 			// Track all DBs in transactions for this transaction
@@ -170,7 +188,8 @@ class TransactionProfiler implements LoggerAwareInterface {
 		$elapsed = ( $eTime - $sTime );
 
 		if ( $isWrite && $n > $this->expect['maxAffected'] ) {
-			$this->logger->info( "Query affected $n row(s):\n" . $query . "\n" . wfBacktrace( true ) );
+			$this->logger->info( "Query affected $n row(s):\n" . $query . "\n" .
+				wfBacktrace( true ) );
 		}
 
 		// Report when too many writes/queries happen...
@@ -179,6 +198,13 @@ class TransactionProfiler implements LoggerAwareInterface {
 		}
 		if ( $isWrite && $this->hits['writes']++ == $this->expect['writes'] ) {
 			$this->reportExpectationViolated( 'writes', $query );
+		}
+		// Report slow queries...
+		if ( !$isWrite && $elapsed > $this->expect['readQueryTime'] ) {
+			$this->reportExpectationViolated( 'readQueryTime', $query, $elapsed );
+		}
+		if ( $isWrite && $elapsed > $this->expect['writeQueryTime'] ) {
+			$this->reportExpectationViolated( 'writeQueryTime', $query, $elapsed );
 		}
 
 		if ( !$this->dbTrxHoldingLocks ) {
@@ -197,14 +223,14 @@ class TransactionProfiler implements LoggerAwareInterface {
 				if ( $sTime >= $lastEnd ) { // sanity check
 					if ( ( $sTime - $lastEnd ) > $this->eventThreshold ) {
 						// Add an entry representing the time spent doing non-queries
-						$this->dbTrxMethodTimes[$name][] = array( '...delay...', $lastEnd, $sTime );
+						$this->dbTrxMethodTimes[$name][] = [ '...delay...', $lastEnd, $sTime ];
 					}
-					$this->dbTrxMethodTimes[$name][] = array( $query, $sTime, $eTime );
+					$this->dbTrxMethodTimes[$name][] = [ $query, $sTime, $eTime ];
 				}
 			} else {
 				// First query in the trx...
 				if ( $sTime >= $info['start'] ) { // sanity check
-					$this->dbTrxMethodTimes[$name][] = array( $query, $sTime, $eTime );
+					$this->dbTrxMethodTimes[$name][] = [ $query, $sTime, $eTime ];
 				}
 			}
 		}
@@ -220,12 +246,25 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 * @param string $server DB server
 	 * @param string $db DB name
 	 * @param string $id ID string of transaction
+	 * @param float $writeTime Time spent in write queries
 	 */
-	public function transactionWritingOut( $server, $db, $id ) {
+	public function transactionWritingOut( $server, $db, $id, $writeTime = 0.0 ) {
 		$name = "{$server} ({$db}) (TRX#$id)";
 		if ( !isset( $this->dbTrxMethodTimes[$name] ) ) {
 			$this->logger->info( "Detected no transaction for '$name' - out of sync." );
 			return;
+		}
+
+		$slow = false;
+
+		// Warn if too much time was spend writing...
+		if ( $writeTime > $this->expect['writeQueryTime'] ) {
+			$this->reportExpectationViolated(
+				'writeQueryTime',
+				"[transaction $id writes to {$server} ({$db})]",
+				$writeTime
+			);
+			$slow = true;
 		}
 		// Fill in the last non-query period...
 		$lastQuery = end( $this->dbTrxMethodTimes[$name] );
@@ -233,11 +272,10 @@ class TransactionProfiler implements LoggerAwareInterface {
 			$now = microtime( true );
 			$lastEnd = $lastQuery[2];
 			if ( ( $now - $lastEnd ) > $this->eventThreshold ) {
-				$this->dbTrxMethodTimes[$name][] = array( '...delay...', $lastEnd, $now );
+				$this->dbTrxMethodTimes[$name][] = [ '...delay...', $lastEnd, $now ];
 			}
 		}
 		// Check for any slow queries or non-query periods...
-		$slow = false;
 		foreach ( $this->dbTrxMethodTimes[$name] as $info ) {
 			$elapsed = ( $info[2] - $info[1] );
 			if ( $elapsed >= $this->dbLockThreshold ) {
@@ -261,14 +299,16 @@ class TransactionProfiler implements LoggerAwareInterface {
 	/**
 	 * @param string $expect
 	 * @param string $query
+	 * @param string|float|int $actual [optional]
 	 */
-	protected function reportExpectationViolated( $expect, $query ) {
-		global $wgRequest;
-
+	protected function reportExpectationViolated( $expect, $query, $actual = null ) {
 		$n = $this->expect[$expect];
 		$by = $this->expectBy[$expect];
+		$actual = ( $actual !== null ) ? " (actual: $actual)" : "";
+
 		$this->logger->info(
-			"[{$wgRequest->getMethod()}] Expectation ($expect <= $n) by $by not met:\n$query\n" . wfBacktrace( true )
+			"Expectation ($expect <= $n) by $by not met$actual:\n$query\n" .
+			wfBacktrace( true )
 		);
 	}
 }

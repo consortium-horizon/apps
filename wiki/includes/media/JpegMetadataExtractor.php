@@ -52,11 +52,11 @@ class JpegMetadataExtractor {
 
 		$segmentCount = 0;
 
-		$segments = array(
-			'XMP_ext' => array(),
-			'COM' => array(),
-			'PSIR' => array(),
-		);
+		$segments = [
+			'XMP_ext' => [],
+			'COM' => [],
+			'PSIR' => [],
+		];
 
 		if ( !$filename ) {
 			throw new MWException( "No filename specified for " . __METHOD__ );
@@ -102,9 +102,9 @@ class JpegMetadataExtractor {
 				// turns $com to valid utf-8.
 				// thus if no change, its utf-8, otherwise its something else.
 				if ( $com !== $oldCom ) {
-					wfSuppressWarnings();
+					MediaWiki\suppressWarnings();
 					$com = $oldCom = iconv( 'windows-1252', 'UTF-8//IGNORE', $oldCom );
-					wfRestoreWarnings();
+					MediaWiki\restoreWarnings();
 				}
 				// Try it again, if its still not a valid string, then probably
 				// binary junk or some really weird encoding, so don't extract.

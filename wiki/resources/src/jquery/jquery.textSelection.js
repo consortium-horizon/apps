@@ -96,7 +96,7 @@
 			 * Inserts text at the beginning and end of a text selection, optionally
 			 * inserting text at the caret when selection is empty.
 			 *
-			 * @fixme document the options parameters
+			 * FIXME document the options parameters
 			 */
 			encapsulateSelection: function ( options ) {
 				return this.each( function () {
@@ -138,7 +138,7 @@
 							insertText = '',
 							selTextArr = selText.split( '\n' );
 						for ( i = 0; i < selTextArr.length; i++ ) {
-							insertText += pre + selTextArr[i] + post;
+							insertText += pre + selTextArr[ i ] + post;
 							if ( i !== selTextArr.length - 1 ) {
 								insertText += '\n';
 							}
@@ -160,7 +160,7 @@
 								context.fn.restoreCursorAndScrollTop();
 							}
 							if ( options.selectionStart !== undefined ) {
-								$( this ).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
+								$( this ).textSelection( 'setSelection', { start: options.selectionStart, end: options.selectionEnd } );
 							}
 
 							selText = $( this ).textSelection( 'getSelection' );
@@ -203,7 +203,7 @@
 
 							$( this ).focus();
 							if ( options.selectionStart !== undefined ) {
-								$( this ).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
+								$( this ).textSelection( 'setSelection', { start: options.selectionStart, end: options.selectionEnd } );
 							}
 
 							selText = $( this ).textSelection( 'getSelection' );
@@ -268,7 +268,7 @@
 			 *
 			 * Will focus the textarea in some browsers (IE/Opera)
 			 *
-			 * @fixme document the options parameters
+			 * FIXME document the options parameters
 			 */
 			getCaretPosition: function ( options ) {
 				function getCaret( e ) {
@@ -367,7 +367,7 @@
 				return getCaret( this.get( 0 ) );
 			},
 			/**
-			 * @fixme document the options parameters
+			 * FIXME document the options parameters
 			 */
 			setSelection: function ( options ) {
 				return this.each( function () {
@@ -411,10 +411,11 @@
 			 *
 			 * Scroll a textarea to the current cursor position. You can set the cursor
 			 * position with setSelection()
-			 * @param options boolean Whether to force a scroll even if the caret position
+			 *
+			 * @param {boolean} options Whether to force a scroll even if the caret position
 			 *  is already visible. Defaults to false
 			 *
-			 * @fixme document the options parameters (function body suggests options.force is a boolean, not options itself)
+			 * FIXME document the options parameters (function body suggests options.force is a boolean, not options itself)
 			 */
 			scrollToCaretPosition: function ( options ) {
 				function getLineLength( e ) {
@@ -576,7 +577,7 @@
 			context.fn.restoreSelection();
 			needSave = true;
 		}
-		retval = ( alternateFn && alternateFn[command] || fn[command] ).call( this, options );
+		retval = ( alternateFn && alternateFn[ command ] || fn[ command ] ).call( this, options );
 		if ( hasWikiEditor && needSave ) {
 			context.fn.saveSelection();
 		}

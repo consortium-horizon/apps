@@ -59,7 +59,7 @@ application/vnd.oasis.opendocument.text odt
 application/vnd.oasis.opendocument.text-master otm
 application/vnd.oasis.opendocument.text-template ott
 application/vnd.oasis.opendocument.text-web oth
-application/x-javascript js
+application/javascript js
 application/x-shockwave-flash swf
 audio/midi mid midi kar
 audio/mpeg mpga mpa mp2 mp3
@@ -110,7 +110,7 @@ application/vnd.oasis.opendocument.text [OFFICE]
 application/vnd.oasis.opendocument.text-template [OFFICE]
 application/vnd.oasis.opendocument.text-master [OFFICE]
 application/vnd.oasis.opendocument.text-web [OFFICE]
-text/javascript application/x-javascript [EXECUTABLE]
+application/javascript text/javascript application/x-javascript [EXECUTABLE]
 application/x-shockwave-flash [MULTIMEDIA]
 audio/midi [AUDIO]
 audio/x-aiff [AUDIO]
@@ -200,7 +200,7 @@ class MimeMagic {
 		global $IP;
 
 		# Allow media handling extensions adding MIME-types and MIME-info
-		Hooks::run( 'MimeMagicInit', array( $this ) );
+		Hooks::run( 'MimeMagicInit', [ $this ] );
 
 		$types = MM_WELL_KNOWN_MIME_TYPES;
 
@@ -223,11 +223,11 @@ class MimeMagic {
 
 		$types .= "\n" . $this->mExtraTypes;
 
-		$types = str_replace( array( "\r\n", "\n\r", "\n\n", "\r\r", "\r" ), "\n", $types );
+		$types = str_replace( [ "\r\n", "\n\r", "\n\n", "\r\r", "\r" ], "\n", $types );
 		$types = str_replace( "\t", " ", $types );
 
-		$this->mMimeToExt = array();
-		$this->mExtToMime = array();
+		$this->mMimeToExt = [];
+		$this->mExtToMime = [];
 
 		$lines = explode( "\n", $types );
 		foreach ( $lines as $s ) {
@@ -300,11 +300,11 @@ class MimeMagic {
 
 		$info .= "\n" . $this->mExtraInfo;
 
-		$info = str_replace( array( "\r\n", "\n\r", "\n\n", "\r\r", "\r" ), "\n", $info );
+		$info = str_replace( [ "\r\n", "\n\r", "\n\n", "\r\r", "\r" ], "\n", $info );
 		$info = str_replace( "\t", " ", $info );
 
-		$this->mMimeTypeAliases = array();
-		$this->mMediaTypes = array();
+		$this->mMimeTypeAliases = [];
+		$this->mMediaTypes = [];
 
 		$lines = explode( "\n", $info );
 		foreach ( $lines as $s ) {
@@ -323,9 +323,9 @@ class MimeMagic {
 				continue;
 			}
 
-			#print "processing MIME INFO line $s<br>";
+			# print "processing MIME INFO line $s<br>";
 
-			$match = array();
+			$match = [];
 			if ( preg_match( '!\[\s*(\w+)\s*\]!', $s, $match ) ) {
 				$s = preg_replace( '!\[\s*(\w+)\s*\]!', '', $s );
 				$mtype = trim( strtoupper( $match[1] ) );
@@ -336,7 +336,7 @@ class MimeMagic {
 			$m = explode( ' ', $s );
 
 			if ( !isset( $this->mMediaTypes[$mtype] ) ) {
-				$this->mMediaTypes[$mtype] = array();
+				$this->mMediaTypes[$mtype] = [];
 			}
 
 			foreach ( $m as $mime ) {
@@ -485,7 +485,7 @@ class MimeMagic {
 	 */
 	public function isPHPImageType( $mime ) {
 		// As defined by imagegetsize and image_type_to_mime
-		static $types = array(
+		static $types = [
 			'image/gif', 'image/jpeg', 'image/png',
 			'image/x-bmp', 'image/xbm', 'image/tiff',
 			'image/jp2', 'image/jpeg2000', 'image/iff',
@@ -493,7 +493,7 @@ class MimeMagic {
 			'image/vnd.wap.wbmp', 'image/vnd.xiff',
 			'image/x-photoshop',
 			'application/x-shockwave-flash',
-		);
+		];
 
 		return in_array( $mime, $types );
 	}
@@ -511,7 +511,7 @@ class MimeMagic {
 	 * @return bool
 	 */
 	function isRecognizableExtension( $extension ) {
-		static $types = array(
+		static $types = [
 			// Types recognized by getimagesize()
 			'gif', 'jpeg', 'jpg', 'png', 'swf', 'psd',
 			'bmp', 'tiff', 'tif', 'jpc', 'jp2',
@@ -525,7 +525,7 @@ class MimeMagic {
 
 			// XML formats we sure hope we recognize reliably
 			'svg',
-		);
+		];
 		return in_array( strtolower( $extension ), $types );
 	}
 
@@ -569,7 +569,7 @@ class MimeMagic {
 		}
 
 		# Media handling extensions can improve the MIME detected
-		Hooks::run( 'MimeMagicImproveFromExtension', array( $this, $ext, &$mime ) );
+		Hooks::run( 'MimeMagicImproveFromExtension', [ $this, $ext, &$mime ] );
 
 		if ( isset( $this->mMimeTypeAliases[$mime] ) ) {
 			$mime = $this->mMimeTypeAliases[$mime];
@@ -617,16 +617,18 @@ class MimeMagic {
 	/**
 	 * Guess the MIME type from the file contents.
 	 *
+	 * @todo Remove $ext param
+	 *
 	 * @param string $file
 	 * @param mixed $ext
 	 * @return bool|string
 	 * @throws MWException
 	 */
-	private function doGuessMimeType( $file, $ext ) { // TODO: remove $ext param
+	private function doGuessMimeType( $file, $ext ) {
 		// Read a chunk of the file
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$f = fopen( $file, 'rb' );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 
 		if ( !$f ) {
 			return 'unknown/unknown';
@@ -643,13 +645,13 @@ class MimeMagic {
 			throw new MWException(
 				"Seeking $tailLength bytes from EOF failed in " . __METHOD__ );
 		}
-		$tail = fread( $f, $tailLength );
+		$tail = $tailLength ? fread( $f, $tailLength ) : '';
 		fclose( $f );
 
 		wfDebug( __METHOD__ . ": analyzing head and tail of $file for magic numbers.\n" );
 
 		// Hardcode a few magic number checks...
-		$headers = array(
+		$headers = [
 			// Multimedia...
 			'MThd'             => 'audio/midi',
 			'OggS'             => 'application/ogg',
@@ -665,7 +667,7 @@ class MimeMagic {
 			'MZ'               => 'application/octet-stream', // DOS/Windows executable
 			"\xca\xfe\xba\xbe" => 'application/octet-stream', // Mach-O binary
 			"\x7fELF"          => 'application/octet-stream', // ELF binary
-		);
+		];
 
 		foreach ( $headers as $magic => $candidate ) {
 			if ( strncmp( $head, $magic, strlen( $magic ) ) == 0 ) {
@@ -693,7 +695,7 @@ class MimeMagic {
 		}
 
 		/* Look for WebP */
-		if ( strncmp( $head, "RIFF", 4 ) == 0 && strncmp( substr( $head, 8, 8 ), "WEBPVP8 ", 8 ) == 0 ) {
+		if ( strncmp( $head, "RIFF", 4 ) == 0 && strncmp( substr( $head, 8, 7 ), "WEBPVP8", 7 ) == 0 ) {
 			wfDebug( __METHOD__ . ": recognized file as image/webp\n" );
 			return "image/webp";
 		}
@@ -753,7 +755,7 @@ class MimeMagic {
 		if ( $script_type ) {
 			if ( $script_type !== "UTF-8" && $script_type !== "ASCII" ) {
 				// Quick and dirty fold down to ASCII!
-				$pack = array( 'UTF-16BE' => 'n*', 'UTF-16LE' => 'v*' );
+				$pack = [ 'UTF-16BE' => 'n*', 'UTF-16LE' => 'v*' ];
 				$chars = unpack( $pack[$script_type], substr( $head, 2 ) );
 				$head = '';
 				foreach ( $chars as $codepoint ) {
@@ -765,7 +767,7 @@ class MimeMagic {
 				}
 			}
 
-			$match = array();
+			$match = [];
 
 			if ( preg_match( '%/?([^\s]+/)(\w+)%', $head, $match ) ) {
 				$mime = "application/x-{$match[2]}";
@@ -780,9 +782,9 @@ class MimeMagic {
 			return $this->detectZipType( $head, $tail, $ext );
 		}
 
-		wfSuppressWarnings();
+		MediaWiki\suppressWarnings();
 		$gis = getimagesize( $file );
-		wfRestoreWarnings();
+		MediaWiki\restoreWarnings();
 
 		if ( $gis && isset( $gis['mime'] ) ) {
 			$mime = $gis['mime'];
@@ -804,7 +806,7 @@ class MimeMagic {
 		# Some strings by reference for performance - assuming well-behaved hooks
 		Hooks::run(
 			'MimeMagicGuessFromContent',
-			array( $this, &$head, &$tail, $file, &$mime )
+			[ $this, &$head, &$tail, $file, &$mime ]
 		);
 
 		return $mime;
@@ -830,7 +832,7 @@ class MimeMagic {
 		}
 
 		$mime = 'application/zip';
-		$opendocTypes = array(
+		$opendocTypes = [
 			'chart-template',
 			'chart',
 			'formula-template',
@@ -846,7 +848,7 @@ class MimeMagic {
 			'text-template',
 			'text-master',
 			'text-web',
-			'text' );
+			'text' ];
 
 		// http://lists.oasis-open.org/archives/office/200505/msg00006.html
 		$types = '(?:' . implode( '|', $opendocTypes ) . ')';
@@ -955,7 +957,7 @@ class MimeMagic {
 
 		if ( $m ) {
 			# normalize
-			$m = preg_replace( '![;, ].*$!', '', $m ); #strip charset, etc
+			$m = preg_replace( '![;, ].*$!', '', $m ); # strip charset, etc
 			$m = trim( $m );
 			$m = strtolower( $m );
 
@@ -1108,7 +1110,7 @@ class MimeMagic {
 				$extMime = $this->mMimeTypeAliases[$extMime];
 			}
 
-			$m = array( $extMime );
+			$m = [ $extMime ];
 		}
 
 		foreach ( $m as $mime ) {

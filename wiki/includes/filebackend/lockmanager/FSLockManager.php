@@ -35,16 +35,16 @@
  */
 class FSLockManager extends LockManager {
 	/** @var array Mapping of lock types to the type actually used */
-	protected $lockTypeMap = array(
+	protected $lockTypeMap = [
 		self::LOCK_SH => self::LOCK_SH,
 		self::LOCK_UW => self::LOCK_SH,
 		self::LOCK_EX => self::LOCK_EX
-	);
+	];
 
 	protected $lockDir; // global dir for all servers
 
 	/** @var array Map of (locked key => lock file handle) */
-	protected $handles = array();
+	protected $handles = [];
 
 	/**
 	 * Construct a new instance from configuration.
@@ -67,7 +67,7 @@ class FSLockManager extends LockManager {
 	protected function doLock( array $paths, $type ) {
 		$status = Status::newGood();
 
-		$lockedPaths = array(); // files locked in this attempt
+		$lockedPaths = []; // files locked in this attempt
 		foreach ( $paths as $path ) {
 			$status->merge( $this->doSingleLock( $path, $type ) );
 			if ( $status->isOK() ) {
@@ -117,9 +117,9 @@ class FSLockManager extends LockManager {
 			if ( isset( $this->handles[$path] ) ) {
 				$handle = $this->handles[$path];
 			} else {
-				wfSuppressWarnings();
+				MediaWiki\suppressWarnings();
 				$handle = fopen( $this->getLockPath( $path ), 'a+' );
-				wfRestoreWarnings();
+				MediaWiki\restoreWarnings();
 				if ( !$handle ) { // lock dir missing?
 					wfMkdirParents( $this->lockDir );
 					$handle = fopen( $this->getLockPath( $path ), 'a+' ); // try again
@@ -159,7 +159,7 @@ class FSLockManager extends LockManager {
 		} elseif ( !isset( $this->locksHeld[$path][$type] ) ) {
 			$status->warning( 'lockmanager-notlocked', $path );
 		} else {
-			$handlesToClose = array();
+			$handlesToClose = [];
 			--$this->locksHeld[$path][$type];
 			if ( $this->locksHeld[$path][$type] <= 0 ) {
 				unset( $this->locksHeld[$path][$type] );

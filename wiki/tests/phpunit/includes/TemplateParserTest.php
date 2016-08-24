@@ -10,10 +10,9 @@ class TemplateParserTest extends MediaWikiTestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->setMwGlobals( array(
+		$this->setMwGlobals( [
 			'wgSecretKey' => 'foo',
-			'wgMemc' => new EmptyBagOStuff(),
-		) );
+		] );
 
 		$this->templateDir = dirname( __DIR__ ) . '/data/templates/';
 	}
@@ -33,31 +32,44 @@ class TemplateParserTest extends MediaWikiTestCase {
 	}
 
 	public static function provideProcessTemplate() {
-		return array(
-			array(
+		return [
+			[
 				'foobar',
-				array(),
+				[],
 				"hello world!\n"
-			),
-			array(
+			],
+			[
 				'foobar_args',
-				array(
+				[
 					'planet' => 'world',
-				),
+				],
 				"hello world!\n",
-			),
-			array(
+			],
+			[
 				'../foobar',
-				array(),
+				[],
 				false,
 				'UnexpectedValueException'
-			),
-			array(
+			],
+			[
 				'nonexistenttemplate',
-				array(),
+				[],
 				false,
 				'RuntimeException',
-			)
-		);
+			],
+			[
+				'has_partial',
+				[
+					'planet' => 'world',
+				],
+				"Partial hello world!\n in here\n",
+			],
+			[
+				'bad_partial',
+				[],
+				false,
+				'Exception',
+			],
+		];
 	}
 }

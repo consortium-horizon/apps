@@ -4,15 +4,33 @@
  * @since 1.18
  */
 ( function ( mw, $ ) {
+	/*jshint latedef:false */
 
 	/**
-	 * @class mw.Title
-	 *
 	 * Parse titles into an object structure. Note that when using the constructor
 	 * directly, passing invalid titles will result in an exception. Use #newFromText to use the
 	 * logic directly and get null for invalid titles which is easier to work with.
 	 *
-	 * @constructor
+	 * @class mw.Title
+	 */
+	/**
+	 * Note that in the constructor and #newFromText method, `namespace` is the **default** namespace
+	 * only, and can be overridden by a namespace prefix in `title`. If you do not want this behavior,
+	 * use #makeTitle. Compare:
+	 *
+	 *     new mw.Title( 'Foo', NS_TEMPLATE ).getPrefixedText();                  // => 'Template:Foo'
+	 *     mw.Title.newFromText( 'Foo', NS_TEMPLATE ).getPrefixedText();          // => 'Template:Foo'
+	 *     mw.Title.makeTitle( NS_TEMPLATE, 'Foo' ).getPrefixedText();            // => 'Template:Foo'
+	 *
+	 *     new mw.Title( 'Category:Foo', NS_TEMPLATE ).getPrefixedText();         // => 'Category:Foo'
+	 *     mw.Title.newFromText( 'Category:Foo', NS_TEMPLATE ).getPrefixedText(); // => 'Category:Foo'
+	 *     mw.Title.makeTitle( NS_TEMPLATE, 'Category:Foo' ).getPrefixedText();   // => 'Template:Category:Foo'
+	 *
+	 *     new mw.Title( 'Template:Foo', NS_TEMPLATE ).getPrefixedText();         // => 'Template:Foo'
+	 *     mw.Title.newFromText( 'Template:Foo', NS_TEMPLATE ).getPrefixedText(); // => 'Template:Foo'
+	 *     mw.Title.makeTitle( NS_TEMPLATE, 'Template:Foo' ).getPrefixedText();   // => 'Template:Template:Foo'
+	 *
+	 * @method constructor
 	 * @param {string} title Title of the page. If no second argument given,
 	 *  this will be searched for a namespace
 	 * @param {number} [namespace=NS_MAIN] If given, will used as default namespace for the given title
@@ -36,40 +54,42 @@
 
 	var
 
+	namespaceIds = mw.config.get( 'wgNamespaceIds' ),
+
 	/**
 	 * @private
 	 * @static
 	 * @property NS_MAIN
 	 */
-	NS_MAIN = 0,
+	NS_MAIN = namespaceIds[ '' ],
 
 	/**
 	 * @private
 	 * @static
 	 * @property NS_TALK
 	 */
-	NS_TALK = 1,
+	NS_TALK = namespaceIds.talk,
 
 	/**
 	 * @private
 	 * @static
 	 * @property NS_SPECIAL
 	 */
-	NS_SPECIAL = -1,
+	NS_SPECIAL = namespaceIds.special,
 
 	/**
 	 * @private
 	 * @static
 	 * @property NS_MEDIA
 	 */
-	NS_MEDIA = -2,
+	NS_MEDIA = namespaceIds.media,
 
 	/**
 	 * @private
 	 * @static
 	 * @property NS_FILE
 	 */
-	NS_FILE = 6,
+	NS_FILE = namespaceIds.file,
 
 	/**
 	 * @private
@@ -107,12 +127,25 @@
 		if ( typeof ns !== 'string' ) {
 			return false;
 		}
-		ns = ns.toLowerCase();
-		id = mw.config.get( 'wgNamespaceIds' )[ns];
+		// TODO: Should just use local var namespaceIds here but it
+		// breaks test which modify the config
+		id = mw.config.get( 'wgNamespaceIds' )[ ns.toLowerCase() ];
 		if ( id === undefined ) {
 			return false;
 		}
 		return id;
+	},
+
+	/**
+	 * @private
+	 * @method getNamespacePrefix_
+	 * @param {number} namespace
+	 * @return {string}
+	 */
+	getNamespacePrefix = function ( namespace ) {
+		return namespace === NS_MAIN ?
+			'' :
+			( mw.config.get( 'wgFormattedNamespaces' )[ namespace ].replace( / /g, '_' ) + ':' );
 	},
 
 	rUnderscoreTrim = /^_+|_+$/g,
@@ -211,7 +244,7 @@
 	],
 
 	/**
-	 * Internal helper for #constructor and #newFromtext.
+	 * Internal helper for #constructor and #newFromText.
 	 *
 	 * Based on Title.php#secureAndSplit
 	 *
@@ -234,7 +267,7 @@
 			.replace( rUnderscoreTrim, '' );
 
 		// Process initial colon
-		if ( title !== '' && title.charAt( 0 ) === ':' ) {
+		if ( title !== '' && title[ 0 ] === ':' ) {
 			// Initial colon means main namespace instead of specified default
 			namespace = NS_MAIN;
 			title = title
@@ -251,16 +284,16 @@
 		// Process namespace prefix (if any)
 		m = title.match( rSplit );
 		if ( m ) {
-			id = getNsIdByName( m[1] );
+			id = getNsIdByName( m[ 1 ] );
 			if ( id !== false ) {
 				// Ordinary namespace
 				namespace = id;
-				title = m[2];
+				title = m[ 2 ];
 
 				// For Talk:X pages, make sure X has no "namespace" prefix
 				if ( namespace === NS_TALK && ( m = title.match( rSplit ) ) ) {
 					// Disallow titles like Talk:File:x (subject should roundtrip: talk:file:x -> file:x -> file_talk:x)
-					if ( getNsIdByName( m[1] ) !== false ) {
+					if ( getNsIdByName( m[ 1 ] ) !== false ) {
 						return false;
 					}
 				}
@@ -325,7 +358,7 @@
 		}
 
 		// Any remaining initial :s are illegal.
-		if ( title.charAt( 0 ) === ':' ) {
+		if ( title[ 0 ] === ':' ) {
 			return false;
 		}
 
@@ -380,9 +413,9 @@
 			rules = sanitationRules;
 
 		for ( i = 0, ruleLength = rules.length; i < ruleLength; ++i ) {
-			rule = rules[i];
+			rule = rules[ i ];
 			for ( m = 0, filterLength = filter.length; m < filterLength; ++m ) {
-				if ( rule[filter[m]] ) {
+				if ( rule[ filter[ m ] ] ) {
 					s = s.replace( rule.pattern, rule.replace );
 				}
 			}
@@ -451,6 +484,10 @@
 	/**
 	 * Constructor for Title objects with a null return instead of an exception for invalid titles.
 	 *
+	 * Note that `namespace` is the **default** namespace only, and can be overridden by a namespace
+	 * prefix in `title`. If you do not want this behavior, use #makeTitle. See #constructor for
+	 * details.
+	 *
 	 * @static
 	 * @param {string} title
 	 * @param {number} [namespace=NS_MAIN] Default namespace
@@ -472,6 +509,24 @@
 	};
 
 	/**
+	 * Constructor for Title objects with predefined namespace.
+	 *
+	 * Unlike #newFromText or #constructor, this function doesn't allow the given `namespace` to be
+	 * overridden by a namespace prefix in `title`. See #constructor for details about this behavior.
+	 *
+	 * The single exception to this is when `namespace` is 0, indicating the main namespace. The
+	 * function behaves like #newFromText in that case.
+	 *
+	 * @static
+	 * @param {number} namespace Namespace to use for the title
+	 * @param {string} title
+	 * @return {mw.Title|null} A valid Title object or null if the title is invalid
+	 */
+	Title.makeTitle = function ( namespace, title ) {
+		return mw.Title.newFromText( getNamespacePrefix( namespace ) + title );
+	};
+
+	/**
 	 * Constructor for Title objects from user input altering that input to
 	 * produce a title that MediaWiki will accept as legal
 	 *
@@ -480,11 +535,6 @@
 	 * @param {number} [defaultNamespace=NS_MAIN]
 	 *  If given, will used as default namespace for the given title.
 	 * @param {Object} [options] additional options
-	 * @param {string} [options.fileExtension='']
-	 *  If the title is about to be created for the Media or File namespace,
-	 *  ensures the resulting Title has the correct extension. Useful, for example
-	 *  on systems that predict the type by content-sniffing, not by file extension.
-	 *  If different from empty string, `forUploading` is assumed.
 	 * @param {boolean} [options.forUploading=true]
 	 *  Makes sure that a file is uploadable under the title returned.
 	 *  There are pages in the file namespace under which file upload is impossible.
@@ -492,7 +542,7 @@
 	 * @return {mw.Title|null} A valid Title object or null if the input cannot be turned into a valid title
 	 */
 	Title.newFromUserInput = function ( title, defaultNamespace, options ) {
-		var namespace, m, id, ext, parts, normalizeExtension;
+		var namespace, m, id, ext, parts;
 
 		// defaultNamespace is optional; check whether options moves up
 		if ( arguments.length < 3 && $.type( defaultNamespace ) === 'object' ) {
@@ -502,15 +552,8 @@
 
 		// merge options into defaults
 		options = $.extend( {
-			fileExtension: '',
 			forUploading: true
 		}, options );
-
-		normalizeExtension = function ( extension ) {
-			// Remove only trailing space (that is removed by MW anyway)
-			extension = extension.toLowerCase().replace( /\s*$/, '' );
-			return extension;
-		};
 
 		namespace = defaultNamespace === undefined ? NS_MAIN : defaultNamespace;
 
@@ -518,7 +561,7 @@
 		title = $.trim( title.replace( rWhitespace, ' ' ) );
 
 		// Process initial colon
-		if ( title !== '' && title.charAt( 0 ) === ':' ) {
+		if ( title !== '' && title[ 0 ] === ':' ) {
 			// Initial colon means main namespace instead of specified default
 			namespace = NS_MAIN;
 			title = title
@@ -531,16 +574,16 @@
 		// Process namespace prefix (if any)
 		m = title.match( rSplit );
 		if ( m ) {
-			id = getNsIdByName( m[1] );
+			id = getNsIdByName( m[ 1 ] );
 			if ( id !== false ) {
 				// Ordinary namespace
 				namespace = id;
-				title = m[2];
+				title = m[ 2 ];
 			}
 		}
 
 		if ( namespace === NS_MEDIA
-			|| ( ( options.forUploading || options.fileExtension ) && ( namespace === NS_FILE ) )
+			|| ( options.forUploading && ( namespace === NS_FILE ) )
 		) {
 
 			title = sanitize( title, [ 'generalRule', 'fileRule' ] );
@@ -555,18 +598,6 @@
 				// Get the last part, which is supposed to be the file extension
 				ext = parts.pop();
 
-				// Does the supplied file name carry the desired file extension?
-				if ( options.fileExtension
-					&& normalizeExtension( ext ) !== normalizeExtension( options.fileExtension )
-				) {
-
-					// No, push back, whatever there was after the dot
-					parts.push( ext );
-
-					// And add the desired file extension later
-					ext = options.fileExtension;
-				}
-
 				// Remove whitespace of the name part (that W/O extension)
 				title = $.trim( parts.join( '.' ) );
 
@@ -578,16 +609,8 @@
 				// Missing file extension
 				title = $.trim( parts.join( '.' ) );
 
-				if ( options.fileExtension ) {
-
-					// Cut, if too long and append the desired file extension
-					title = trimFileNameToByteLength( title, options.fileExtension );
-
-				} else {
-
-					// Name has no file extension and a fallback wasn't provided either
-					return null;
-				}
+				// Name has no file extension and a fallback wasn't provided either
+				return null;
 			}
 		} else {
 
@@ -614,13 +637,11 @@
 	 * @static
 	 * @param {string} uncleanName The unclean file name including file extension but
 	 *   without namespace
-	 * @param {string} [fileExtension] the desired file extension
 	 * @return {mw.Title|null} A valid Title object or null if the title is invalid
 	 */
-	Title.newFromFileName = function ( uncleanName, fileExtension ) {
+	Title.newFromFileName = function ( uncleanName ) {
 
 		return Title.newFromUserInput( 'File:' + uncleanName, {
-			fileExtension: fileExtension,
 			forUploading: true
 		} );
 	};
@@ -641,7 +662,7 @@
 			thumbPhpRegex = /thumb\.php/,
 			regexes = [
 				// Thumbnails
-				/\/[a-f0-9]\/[a-f0-9]{2}\/([^\s\/]+)\/[^\s\/]+-(?:\1|thumbnail)[^\s\/]*$/,
+				/\/[a-f0-9]\/[a-f0-9]{2}\/([^\s\/]+)\/[^\s\/]+-[^\s\/]*$/,
 
 				// Thumbnails in non-hashed upload directories
 				/\/([^\s\/]+)\/[^\s\/]+-(?:\1|thumbnail)[^\s\/]*$/,
@@ -655,7 +676,7 @@
 
 			recount = regexes.length;
 
-		src = img.jquery ? img[0].src : img.src;
+		src = img.jquery ? img[ 0 ].src : img.src;
 
 		matches = src.match( thumbPhpRegex );
 
@@ -666,11 +687,11 @@
 		decodedSrc = decodeURIComponent( src );
 
 		for ( i = 0; i < recount; i++ ) {
-			regex = regexes[i];
+			regex = regexes[ i ];
 			matches = decodedSrc.match( regex );
 
-			if ( matches && matches[1] ) {
-				return mw.Title.newFromText( 'File:' + matches[1] );
+			if ( matches && matches[ 1 ] ) {
+				return mw.Title.newFromText( 'File:' + matches[ 1 ] );
 			}
 		}
 
@@ -690,9 +711,9 @@
 			obj = Title.exist.pages;
 
 		if ( type === 'string' ) {
-			match = obj[title];
+			match = obj[ title ];
 		} else if ( type === 'object' && title instanceof Title ) {
-			match = obj[title.toString()];
+			match = obj[ title.toString() ];
 		} else {
 			throw new Error( 'mw.Title.exists: title must be a string or an instance of Title' );
 		}
@@ -729,16 +750,43 @@
 		pages: {},
 
 		set: function ( titles, state ) {
-			titles = $.isArray( titles ) ? titles : [titles];
+			titles = $.isArray( titles ) ? titles : [ titles ];
 			state = state === undefined ? true : !!state;
 			var i,
 				pages = this.pages,
 				len = titles.length;
 
 			for ( i = 0; i < len; i++ ) {
-				pages[ titles[i] ] = state;
+				pages[ titles[ i ] ] = state;
 			}
 			return true;
+		}
+	};
+
+	/**
+	 * Normalize a file extension to the common form, making it lowercase and checking some synonyms,
+	 * and ensure it's clean. Extensions with non-alphanumeric characters will be discarded.
+	 * Keep in sync with File::normalizeExtension() in PHP.
+	 *
+	 * @param {string} extension File extension (without the leading dot)
+	 * @return {string} File extension in canonical form
+	 */
+	Title.normalizeExtension = function ( extension ) {
+		var
+			lower = extension.toLowerCase(),
+			squish = {
+				htm: 'html',
+				jpeg: 'jpg',
+				mpeg: 'mpg',
+				tiff: 'tif',
+				ogv: 'ogg'
+			};
+		if ( squish.hasOwnProperty( lower ) ) {
+			return squish[ lower ];
+		} else if ( /^[0-9a-z]+$/.test( lower ) ) {
+			return lower;
+		} else {
+			return '';
 		}
 	};
 
@@ -767,9 +815,7 @@
 		 * @return {string}
 		 */
 		getNamespacePrefix: function () {
-			return this.namespace === NS_MAIN ?
-				'' :
-				( mw.config.get( 'wgFormattedNamespaces' )[ this.namespace ].replace( / /g, '_' ) + ':' );
+			return getNamespacePrefix( this.namespace );
 		},
 
 		/**
@@ -782,11 +828,13 @@
 		 * @return {string}
 		 */
 		getName: function () {
-			if ( $.inArray( this.namespace, mw.config.get( 'wgCaseSensitiveNamespaces' ) ) !== -1 ) {
+			if (
+				$.inArray( this.namespace, mw.config.get( 'wgCaseSensitiveNamespaces' ) ) !== -1 ||
+				!this.title.length
+			) {
 				return this.title;
-			} else {
-				return $.ucFirst( this.title );
 			}
+			return this.title[ 0 ].toUpperCase() + this.title.slice( 1 );
 		},
 
 		/**
@@ -910,7 +958,12 @@
 		 * @return {string}
 		 */
 		getUrl: function ( params ) {
-			return mw.util.getUrl( this.toString(), params );
+			var fragment = this.getFragment();
+			if ( fragment ) {
+				return mw.util.getUrl( this.toString() + '#' + fragment, params );
+			} else {
+				return mw.util.getUrl( this.toString(), params );
+			}
 		},
 
 		/**

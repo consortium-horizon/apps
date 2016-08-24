@@ -39,6 +39,13 @@ class XmlTypeCheck {
 	public $filterMatch = false;
 
 	/**
+	 * Will contain the type of filter hit if the optional element filter returned
+	 * a match at some point.
+	 * @var mixed
+	 */
+	public $filterMatchType = false;
+
+	/**
 	 * Name of the document's root element, including any namespace
 	 * as an expanded URL.
 	 */
@@ -49,12 +56,12 @@ class XmlTypeCheck {
 	 * data to the top string of the stack, then pop off the string and process it when the
 	 * element is closed.
 	 */
-	protected $elementData = array();
+	protected $elementData = [];
 
 	/**
 	 * A stack of element names and attributes, as we process them.
 	 */
-	protected $elementDataContext = array();
+	protected $elementDataContext = [];
 
 	/**
 	 * Current depth of the data stack.
@@ -64,9 +71,9 @@ class XmlTypeCheck {
 	/**
 	 * Additional parsing options
 	 */
-	private $parserOptions = array(
+	private $parserOptions = [
 		'processing_instruction_handler' => '',
-	);
+	];
 
 	/**
 	 * @param string $input a filename or string containing the XML element
@@ -80,7 +87,7 @@ class XmlTypeCheck {
 	 * @param array $options list of additional parsing options:
 	 *        processing_instruction_handler: Callback for xml_set_processing_instruction_handler
 	 */
-	function __construct( $input, $filterCallback = null, $isFile = true, $options = array() ) {
+	function __construct( $input, $filterCallback = null, $isFile = true, $options = [] ) {
 		$this->filterCallback = $filterCallback;
 		$this->parserOptions = array_merge( $this->parserOptions, $options );
 		$this->validateFromInput( $input, $isFile );
@@ -125,7 +132,6 @@ class XmlTypeCheck {
 		return $this->rootElement;
 	}
 
-
 	/**
 	 * @param string $fname the filename
 	 */
@@ -158,7 +164,7 @@ class XmlTypeCheck {
 	}
 
 	private function readNext( XMLReader $reader ) {
-		set_error_handler( array( $this, 'XmlErrorHandler' ) );
+		set_error_handler( [ $this, 'XmlErrorHandler' ] );
 		$ret = $reader->read();
 		restore_error_handler();
 		return $ret;
@@ -173,7 +179,7 @@ class XmlTypeCheck {
 		// First, move through anything that isn't an element, and
 		// handle any processing instructions with the callback
 		do {
-			if( !$this->readNext( $reader ) ) {
+			if ( !$this->readNext( $reader ) ) {
 				// Hit the end of the document before any elements
 				$this->wellFormed = false;
 				return;
@@ -251,7 +257,7 @@ class XmlTypeCheck {
 	 * @return array of attributes
 	 */
 	private function getAttributesArray( XMLReader $r ) {
-		$attrs = array();
+		$attrs = [];
 		while ( $r->moveToNextAttribute() ) {
 			if ( $r->namespaceURI === 'http://www.w3.org/2000/xmlns/' ) {
 				// XMLReader treats xmlns attributes as normal
@@ -283,7 +289,7 @@ class XmlTypeCheck {
 	 * @param $attribs
 	 */
 	private function elementOpen( $name, $attribs ) {
-		$this->elementDataContext[] = array( $name, $attribs );
+		$this->elementDataContext[] = [ $name, $attribs ];
 		$this->elementData[] = '';
 		$this->stackDepth++;
 	}
@@ -294,17 +300,20 @@ class XmlTypeCheck {
 		list( $name, $attribs ) = array_pop( $this->elementDataContext );
 		$data = array_pop( $this->elementData );
 		$this->stackDepth--;
+		$callbackReturn = false;
 
-		if ( is_callable( $this->filterCallback )
-			&& call_user_func(
+		if ( is_callable( $this->filterCallback ) ) {
+			$callbackReturn = call_user_func(
 				$this->filterCallback,
 				$name,
 				$attribs,
 				$data
-			)
-		) {
-			// Filter hit
+			);
+		}
+		if ( $callbackReturn ) {
+			// Filter hit!
 			$this->filterMatch = true;
+			$this->filterMatchType = $callbackReturn;
 		}
 	}
 
@@ -321,15 +330,18 @@ class XmlTypeCheck {
 	 * @param $data
 	 */
 	private function processingInstructionHandler( $target, $data ) {
+		$callbackReturn = false;
 		if ( $this->parserOptions['processing_instruction_handler'] ) {
-			if ( call_user_func(
+			$callbackReturn = call_user_func(
 				$this->parserOptions['processing_instruction_handler'],
 				$target,
 				$data
-			) ) {
-				// Filter hit!
-				$this->filterMatch = true;
-			}
+			);
+		}
+		if ( $callbackReturn ) {
+			// Filter hit!
+			$this->filterMatch = true;
+			$this->filterMatchType = $callbackReturn;
 		}
 	}
 }
