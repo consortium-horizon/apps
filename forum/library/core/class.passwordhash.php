@@ -13,6 +13,11 @@
 
 include_once PATH_LIBRARY.'/vendors/phpass/PasswordHash.php';
 
+require_once(PATH_LIBRARY.'/core/class.request.php');
+require_once(PATH_LIBRARY.'/core/class.gdn.php');
+require_once(PATH_LIBRARY.'/core/class.userexception.php');
+
+
 /**
  * Wrapper for the Portable PHP password hashing framework.
  */
@@ -88,7 +93,10 @@ class Gdn_PasswordHash extends PasswordHash {
      */
     function checkPassword($Password, $StoredHash, $Method = false, $Username = null) {
         $Result = false;
-        $ResetUrl = Url('entry/passwordrequest'.(Gdn::request()->get('display') ? '?display='.urlencode(Gdn::request()->get('display')) : ''));
+        if (defined('APPLICATION'))
+            $ResetUrl = urlencode('entry/passwordrequest'.(Gdn::request()->get('display') ? '?display='.urlencode(Gdn::request()->get('display')) : ''));
+        else
+            $ResetUrl = urlencode("http://www.consortium-horizon.com/forum/entry/passwordrequest");
         switch (strtolower($Method)) {
             case 'crypt':
                 $Result = (crypt($Password, $StoredHash) === $StoredHash);
