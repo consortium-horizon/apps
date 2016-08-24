@@ -1,8 +1,0 @@
-{
-  "name": "consortium-horizon-web",
-  "dependencies": {
-    "cms": "WordPress/WordPress#4.2.2",
-    "forum": "vanilla/vanilla#Vanilla_2.1.11",
-    "wiki": "wikimedia/mediawiki#1.25.1"
-  }
-}
