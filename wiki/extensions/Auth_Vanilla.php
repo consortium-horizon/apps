@@ -35,7 +35,7 @@
 
 define("PATH_LIBRARY","/var/www/webapps/current/forum/library");
 require_once(PATH_LIBRARY."/core/class.passwordhash.php");
-require_once("includes/AuthPlugin.php");
+require_once("$IP/includes/AuthPlugin.php");
 
 /**
  * Check the Vanilla session and automatically log the user into the wiki.
