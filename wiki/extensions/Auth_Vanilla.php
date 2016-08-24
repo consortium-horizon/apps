@@ -17,13 +17,13 @@
  * @package MediaWiki
  */
 
-define('APPLICATION', 'Vanilla');
-define('APPLICATION_VERSION', '2.1.11');
-define('DS', '/');
-define('PATH_ROOT', '/var/www/webapps/current/forum/');
-ob_start();
-require_once(PATH_ROOT.DS.'bootstrap.php');
-ob_end_clean(); // clear any header output from vanila
+// define('APPLICATION', 'Vanilla');
+// define('APPLICATION_VERSION', '2.1.11');
+// define('DS', '/');
+// define('PATH_ROOT', '/var/www/webapps/current/forum/');
+// ob_start();
+// require_once(PATH_ROOT.DS.'bootstrap.php');
+// ob_end_clean(); // clear any header output from vanila
 // $Session = Gdn::Session();
 // $Authenticator = Gdn::Authenticator();
 // if ($Session->IsValid()) {
@@ -106,10 +106,10 @@ class AuthPlugin_Vanilla extends AuthPlugin {
 
         function AuthPlugin_Vanilla($host, $username, $password, $dbname, $prefix) {
                 global $wgHooks;
-                $this->vanilla_database = mysql_pconnect($host, $username, $password);
+                $this->vanilla_database = new mysqli($host, $username, $password, $dbname);
                 // if (!$this->vanilla_database)
                 //         die("problème de connection DB");
-                mysql_select_db($dbname, $this->vanilla_database);
+                //mysql_select_db($dbname, $this->vanilla_database);
                 $this->vanilla_prefix = $prefix;
                 // set the usergroups for those who can edit the wiki
                 $this->allowed_usergroups = Array(11);
@@ -145,11 +145,11 @@ class AuthPlugin_Vanilla extends AuthPlugin {
                         $userrolessqlvalues = rtrim($userrolessqlvalues, ',');
                         $userrolessqlvalues .= ")";
                         $vanilla_find_user_query = "SELECT Name FROM " . $this->vanilla_prefix . "User as U, " . $this->vanilla_prefix . "UserRole as UR WHERE U.UserId=UR.UserID AND UR.RoleId IN ".$userrolessqlvalues." AND Name = '" . $username . "'";
-                        $vanilla_find_result = mysql_query($vanilla_find_user_query, $this->vanilla_database);
+                        $vanilla_find_result = $this->vanilla_database->query($vanilla_find_user_query);
                         // make sure that there is only one person with the username
-                        if (mysql_num_rows($vanilla_find_result) == 1) {
-                                $vanilla_userinfo = mysql_fetch_assoc($vanilla_find_result);
-                                mysql_free_result($vanilla_find_result);
+                        if ($vanilla_find_result->num_rows == 1) {
+                                $vanilla_userinfo = $vanilla_find_result->fetch_assoc();
+                                $vanilla_find_result->free();
                                 return true;
                         }
                 }
@@ -180,12 +180,12 @@ class AuthPlugin_Vanilla extends AuthPlugin {
                         $userrolessqlvalues = rtrim($userrolessqlvalues, ',');
                         $userrolessqlvalues .= ")";
                         $vanilla_find_user_query = "SELECT Password,  HashMethod FROM " . $this->vanilla_prefix . "User as U, " . $this->vanilla_prefix . "UserRole as UR WHERE U.UserId=UR.UserID AND UR.RoleId IN ".$userrolessqlvalues." AND Name = '" . $username . "'";
-                        $vanilla_find_result = mysql_query($vanilla_find_user_query, $this->vanilla_database);
+                        $vanilla_find_result = $this->vanilla_database->query($vanilla_find_user_query);
                         // if (!$vanilla_find_result)
                         //         die("THEM LELZ: ".$vanilla_find_user_query);
-                        if (mysql_num_rows($vanilla_find_result) == 1) {
-                                $vanilla_userinfo = mysql_fetch_assoc($vanilla_find_result);
-                                mysql_free_result($vanilla_find_result);
+                        if ($vanilla_find_result->num_rows == 1) {
+                                $vanilla_userinfo = $vanilla_find_result->fetch_assoc();
+                                $vanilla_find_result->free();
                                 $DbHash = $vanilla_userinfo['Password'];
                                 $DbMethod = $vanilla_userinfo['HashMethod'];
                                 $FormPassword = $password;
@@ -209,28 +209,28 @@ class AuthPlugin_Vanilla extends AuthPlugin {
         */
         function updateUser( &$user ) {
                 # Override this and do something
-                return false;
-                $vanilla_find_user_query = "SELECT * FROM " . $this->vanilla_prefix . "User WHERE Name ='" . addslashes($user->mName) . "'";
-                $vanilla_find_result = mysql_query($vanilla_find_user_query, $this->vanilla_database) or die("Could not find username");
-                if(mysql_num_rows($vanilla_find_result) == 1) {
-                        $vanilla_userinfo = mysql_fetch_assoc($vanilla_find_result);
-                        mysql_free_result($vanilla_find_result);
+                // return false;
+                // $vanilla_find_user_query = "SELECT * FROM " . $this->vanilla_prefix . "User WHERE Name ='" . addslashes($user->mName) . "'";
+                // $vanilla_find_result = mysql_query($vanilla_find_user_query, $this->vanilla_database) or die("Could not find username");
+                // if(mysql_num_rows($vanilla_find_result) == 1) {
+                //         $vanilla_userinfo = mysql_fetch_assoc($vanilla_find_result);
+                //         mysql_free_result($vanilla_find_result);
 
-                        if (in_array($vanilla_userinfo['RoleID'], $this->admin_usergroups) || $admin_secondary === true) {
-                                // if a user is not a sysop, make them a sysop
-                                if (!in_array("sysop", $user->getEffectiveGroups())) {
-                                        $user->addGroup('sysop');
-                                        return true;
-                                }
-                        }
-                        // if the user is not an administrator, but they were, and they are still a sysop, remove their sysop status
-                        if (!in_array($vanilla_userinfo['RoleID'], $this->admin_usergroups) && $admin_secondary === false) {
-                                if (in_array("sysop", $user->getEffectiveGroups())) {
-                                        $user->removeGroup('sysop');
-                                        return true;
-                                }
-                        }
-                }
+                //         if (in_array($vanilla_userinfo['RoleID'], $this->admin_usergroups) || $admin_secondary === true) {
+                //                 // if a user is not a sysop, make them a sysop
+                //                 if (!in_array("sysop", $user->getEffectiveGroups())) {
+                //                         $user->addGroup('sysop');
+                //                         return true;
+                //                 }
+                //         }
+                //         // if the user is not an administrator, but they were, and they are still a sysop, remove their sysop status
+                //         if (!in_array($vanilla_userinfo['RoleID'], $this->admin_usergroups) && $admin_secondary === false) {
+                //                 if (in_array("sysop", $user->getEffectiveGroups())) {
+                //                         $user->removeGroup('sysop');
+                //                         return true;
+                //                 }
+                //         }
+                // }
                 return false;
         }
 
@@ -276,12 +276,12 @@ class AuthPlugin_Vanilla extends AuthPlugin {
         * @param User $user
         * @access public
         */
-        function initUser( &$user ) {
+        function initUser( &$user, $autocreate = false) {
                 $vanilla_find_user_query = "SELECT Email, RoleID FROM " . $this->vanilla_prefix . "User WHERE Name LIKE '" . addslashes($user->mName) . "'";
-                $vanilla_find_result = mysql_query($vanilla_find_user_query, $this->vanilla_database);
-                if(mysql_num_rows($vanilla_find_result) == 1) {
-                        $vanilla_userinfo = mysql_fetch_assoc($vanilla_find_result);
-                        mysql_free_result($vanilla_find_result);
+                $vanilla_find_result = $this->vanilla_database->query($vanilla_find_user_query);
+                if ($vanilla_find_result->num_rows == 1) {
+                        $vanilla_userinfo = $vanilla_find_result->fetch_assoc();
+                        $vanilla_find_result->free();
                         $user->mEmail = $vanilla_userinfo['Email'];
                         $user->mEmailAuthenticated = wfTimestampNow();
                 }
