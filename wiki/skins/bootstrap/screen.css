@@ -129,9 +129,9 @@ a:not([name]) {
   }
 }
 
-.layout .firstHeading {
+/*.layout .firstHeading {
   display: none;
-}
+}*/
 
 .nolayout .firstHeading {
   margin-top: 10px;
@@ -597,4 +597,13 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
     width:90% !important;
     height:auto;
     display:block;
+}
+
+#sandbox-notice {
+  background-color: #FFE5B6;
+  color: black;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  margin-bottom: 10px;
 }
