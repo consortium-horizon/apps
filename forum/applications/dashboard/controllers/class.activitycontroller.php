@@ -2,7 +2,7 @@
 /**
  * Manages the activity stream.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -50,7 +50,6 @@ class ActivityController extends Gdn_Controller {
     public function initialize() {
         $this->Head = new HeadModule($this);
         $this->addJsFile('jquery.js');
-        $this->addJsFile('jquery.livequery.js');
         $this->addJsFile('jquery.form.js');
         $this->addJsFile('jquery.popup.js');
         $this->addJsFile('jquery.gardenhandleajaxform.js');
@@ -87,6 +86,34 @@ class ActivityController extends Gdn_Controller {
         }
 
         $this->ActivityData = $this->ActivityModel->getWhere(array('ActivityID' => $ActivityID));
+
+        // Check visibility.
+        $userid = val('NotifyUserID', $this->ActivityData->firstRow());
+        switch ($userid) {
+            case ActivityModel::NOTIFY_PUBLIC:
+                // Carry on!
+                break;
+
+            case ActivityModel::NOTIFY_MODS:
+                if (!checkPermission('Garden.Moderation.Manage')) {
+                    throw permissionException();
+                }
+                break;
+
+            case ActivityModel::NOTIFY_ADMIN:
+                if (!checkPermission('Garden.Settings.Manage')) {
+                    throw permissionException();
+                }
+                break;
+
+            default:
+                // Actual userid.
+                if (!checkPermission('Garden.Community.Manage') && Gdn::Session()->UserID !== $userid) {
+                    throw permissionException();
+                }
+                break;
+        }
+
         $this->setData('Comments', $this->ActivityModel->getComments(array($ActivityID)));
         $this->setData('Activities', $this->ActivityData);
 
@@ -125,7 +152,7 @@ class ActivityController extends Gdn_Controller {
         }
 
         // Which page to load
-        list($Offset, $Limit) = offsetLimit($Page, c('Garden.Activities.PerPage', 30));
+        list($Offset, $Limit) = offsetLimit($Page, c('Garden.Activities.PerPage',30));
         $Offset = is_numeric($Offset) ? $Offset : 0;
         if ($Offset < 0) {
             $Offset = 0;
@@ -141,7 +168,7 @@ class ActivityController extends Gdn_Controller {
         // Comment submission
         $Session = Gdn::session();
         $Comment = $this->Form->getFormValue('Comment');
-        $Activities = $this->ActivityModel->getWhere(array('NotifyUserID' => $NotifyUserID), $Offset, $Limit)->resultArray();
+        $Activities = $this->ActivityModel->getWhere(array('NotifyUserID' => $NotifyUserID), '', '', $Limit, $Offset)->resultArray();
         $this->ActivityModel->joinComments($Activities);
 
         $this->setData('Filter', strtolower($Filter));
@@ -207,15 +234,20 @@ class ActivityController extends Gdn_Controller {
             throw permissionException();
         }
 
-        $this->ActivityModel->delete($ActivityID);
+        $this->ActivityModel->deleteID($ActivityID);
+
 
         if ($this->_DeliveryType === DELIVERY_TYPE_ALL) {
-            redirect(GetIncomingValue('Target', $this->SelfUrl));
+            $target = Gdn::request()->get('Target');
+            if ($target) {
+                // Bail with a redirect if we got one.
+                redirect($target);
+            } else {
+                // We got this as a full page somehow, so send them back to /activity.
+                $this->RedirectUrl = url('activity');
+            }
         }
 
-        // Still here? Getting a 404.
-        $this->ControllerName = 'Home';
-        $this->View = 'FileNotFound';
         $this->render();
     }
 
@@ -237,6 +269,17 @@ class ActivityController extends Gdn_Controller {
             $Body = $this->Form->getValue('Body', '');
             $ActivityID = $this->Form->getValue('ActivityID', '');
             if (is_numeric($ActivityID) && $ActivityID > 0) {
+                $activity = $this->ActivityModel->getID($ActivityID);
+                if ($activity) {
+                    if ($activity['NotifyUserID'] == ActivityModel::NOTIFY_ADMINS) {
+                        $this->permission('Garden.Settings.Manage');
+                    } elseif ($activity['NotifyUserID'] == ActivityModel::NOTIFY_MODS) {
+                        $this->permission('Garden.Moderation.Manage');
+                    }
+                } else {
+                    throw new Exception(t('Invalid activity'));
+                }
+
                 $ActivityComment = array(
                     'ActivityID' => $ActivityID,
                     'Body' => $Body,

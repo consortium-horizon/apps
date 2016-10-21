@@ -2,7 +2,7 @@
 /**
  * Managing core Dashboard settings.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -12,6 +12,8 @@
  * Handles /settings endpoint.
  */
 class SettingsController extends DashboardController {
+
+    const DEFAULT_AVATAR_FOLDER = 'defaultavatar';
 
     /** @var array Models to automatically instantiate. */
     public $Uses = array('Form', 'Database');
@@ -26,7 +28,7 @@ class SettingsController extends DashboardController {
     public $RequiredAdminPermissions = array();
 
     /**
-     * Hightlight menu path. Automatically run on every use.
+     * Highlight menu path. Automatically run on every use.
      *
      * @since 2.0.0
      * @access public
@@ -123,6 +125,178 @@ class SettingsController extends DashboardController {
                 return "$Name $Value";
             }
         }
+    }
+
+    /**
+     * Settings page for managing avatar settings.
+     *
+     * Displays the current avatar and exposes the following config settings:
+     * Garden.Thumbnail.Size
+     * Garden.Profile.MaxWidth
+     * Garden.Profile.MaxHeight
+     */
+    public function avatars() {
+        $this->permission('Garden.Community.Manage');
+        $this->addSideMenu('dashboard/settings/avatars');
+        $this->addJsFile('avatars.js');
+        $this->title(t('Avatars'));
+
+        $validation = new Gdn_Validation();
+        $validation->applyRule('Garden.Thumbnail.Size', 'Integer', t('Thumbnail size must be an integer.'));
+        $validation->applyRule('Garden.Profile.MaxWidth', 'Integer', t('Max avatar width must be an integer.'));
+        $validation->applyRule('Garden.Profile.MaxHeight', 'Integer', t('Max avatar height must be an integer.'));
+
+        $configurationModel = new Gdn_ConfigurationModel($validation);
+        $configurationModel->setField(array(
+            'Garden.Thumbnail.Size',
+            'Garden.Profile.MaxWidth',
+            'Garden.Profile.MaxHeight'
+        ));
+        $this->Form->setModel($configurationModel);
+        $this->setData('avatar', UserModel::getDefaultAvatarUrl());
+
+        if (!$this->Form->authenticatedPostBack()) {
+            $this->Form->setData($configurationModel->Data);
+            $this->setData('lessHidden', 'Hidden'); // show advanced settings only if we're in a post-back
+        } else {
+            $this->setData('moreHidden', 'Hidden');
+            if ($this->Form->save() !== false) {
+                $this->informMessage(t("Your settings have been saved."));
+            }
+        }
+        $this->render();
+    }
+
+    /**
+     * Test whether a path is a relative path to the proper uploads directory.
+     *
+     * @param string $avatar The path to the avatar image to test (most often Garden.DefaultAvatar)
+     * @return bool Whether the avatar has been uploaded from the dashboard.
+     */
+    public function isUploadedDefaultAvatar($avatar) {
+        return (strpos($avatar, self::DEFAULT_AVATAR_FOLDER.'/') !== false);
+    }
+
+    /**
+     * Settings page for uploading, deleting and cropping the default avatar.
+     *
+     * @throws Exception
+     */
+    public function defaultAvatar() {
+        $this->permission('Garden.Community.Manage');
+        $this->addSideMenu('dashboard/settings/avatars');
+        $this->title(t('Default Avatar'));
+        $this->addJsFile('avatars.js');
+
+        $validation = new Gdn_Validation();
+        $configurationModel = new Gdn_ConfigurationModel($validation);
+        $this->Form->setModel($configurationModel);
+
+        if (($avatar = c('Garden.DefaultAvatar')) && $this->isUploadedDefaultAvatar($avatar)) {
+            //Get the image source so we can manipulate it in the crop module.
+            $upload = new Gdn_UploadImage();
+            $thumbnailSize = c('Garden.Thumbnail.Size', 40);
+            $basename = changeBasename($avatar, "p%s");
+            $source = $upload->copyLocal($basename);
+
+            //Set up cropping.
+            $crop = new CropImageModule($this, $this->Form, $thumbnailSize, $thumbnailSize, $source);
+            $crop->setExistingCropUrl(Gdn_UploadImage::url(changeBasename($avatar, "n%s")));
+            $crop->setSourceImageUrl(Gdn_UploadImage::url(changeBasename($avatar, "p%s")));
+            $this->setData('crop', $crop);
+        } else {
+            $this->setData('avatar', UserModel::getDefaultAvatarUrl());
+        }
+
+        if (!$this->Form->authenticatedPostBack()) {
+            $this->Form->setData($configurationModel->Data);
+        } else if ($this->Form->save() !== false) {
+            $upload = new Gdn_UploadImage();
+            $newAvatar = false;
+            if ($tmpAvatar = $upload->validateUpload('DefaultAvatar', false)) {
+                // New upload
+                $thumbOptions = array('Crop' => true, 'SaveGif' => c('Garden.Thumbnail.SaveGif'));
+                $newAvatar = $this->saveDefaultAvatars($tmpAvatar, $thumbOptions);
+            } else if ($avatar && $crop && $crop->isCropped()) {
+                // New thumbnail
+                $tmpAvatar = $source;
+                $thumbOptions = array('Crop' => true,
+                    'SourceX' => $crop->getCropXValue(),
+                    'SourceY' => $crop->getCropYValue(),
+                    'SourceWidth' => $crop->getCropWidth(),
+                    'SourceHeight' => $crop->getCropHeight());
+                $newAvatar = $this->saveDefaultAvatars($tmpAvatar, $thumbOptions);
+            }
+            if ($this->Form->errorCount() == 0) {
+                if ($newAvatar) {
+                    $this->deleteDefaultAvatars($avatar);
+                    $avatar = c('Garden.DefaultAvatar');
+                    $thumbnailSize = c('Garden.Thumbnail.Size', 40);
+
+                    // Update crop properties.
+                    $basename = changeBasename($avatar, "p%s");
+                    $source = $upload->copyLocal($basename);
+                    $crop = new CropImageModule($this, $this->Form, $thumbnailSize, $thumbnailSize, $source);
+                    $crop->setSize($thumbnailSize, $thumbnailSize);
+                    $crop->setExistingCropUrl(Gdn_UploadImage::url(changeBasename($avatar, "n%s")));
+                    $crop->setSourceImageUrl(Gdn_UploadImage::url(changeBasename($avatar, "p%s")));
+                    $this->setData('crop', $crop);
+                }
+            }
+            $this->informMessage(t("Your settings have been saved."));
+        }
+        $this->render();
+    }
+
+    /**
+     * Saves the default avatar to /uploads in three formats:
+     *   The default image, which is not resized or cropped.
+     *   p* : The profile-sized image, which is constrained by Garden.Profile.MaxWidth and Garden.Profile.MaxHeight.
+     *   n* : The thumbnail-sized image, which is constrained and cropped according to Garden.Thumbnail.Size.
+     *
+     * @param string $source The path to the local copy of the image.
+     * @param array $thumbOptions The options to save the thumbnail-sized avatar with.
+     * @return bool Whether the saves were successful.
+     */
+    private function saveDefaultAvatars($source, $thumbOptions) {
+        try {
+            $upload = new Gdn_UploadImage();
+            // Generate the target image name
+            $targetImage = $upload->generateTargetName(PATH_UPLOADS);
+            $imageBaseName = pathinfo($targetImage, PATHINFO_BASENAME);
+
+            // Save the full size image.
+            $parts = Gdn_UploadImage::saveImageAs(
+                $source,
+                self::DEFAULT_AVATAR_FOLDER.'/'.$imageBaseName
+            );
+
+            // Save the profile size image.
+            Gdn_UploadImage::saveImageAs(
+                $source,
+                self::DEFAULT_AVATAR_FOLDER."/p$imageBaseName",
+                c('Garden.Profile.MaxHeight', 1000),
+                c('Garden.Profile.MaxWidth', 250),
+                array('SaveGif' => c('Garden.Thumbnail.SaveGif'))
+            );
+
+            $thumbnailSize = c('Garden.Thumbnail.Size', 40);
+            // Save the thumbnail size image.
+            Gdn_UploadImage::saveImageAs(
+                $source,
+                self::DEFAULT_AVATAR_FOLDER."/n$imageBaseName",
+                $thumbnailSize,
+                $thumbnailSize,
+                $thumbOptions
+            );
+        } catch (Exception $ex) {
+            $this->Form->addError($ex);
+            return false;
+        }
+
+        $imageBaseName = $parts['SaveName'];
+        saveToConfig('Garden.DefaultAvatar', $imageBaseName);
+        return true;
     }
 
     /**
@@ -307,6 +481,9 @@ class SettingsController extends DashboardController {
                         $this->Form->setFormValue('BanID', $ID);
                     }
 
+                    // Trim the ban value to avoid obvious mismatches.
+                    $this->Form->setFormValue('BanValue', trim($this->Form->getFormValue('BanValue')));
+
                     try {
                         // Save the ban.
                         $NewID = $this->Form->save();
@@ -322,8 +499,10 @@ class SettingsController extends DashboardController {
                 $this->View = 'Ban';
                 break;
             case 'delete':
-                $BanModel->delete(array('BanID' => $ID));
-                $this->View = 'BanDelete';
+                if ($this->Form->authenticatedPostBack()) {
+                    $BanModel->delete(array('BanID' => $ID));
+                    $this->View = 'BanDelete';
+                }
                 break;
             default:
                 $Bans = $BanModel->getWhere(array(), 'BanType, BanValue', 'asc', $Limit, $Offset)->resultArray();
@@ -430,7 +609,8 @@ class SettingsController extends DashboardController {
             'Garden.Email.SmtpUser',
             'Garden.Email.SmtpPassword',
             'Garden.Email.SmtpPort',
-            'Garden.Email.SmtpSecurity'
+            'Garden.Email.SmtpSecurity',
+            'Garden.Email.OmitToName'
         ));
 
         // Set the model on the form.
@@ -451,6 +631,269 @@ class SettingsController extends DashboardController {
             }
         }
 
+        $this->render();
+    }
+
+    /**
+     * Settings page for HTML email styling.
+     *
+     * Exposes config settings:
+     * Garden.EmailTemplate.BackgroundColor
+     * Garden.EmailTemplate.ButtonBackgroundColor
+     * Garden.EmailTemplate.ButtonTextColor
+     *
+     * @throws Gdn_UserException
+     */
+    public function emailStyles() {
+        // Set default colors
+        if (!c('Garden.EmailTemplate.TextColor')) {
+            saveToConfig('Garden.EmailTemplate.TextColor', EmailTemplate::DEFAULT_TEXT_COLOR, false);
+        }
+        if (!c('Garden.EmailTemplate.BackgroundColor')) {
+            saveToConfig('Garden.EmailTemplate.BackgroundColor', EmailTemplate::DEFAULT_BACKGROUND_COLOR, false);
+        }
+        if (!c('Garden.EmailTemplate.ContainerBackgroundColor')) {
+            saveToConfig('Garden.EmailTemplate.ContainerBackgroundColor', EmailTemplate::DEFAULT_CONTAINER_BACKGROUND_COLOR, false);
+        }
+        if (!c('Garden.EmailTemplate.ButtonTextColor')) {
+            saveToConfig('Garden.EmailTemplate.ButtonTextColor', EmailTemplate::DEFAULT_BUTTON_TEXT_COLOR, false);
+        }
+        if (!c('Garden.EmailTemplate.ButtonBackgroundColor')) {
+            saveToConfig('Garden.EmailTemplate.ButtonBackgroundColor', EmailTemplate::DEFAULT_BUTTON_BACKGROUND_COLOR, false);
+        }
+
+        $this->permission('Garden.Settings.Manage');
+        $this->addSideMenu('dashboard/settings/emailstyles');
+        $this->addJsFile('email.js');
+        // Get the current logo.
+        $image = c('Garden.EmailTemplate.Image');
+        if ($image) {
+            $image = ltrim($image, '/');
+            $this->setData('EmailImage', Gdn_UploadImage::url($image));
+        }
+        $this->Form = new Gdn_Form();
+        $validation = new Gdn_Validation();
+        $configurationModel = new Gdn_ConfigurationModel($validation);
+        $configurationModel->setField(array(
+            'Garden.EmailTemplate.TextColor',
+            'Garden.EmailTemplate.BackgroundColor',
+            'Garden.EmailTemplate.ContainerBackgroundColor',
+            'Garden.EmailTemplate.ButtonTextColor',
+            'Garden.EmailTemplate.ButtonBackgroundColor'
+        ));
+        // Set the model on the form.
+        $this->Form->setModel($configurationModel);
+        // If seeing the form for the first time...
+        if ($this->Form->authenticatedPostBack() === false) {
+            // Apply the config settings to the form.
+            $this->Form->setData($configurationModel->Data);
+        } else {
+            if ($this->Form->save() !== false) {
+                $this->informMessage(t("Your settings have been saved."));
+            }
+        }
+        $this->render();
+    }
+
+    /**
+     * Sets up a new Gdn_Email object with a test email.
+     *
+     * @param string $textColor The hex color code of the text.
+     * @param string $backGroundColor The hex color code of the background color.
+     * @param string $containerBackgroundColor The hex color code of the container background color.
+     * @param string $buttonTextColor The hex color code of the link color.
+     * @param string $buttonBackgroundColor The hex color code of the button background.
+     * @return Gdn_Email The email object with the test colors set.
+     */
+    public function getTestEmail($textColor = '', $backGroundColor = '', $containerBackgroundColor = '', $buttonTextColor = '', $buttonBackgroundColor = '') {
+        $emailer = new Gdn_Email();
+        $email = $emailer->getEmailTemplate();
+        if ($textColor) {
+            $email->setTextColor($textColor);
+        }
+        if ($backGroundColor) {
+            $email->setBackgroundColor($backGroundColor);
+        }
+        if ($backGroundColor) {
+            $email->setContainerBackgroundColor($containerBackgroundColor);
+        }
+        if ($buttonTextColor) {
+            $email->setDefaultButtonTextColor($buttonTextColor);
+        }
+        if ($buttonBackgroundColor) {
+            $email->setDefaultButtonBackgroundColor($buttonBackgroundColor);
+        }
+        $message = t('Test Email Message');
+
+        $email->setMessage($message)
+            ->setTitle(t('Test Email'))
+            ->setButton(externalUrl('/'), t('Check it out'));
+        $emailer->setEmailTemplate($email);
+        return $emailer;
+    }
+
+    /**
+     * Echoes out a test email with the colors in the post request.
+     *
+     * @throws Exception
+     * @throws Gdn_UserException
+     */
+    public function emailPreview() {
+        $request = Gdn::request();
+//        if (!$request->isAuthenticatedPostBack(true)) {
+//            throw new Exception('Requires POST', 405);
+//        }
+
+        $textColor = $request->post('textColor', '');
+        $backGroundColor = $request->post('backgroundColor', '');
+        $containerBackGroundColor = $request->post('containerBackgroundColor', '');
+        $buttonTextColor = $request->post('buttonTextColor', '');
+        $buttonBackgroundColor = $request->post('buttonBackgroundColor', '');
+
+        echo $this->getTestEmail($textColor, $backGroundColor, $containerBackGroundColor, $buttonTextColor, $buttonBackgroundColor)->getEmailTemplate()->toString();
+    }
+
+    /**
+     * Form for sending a test email.
+     * On postback, sends a test email to the addresses specified in the form.
+     *
+     * @throws Exception
+     * @throws Gdn_UserException
+     */
+    public function emailTest() {
+        if (!Gdn::session()->checkPermission('Garden.Community.Manage')) {
+            throw permissionException();
+        }
+        $this->addSideMenu('dashboard/settings/email');
+        $this->Form = new Gdn_Form();
+        $validation = new Gdn_Validation();
+        $configurationModel = new Gdn_ConfigurationModel($validation);
+        $this->Form->setModel($configurationModel);
+        if ($this->Form->authenticatedPostBack() !== false) {
+            $addressList = $this->Form->getFormValue('EmailTestAddresses');
+            $addresses = explode(',', $addressList);
+            if (sizeof($addresses) > 10) {
+                $this->Form->addError(sprintf(t('Too many addresses! We\'ll send up to %s addresses at once.'), '10'));
+            } else {
+                $emailer = $this->getTestEmail();
+                $emailer->to($addresses);
+                $emailer->subject(sprintf(t('Test email from %s'), c('Garden.Title')));
+                if ($emailer->send()) {
+                    $this->informMessage(t("The email has been sent."));
+                } else {
+                    $this->Form->addError(t('Error sending email. Please review the addresses and try again.'));
+                }
+            }
+        }
+        $this->render();
+    }
+
+    /**
+     * Manages the Garden.Email.Format setting.
+     *
+     * @param $value Whether to send emails in plaintext.
+     * @throws Exception
+     * @throws Gdn_UserException
+     */
+    public function setEmailFormat($value) {
+        if (!Gdn::request()->isAuthenticatedPostBack(true)) {
+            throw new Exception('Requires POST', 405);
+        }
+        $value = strtolower($value);
+        if (in_array($value, Gdn_Email::$supportedFormats)) {
+            if (Gdn::session()->checkPermission('Garden.Community.Manage')) {
+                saveToConfig('Garden.Email.Format', $value);
+                if ($value === 'html') {
+                    $newToggle = wrap(anchor(t('Enabled'), '/dashboard/settings/setemailformat/text', 'Hijack SmallButton', array('onclick' => 'emailStyles.hideSettings();')), 'span', array('class' => "ActivateSlider ActivateSlider-Active"));
+                } else {
+                    $newToggle = wrap(anchor(t('Disabled'), '/dashboard/settings/setemailformat/html', 'Hijack SmallButton', array('onclick' => 'emailStyles.showSettings();')), 'span', array('class' => "ActivateSlider ActivateSlider-Inactive"));
+                }
+                $this->jsonTarget("#plaintext-toggle", $newToggle);
+            }
+        }
+        $this->render('Blank', 'Utility');
+    }
+
+    /**
+     * Remove the email image from config & delete it.
+     */
+    public function removeEmailImage() {
+        if (Gdn::request()->isAuthenticatedPostBack(true) && Gdn::session()->checkPermission('Garden.Community.Manage')) {
+            $image = c('Garden.EmailTemplate.Image', '');
+            RemoveFromConfig('Garden.EmailTemplate.Image');
+            $upload = new Gdn_Upload();
+            $upload->delete($image);
+        }
+    }
+
+    /**
+     * Endpoint for retrieving email image url.
+     */
+    public function emailImageUrl() {
+        $this->deliveryMethod(DELIVERY_METHOD_JSON);
+        $this->deliveryType(DELIVERY_TYPE_DATA);
+        $image = c('Garden.EmailTemplate.Image');
+        if ($image) {
+            $image = Gdn_UploadImage::url($image);
+        }
+        $this->setData('EmailImage', $image);
+        $this->render();
+    }
+
+    /**
+     * Form for adding an email image.
+     * Exposes the Garden.EmailTemplate.Image setting.
+     * Garden.EmailTemplate.Image must be an upload.
+     *
+     * Saves the image based on 2 config settings:
+     * Garden.EmailTemplate.ImageMaxWidth (default 400px) and
+     * Garden.EmailTemplate.ImageMaxHeight (default 300px)
+     *
+     * @throws Gdn_UserException
+     */
+    public function emailImage() {
+        if (!Gdn::session()->checkPermission('Garden.Community.Manage')) {
+            throw permissionException();
+        }
+        $this->addJsFile('email.js');
+        $this->addSideMenu('dashboard/settings/email');
+        $image = c('Garden.EmailTemplate.Image');
+        $this->Form = new Gdn_Form();
+        $validation = new Gdn_Validation();
+        $configurationModel = new Gdn_ConfigurationModel($validation);
+        // Set the model on the form.
+        $this->Form->setModel($configurationModel);
+        if ($this->Form->authenticatedPostBack() !== false) {
+            try {
+                $upload = new Gdn_UploadImage();
+                // Validate the upload
+                $tmpImage = $upload->validateUpload('EmailImage', false);
+                if ($tmpImage) {
+                    // Generate the target image name
+                    $targetImage = $upload->generateTargetName(PATH_UPLOADS);
+                    $imageBaseName = pathinfo($targetImage, PATHINFO_BASENAME);
+                    // Delete any previously uploaded images.
+                    if ($image) {
+                        $upload->delete($image);
+                    }
+                    // Save the uploaded image
+                    $parts = $upload->saveImageAs(
+                        $tmpImage,
+                        $imageBaseName,
+                        c('Garden.EmailTemplate.ImageMaxWidth', 400),
+                        c('Garden.EmailTemplate.ImageMaxHeight', 300)
+                    );
+
+                    $imageBaseName = $parts['SaveName'];
+                    saveToConfig('Garden.EmailTemplate.Image', $imageBaseName);
+                    $this->setData('EmailImage', Gdn_UploadImage::url($imageBaseName));
+                } else {
+                    $this->Form->addError(t('There\'s been an error uploading the image. Your email logo can uploaded in one of the following filetypes: gif, jpg, png'));
+                }
+            } catch (Exception $ex) {
+                $this->Form->addError($ex);
+            }
+        }
         $this->render();
     }
 
@@ -518,8 +961,8 @@ class SettingsController extends DashboardController {
             // Grab all of the plugins & versions
             $Plugins = Gdn::pluginManager()->availablePlugins();
             foreach ($Plugins as $Plugin => $Info) {
-                $Name = arrayValue('Name', $Info, $Plugin);
-                $Version = arrayValue('Version', $Info, '');
+                $Name = val('Name', $Info, $Plugin);
+                $Version = val('Version', $Info, '');
                 if ($Version != '') {
                     $UpdateData[] = array(
                         'Name' => $Name,
@@ -533,8 +976,8 @@ class SettingsController extends DashboardController {
             $ApplicationManager = Gdn::factory('ApplicationManager');
             $Applications = $ApplicationManager->availableApplications();
             foreach ($Applications as $Application => $Info) {
-                $Name = arrayValue('Name', $Info, $Application);
-                $Version = arrayValue('Version', $Info, '');
+                $Name = val('Name', $Info, $Application);
+                $Version = val('Version', $Info, '');
                 if ($Version != '') {
                     $UpdateData[] = array(
                         'Name' => $Name,
@@ -548,8 +991,8 @@ class SettingsController extends DashboardController {
             $ThemeManager = new Gdn_ThemeManager;
             $Themes = $ThemeManager->availableThemes();
             foreach ($Themes as $Theme => $Info) {
-                $Name = arrayValue('Name', $Info, $Theme);
-                $Version = arrayValue('Version', $Info, '');
+                $Name = val('Name', $Info, $Theme);
+                $Version = val('Version', $Info, '');
                 if ($Version != '') {
                     $UpdateData[] = array(
                         'Name' => $Name,
@@ -738,13 +1181,20 @@ class SettingsController extends DashboardController {
         // Create a model to save configuration settings
         $Validation = new Gdn_Validation();
         $ConfigurationModel = new Gdn_ConfigurationModel($Validation);
-        $ConfigurationModel->setField(array(
+
+        $registrationOptions = array(
             'Garden.Registration.Method' => 'Captcha',
-            'Garden.Registration.CaptchaPrivateKey',
-            'Garden.Registration.CaptchaPublicKey',
             'Garden.Registration.InviteExpiration',
             'Garden.Registration.ConfirmEmail'
-        ));
+        );
+
+        if ($manageCaptcha = c('Garden.Registration.ManageCaptcha', true)) {
+            $registrationOptions[] = 'Garden.Registration.CaptchaPrivateKey';
+            $registrationOptions[] = 'Garden.Registration.CaptchaPublicKey';
+        }
+        $this->setData('_ManageCaptcha', $manageCaptcha);
+
+        $ConfigurationModel->setField($registrationOptions);
 
         // Set the model on the forms.
         $this->Form->setModel($ConfigurationModel);
@@ -904,10 +1354,9 @@ class SettingsController extends DashboardController {
      *
      * @since 2.0.0
      * @access public
-     * @param string $Style Unique ID.
      * @todo Why is this in a giant try/catch block?
      */
-    public function themeOptions($Style = null) {
+    public function themeOptions() {
         $this->permission('Garden.Settings.Manage');
 
         try {
@@ -934,12 +1383,9 @@ class SettingsController extends DashboardController {
                 }
 
                 saveToConfig($ConfigSaveData);
+                $this->fireEvent['AfterSaveThemeOptions'];
 
                 $this->informMessage(t("Your changes have been saved."));
-            } elseif ($Style) {
-                saveToConfig(array(
-                    'Garden.ThemeOptions.Styles.Key' => $Style,
-                    'Garden.ThemeOptions.Styles.Value' => $this->data("ThemeInfo.Options.Styles.$Style.Basename")));
             }
 
             $this->setData('ThemeOptions', c('Garden.ThemeOptions'));
@@ -953,7 +1399,7 @@ class SettingsController extends DashboardController {
                         $Value = $Default;
                     }
 
-                    $this->Form->setFormValue($this->Form->escapeString('Text_'.$Key), $Value);
+                    $this->Form->setValue($this->Form->escapeString('Text_'.$Key), $Value);
                 }
             }
 
@@ -972,10 +1418,9 @@ class SettingsController extends DashboardController {
      *
      * @since 2.0.0
      * @access public
-     * @param string $Style Unique ID.
      * @todo Why is this in a giant try/catch block?
      */
-    public function mobileThemeOptions($Style = null) {
+    public function mobileThemeOptions() {
         $this->permission('Garden.Settings.Manage');
 
         try {
@@ -1005,12 +1450,9 @@ class SettingsController extends DashboardController {
                 }
 
                 saveToConfig($ConfigSaveData);
+                $this->fireEvent['AfterSaveThemeOptions'];
 
                 $this->informMessage(t("Your changes have been saved."));
-            } elseif ($Style) {
-                saveToConfig(array(
-                    'Garden.MobileThemeOptions.Styles.Key' => $Style,
-                    'Garden.MobileThemeOptions.Styles.Value' => $this->data("ThemeInfo.Options.Styles.$Style.Basename")));
             }
 
             $this->setData('ThemeOptions', c('Garden.MobileThemeOptions'));
@@ -1316,6 +1758,38 @@ class SettingsController extends DashboardController {
         redirect('/settings/banner');
     }
 
+
+    /**
+     * Remove the default avatar from config & delete it.
+     *
+     * @since 2.0.0
+     * @access public
+     * @param string $transientKey Security token.
+     */
+    public function removeDefaultAvatar($transientKey = '') {
+        $session = Gdn::session();
+        if ($session->validateTransientKey($transientKey) && $session->checkPermission('Garden.Community.Manage')) {
+            $avatar = c('Garden.DefaultAvatar', '');
+            $this->deleteDefaultAvatars($avatar);
+            removeFromConfig('Garden.DefaultAvatar');
+        }
+        redirect('dashboard/settings/defaultavatar');
+    }
+
+    /**
+     * Deletes uploaded default avatars.
+     *
+     * @param string $avatar The avatar to delete.
+     */
+    private function deleteDefaultAvatars($avatar = '') {
+        if ($avatar && $this->isUploadedDefaultAvatar($avatar)) {
+            $upload = new Gdn_Upload();
+            $upload->delete(self::DEFAULT_AVATAR_FOLDER.'/'.basename($avatar));
+            $upload->delete(self::DEFAULT_AVATAR_FOLDER.'/'.basename(changeBasename($avatar, 'p%s')));
+            $upload->delete(self::DEFAULT_AVATAR_FOLDER.'/'.basename(changeBasename($avatar, 'n%s')));
+        }
+    }
+
     /**
      * Prompts new admins how to get started using new install.
      *
@@ -1332,7 +1806,6 @@ class SettingsController extends DashboardController {
         if ($this->Form->authenticatedPostBack()) {
             // Do invitations to new members.
             $Message = $this->Form->getFormValue('InvitationMessage');
-            $Message .= "\n\n".Gdn::request()->Url('/', true);
             $Message = trim($Message);
             $Recipients = $this->Form->getFormValue('Recipients');
             if ($Recipients == $this->TextEnterEmails) {
@@ -1355,7 +1828,10 @@ class SettingsController extends DashboardController {
             if ($this->Form->errorCount() == 0) {
                 $Email = new Gdn_Email();
                 $Email->subject(t('Check out my new community!'));
-                $Email->message($Message);
+                $emailTemplate = $Email->getEmailTemplate();
+                $emailTemplate->setMessage($Message, true)
+                    ->setButton(externalUrl('/'), t('Check it out'));
+                $Email->setEmailTemplate($emailTemplate);
                 foreach ($Recipients as $Recipient) {
                     if (trim($Recipient) != '') {
                         $Email->to($Recipient);

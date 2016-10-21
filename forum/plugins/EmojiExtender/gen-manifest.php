@@ -6,11 +6,11 @@ ini_set('track_errors', 1);
 
 $path = rtrim($argv[1], '/');
 
-$manifest = array();
+$manifest = [];
 $emoji_paths = glob("$path/*.*");
 $emoji = array();
 
-$validExtensions = array('gif', 'png', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff', 'svg');
+$validExtensions = ['gif', 'png', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff', 'svg'];
 
 $manifest['format'] = '<img class="emoji" src="%1$s" title="%2$s" alt="%2$s"/>';
 

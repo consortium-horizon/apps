@@ -6,7 +6,7 @@
  * My hat is off to them.
  *
  * @author Todd Burry <todd@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -581,16 +581,19 @@ class Gdn_DataSet implements IteratorAggregate, Countable {
      * @param array $Resultset The array of arrays or objects that represent the data to be traversed.
      */
     public function importDataset($Resultset) {
-        if (is_array($Resultset) && array_key_exists(0, $Resultset)) {
+        if (is_array($Resultset)) {
+            if (array_key_exists(0, $Resultset)) {
+                $FirstRow = $Resultset[0];
+
+                if (is_array($FirstRow)) {
+                    $this->_DatasetType = DATASET_TYPE_ARRAY;
+                } else {
+                    $this->_DatasetType = DATASET_TYPE_OBJECT;
+                }
+            }
+
             $this->_Cursor = -1;
             $this->_PDOStatement = null;
-            $FirstRow = $Resultset[0];
-
-            if (is_array($FirstRow)) {
-                $this->_DatasetType = DATASET_TYPE_ARRAY;
-            } else {
-                $this->_DatasetType = DATASET_TYPE_OBJECT;
-            }
             $this->_Result = $Resultset;
         }
     }

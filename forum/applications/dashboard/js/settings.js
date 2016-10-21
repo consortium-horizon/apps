@@ -15,14 +15,14 @@ jQuery(document).ready(function($) {
             },
             error: function() {
                 container.removeClass('Loading');
-                container.text('Failed to load ' + type + ' feed.');
+                container.text('Failed to load feed.');
             }
         });
     };
 
     lists.addClass('Loading');
-    var newsUrl = gdn.definition("DashboardNewsFeed", "/dashboard/utility/getfeed/news/5/normal");
-    var releasesUrl = gdn.definition("DashboardReleasesFeed", "/dashboard/utility/getfeed/releases/2/extended");
+    var newsUrl = gdn.definition("DashboardNewsFeed", "/utility/getfeed/news/5/normal");
+    var releasesUrl = gdn.definition("DashboardReleasesFeed", "/utility/getfeed/releases/2/extended");
     if (newsUrl) {
         loadFeed(newsColumn, newsUrl);
     }

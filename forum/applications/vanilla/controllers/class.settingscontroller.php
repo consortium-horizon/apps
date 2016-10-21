@@ -2,7 +2,7 @@
 /**
  * Settings controller
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Vanilla
  * @since 2.0
@@ -48,8 +48,6 @@ class SettingsController extends Gdn_Controller {
             'Vanilla.Archive.Exclude',
             'Garden.EditContentTimeout',
             'Vanilla.AdminCheckboxes.Use',
-            'Vanilla.Discussions.SortField' => 'd.DateLastComment',
-            'Vanilla.Discussions.UserSortField',
             'Vanilla.Comment.MaxLength',
             'Vanilla.Comment.MinLength'
         ));
@@ -122,7 +120,6 @@ class SettingsController extends Gdn_Controller {
         // Set up head
         $this->Head = new HeadModule($this);
         $this->addJsFile('jquery.js');
-        $this->addJsFile('jquery.livequery.js');
         $this->addJsFile('jquery.form.js');
         $this->addJsFile('jquery.popup.js');
         $this->addJsFile('jquery.gardenhandleajaxform.js');
@@ -282,13 +279,19 @@ class SettingsController extends Gdn_Controller {
         $this->RoleArray = $RoleModel->getArray();
 
         $this->fireEvent('AddEditCategory');
-        $this->SetupDiscussionTypes(array());
+        $this->setupDiscussionTypes(array());
 
         if ($this->Form->authenticatedPostBack()) {
             // Form was validly submitted
             $IsParent = $this->Form->getFormValue('IsParent', '0');
             $this->Form->setFormValue('AllowDiscussions', $IsParent == '1' ? '0' : '1');
             $this->Form->setFormValue('CustomPoints', (bool)$this->Form->getFormValue('CustomPoints'));
+
+            // Enforces tinyint values on boolean fields to comply with strict mode
+            $this->Form->setFormValue('HideAllDiscussions', forceBool($this->Form->getFormValue('HideAllDiscussions'), '0', '1', '0'));
+            $this->Form->setFormValue('Archived', forceBool($this->Form->getFormValue('Archived'), '0', '1', '0'));
+            $this->Form->setFormValue('AllowFileUploads', forceBool($this->Form->getFormValue('AllowFileUploads'), '0', '1', '0'));
+
             $CategoryID = $this->Form->save();
             if ($CategoryID) {
                 $Category = CategoryModel::categories($CategoryID);
@@ -296,6 +299,10 @@ class SettingsController extends Gdn_Controller {
 
                 if ($this->deliveryType() == DELIVERY_TYPE_ALL) {
                     redirect('vanilla/settings/managecategories');
+                } elseif ($this->deliveryType() === DELIVERY_TYPE_DATA && method_exists($this, 'getCategory')) {
+                    $this->Data = [];
+                    $this->getCategory($CategoryID);
+                    return;
                 }
             } else {
                 unset($CategoryID);
@@ -305,8 +312,8 @@ class SettingsController extends Gdn_Controller {
         }
 
         // Get all of the currently selected role/permission combinations for this junction.
-        $Permissions = $PermissionModel->GetJunctionPermissions(array('JunctionID' => isset($CategoryID) ? $CategoryID : 0), 'Category');
-        $Permissions = $PermissionModel->UnpivotPermissions($Permissions, true);
+        $Permissions = $PermissionModel->getJunctionPermissions(array('JunctionID' => isset($CategoryID) ? $CategoryID : 0), 'Category');
+        $Permissions = $PermissionModel->unpivotPermissions($Permissions, true);
 
         if ($this->deliveryType() == DELIVERY_TYPE_ALL) {
             $this->setData('PermissionData', $Permissions, true);
@@ -314,6 +321,41 @@ class SettingsController extends Gdn_Controller {
 
         // Render default view
         $this->render();
+    }
+
+    /**
+     * Get a single category for administration.
+     *
+     * This endpoint is intended for API access.
+     *
+     * @param int $categoryID The category to find.
+     */
+    public function getCategory($categoryID) {
+        // Check permission
+        $this->permission('Garden.Community.Manage');
+
+        if (!$categoryID) {
+            throw new Gdn_UserException(sprintf(t('ValidationRequired'), 'CategoryID'));
+        }
+
+        $categoryModel = new CategoryModel();
+        $category = $categoryModel->getID($categoryID, DATASET_TYPE_ARRAY);
+//        $category = Gdn::sql()->getWhere('Category', ['CategoryID' => $categoryID])->firstRow(DATASET_TYPE_ARRAY);
+
+        if (!$category) {
+            throw notFoundException('Category');
+        }
+
+        // Add the permissions for the category.
+        if ($category['PermissionCategoryID'] == $category['CategoryID']) {
+            $category['Permissions'] = $categoryModel->getRolePermissions($categoryID);
+        } else {
+            $category['Permissions'] = null;
+        }
+
+        $this->setData('Category', $category);
+        saveToConfig('Api.Clean', false, false);
+        $this->render('blank', 'utility', 'dashboard');
     }
 
     /**
@@ -431,13 +473,16 @@ class SettingsController extends Gdn_Controller {
         if ($this->_DeliveryType == DELIVERY_TYPE_ALL) {
             redirect($RedirectUrl);
         } else {
-            $this->ControllerName = 'Home';
-            $this->View = 'FileNotFound';
             $this->RedirectUrl = url($RedirectUrl);
             $this->render();
         }
     }
 
+    /**
+     *
+     *
+     * @param $Category
+     */
     protected function setupDiscussionTypes($Category) {
         $DiscussionTypes = DiscussionModel::DiscussionTypes();
         $this->setData('DiscussionTypes', $DiscussionTypes);
@@ -506,16 +551,16 @@ class SettingsController extends Gdn_Controller {
         $this->fireEvent('AddEditCategory');
 
         if ($this->Form->authenticatedPostBack()) {
-            $this->SetupDiscussionTypes($this->Category);
+            $this->setupDiscussionTypes($this->Category);
             $Upload = new Gdn_Upload();
-            $TmpImage = $Upload->ValidateUpload('PhotoUpload', false);
+            $TmpImage = $Upload->validateUpload('PhotoUpload', false);
             if ($TmpImage) {
                 // Generate the target image name
-                $TargetImage = $Upload->GenerateTargetName(PATH_UPLOADS);
+                $TargetImage = $Upload->generateTargetName(PATH_UPLOADS);
                 $ImageBaseName = pathinfo($TargetImage, PATHINFO_BASENAME);
 
                 // Save the uploaded image
-                $Parts = $Upload->SaveAs(
+                $Parts = $Upload->saveAs(
                     $TmpImage,
                     $ImageBaseName
                 );
@@ -523,23 +568,32 @@ class SettingsController extends Gdn_Controller {
             }
             $this->Form->setFormValue('CustomPoints', (bool)$this->Form->getFormValue('CustomPoints'));
 
+            // Enforces tinyint values on boolean fields to comply with strict mode
+            $this->Form->setFormValue('HideAllDiscussions', forceBool($this->Form->getFormValue('HideAllDiscussions'), '0', '1', '0'));
+            $this->Form->setFormValue('Archived', forceBool($this->Form->getFormValue('Archived'), '0', '1', '0'));
+            $this->Form->setFormValue('AllowFileUploads', forceBool($this->Form->getFormValue('AllowFileUploads'), '0', '1', '0'));
+
             if ($this->Form->save()) {
                 $Category = CategoryModel::categories($CategoryID);
                 $this->setData('Category', $Category);
 
                 if ($this->deliveryType() == DELIVERY_TYPE_ALL) {
                     redirect('vanilla/settings/managecategories');
+                } elseif ($this->deliveryType() === DELIVERY_TYPE_DATA && method_exists($this, 'getCategory')) {
+                    $this->Data = [];
+                    $this->getCategory($CategoryID);
+                    return;
                 }
             }
         } else {
             $this->Form->setData($this->Category);
-            $this->SetupDiscussionTypes($this->Category);
+            $this->setupDiscussionTypes($this->Category);
             $this->Form->setValue('CustomPoints', $this->Category->PointsCategoryID == $this->Category->CategoryID);
         }
 
         // Get all of the currently selected role/permission combinations for this junction.
-        $Permissions = $PermissionModel->GetJunctionPermissions(array('JunctionID' => $CategoryID), 'Category', '', array('AddDefaults' => !$this->Category->CustomPermissions));
-        $Permissions = $PermissionModel->UnpivotPermissions($Permissions, true);
+        $Permissions = $PermissionModel->getJunctionPermissions(array('JunctionID' => $CategoryID), 'Category', '', array('AddDefaults' => !$this->Category->CustomPermissions));
+        $Permissions = $PermissionModel->unpivotPermissions($Permissions, true);
 
         if ($this->deliveryType() == DELIVERY_TYPE_ALL) {
             $this->setData('PermissionData', $Permissions, true);
@@ -561,23 +615,31 @@ class SettingsController extends Gdn_Controller {
         $this->addSideMenu('vanilla/settings/managecategories');
 
         $this->addJsFile('categories.js');
-        $this->addJsFile('js/library/jquery.alphanumeric.js');
+        $this->addJsFile('jquery.alphanumeric.js');
 
 
         // This now works on latest jQuery version 1.10.2
         //
         // Jan29, 2014, upgraded jQuery UI to 1.10.3 from 1.8.11
-        $this->addJsFile('js/library/nestedSortable/jquery-ui.min.js');
+        $this->addJsFile('nestedSortable/jquery-ui.min.js');
         // Newer nestedSortable, but does not work.
         //$this->addJsFile('js/library/nestedSortable/jquery.mjs.nestedSortable.js');
         // old jquery-ui
         //$this->addJsFile('js/library/nestedSortable.1.3.4/jquery-ui-1.8.11.custom.min.js');
-        $this->addJsFile('js/library/nestedSortable.1.3.4/jquery.ui.nestedSortable.js');
+        $this->addJsFile('nestedSortable.1.3.4/jquery.ui.nestedSortable.js');
 
         $this->title(t('Categories'));
 
         // Get category data
-        $this->setData('CategoryData', $this->CategoryModel->GetAll('TreeLeft'), true);
+        $CategoryData = $this->CategoryModel->getAll('TreeLeft');
+
+        // Set CanDelete per-category so we can override later if we want.
+        $canDelete = checkPermission('Garden.Settings.Manage');
+        array_walk($CategoryData->result(), function(&$value) use ($canDelete) {
+            setvalr('CanDelete', $value, $canDelete);
+        });
+
+        $this->setData('CategoryData', $CategoryData, true);
 
         // Setup & save forms
         $Validation = new Gdn_Validation();

@@ -3,7 +3,7 @@
  * Smart abstraction layer.
  *
  * @author Mark O'Sullivan <markm@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -34,14 +34,14 @@ class Gdn_Smarty {
 
         // Get an ID for the body.
         $BodyIdentifier = strtolower($Controller->ApplicationFolder.'_'.$ControllerName.'_'.Gdn_Format::alphaNumeric(strtolower($Controller->RequestMethod)));
-        $Smarty->assign('BodyID', $BodyIdentifier);
+        $Smarty->assign('BodyID', htmlspecialchars($BodyIdentifier));
         //$Smarty->assign('Config', Gdn::Config());
 
         // Assign some information about the user.
         $Session = Gdn::session();
         if ($Session->isValid()) {
             $User = array(
-                'Name' => $Session->User->Name,
+                'Name' => htmlspecialchars($Session->User->Name),
                 'Photo' => '',
                 'CountNotifications' => (int)val('CountNotifications', $Session->User, 0),
                 'CountUnreadConversations' => (int)val('CountUnreadConversations', $Session->User, 0),
@@ -49,17 +49,11 @@ class Gdn_Smarty {
 
             $Photo = $Session->User->Photo;
             if ($Photo) {
-                if (!IsUrl($Photo)) {
-                    $Photo = Gdn_Upload::Url(ChangeBasename($Photo, 'n%s'));
+                if (!isUrl($Photo)) {
+                    $Photo = Gdn_Upload::url(changeBasename($Photo, 'n%s'));
                 }
             } else {
-                if (function_exists('UserPhotoDefaultUrl')) {
-                    $Photo = UserPhotoDefaultUrl($Session->User, 'ProfilePhoto');
-                } elseif ($ConfigPhoto = C('Garden.DefaultAvatar'))
-                    $Photo = Gdn_Upload::url($ConfigPhoto);
-                else {
-                    $Photo = Asset('/applications/dashboard/design/images/defaulticon.png', true);
-                }
+                $Photo = UserModel::getDefaultAvatarUrl($Session->User);
             }
             $User['Photo'] = $Photo;
         } else {

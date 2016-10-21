@@ -3,7 +3,7 @@
  * Gdn_Model.
  *
  * @author Mark O'Sullivan <markm@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -35,6 +35,11 @@ class Gdn_Model extends Gdn_Pluggable {
      * field will be automatically filled by the model if it exists.
      */
     public $DateUpdated = 'DateUpdated';
+
+    /**
+     * @var array The fields that should be filtered out via {@link Gdn_Model::filterForm()}.
+     */
+    protected $filterFields;
 
     /**
      * @var string The name of the field that stores the id of the user that inserted it.
@@ -96,7 +101,38 @@ class Gdn_Model extends Gdn_Pluggable {
         $this->Validation = new Gdn_Validation();
         $this->Name = $Name;
         $this->PrimaryKey = $Name.'ID';
+        $this->filterFields = array(
+            'Attributes' => 0,
+            'DateInserted' => 0,
+            'InsertUserID' => 0,
+            'InsertIPAddress' => 0,
+            'CheckBoxes' => 0,
+            'DateUpdated' => 0,
+            'UpdateUserID' => 0,
+            'UpdateIPAddress' => 0,
+            'DeliveryMethod' => 0,
+            'DeliveryType' => 0,
+            'OK' => 0,
+            'TransientKey' => 0,
+            'hpt' => 0
+        );
+
         parent::__construct();
+    }
+
+    /**
+     * Add one or more filter field names to the list of fields that will be removed during save.
+     *
+     * @param string|array $field Either a field name or an array of field names to filter.
+     * @return Gdn_Model Returns $this for chaining.
+     */
+    public function addFilterField($field) {
+        if (is_array($field)) {
+            $this->filterFields = array_replace($this->filterFields, array_fill_keys($field, 0));
+        } else {
+            $this->filterFields[$field] = 0;
+        }
+        return $this;
     }
 
     /**
@@ -171,6 +207,29 @@ class Gdn_Model extends Gdn_Pluggable {
         return $this->Schema;
     }
 
+    /**
+     * Get all of the field names that will be filtered out during save.
+     *
+     * @return array Returns an array of field names.
+     */
+    public function getFilterFields() {
+        return array_keys($this->filterFields);
+    }
+
+    /**
+     * Remove one or more fields from the filter field array.
+     *
+     * @param string|array $field One or more field names to remove.
+     * @return Gdn_Model Returns $this for chaining.
+     */
+    public function removeFilterField($field) {
+        if (is_array($field)) {
+            $this->filterFields = array_diff_key($this->filterFields, array_fill_keys($field, 0));
+        } else {
+            unset($this->filterFields[$field]);
+        }
+        return $this;
+    }
 
     /**
      *  Takes a set of form data ($Form->_PostValues), validates them, and
@@ -198,7 +257,7 @@ class Gdn_Model extends Gdn_Pluggable {
         // Validate the form posted values
         if ($this->validate($FormPostValues, $Insert) === true) {
             $Fields = $this->Validation->validationFields();
-            $Fields = removeKeyFromArray($Fields, $this->PrimaryKey); // Don't try to insert or update the primary key
+            unset($Fields[$this->PrimaryKey]); // Don't try to insert or update the primary key
             if ($Insert === false) {
                 $this->update($Fields, array($this->PrimaryKey => $PrimaryKeyVal));
             } else {
@@ -227,6 +286,17 @@ class Gdn_Model extends Gdn_Pluggable {
         $Set = array_intersect_key($Property, $this->Schema->fields());
         self::serializeRow($Set);
         $this->SQL->put($this->Name, $Set, array($this->PrimaryKey => $RowID));
+    }
+
+    /**
+     * Set the array of filter field names.
+     *
+     * @param array $fields An array of field names.
+     * @return Gdn_Model Returns $this for chaining.
+     */
+    public function setFilterFields(array $fields) {
+        $this->filterFields = array_fill_keys($fields, 0);
+        return $this;
     }
 
     /**
@@ -317,49 +387,63 @@ class Gdn_Model extends Gdn_Pluggable {
 
 
     /**
+     * Delete records from a table.
      *
+     * @param array|int $where The where clause to delete or an integer value.
+     * @param array|true $options An array of options to control the delete.
      *
-     * @param unknown_type $Where
-     * @param unknown_type $Limit
-     * @param unknown_type $ResetData
-     * @return Gdn_Dataset
+     *  - limit: A limit to the number of records to delete.
+     *  - reset: Deprecated. Whether or not to reset this SQL statement after the delete. Defaults to false.
+     * @return Gdn_Dataset Returns the result of the delete.
      */
-    public function delete($Where = '', $Limit = false, $ResetData = false) {
-        if (is_numeric($Where)) {
-            $Where = array($this->PrimaryKey => $Where);
+    public function delete($where = [], $options = []) {
+        if (is_numeric($where)) {
+            deprecated('Gdn_Model->delete(int)', 'Gdn_Model->deleteID()');
+            $where = array($this->PrimaryKey => $where);
+        }
+
+        $ResetData = false;
+        if ($options === true || val('reset', $options)) {
+            deprecated('Gdn_Model->delete() with reset true');
+            $ResetData = true;
+        } elseif (is_numeric($options)) {
+            deprecated('The $limit parameter is deprecated in Gdn_Model->delete(). Use the limit option.');
+            $limit = $options;
+        } else {
+            $limit = val('limit', $options);
         }
 
         if ($ResetData) {
-            $Result = $this->SQL->delete($this->Name, $Where, $Limit);
+            $Result = $this->SQL->delete($this->Name, $where, $limit);
         } else {
-            $Result = $this->SQL->noReset()->delete($this->Name, $Where, $Limit);
+            $Result = $this->SQL->noReset()->delete($this->Name, $where, $limit);
         }
         return $Result;
     }
 
     /**
+     * Delete a record by primary key.
+     *
+     * @param mixed $id The primary key value of the record to delete.
+     * @param array $options An array of options to affect the delete behaviour. Reserved for future use.
+     * @return bool Returns **true** if the delete was successful or **false** otherwise.
+     */
+    public function deleteID($id, $options = []) {
+        $r = $this->delete(
+            [$this->PrimaryKey => $id]
+        );
+        return $r;
+    }
+
+    /**
      * Filter out any potentially insecure fields before they go to the database.
      *
-     * @param array $Data
-     * @return array
+     * @param array $data The array of data to filter.
+     * @return array Returns a copy of {@link $data} with fields removed.
      */
-    public function filterForm($Data) {
-        $Data = array_diff_key($Data, array(
-            'Attributes' => 0,
-            'DateInserted' => 0,
-            'InsertUserID' => 0,
-            'InsertIPAddress' => 0,
-            'CheckBoxes' => 0,
-            'DateUpdated' => 0,
-            'UpdateUserID' => 0,
-            'UpdateIPAddress' => 0,
-            'DeliveryMethod' => 0,
-            'DeliveryType' => 0,
-            'OK' => 0,
-            'TransientKey' => 0,
-            'hpt' => 0
-        ));
-        return $Data;
+    public function filterForm($data) {
+        $data = array_diff_key($data, $this->filterFields);
+        return $data;
     }
 
     /**
@@ -461,9 +545,9 @@ class Gdn_Model extends Gdn_Pluggable {
      *
      * @param array|bool $Where A filter suitable for passing to Gdn_SQLDriver::Where().
      * @param string $OrderFields A comma delimited string to order the data.
-     * @param string $OrderDirection One of <b>asc</b> or <b>desc</b>
-     * @param int|bool $Limit
-     * @param int|bool $Offset
+     * @param string $OrderDirection One of **asc** or **desc**.
+     * @param int|false $Limit The database limit.
+     * @param int|false $Offset The database offset.
      * @return Gdn_DataSet
      */
     public function getWhere($Where = false, $OrderFields = '', $OrderDirection = 'asc', $Limit = false, $Offset = false) {

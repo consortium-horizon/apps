@@ -2,7 +2,7 @@
 /**
  * Twitter plugin.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Twitter
  */
@@ -21,7 +21,8 @@ $PluginInfo['Twitter'] = array(
     'AuthorEmail' => 'todd@vanillaforums.com',
     'AuthorUrl' => 'http://www.vanillaforums.org/profile/todd',
     'SocialConnect' => true,
-    'RequiresRegistration' => true
+    'RequiresRegistration' => true,
+    'Icon' => 'twitter.svg'
 );
 
 require_once PATH_LIBRARY.'/vendors/oauth/OAuth.php';
@@ -298,7 +299,7 @@ class TwitterPlugin extends Gdn_Plugin {
      * @param bool $Query
      */
     public function authorize($Query = false) {
-        // Aquire the request token.
+        // Acquire the request token.
         $Consumer = new OAuthConsumer(c('Plugins.Twitter.ConsumerKey'), c('Plugins.Twitter.Secret'));
         $RedirectUri = $this->redirectUri();
         if ($Query) {
@@ -925,8 +926,8 @@ class TwitterPlugin extends Gdn_Plugin {
         $Sender->permission('Garden.Settings.Manage');
         if ($Sender->Form->authenticatedPostBack()) {
             $Settings = array(
-                'Plugins.Twitter.ConsumerKey' => $Sender->Form->getFormValue('ConsumerKey'),
-                'Plugins.Twitter.Secret' => $Sender->Form->getFormValue('Secret'),
+                'Plugins.Twitter.ConsumerKey' => trim($Sender->Form->getFormValue('ConsumerKey')),
+                'Plugins.Twitter.Secret' => trim($Sender->Form->getFormValue('Secret')),
                 'Plugins.Twitter.SocialSignIn' => $Sender->Form->getFormValue('SocialSignIn'),
                 'Plugins.Twitter.SocialReactions' => $Sender->Form->getFormValue('SocialReactions'),
                 'Plugins.Twitter.SocialSharing' => $Sender->Form->getFormValue('SocialSharing')

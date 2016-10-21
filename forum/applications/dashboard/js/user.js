@@ -1,4 +1,4 @@
-// This file contains javascript that is specific to the dashboard/profile controller.
+// This file contains javascript that is specific to the /profile controller.
 jQuery(document).ready(function($) {
 
     // Reveal password
@@ -29,6 +29,23 @@ jQuery(document).ready(function($) {
         $('#Form_ShowPassword').val(passwd);
         return false;
     });
+
+    // No password.
+    var checkNoPassword = function() {
+        var checked = $(this).prop('checked');
+
+        if (checked) {
+            $('.js-password').prop('disabled', true);
+            $('.js-password-related').hide();
+        } else {
+            $('.js-password').prop('disabled', false);
+            $('.js-password-related').show();
+        }
+    };
+
+    $(document).on('click', '.js-nopassword input[type=checkbox]', checkNoPassword);
+
+    checkNoPassword.apply($('.js-nopassword input[type=checkbox]'));
 
     // Hide/Reveal reset password input
     var hideNewPassword = function() {

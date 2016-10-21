@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Facebook
  */
@@ -23,13 +23,16 @@ $PluginInfo['Facebook'] = array(
     'AuthorUrl' => 'http://www.vanillaforums.org/profile/todd',
     'Hidden' => true,
     'SocialConnect' => true,
-    'RequiresRegistration' => true
+    'RequiresRegistration' => true,
+    'Icon' => 'facebook.svg'
 );
 
 /**
  * Class FacebookPlugin
  */
 class FacebookPlugin extends Gdn_Plugin {
+
+    const API_VERSION = '2.7';
 
     /** Authentication table key. */
     const ProviderKey = 'Facebook';
@@ -81,7 +84,7 @@ class FacebookPlugin extends Gdn_Plugin {
      */
     public function api($Path, $Post = false) {
         // Build the url.
-        $Url = 'https://graph.facebook.com/'.ltrim($Path, '/');
+        $Url = 'https://graph.facebook.com/v'.self::API_VERSION.'/'.ltrim($Path, '/');
         $AccessToken = $this->accessToken();
         if (!$AccessToken) {
             throw new Gdn_UserException("You don't have a valid Facebook connection.");
@@ -337,7 +340,7 @@ class FacebookPlugin extends Gdn_Plugin {
             'ConnectUrl' => $this->authorizeUri(false, self::profileConnecUrl()),
             'Profile' => array(
                 'Name' => val('name', $Profile),
-                'Photo' => "//graph.facebook.com/{$Profile['id']}/picture?type=large"
+                'Photo' => "//graph.facebook.com/{$Profile['id']}/picture?width=200&height=200"
             )
         );
     }
@@ -441,8 +444,8 @@ class FacebookPlugin extends Gdn_Plugin {
         $Sender->permission('Garden.Settings.Manage');
         if ($Sender->Form->authenticatedPostBack()) {
             $Settings = array(
-                'Plugins.Facebook.ApplicationID' => $Sender->Form->getFormValue('ApplicationID'),
-                'Plugins.Facebook.Secret' => $Sender->Form->getFormValue('Secret'),
+                'Plugins.Facebook.ApplicationID' => trim($Sender->Form->getFormValue('ApplicationID')),
+                'Plugins.Facebook.Secret' => trim($Sender->Form->getFormValue('Secret')),
                 'Plugins.Facebook.UseFacebookNames' => $Sender->Form->getFormValue('UseFacebookNames'),
                 'Plugins.Facebook.SocialSignIn' => $Sender->Form->getFormValue('SocialSignIn'),
                 'Plugins.Facebook.SocialReactions' => $Sender->Form->getFormValue('SocialReactions'),
@@ -528,7 +531,7 @@ class FacebookPlugin extends Gdn_Plugin {
         $Form->setFormValue('ProviderName', 'Facebook');
         $Form->setFormValue('FullName', val('name', $Profile));
         $Form->setFormValue('Email', val('email', $Profile));
-        $Form->setFormValue('Photo', "//graph.facebook.com/{$ID}/picture?type=large");
+        $Form->setFormValue('Photo', "//graph.facebook.com/{$ID}/picture?width=200&height=200");
         $Form->addHidden('AccessToken', $AccessToken);
 
         if (c('Plugins.Facebook.UseFacebookNames')) {
@@ -599,7 +602,7 @@ class FacebookPlugin extends Gdn_Plugin {
      * @return mixed
      */
     public function getProfile($AccessToken) {
-        $Url = "https://graph.facebook.com/me?access_token=$AccessToken";
+        $Url = "https://graph.facebook.com/me?access_token=$AccessToken&fields=name,id,email";
 //      $C = curl_init();
 //      curl_setopt($C, CURLOPT_RETURNTRANSFER, true);
 //      curl_setopt($C, CURLOPT_SSL_VERIFYPEER, false);

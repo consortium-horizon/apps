@@ -2,7 +2,7 @@
 /**
  * Permission model.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -109,14 +109,14 @@ class PermissionModel extends Gdn_Model {
             }
         }
 
-        $this->AddDefault(
+        $this->addDefault(
             RoleModel::TYPE_GUEST,
             array(
                 'Garden.Activity.View' => 1,
                 'Garden.Profiles.View' => 1,
             )
         );
-        $this->AddDefault(
+        $this->addDefault(
             RoleModel::TYPE_UNCONFIRMED,
             $Permissions = array(
                 'Garden.SignIn.Allow' => 1,
@@ -125,7 +125,7 @@ class PermissionModel extends Gdn_Model {
                 'Garden.Email.View' => 1
             )
         );
-        $this->AddDefault(
+        $this->addDefault(
             RoleModel::TYPE_APPLICANT,
             $Permissions = array(
                 'Garden.SignIn.Allow' => 1,
@@ -134,7 +134,7 @@ class PermissionModel extends Gdn_Model {
                 'Garden.Email.View' => 1
             )
         );
-        $this->AddDefault(
+        $this->addDefault(
             RoleModel::TYPE_MODERATOR,
             $Permissions = array(
                 'Garden.SignIn.Allow' => 1,
@@ -147,7 +147,7 @@ class PermissionModel extends Gdn_Model {
                 'Garden.Email.View' => 1
             )
         );
-        $this->AddDefault(
+        $this->addDefault(
             RoleModel::TYPE_ADMINISTRATOR,
             array(
                 'Garden.SignIn.Allow' => 1,
@@ -170,7 +170,7 @@ class PermissionModel extends Gdn_Model {
                 'Garden.Moderation.Manage' => 1
             )
         );
-        $this->AddDefault(
+        $this->addDefault(
             RoleModel::TYPE_MEMBER,
             array(
                 'Garden.SignIn.Allow' => 1,
@@ -181,19 +181,18 @@ class PermissionModel extends Gdn_Model {
             )
         );
 
-        // Allow the ability for other applications and plug-ins to speakup with their own default permissions.
+        // Allow the ability for other applications and plug-ins to speak up with their own default permissions.
         $this->fireEvent('DefaultPermissions');
     }
 
     /**
-     *
+     * Remove the cached permissions for all users.
      */
     public function clearPermissions() {
         static $PermissionsCleared = false;
 
         if (!$PermissionsCleared) {
-            // Remove the cached permissions for all users.
-            Gdn::userModel()->ClearPermissions();
+            Gdn::userModel()->clearPermissions();
             $PermissionsCleared = true;
         }
     }
@@ -210,7 +209,7 @@ class PermissionModel extends Gdn_Model {
     public function define($PermissionNames, $Type = 'tinyint', $JunctionTable = null, $JunctionColumn = null) {
         $PermissionNames = (array)$PermissionNames;
 
-        $Structure = $this->Database->Structure();
+        $Structure = $this->Database->structure();
         $Structure->table('Permission');
         $DefaultPermissions = array();
         $NewColumns = array();
@@ -332,7 +331,7 @@ class PermissionModel extends Gdn_Model {
      */
     public function getDefaults() {
         if (empty($this->DefaultPermissions)) {
-            $this->AssignDefaults();
+            $this->assignDefaults();
         }
 
         return $this->DefaultPermissions;
@@ -544,8 +543,8 @@ class PermissionModel extends Gdn_Model {
      */
     public function getJunctionPermissions($Where, $JunctionTable = null, $LimitToSuffix = '', $Options = array()) {
         $Namespaces = $this->GetAllowedPermissionNamespaces();
-        $RoleID = arrayValue('RoleID', $Where, null);
-        $JunctionID = arrayValue('JunctionID', $Where, null);
+        $RoleID = val('RoleID', $Where, null);
+        $JunctionID = val('JunctionID', $Where, null);
         $SQL = $this->SQL;
 
         // Load all of the default junction permissions.
@@ -992,11 +991,11 @@ class PermissionModel extends Gdn_Model {
                     $Parts = explode('/', $Key);
                     $JunctionTable = $Parts[0];
                     $JunctionColumn = $Parts[1];
-                    $JunctionID = arrayValue('JunctionID', $Overrides, $Parts[2]);
+                    $JunctionID = val('JunctionID', $Overrides, $Parts[2]);
                     if (count($Parts) >= 4) {
                         $RoleID = $Parts[3];
                     } else {
-                        $RoleID = arrayValue('RoleID', $Overrides, null);
+                        $RoleID = val('RoleID', $Overrides, null);
                     }
                 } else {
                     // This is a global permission.
@@ -1005,7 +1004,7 @@ class PermissionModel extends Gdn_Model {
                     $JunctionTable = null;
                     $JunctionColumn = null;
                     $JunctionID = null;
-                    $RoleID = arrayValue('RoleID', $Overrides, null);
+                    $RoleID = val('RoleID', $Overrides, null);
                 }
 
                 // Check for a row in the result for these permissions.
@@ -1219,7 +1218,7 @@ class PermissionModel extends Gdn_Model {
         // Iterate through our roles and reset their permissions.
         $Permissions = Gdn::permissionModel();
         foreach ($Roles as $RoleID => $Role) {
-            $Permissions->ResetRole($RoleID);
+            $Permissions->resetRole($RoleID);
         }
     }
 
@@ -1237,8 +1236,8 @@ class PermissionModel extends Gdn_Model {
             $RoleType = RoleModel::TYPE_MEMBER;
         }
 
-        $Defaults = $this->GetDefaults();
-        $RowDefaults = $this->GetRowDefaults();
+        $Defaults = $this->getDefaults();
+        $RowDefaults = $this->getRowDefaults();
 
         $ResetValues = array_fill_keys(array_keys($RowDefaults), 0);
 
@@ -1371,7 +1370,7 @@ class PermissionModel extends Gdn_Model {
      * @param bool $IncludeRole
      */
     protected function _UnpivotPermissionsRow($Row, &$Result, $IncludeRole = false) {
-        $GlobalName = arrayValue('Name', $Row);
+        $GlobalName = val('Name', $Row);
 
         // Loop through each permission in the row and place them in the correct place in the grid.
         foreach ($Row as $PermissionName => $Value) {

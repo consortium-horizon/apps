@@ -5,7 +5,7 @@
  * @author Mark O'Sullivan <markm@vanillaforums.com>
  * @author Todd Burry <todd@vanillaforums.com>
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -86,7 +86,7 @@ class Gdn_PluginManager extends Gdn_Pluggable {
      */
     public function start($Force = false) {
 
-        if (function_exists('apc_fetch') && C('Garden.Apc', false)) {
+        if (function_exists('apc_fetch') && c('Garden.Apc', false)) {
             $this->Apc = true;
         }
 
@@ -253,7 +253,7 @@ class Gdn_PluginManager extends Gdn_Pluggable {
             $this->availablePlugins($Force);
 
             $this->EnabledPlugins = array();
-            $EnabledPlugins = C('EnabledPlugins', array());
+            $EnabledPlugins = c('EnabledPlugins', array());
 
             foreach ($EnabledPlugins as $PluginName => $PluginStatus) {
                 // Plugins can be explicitly disabled
@@ -350,6 +350,13 @@ class Gdn_PluginManager extends Gdn_Pluggable {
             $SearchPluginInfo['RealFile'] = $RealPluginFile;
             $SearchPluginInfo['RealRoot'] = dirname($RealPluginFile);
             $SearchPluginInfo['SearchPath'] = $SearchPath;
+            $SearchPluginInfo['Dir'] = "/plugins/$PluginFolderName";
+
+            $iconUrl = $SearchPluginInfo['Dir'].'/'.val('Icon', $SearchPluginInfo, 'icon.png');
+            if (file_exists(PATH_ROOT.$iconUrl)) {
+                $SearchPluginInfo['IconUrl'] = $iconUrl;
+            }
+
             $PluginInfo[$PluginFolderName] = $SearchPluginInfo;
 
             $PluginClassName = val('ClassName', $SearchPluginInfo);
@@ -556,8 +563,8 @@ class Gdn_PluginManager extends Gdn_Pluggable {
         foreach ($this->enabledPlugins() as $PluginName => $Trash) {
             $PluginInfo = $this->getPluginInfo($PluginName);
 
-            // Remove plugin hooks from plugins that dont explicitly claim to be friendly with mobile themes
-            if (!val('MobileFriendly', $PluginInfo)) {
+            // Remove plugin hooks from plugins that explicitly claim to not be mobile friendly
+            if (!val('MobileFriendly', $PluginInfo, true)) {
                 $this->unregisterPlugin(val('ClassName', $PluginInfo));
             }
         }
@@ -570,10 +577,9 @@ class Gdn_PluginManager extends Gdn_Pluggable {
      * @return bool
      */
     public function checkPlugin($PluginName) {
-        if (array_key_exists($PluginName, $this->enabledPlugins())) {
+        if (array_key_exists(strtolower($PluginName), array_change_key_case($this->enabledPlugins(), CASE_LOWER))) {
             return true;
         }
-
         return false;
     }
 
@@ -892,7 +898,7 @@ class Gdn_PluginManager extends Gdn_Pluggable {
      */
     public function callMethodOverride($Sender, $ClassName, $MethodName) {
         $EventKey = strtolower($ClassName.'_'.$MethodName.'_Override');
-        $OverrideKey = ArrayValue($EventKey, $this->_MethodOverrideCollection, '');
+        $OverrideKey = val($EventKey, $this->_MethodOverrideCollection, '');
         $OverrideKeyParts = explode('.', $OverrideKey);
         if (count($OverrideKeyParts) != 2) {
             return false;
@@ -929,7 +935,7 @@ class Gdn_PluginManager extends Gdn_Pluggable {
     public function callNewMethod($Sender, $ClassName, $MethodName) {
         $Return = false;
         $EventKey = strtolower($ClassName.'_'.$MethodName.'_Create');
-        $NewMethodKey = ArrayValue($EventKey, $this->_NewMethodCollection, '');
+        $NewMethodKey = val($EventKey, $this->_NewMethodCollection, '');
         $NewMethodKeyParts = explode('.', $NewMethodKey);
         if (count($NewMethodKeyParts) != 2) {
             return false;
@@ -1043,27 +1049,24 @@ class Gdn_PluginManager extends Gdn_Pluggable {
             eval($PluginInfoString);
         }
 
-        // Define the folder name and assign the class name for the newly added item
-        if (isset(${$VariableName}) && is_array(${$VariableName})) {
-            $Item = array_pop($Trash = array_keys(${$VariableName}));
+        // Define the folder name and assign the class name for the newly added item.
+        $var = ${$VariableName};
+        if (isset($var) && is_array($var)) {
+            reset($var);
+            $name = key($var);
+            $var = current($var);
 
-            ${$VariableName}[$Item]['Index'] = $Item;
-            ${$VariableName}[$Item]['ClassName'] = $ClassName;
-            ${$VariableName}[$Item]['PluginFilePath'] = $PluginFile;
-            ${$VariableName}[$Item]['PluginRoot'] = dirname($PluginFile);
+            $var['Index'] = $name;
+            $var['ClassName'] = $ClassName;
+            $var['PluginFilePath'] = $PluginFile;
+            $var['PluginRoot'] = dirname($PluginFile);
+            touchValue('Name', $var, $name);
+            touchValue('Folder', $var, $name);
 
-            if (!array_key_exists('Name', ${$VariableName}[$Item])) {
-                ${$VariableName}[$Item]['Name'] = $Item;
-            }
-
-            if (!array_key_exists('Folder', ${$VariableName}[$Item])) {
-                ${$VariableName}[$Item]['Folder'] = $Item;
-            }
-
-            return ${$VariableName}[$Item];
+            return $var;
         } elseif ($VariableName !== null) {
-            if (isset(${$VariableName})) {
-                return $$VariableName;
+            if (isset($var)) {
+                return $var;
             }
         }
 
@@ -1088,7 +1091,7 @@ class Gdn_PluginManager extends Gdn_Pluggable {
             $this->PluginSearchPaths[rtrim(PATH_PLUGINS, '/')] = 'core';
 
             // Check for, and load, alternate search paths from config
-            $RawAlternatePaths = C('Garden.PluginManager.Search', null);
+            $RawAlternatePaths = c('Garden.PluginManager.Search', null);
             if (!is_null($RawAlternatePaths)) {
                 $AlternatePaths = $RawAlternatePaths;
 
@@ -1153,17 +1156,17 @@ class Gdn_PluginManager extends Gdn_Pluggable {
 
         // Required Themes
         $EnabledThemes = Gdn::themeManager()->enabledThemeInfo();
-        $RequiredThemes = ArrayValue('RequiredTheme', $PluginInfo, false);
+        $RequiredThemes = val('RequiredTheme', $PluginInfo, false);
         CheckRequirements($PluginName, $RequiredThemes, $EnabledThemes, 'theme');
 
         // Required Applications
         $EnabledApplications = Gdn::applicationManager()->enabledApplications();
-        $RequiredApplications = ArrayValue('RequiredApplications', $PluginInfo, false);
+        $RequiredApplications = val('RequiredApplications', $PluginInfo, false);
         CheckRequirements($PluginName, $RequiredApplications, $EnabledApplications, 'application');
 
         // Include the plugin, instantiate it, and call its setup method
-        $PluginClassName = ArrayValue('ClassName', $PluginInfo, false);
-        $PluginFolder = ArrayValue('Folder', $PluginInfo, false);
+        $PluginClassName = val('ClassName', $PluginInfo, false);
+        $PluginFolder = val('Folder', $PluginInfo, false);
         if ($PluginFolder == '') {
             throw new Exception(T('The plugin folder was not properly defined.'));
         }
@@ -1255,7 +1258,7 @@ class Gdn_PluginManager extends Gdn_Pluggable {
         // Get all available plugins and compile their requirements
         foreach ($this->enabledPlugins() as $CheckingName => $Trash) {
             $CheckingInfo = $this->getPluginInfo($CheckingName);
-            $RequiredPlugins = ArrayValue('RequiredPlugins', $CheckingInfo, false);
+            $RequiredPlugins = val('RequiredPlugins', $CheckingInfo, false);
             if (is_array($RequiredPlugins) && array_key_exists($PluginName, $RequiredPlugins) === true) {
                 throw new Exception(sprintf(T('You cannot disable the %1$s plugin because the %2$s plugin requires it in order to function.'), $PluginName, $CheckingName));
             }
@@ -1351,9 +1354,9 @@ class Gdn_PluginManager extends Gdn_Pluggable {
                 break;
         }
 
-        $PluginInfo = ArrayValue($PluginName, $this->availablePlugins(), false);
-        $PluginFolder = ArrayValue('Folder', $PluginInfo, false);
-        $PluginClassName = ArrayValue('ClassName', $PluginInfo, false);
+        $PluginInfo = val($PluginName, $this->availablePlugins(), false);
+        $PluginFolder = val('Folder', $PluginInfo, false);
+        $PluginClassName = val('ClassName', $PluginInfo, false);
 
         if ($PluginFolder !== false && $PluginClassName !== false && class_exists($PluginClassName) === false) {
             if ($ForAction !== self::ACTION_DISABLE) {

@@ -2,7 +2,7 @@
 /**
  * Manages the social plugins.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.1
@@ -94,6 +94,9 @@ class SocialController extends DashboardController {
      */
     public function disable($Plugin) {
         $this->permission('Garden.Settings.Manage');
+        if (!Gdn::request()->isAuthenticatedPostBack(true)) {
+            throw new Exception('Requires POST', 405);
+        }
         $Connections = $this->GetConnections();
         unset($this->Data['Connections']);
 
@@ -127,6 +130,9 @@ class SocialController extends DashboardController {
      */
     public function enable($Plugin) {
         $this->permission('Garden.Settings.Manage');
+        if (!Gdn::request()->isAuthenticatedPostBack(true)) {
+            throw new Exception('Requires POST', 405);
+        }
         $Connections = $this->GetConnections();
 
         if (!array_key_exists($Plugin, $Connections)) {

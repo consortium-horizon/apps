@@ -1,12 +1,10 @@
-<?php if (!defined('APPLICATION')) {
-    exit();
-      }
+<?php if (!defined('APPLICATION')) exit();
 /**
  * Vanilla database structure.
  *
  * Called by VanillaHooks::Setup() to update database upon enabling app.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @since 2.0
  * @package Vanilla
@@ -17,7 +15,7 @@ if (!isset($Drop)) {
 }
 
 if (!isset($Explicit)) {
-    $Explicit = true;
+    $Explicit = false;
 }
 
 $SQL = Gdn::database()->sql();
@@ -68,7 +66,7 @@ if ($SQL->getWhere('Category', array('CategoryID' => -1))->numRows() == 0) {
 }
 
 if ($Drop || !$CategoryExists) {
-    $SQL->insert('Category', array('ParentCategoryID' => -1, 'TreeLeft' => 2, 'TreeRight' => 3, 'InsertUserID' => 1, 'UpdateUserID' => 1, 'DateInserted' => Gdn_Format::toDateTime(), 'DateUpdated' => Gdn_Format::toDateTime(), 'Name' => 'General', 'UrlCode' => 'general', 'Description' => 'General discussions', 'PermissionCategoryID' => -1));
+    $SQL->insert('Category', array('ParentCategoryID' => -1, 'TreeLeft' => 2, 'TreeRight' => 3, 'Depth' => 1, 'InsertUserID' => 1, 'UpdateUserID' => 1, 'DateInserted' => Gdn_Format::toDateTime(), 'DateUpdated' => Gdn_Format::toDateTime(), 'Name' => 'General', 'UrlCode' => 'general', 'Description' => 'General discussions', 'PermissionCategoryID' => -1));
 } elseif ($CategoryExists && !$PermissionCategoryIDExists) {
     if (!c('Garden.Permissions.Disabled.Category')) {
         // Existing installations need to be set up with per/category permissions.
@@ -113,8 +111,8 @@ $Construct
     ->column('Sink', 'tinyint(1)', '0')
     ->column('DateInserted', 'datetime', false, array('index', 'index.CategoryInserted'))
     ->column('DateUpdated', 'datetime', true)
-    ->column('InsertIPAddress', 'varchar(15)', true)
-    ->column('UpdateIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
+    ->column('UpdateIPAddress', 'ipaddress', true)
     ->column('DateLastComment', 'datetime', null, array('index', 'index.CategoryPages'))
     ->column('LastCommentUserID', 'int', true)
     ->column('Score', 'float', null)
@@ -180,8 +178,8 @@ $Construct
     ->column('DateInserted', 'datetime', null, array('index.1', 'index'))
     ->column('DateDeleted', 'datetime', true)
     ->column('DateUpdated', 'datetime', true)
-    ->column('InsertIPAddress', 'varchar(15)', true)
-    ->column('UpdateIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
+    ->column('UpdateIPAddress', 'ipaddress', true)
     ->column('Flag', 'tinyint', 0)
     ->column('Score', 'float', null)
     ->column('Attributes', 'text', true)
@@ -317,7 +315,6 @@ $PermissionModel->Define(
 
 $PermissionModel->Undefine('Vanilla.Spam.Manage');
 
-
 /*
 Apr 26th, 2010
 Removed FirstComment from :_Discussion and moved it into the discussion table.
@@ -410,5 +407,5 @@ include(PATH_APPLICATIONS.DS.'vanilla'.DS.'settings'.DS.'stub.php');
 // Set current Vanilla.Version
 $ApplicationInfo = array();
 include(CombinePaths(array(PATH_APPLICATIONS.DS.'vanilla'.DS.'settings'.DS.'about.php')));
-$Version = arrayValue('Version', arrayValue('Vanilla', $ApplicationInfo, array()), 'Undefined');
+$Version = val('Version', val('Vanilla', $ApplicationInfo, array()), 'Undefined');
 saveToConfig('Vanilla.Version', $Version);

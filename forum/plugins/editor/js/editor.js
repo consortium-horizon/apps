@@ -1,5 +1,6 @@
 (function($) {
-    $.fn.setAsEditor = function() {
+    $.fn.setAsEditor = function(selector) {
+        selector = selector || '.BodyBox';
 
         // If editor can be loaded, add class to body
         $('body').addClass('editor-active');
@@ -208,23 +209,6 @@
             }());
 
             /**
-             * Toggle spoilers.
-             */
-            $(document).on('mouseup', '.Spoiled', function(e) {
-                // Do not close if its a link or user selects some text.
-                if (!document.getSelection().toString().length && e.target.nodeName.toLowerCase() != 'a') {
-                    $(this).removeClass('Spoiled').addClass('Spoiler');
-                }
-                e.stopPropagation(); // for nesting
-            });
-
-            $(document).on('mouseup', '.Spoiler', function(e) {
-                $(this).removeClass('Spoiler').addClass('Spoiled');
-                e.stopPropagation(); // for nesting
-            });
-
-
-            /**
              * Lights on/off in fullpage
              *
              * Note: Wysiwyg makes styling the BodyBox more difficult as it's an
@@ -420,17 +404,13 @@
                         return false;
                     }
 
-                    // Make exception for non-wysiwyg, as wysihtml5 has custom
-                    // key handler.
-                    if (!$(this).closest('.editor').hasClass('editor-format-wysiwyg')) {
-                        // Fire event programmatically to do what needs to be done in
-                        // ButtonBar code.
-                        $(this).parent().find('.Button').trigger('click.insertData');
+                    // Fire event programmatically to do what needs to be done in
+                    // ButtonBar code.
+                    $(this).parent().find('.Button').trigger('click.insertData');
 
-                        e.stopPropagation();
-                        e.preventDefault();
-                        return false;
-                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return false;
                 }
             });
 
@@ -489,16 +469,6 @@
              }, 0);
              });
              */
-
-            // Handle quotes plugin using triggered event.
-            $('a.ReactButton.Quote').on('click', function(e) {
-                // Stop animation from other plugin and let this one
-                // handle the scroll, otherwise the scrolling jumps
-                // all over, and really distracts the eyes.
-                $('html, body').stop().animate({
-                    scrollTop: $(editor.textarea.element).parent().parent().offset().top
-                }, 800);
-            });
 
             $(editor.textarea.element).on('appendHtml', function(e, data) {
 
@@ -822,7 +792,7 @@
             var editorKey = 'editor-uploads-';
             var editorForm = $dndCueWrapper.closest('form');
 
-            var savedUploadsContainer = '';
+            var savedUploadsContainer = savedContainer = '';
             var mainCommentForm = '';
             if (editorForm) {
                 var formCommentId = $(editorForm).find('#Form_CommentID');
@@ -847,20 +817,30 @@
                 // Build editorKey
                 if (formCommentId.length
                     && parseInt(formCommentId[0].value) > 0) {
+                    var type = 'CommentID';
+                    var id = formCommentId[0].value;
                     editorKey += 'commentid' + formCommentId[0].value;
                 } else if (formDiscussionId.length
                     && parseInt(formDiscussionId[0].value) > 0) {
+                    var type = 'DiscussionID';
+                    var id = formDiscussionId[0].value;
                     editorKey += 'discussionid' + formDiscussionId[0].value;
                 } else if (formConversationId.length
                     && parseInt(formConversationId[0].value) > 0) {
+                    var type = 'ConversationID';
+                    var id = formConversationId[0].value;
                     editorKey += 'conversationid' + formConversationId[0].value;
                 }
 
-                // Make saved files editable
+                // Make saved files editable from the form
                 if (!mainCommentBox && editorKey != 'editor-uploads-') {
                     var savedContainer = $('#' + editorKey);
                     if (savedContainer.length && savedContainer.html().trim() != '') {
-                        savedUploadsContainer = savedContainer;
+                        savedContainer.hide();
+                        // Move existing uploads into preview container for better UX.
+                        var form = $('#Form_' + type + ':input[value="' + id + '"]').closest('form').find('.bodybox-wrap');
+                        form.children('.editor-upload-previews').html(savedContainer.html());
+                        savedUploadsContainer = form.children('.editor-upload-previews');
                     }
                 }
             }
@@ -949,11 +929,13 @@
                 // Turn read-only mode on. Event is fired from conversations.js
                 // and discussion.js.
                 $(editorForm).on('clearCommentForm', function(e) {
-                    $(savedUploadsContainer).addClass('editor-upload-readonly');
+                    $(savedContainer).addClass('editor-upload-readonly');
+                    $(savedContainer).show();
                 });
 
                 $(editorForm).on('clearMessageForm', function(e) {
-                    $(savedUploadsContainer).addClass('editor-upload-readonly');
+                    $(savedContainer).addClass('editor-upload-readonly');
+                    $(savedContainer).show();
                 });
 
                 $(savedUploadsContainer)
@@ -971,9 +953,6 @@
                             name: 'RemoveMediaIDs[]',
                             value: mediaId
                         }).appendTo($(editorForm));
-
-                        // Remove element from body.
-                        removeImageFromBody($editorFilePreview);
                     })
                     // This will remove the hidden input
                     .on('click.saved-file-reattach', '.editor-file-reattach', function(e) {
@@ -982,9 +961,6 @@
 
                         // Remove hidden input from form
                         $('#file-remove-' + mediaId).remove();
-
-                        // Re-attach
-                        insertImageIntoBody($editorFilePreview);
                     });
             }
 
@@ -1118,7 +1094,7 @@
                                     editorDropdownsClose();
                                 } else {
                                     // File dropped is not allowed!
-                                    var message = '"' + filename + '" ';
+                                    var message = 'File ';
 
                                     if (!validFile) {
                                         message += 'is not allowed';
@@ -1207,7 +1183,7 @@
 
                                 var payloadHeight = payload.original_height;
                                 var payloadWidth = payload.original_width;
-                                var editorWidth = $(editor.textarea.element).width();
+                                var editorWidth = $(this).find('.BodyBox').width();
 
                                 // Image max-width is 100%. Change the height to refect scaling down the width.
                                 if (editorWidth < payloadWidth) {
@@ -1508,6 +1484,14 @@
                 var currentEditableCommentId = (new Date()).getTime();
                 var editorName = 'vanilla-editor-text-' + currentEditableCommentId;
 
+                $(document).on('click', 'a.PreviewButton', function() {
+                    $currentEditorToolbar.hide();
+                });
+
+                $(document).on('click', 'a.WriteButton', function() {
+                    $currentEditorToolbar.show();
+                });
+
                 switch (format) {
                     case 'wysiwyg':
                     case 'ipb':
@@ -1770,7 +1754,7 @@
                                 }
 
                                 // Enable file uploads
-                                fileUploadsInit($currentEditableTextarea, '');
+                                fileUploadsInit($currentEditableTextarea[0], '');
 
                                 insertImageUrl($currentEditableTextarea);
                             });
@@ -1785,12 +1769,11 @@
             }
         } //editorInit
 
-        // Deprecated livequery.
-        if (jQuery().livequery) {
-            this.livequery(function() {
-                editorInit('', $(this));
-            });
-        }
+        // Initialize new editors.
+        $(document).on('EditCommentFormLoaded popupReveal', function () {
+            editorInit('', $(selector));
+        })
+        editorInit('', this);
 
         // jQuery chaining
         return this;
@@ -1802,7 +1785,6 @@
 jQuery(document).ready(function($) {
     $('.BodyBox').setAsEditor();
 });
-
 
 /*
  * This is an example of hooking into the custom parse event, to enable

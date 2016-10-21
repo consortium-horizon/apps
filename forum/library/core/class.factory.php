@@ -4,7 +4,7 @@
  *
  * @author Todd Burry <todd@vanillaforums.com>
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -312,8 +312,39 @@ class Gdn_Factory {
         if (array_key_exists($Alias, $this->_Dependencies)) {
             if (is_null($PropertyName)) {
                 unset($this->_Dependencies[$Alias]);
-            } elseif (array_key_exists($PropertyName, $this->_Dependencies[$Alias]))
+            } elseif (array_key_exists($PropertyName, $this->_Dependencies[$Alias])) {
                 unset($this->_Dependencies[$Alias][$PropertyName]);
+            }
         }
+    }
+
+    /**
+     * Get all currently defined factories
+     *
+     * @return array
+     */
+    public function all() {
+        return $this->_Objects;
+    }
+
+    /**
+     * Search installed factories by fnmatch
+     *
+     * @param string $search fnmatch-compatible search string
+     * @return array list of matching definitions
+     */
+    public function search($search) {
+        $arr = array_map(function ($ak, $av) use ($search) {
+            return fnmatch($search, $ak, FNM_CASEFOLD) ? [$ak => $av] : null;
+        }, array_keys($this->_Objects), array_values($this->_Objects));
+
+        $arr = array_filter($arr);
+        $arr = array_reduce($arr, function ($carry, $av) {
+            $key = array_pop(array_keys($av));
+            $carry[$key] = $av[$key];
+            return $carry;
+        }, []);
+
+        return $arr;
     }
 }

@@ -3,7 +3,7 @@
  * ProfileExtender Plugin.
  *
  * @author Lincoln Russell <lincoln@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package ProfileExtender
  */
@@ -39,7 +39,7 @@ $PluginInfo['ProfileExtender'] = array(
 class ProfileExtenderPlugin extends Gdn_Plugin {
 
     /** @var array */
-    public $MagicLabels = array('Twitter', 'Google', 'Facebook', 'LinkedIn', 'Website', 'Real Name');
+    public $MagicLabels = array('Twitter', 'Google', 'Facebook', 'LinkedIn', 'GitHub', 'Website', 'Real Name');
 
     /**
      * Available form field types in format Gdn_Type => DisplayName.
@@ -70,7 +70,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     /**
      * Add the Dashboard menu item.
      */
-    public function base_GetAppSettingsMenuItems_handler($Sender) {
+    public function base_getAppSettingsMenuItems_handler($Sender) {
         $Menu = &$Sender->EventArguments['SideMenu'];
         $Menu->addLink('Users', t('Profile Fields'), 'settings/profileextender', 'Garden.Settings.Manage');
     }
@@ -78,8 +78,8 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     /**
      * Add non-checkbox fields to registration forms.
      */
-    public function entryController_RegisterBeforePassword_handler($Sender) {
-        $ProfileFields = $this->GetProfileFields();
+    public function entryController_registerBeforePassword_handler($Sender) {
+        $ProfileFields = $this->getProfileFields();
         $Sender->RegistrationFields = array();
         foreach ($ProfileFields as $Name => $Field) {
             if (val('OnRegister', $Field) && val('FormType', $Field) != 'CheckBox') {
@@ -92,7 +92,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
     /**
      * Add checkbox fields to registration forms.
      */
-    public function entryController_RegisterFormBeforeTerms_handler($Sender) {
+    public function entryController_registerFormBeforeTerms_handler($Sender) {
         $ProfileFields = $this->getProfileFields();
         $Sender->RegistrationFields = array();
         foreach ($ProfileFields as $Name => $Field) {
@@ -112,7 +112,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
         foreach ($ProfileFields as $Name => $Field) {
             // Check both so you can't break register form by requiring omitted field
             if (val('Required', $Field) && val('OnRegister', $Field)) {
-                $Sender->UserModel->Validation->applyRule($Name, 'Required', $Field['Label']." is required.");
+                $Sender->UserModel->Validation->applyRule($Name, 'Required', T('%s is required.', $Field['Label']));
             }
         }
 
@@ -147,6 +147,9 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
                     break;
                 case 'LinkedIn':
                     $Fields['LinkedIn'] = anchor($Value, 'http://www.linkedin.com/in/'.$Value);
+                    break;
+                case 'GitHub':
+                    $Fields['GitHub'] = anchor($Value, 'https://github.com/'.$Value);
                     break;
                 case 'Google':
                     $Fields['Google'] = anchor('Google+', $Value, '', array('rel' => 'me'));
@@ -186,7 +189,6 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
      */
     private function getProfileFields() {
         $Fields = c('ProfileExtender.Fields', array());
-
         if (!is_array($Fields)) {
             $Fields = array();
         }
@@ -202,14 +204,13 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
             // Verify field form type
             if (!isset($Field['FormType'])) {
                 $Fields[$Name]['FormType'] = 'TextBox';
-            } elseif (!array_key_exists($Field['FormType'], $this->FormTypes))
+            } elseif (!array_key_exists($Field['FormType'], $this->FormTypes)) {
                 unset($this->ProfileFields[$Name]);
-        }
-
-        // Special case for birthday field
-        if (isset($Fields['DateOfBirth'])) {
-            $Fields['DateOfBirth']['FormType'] = 'Date';
-            $Fields['DateOfBirth']['Label'] = t('Birthday');
+            } elseif ($Fields[$Name]['FormType'] == 'DateOfBirth') {
+                // Special case for birthday field
+                $Fields[$Name]['FormType'] = 'Date';
+                $Fields[$Name]['Label'] = t('Birthday');
+            }
         }
 
         return $Fields;
@@ -239,8 +240,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
         $this->ProfileFields = $this->getProfileFields();
 
         // Get user-specific data
-        $this->UserFields = Gdn::userModel()->GetMeta($Sender->data("User.UserID"), 'Profile.%', 'Profile.');
-
+        $this->UserFields = Gdn::userModel()->getMeta($Sender->Form->getValue('UserID'), 'Profile.%', 'Profile.');
         // Fill in user data on form
         foreach ($this->UserFields as $Field => $Value) {
             $Sender->Form->setValue($Field, $Value);
@@ -313,11 +313,22 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
             }
 
             // Merge updated data into config
-            $Fields = $this->GetProfileFields();
+            $Fields = $this->getProfileFields();
             if (!$Name = val('Name', $FormPostValues)) {
                 // Make unique name from label for new fields
-                $Name = $TestSlug = preg_replace('`[^0-9a-zA-Z]`', '', val('Label', $FormPostValues));
+                if (unicodeRegexSupport()) {
+                    $regex = '/[^\pL\pN]/u';
+                } else {
+                    $regex = '/[^a-z\d]/i';
+                }
+                // Make unique slug
+                $Name = $TestSlug = substr(preg_replace($regex, '', val('Label', $FormPostValues)), 0, 50);
                 $i = 1;
+
+                // Fallback in case the name is empty
+                if (empty($Name)) {
+                    $Name = $TestSlug = md5($Field);
+                }
                 while (array_key_exists($Name, $Fields) || in_array($Name, $this->ReservedNames)) {
                     $Name = $TestSlug.$i++;
                 }
@@ -332,7 +343,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
             }
         } elseif (isset($Args[0])) {
             // Editing
-            $Data = $this->GetProfileField($Args[0]);
+            $Data = $this->getProfileField($Args[0]);
             if (isset($Data['Options']) && is_array($Data['Options'])) {
                 $Data['Options'] = implode("\n", $Data['Options']);
             }
@@ -427,7 +438,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
             }
 
             // Display all non-hidden fields
-            $ProfileFields = array_reverse($ProfileFields);
+            $ProfileFields = array_reverse($ProfileFields, true);
             foreach ($ProfileFields as $Name => $Value) {
                 // Skip empty and hidden fields.
                 if (!$Value || !val('OnProfile', $AllFields[$Name])) {
@@ -464,7 +475,7 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
      * @param $Args array
      */
     public function userModel_afterInsertUser_handler($Sender, $Args) {
-        $this->updateUserFields($Args['InsertUserID'], $Args['User']);
+        $this->updateUserFields($Args['InsertUserID'], $Args['RegisteringUser']);
     }
 
     /**
@@ -499,6 +510,57 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
         }
     }
 
+
+    /**
+     * Endpoint to export basic user data along with all custom fields into CSV.
+     */
+    public function utilityController_exportProfiles_create($sender) {
+        // Clear our ability to do this.
+        $sender->permission('Garden.Settings.Manage');
+        if (Gdn::userModel()->pastUserMegaThreshold()) {
+            throw new Gdn_UserException('You have too many users to export automatically.');
+        }
+
+        // Determine profile fields we need to add.
+        $fields = $this->getProfileFields();
+        $columnNames = array('Name', 'Email', 'Joined', 'Last Seen', 'Discussions', 'Comments', 'Points');
+
+        // Set up our basic query.
+        Gdn::sql()
+            ->select('u.Name')
+            ->select('u.Email')
+            ->select('u.DateInserted')
+            ->select('u.DateLastActive')
+            ->select('u.CountDiscussions')
+            ->select('u.CountComments')
+            ->select('u.Points')
+            ->from('User u')
+            ->where('u.Deleted', 0)
+            ->where('u.Admin <', 2);
+
+        $i = 0;
+        foreach ($fields as $slug => $fieldData) {
+            // Add this field to the output
+            $columnNames[] = val('Label', $fieldData, $slug);
+
+            // Add this field to the query.
+            Gdn::sql()
+                ->join('UserMeta a'.$i, "u.UserID = a$i.UserID and a$i.Name = 'Profile.$slug'", 'left')
+                ->select('a'.$i.'.Value', '', $slug);
+            $i++;
+        }
+
+        // Get our user data.
+        $users = Gdn::sql()->get()->resultArray();
+
+        // Serve a CSV of the results.
+        exportCSV($columnNames, $users);
+        die();
+
+        // Useful for query debug.
+        //$sender->render('blank');
+    }
+
     /**
      * Import from CustomProfileFields or upgrade from ProfileExtender 2.0.
      */
@@ -517,9 +579,19 @@ class ProfileExtenderPlugin extends Gdn_Plugin {
             // Assign new data structure
             $NewData = array();
             foreach ($Fields as $Field) {
+                if (unicodeRegexSupport()) {
+                    $regex = '/[^\pL\pN]/u';
+                } else {
+                    $regex = '/[^a-z\d]/i';
+                }
                 // Make unique slug
-                $Name = $TestSlug = preg_replace('`[^0-9a-zA-Z]`', '', $Field);
+                $Name = $TestSlug = preg_replace($regex, '', $Field);
                 $i = 1;
+
+                // Fallback in case the name is empty
+                if (empty($Name)) {
+                    $Name = $TestSlug = md5($Field);
+                }
                 while (array_key_exists($Name, $NewData) || in_array($Name, $this->ReservedNames)) {
                     $Name = $TestSlug.$i++;
                 }

@@ -2,7 +2,7 @@
 /**
  * DashboardHooks class.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -24,19 +24,19 @@ class DashboardHooks implements Gdn_IPlugin {
      *
      * @param Gdn_Controller $Sender
      */
-    public function base_Render_Before($Sender) {
+    public function base_render_before($Sender) {
         $Session = Gdn::session();
 
         // Enable theme previewing
         if ($Session->isValid()) {
-            $PreviewThemeName = $Session->GetPreference('PreviewThemeName', '');
-            $PreviewThemeFolder = $Session->GetPreference('PreviewThemeFolder', '');
+            $PreviewThemeName = htmlspecialchars($Session->getPreference('PreviewThemeName', ''));
+            $PreviewThemeFolder = htmlspecialchars($Session->getPreference('PreviewThemeFolder', ''));
             if ($PreviewThemeName != '') {
                 $Sender->Theme = $PreviewThemeName;
                 $Sender->informMessage(
                     sprintf(t('You are previewing the %s theme.'), wrap($PreviewThemeName, 'em'))
                     .'<div class="PreviewThemeButtons">'
-                    .anchor(t('Apply'), 'settings/themes/'.$PreviewThemeName.'/'.$Session->TransientKey(), 'PreviewThemeButton')
+                    .anchor(t('Apply'), 'settings/themes/'.$PreviewThemeName.'/'.$Session->transientKey(), 'PreviewThemeButton')
                     .' '.anchor(t('Cancel'), 'settings/cancelpreview/', 'PreviewThemeButton')
                     .'</div>',
                     'DoNotDismiss'
@@ -45,10 +45,8 @@ class DashboardHooks implements Gdn_IPlugin {
         }
 
         if ($Session->isValid()) {
-            $ConfirmEmail = c('Garden.Registration.ConfirmEmail', false);
             $Confirmed = val('Confirmed', Gdn::session()->User, true);
-
-            if ($ConfirmEmail && !$Confirmed) {
+            if (UserModel::requireConfirmEmail() && !$Confirmed) {
                 $Message = formatString(t('You need to confirm your email address.', 'You need to confirm your email address. Click <a href="{/entry/emailconfirmrequest,url}">here</a> to resend the confirmation email.'));
                 $Sender->informMessage($Message, '');
             }
@@ -58,10 +56,7 @@ class DashboardHooks implements Gdn_IPlugin {
         $MessageCache = Gdn::config('Garden.Messages.Cache', array());
         $Location = $Sender->Application.'/'.substr($Sender->ControllerName, 0, -10).'/'.$Sender->RequestMethod;
         $Exceptions = array('[Base]');
-// 2011-09-09 - mosullivan - No longer allowing messages in dashboard
-//		if ($Sender->MasterView == 'admin')
-//			$Exceptions[] = '[Admin]';
-//		else if (in_array($Sender->MasterView, array('', 'default')))
+
         if (in_array($Sender->MasterView, array('', 'default'))) {
             $Exceptions[] = '[NonAdmin]';
         }
@@ -74,20 +69,21 @@ class DashboardHooks implements Gdn_IPlugin {
 
         if ($Sender->MasterView != 'admin' && !$Sender->data('_NoMessages') && (val('MessagesLoaded', $Sender) != '1' && $Sender->MasterView != 'empty' && ArrayInArray($Exceptions, $MessageCache, false) || InArrayI($Location, $MessageCache))) {
             $MessageModel = new MessageModel();
-            $MessageData = $MessageModel->GetMessagesForLocation($Location, $Exceptions, $Sender->data('Category.CategoryID'));
+            $MessageData = $MessageModel->getMessagesForLocation($Location, $Exceptions, $Sender->data('Category.CategoryID'));
             foreach ($MessageData as $Message) {
                 $MessageModule = new MessageModule($Sender, $Message);
                 if ($SignInOnly) { // Insert special messages even in SignIn popup
                     echo $MessageModule;
-                } elseif ($Sender->deliveryType() == DELIVERY_TYPE_ALL)
+                } elseif ($Sender->deliveryType() == DELIVERY_TYPE_ALL) {
                     $Sender->addModule($MessageModule);
+                }
             }
             $Sender->MessagesLoaded = '1'; // Fixes a bug where render gets called more than once and messages are loaded/displayed redundantly.
         }
 
         if ($Sender->deliveryType() == DELIVERY_TYPE_ALL) {
-            $Gdn_Statistics = Gdn::Factory('Statistics');
-            $Gdn_Statistics->Check($Sender);
+            $Gdn_Statistics = Gdn::factory('Statistics');
+            $Gdn_Statistics->check($Sender);
         }
 
         // Allow forum embedding
@@ -103,14 +99,23 @@ class DashboardHooks implements Gdn_IPlugin {
             if ($RemoteUrl) {
                 $Sender->addDefinition('RemoteUrl', $RemoteUrl);
             }
+            if ($remoteUrlFormat = c('Garden.Embed.RemoteUrlFormat')) {
+                $Sender->addDefinition('RemoteUrlFormat', $remoteUrlFormat);
+            }
 
             // Force embedding?
-            if (!IsSearchEngine() && !IsMobile() && strtolower($Sender->ControllerName) != 'entry') {
-                $Sender->addDefinition('ForceEmbedForum', c('Garden.Embed.ForceForum') ? '1' : '0');
+            if (!IsSearchEngine() && strtolower($Sender->ControllerName) != 'entry') {
+                if (IsMobile()) {
+                    $forceEmbedForum = c('Garden.Embed.ForceMobile') ? '1' : '0';
+                } else {
+                    $forceEmbedForum = c('Garden.Embed.ForceForum') ? '1' : '0';
+                }
+
+                $Sender->addDefinition('ForceEmbedForum', $forceEmbedForum);
                 $Sender->addDefinition('ForceEmbedDashboard', c('Garden.Embed.ForceDashboard') ? '1' : '0');
             }
 
-            $Sender->addDefinition('Path', Gdn::request()->Path());
+            $Sender->addDefinition('Path', Gdn::request()->path());
             // $Sender->addDefinition('MasterView', $Sender->MasterView);
             $Sender->addDefinition('InDashboard', $Sender->MasterView == 'admin' ? '1' : '0');
 
@@ -126,7 +131,7 @@ class DashboardHooks implements Gdn_IPlugin {
         // Allow return to mobile site
         $ForceNoMobile = val('X-UA-Device-Force', $_COOKIE);
         if ($ForceNoMobile === 'desktop') {
-            $Sender->AddAsset('Foot', wrap(Anchor(t('Back to Mobile Site'), '/profile/nomobile/1'), 'div'), 'MobileLink');
+            $Sender->addAsset('Foot', wrap(Anchor(t('Back to Mobile Site'), '/profile/nomobile/1'), 'div'), 'MobileLink');
         }
 
         // Allow global translation of TagHint
@@ -134,17 +139,42 @@ class DashboardHooks implements Gdn_IPlugin {
     }
 
     /**
+     * Aggressively prompt users to upgrade PHP version.
+     *
+     * @param $sender
+     */
+    public function settingsController_render_before($sender) {
+        // Set this in your config to dismiss our upgrade warnings. Not recommended.
+        if (c('Vanilla.WarnedMeToUpgrade') === 'PHP 5.6') {
+            return;
+        }
+
+        if (version_compare(phpversion(), '5.6') < 0) {
+            $UpgradeMessage = ['Content' => 'Upgrade to <b>PHP 5.6</b> or higher immediately. Version '.phpversion().' is no longer supported.', 'AssetTarget' => 'Content', 'CssClass' => 'WarningMessage'];
+            $MessageModule = new MessageModule($sender, $UpgradeMessage);
+            $sender->addModule($MessageModule);
+        }
+
+        $mysqlVersion = gdn::sql()->version();
+        if (version_compare($mysqlVersion, '5.6') < 0) {
+            $UpgradeMessage = ['Content' => 'We recommend using <b>MySQL 5.6</b> or higher. Version '.htmlspecialchars($mysqlVersion).' will not support all upcoming Vanilla features.', 'AssetTarget' => 'Content', 'CssClass' => 'InfoMessage'];
+            $MessageModule = new MessageModule($sender, $UpgradeMessage);
+            $sender->addModule($MessageModule);
+        }
+    }
+
+    /**
      * @param $Sender
      */
-    public function base_GetAppSettingsMenuItems_Handler($Sender) {
+    public function base_getAppSettingsMenuItems_handler($Sender) {
         // SideMenuModule menu
         $Menu = &$Sender->EventArguments['SideMenu'];
-        $Menu->AddItem('Dashboard', t('Dashboard'), false, array('class' => 'Dashboard'));
+        $Menu->addItem('Dashboard', t('Dashboard'), false, array('class' => 'Dashboard'));
         $Menu->addLink('Dashboard', t('Dashboard'), '/dashboard/settings', 'Garden.Settings.View', array('class' => 'nav-dashboard'));
         $Menu->addLink('Dashboard', t('Getting Started'), '/dashboard/settings/gettingstarted', 'Garden.Settings.Manage', array('class' => 'nav-getting-started'));
         $Menu->addLink('Dashboard', t('Help &amp; Tutorials'), '/dashboard/settings/tutorials', 'Garden.Settings.View', array('class' => 'nav-tutorials'));
 
-        $Menu->AddItem('Appearance', t('Appearance'), false, array('class' => 'Appearance'));
+        $Menu->addItem('Appearance', t('Appearance'), false, array('class' => 'Appearance'));
         $Menu->addLink('Appearance', t('Banner'), '/dashboard/settings/banner', 'Garden.Community.Manage', array('class' => 'nav-banner'));
         $Menu->addLink('Appearance', t('Homepage'), '/dashboard/settings/homepage', 'Garden.Settings.Manage', array('class' => 'nav-homepage'));
 
@@ -158,10 +188,11 @@ class DashboardHooks implements Gdn_IPlugin {
             $Menu->addLink('Appearance', t('Mobile Theme Options'), '/dashboard/settings/mobilethemeoptions', 'Garden.Settings.Manage', array('class' => 'nav-mobile-theme-options'));
         }
 
-
         $Menu->addLink('Appearance', t('Messages'), '/dashboard/message', 'Garden.Community.Manage', array('class' => 'nav-messages'));
+        $Menu->addLink('Appearance', t('Avatars'), '/dashboard/settings/avatars', 'Garden.Community.Manage', array('class' => 'nav-avatars'));
+        $Menu->addLink('Appearance', t('Email'), '/dashboard/settings/emailstyles', 'Garden.Community.Manage', array('class' => 'nav-email-styles'));
 
-        $Menu->AddItem('Users', t('Users'), false, array('class' => 'Users'));
+        $Menu->addItem('Users', t('Users'), false, array('class' => 'Users'));
         $Menu->addLink('Users', t('Users'), '/dashboard/user', array('Garden.Users.Add', 'Garden.Users.Edit', 'Garden.Users.Delete'), array('class' => 'nav-users'));
 
         if (Gdn::session()->checkPermission(array('Garden.Settings.Manage', 'Garden.Roles.Manage'), false)) {
@@ -175,7 +206,7 @@ class DashboardHooks implements Gdn_IPlugin {
             $Menu->addLink('Users', t('Applicants').' <span class="Popin" rel="/dashboard/user/applicantcount"></span>', 'dashboard/user/applicants', 'Garden.Users.Approve', array('class' => 'nav-applicants'));
         }
 
-        $Menu->AddItem('Moderation', t('Moderation'), false, array('class' => 'Moderation'));
+        $Menu->addItem('Moderation', t('Moderation'), false, array('class' => 'Moderation'));
 
         if (Gdn::session()->checkPermission(array('Garden.Moderation.Manage', 'Moderation.Spam.Manage'), false)) {
             $Menu->addLink('Moderation', t('Spam Queue'), 'dashboard/log/spam', false, array('class' => 'nav-spam-queue'));
@@ -186,23 +217,23 @@ class DashboardHooks implements Gdn_IPlugin {
         $Menu->addLink('Moderation', t('Change Log'), 'dashboard/log/edits', 'Garden.Moderation.Manage', array('class' => 'nav-change-log'));
         $Menu->addLink('Moderation', t('Banning'), 'dashboard/settings/bans', 'Garden.Community.Manage', array('class' => 'nav-bans'));
 
-        $Menu->AddItem('Forum', t('Forum Settings'), false, array('class' => 'Forum'));
+        $Menu->addItem('Forum', t('Forum Settings'), false, array('class' => 'Forum'));
         $Menu->addLink('Forum', t('Social'), 'dashboard/social', 'Garden.Settings.Manage', array('class' => 'nav-social-settings'));
 
-        $Menu->AddItem('Reputation', t('Reputation'), false, array('class' => 'Reputation'));
+        $Menu->addItem('Reputation', t('Reputation'), false, array('class' => 'Reputation'));
 
-        $Menu->AddItem('Add-ons', t('Addons'), false, array('class' => 'Addons'));
+        $Menu->addItem('Add-ons', t('Addons'), false, array('class' => 'Addons'));
         $Menu->addLink('Add-ons', t('Plugins'), 'dashboard/settings/plugins', 'Garden.Settings.Manage', array('class' => 'nav-addons nav-plugins'));
         $Menu->addLink('Add-ons', t('Applications'), 'dashboard/settings/applications', 'Garden.Settings.Manage', array('class' => 'nav-addons nav-applications'));
         $Menu->addLink('Add-ons', t('Locales'), 'dashboard/settings/locales', 'Garden.Settings.Manage', array('class' => 'nav-addons nav-locales'));
 
-        $Menu->AddItem('Site Settings', t('Settings'), false, array('class' => 'SiteSettings'));
+        $Menu->addItem('Site Settings', t('Settings'), false, array('class' => 'SiteSettings'));
         $Menu->addLink('Site Settings', t('Outgoing Email'), 'dashboard/settings/email', 'Garden.Settings.Manage', array('class' => 'nav-email nav-email-out'));
         $Menu->addLink('Site Settings', t('Routes'), 'dashboard/routes', 'Garden.Settings.Manage', array('class' => 'nav-routes'));
         $Menu->addLink('Site Settings', t('Statistics'), 'dashboard/statistics', 'Garden.Settings.Manage', array('class' => 'nav-statistics-settings'));
 
         if (Gdn::session()->checkPermission('Garden.Settings.Manage')) {
-            $Menu->AddItem('Import', t('Import'), 'Garden.Settings.Manage', array('class' => 'Import'));
+            $Menu->addItem('Import', t('Import'), 'Garden.Settings.Manage', array('class' => 'Import'));
             $Menu->addLink('Import', false, 'dashboard/import', 'Garden.Settings.Manage', array('class' => 'nav-import'));
         }
     }
@@ -216,18 +247,18 @@ class DashboardHooks implements Gdn_IPlugin {
      *
      * @param Gdn_Dispatcher $Sender
      */
-    public function gdn_Dispatcher_AppStartup_Handler($Sender) {
+    public function gdn_dispatcher_appStartup_handler($Sender) {
         safeHeader('P3P: CP="CAO PSA OUR"', true);
 
         if ($SSO = Gdn::request()->get('sso')) {
             saveToConfig('Garden.Registration.SendConnectEmail', false, false);
 
-            $IsApi = preg_match('`\.json$`i', Gdn::request()->Path());
+            $IsApi = preg_match('`\.json$`i', Gdn::request()->path());
 
             $UserID = false;
             try {
                 $CurrentUserID = Gdn::session()->UserID;
-                $UserID = Gdn::userModel()->SSO($SSO);
+                $UserID = Gdn::userModel()->sso($SSO);
             } catch (Exception $Ex) {
                 trace($Ex, TRACE_ERROR);
             }
@@ -243,7 +274,10 @@ class DashboardHooks implements Gdn_IPlugin {
                 }
             } else {
                 // There was some sort of error. Let's print that out.
-                trace(Gdn::userModel()->Validation->resultsText(), TRACE_WARNING);
+                foreach (Gdn::userModel()->Validation->resultsArray() as $msg) {
+                    trace($msg, TRACE_ERROR);
+                }
+                Gdn::userModel()->Validation->reset();
             }
         }
     }
@@ -254,7 +288,7 @@ class DashboardHooks implements Gdn_IPlugin {
      * @param RootController $Sender
      * @param string $Target The url to redirect to after sso.
      */
-    public function rootController_SSO_Create($Sender, $Target = '') {
+    public function rootController_sso_create($Sender, $Target = '') {
         if (!$Target) {
             $Target = $Sender->Request->get('redirect');
             if (!$Target) {
@@ -265,7 +299,7 @@ class DashboardHooks implements Gdn_IPlugin {
         // TODO: Make sure the target is a safe redirect.
 
         // Get the default authentication provider.
-        $DefaultProvider = Gdn_AuthenticationProviderModel::GetDefault();
+        $DefaultProvider = Gdn_AuthenticationProviderModel::getDefault();
         $Sender->EventArguments['Target'] = $Target;
         $Sender->EventArguments['DefaultProvider'] = $DefaultProvider;
         $Handled = false;
@@ -318,7 +352,7 @@ class DashboardHooks implements Gdn_IPlugin {
         $sender->addGroup('moderation', array('text' => t('Moderation'), 'sort' => 90));
         if (Gdn::session()->checkPermission('Garden.Users.Approve')) {
             $RoleModel = new RoleModel();
-            $applicant_count = (int)$RoleModel->GetApplicantCount();
+            $applicant_count = (int)$RoleModel->getApplicantCount();
             if ($applicant_count > 0 || true) {
                 $sender->addLink('moderation.applicants', array('text' => t('Applicants'), 'url' => '/user/applicants', 'icon' => icon('user'), 'badge' => countString($applicant_count)));
             }
@@ -391,5 +425,32 @@ class DashboardHooks implements Gdn_IPlugin {
 
         // Add a stub group for moderation.
         $sender->addGroup('moderation', array('text' => t('Moderation'), 'sort' => 90));
+    }
+
+    /**
+     * After executing /settings/utility/update check if any role permissions have been changed, if not reset all the permissions on the roles.
+     * @param $sender
+     */
+    public function updateModel_afterStructure_handler($sender) {
+        // Only setup default permissions if no role permissions are set.
+        $hasPermissions = Gdn::sql()->getWhere('Permission', array('RoleID >' => 0))->firstRow(DATASET_TYPE_ARRAY);
+        if (!$hasPermissions) {
+            PermissionModel::resetAllRoles();
+        }
+    }
+
+    /**
+     * Add user's viewable roles to gdn.meta if user is logged in.
+     * @param $sender
+     * @param $args
+     */
+    public function gdn_dispatcher_afterControllerCreate_handler($sender, $args) {
+        // Function addDefinition returns the value of the definition if you pass only one argument.
+        if (!gdn::controller()->addDefinition('Roles')) {
+            if (Gdn::session()->isValid()) {
+                $roleModel = new RoleModel();
+                gdn::controller()->addDefinition("Roles", $roleModel->getPublicUserRoles(gdn::session()->UserID, "Name"));
+            }
+        }
     }
 }

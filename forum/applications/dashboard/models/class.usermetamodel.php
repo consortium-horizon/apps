@@ -2,7 +2,7 @@
 /**
  * UserMeta model.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0.18 (?)
@@ -173,7 +173,9 @@ class UserMetaModel extends Gdn_Model {
             }
 
             $CacheKey = 'UserMeta_'.$UserID;
-            Gdn::cache()->store($CacheKey, $UserMeta);
+            Gdn::cache()->store($CacheKey, $UserMeta, array(
+                Gdn_Cache::FEATURE_EXPIRY => 3600
+            ));
 
             // Update the DB.
             $this->SQL->reset();

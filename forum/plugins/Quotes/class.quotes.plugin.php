@@ -3,7 +3,7 @@
  * Quotes Plugin.
  *
  *  @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Quotes
  */
@@ -12,7 +12,7 @@
 $PluginInfo['Quotes'] = array(
     'Name' => 'Quotes',
     'Description' => "Adds an option to each comment for users to easily quote each other.",
-    'Version' => '1.6.10',
+    'Version' => '1.8',
     'MobileFriendly' => true,
     'RequiredApplications' => array('Vanilla' => '2.1'),
     'HasLocale' => true,
@@ -31,7 +31,7 @@ $PluginInfo['Quotes'] = array(
  *  1.6.4   Moved button to reactions area & changed js accordingly.
  *  1.6.8   Textarea target will now automatically resize to fit text body.
  *  1.6.9   Security fix.
- *
+ *  1.7     Eliminate livequery and js refactor.
  */
 class QuotesPlugin extends Gdn_Plugin {
 
@@ -230,7 +230,6 @@ class QuotesPlugin extends Gdn_Plugin {
      * Add 'Quote' option to Discussion.
      */
     public function base_AfterFlag_handler($Sender, $Args) {
-        echo Gdn_Theme::BulletItem('Flags');
         $this->addQuoteButton($Sender, $Args);
     }
 
@@ -252,6 +251,7 @@ class QuotesPlugin extends Gdn_Plugin {
             return;
         }
 
+        echo Gdn_Theme::BulletItem('Flags');
         echo anchor(sprite('ReactQuote', 'ReactSprite').' '.t('Quote'), url("post/quote/{$Object->DiscussionID}/{$ObjectID}", true), 'ReactButton Quote Visible').' ';
     }
 
@@ -358,7 +358,7 @@ BLOCKQUOTE;
      * @param $Sender
      */
     public function postController_BeforeCommentRender_handler($Sender) {
-        if (isset($Sender->Data['Plugin.Quotes.QuoteSource'])) {
+        if ($Sender->data('Plugin.Quotes.QuoteSource')) {
             if (sizeof($Sender->RequestArgs) < 2) {
                 return;
             }
@@ -440,6 +440,8 @@ BLOCKQUOTE;
                 }
             }
             $Data->Body = $NewBody;
+            $this->EventArguments['String'] = &$Data->Body;
+            $this->fireEvent('FilterContent');
 
             // Format the quote according to the format.
             switch ($Format) {
@@ -468,11 +470,6 @@ BQ;
                 case 'Display':
                 case 'Text':
                     $QuoteBody = $Data->Body;
-
-                    // Strip inner quotes and mentions...
-                    $QuoteBody = self::_stripMarkdownQuotes($QuoteBody);
-                    $QuoteBody = self::_stripMentions($QuoteBody);
-
                     $Quote = '> '.sprintf(t('%s said:'), '@'.$Data->InsertName)."\n".
                         '> '.str_replace("\n", "\n> ", $QuoteBody)."\n";
 

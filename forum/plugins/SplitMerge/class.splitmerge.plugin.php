@@ -2,7 +2,7 @@
 /**
  * SplitMerge plugin.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package SplitMerge
  */
@@ -150,9 +150,9 @@ class SplitMergePlugin extends Gdn_Plugin {
         }
 
         // Check that the user has permission to edit all discussions
-        foreach($Discussions as $discussion) {
+        foreach ($Discussions as $discussion) {
             if (!DiscussionModel::canEdit($discussion)) {
-                throw permissionException('@'.t('You do not have permission to edit all of the discussions you are trying to merge.'));
+                throw permissionException('@'.t('You do not have permission to edit all of the posts you are trying to merge.'));
             }
         }
 
@@ -224,7 +224,7 @@ class SplitMergePlugin extends Gdn_Plugin {
                             $CommentModel->removePageCache($Discussion['DiscussionID']);
                         } else {
                             // Delete discussion that was merged.
-                            $DiscussionModel->delete($Discussion['DiscussionID']);
+                            $DiscussionModel->deleteID($Discussion['DiscussionID']);
                         }
                     } else {
                         $Sender->informMessage($CommentModel->Validation->resultsText());

@@ -2,7 +2,7 @@
 /**
  * Tagging plugin.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Tagging
  */
@@ -220,7 +220,7 @@ endforeach; ?>
 ?>
                         <li><?php
                             echo anchor(
-                                TagFullName($Tag).' '.Wrap(number_format($Tag['CountDiscussions']), 'span', array('class' => 'Count')),
+                                htmlspecialchars(TagFullName($Tag)).' '.Wrap(number_format($Tag['CountDiscussions']), 'span', array('class' => 'Count')),
                                 TagUrl($Tag, '', '/'),
                                 array('class' => 'Tag_'.str_replace(' ', '_', $Tag['Name']))
                             );

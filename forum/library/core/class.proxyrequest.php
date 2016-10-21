@@ -3,7 +3,7 @@
  * ProxyRequest handler class.
  *
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0.18
@@ -13,6 +13,7 @@
  * This class abstracts the work of doing external requests.
  */
 class ProxyRequest {
+    const MAX_LOG_BODYLENGTH = 500;
 
     protected $CookieJar;
 
@@ -115,10 +116,17 @@ class ProxyRequest {
      * @return int
      */
     public function curlHeader(&$Handler, $HeaderString) {
-        $Line = explode(':', trim($HeaderString));
+        $Line = explode(':', $HeaderString);
         $Key = trim(array_shift($Line));
         $Value = trim(implode(':', $Line));
-        if (!empty($Key)) {
+        // Prevent overwriting existing $this->ResponseHeaders[$Key] entries.
+        if (array_key_exists($Key, $this->ResponseHeaders)) {
+            if (!is_array($this->ResponseHeaders[$Key])) {
+                // Transform ResponseHeader to an array.
+                $this->ResponseHeaders[$Key] = array($this->ResponseHeaders[$Key]);
+            }
+            $this->ResponseHeaders[$Key][] = $Value;
+        } elseif (!empty($Key)) {
             $this->ResponseHeaders[$Key] = $Value;
         }
         return strlen($HeaderString);
@@ -376,8 +384,8 @@ class ProxyRequest {
         $this->action(" transfer mode: {$TransferMode}");
 
         $logContext = array(
-            'url' => $Url,
-            'method' => $RequestMethod
+            'requestUrl' => $Url,
+            'requestMethod' => $RequestMethod
         );
 
         /*
@@ -418,7 +426,7 @@ class ProxyRequest {
         curl_setopt($Handler, CURLOPT_HEADER, false);
         curl_setopt($Handler, CURLINFO_HEADER_OUT, true);
         curl_setopt($Handler, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($Handler, CURLOPT_USERAGENT, val('HTTP_USER_AGENT', $_SERVER, 'Vanilla/2.0'));
+        curl_setopt($Handler, CURLOPT_USERAGENT, val('HTTP_USER_AGENT', $_SERVER, 'Vanilla/'.c('Vanilla.Version')));
         curl_setopt($Handler, CURLOPT_CONNECTTIMEOUT, $ConnectTimeout);
         curl_setopt($Handler, CURLOPT_HEADERFUNCTION, array($this, 'CurlHeader'));
 
@@ -517,6 +525,12 @@ class ProxyRequest {
             }
         }
 
+        // Allow HEAD
+        if ($RequestMethod == 'HEAD') {
+            curl_setopt($Handler, CURLOPT_HEADER, true);
+            curl_setopt($Handler, CURLOPT_NOBODY, true);
+        }
+
         // Any extra needed headers
         if (sizeof($SendExtraHeaders)) {
             curl_setopt($Handler, CURLOPT_HTTPHEADER, $SendExtraHeaders);
@@ -526,8 +540,8 @@ class ProxyRequest {
         curl_setopt($Handler, CURLOPT_URL, $Url);
         curl_setopt($Handler, CURLOPT_PORT, $Port);
 
-        if (val('Log', $Options, true)) {
-            Logger::event('http_request', Logger::DEBUG, '{method} {url}', $logContext);
+        if (val('LogRequest', $Options, false)) {
+            Logger::event('http_request', Logger::INFO, '{requestMethod} {requestUrl}', $logContext);
         }
 
         $this->curlReceive($Handler);
@@ -541,8 +555,15 @@ class ProxyRequest {
 
         $logContext['responseCode'] = $this->ResponseStatus;
         $logContext['responseTime'] = $this->ResponseTime;
-        if (debug()) {
-            if ($this->ContentType == 'application/json') {
+
+        // Add the response body to the log entry if it isn't too long or we are debugging.
+        $logResponseBody = val('LogResponseBody', $Options, null);
+        $logResponseBody = $logResponseBody === null ?
+            !in_array($RequestMethod, ['GET', 'OPTIONS']) && strlen($this->ResponseBody) < self::MAX_LOG_BODYLENGTH :
+            $logResponseBody;
+
+        if ($logResponseBody || debug() || (!$this->responseClass('2xx') && val('LogResponseErrorBody', $Options, true))) {
+            if (stripos($this->ContentType, 'application/json') !== false) {
                 $body = @json_decode($this->ResponseBody, true);
                 if (!$body) {
                     $body = $this->ResponseBody;
@@ -552,11 +573,12 @@ class ProxyRequest {
                 $logContext['responseBody'] = $this->ResponseBody;
             }
         }
+        $logLevel = val('Log', $Options, true) ? Logger::INFO : Logger::DEBUG;
         if (val('Log', $Options, true)) {
             if ($this->responseClass('2xx')) {
-                Logger::event('http_response', Logger::DEBUG, '{responseCode} {method} {url} in {responseTime}s', $logContext);
+                Logger::event('http_response', $logLevel, '{responseCode} {requestMethod} {requestUrl} in {responseTime}s', $logContext);
             } else {
-                Logger::event('http_response_error', Logger::DEBUG, '{responseCode} {method} {url} in {responseTime}s', $logContext);
+                Logger::event('http_response_error', $logLevel, '{responseCode} {requestMethod} {requestUrl} in {responseTime}s', $logContext);
             }
         }
 
@@ -644,6 +666,15 @@ class ProxyRequest {
      */
     public function status() {
         return $this->ResponseStatus;
+    }
+
+    /**
+     * Get request total time
+     *
+     * @return float
+     */
+    public function time() {
+        return $this->ResponseTime;
     }
 
     /**

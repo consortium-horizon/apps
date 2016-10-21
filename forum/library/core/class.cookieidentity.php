@@ -5,7 +5,7 @@
  * @author Mark O'Sullivan <markm@vanillaforums.com>
  * @author Todd Burry <todd@vanillaforums.com>
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -103,7 +103,7 @@ class Gdn_CookieIdentity {
             return 0;
         }
 
-        list($UserID, $Expiration) = $this->getCookiePayload($this->CookieName);
+        list($UserID) = self::getCookiePayload($this->CookieName);
 
         if (!is_numeric($UserID) || $UserID < -2) { // allow for handshake special id
             return 0;
@@ -138,52 +138,13 @@ class Gdn_CookieIdentity {
             return false;
         }
 
-        list($UserID, $Expiration) = $this->getCookiePayload($this->CookieName);
+        list($UserID) = self::getCookiePayload($this->CookieName);
 
         if ($UserID != $CheckUserID) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Returns $this->_HashHMAC with the provided data, the default hashing method
-     * (md5), and the server's COOKIE.SALT string as the key.
-     *
-     * @param string $Data The data to place in the hash.
-     */
-    protected static function _hash($Data, $CookieHashMethod, $CookieSalt) {
-        return Gdn_CookieIdentity::_hashHMAC($CookieHashMethod, $Data, $CookieSalt);
-    }
-
-    /**
-     * Returns the provided data hashed with the specified method using the
-     * specified key.
-     *
-     * @param string $HashMethod The hashing method to use on $Data. Options are MD5 or SHA1.
-     * @param string $Data The data to place in the hash.
-     * @param string $Key The key to use when hashing the data.
-     */
-    protected static function _hashHMAC($HashMethod, $Data, $Key) {
-        $PackFormats = array('md5' => 'H32', 'sha1' => 'H40');
-
-        if (!isset($PackFormats[$HashMethod])) {
-            return false;
-        }
-
-        $PackFormat = $PackFormats[$HashMethod];
-        // this is the equivalent of "strlen($Key) > 64":
-        if (isset($Key[63])) {
-            $Key = pack($PackFormat, $HashMethod($Key));
-        } else {
-            $Key = str_pad($Key, 64, chr(0));
-        }
-
-        $InnerPad = (substr($Key, 0, 64) ^ str_repeat(chr(0x36), 64));
-        $OuterPad = (substr($Key, 0, 64) ^ str_repeat(chr(0x5C), 64));
-
-        return $HashMethod($OuterPad.pack($PackFormat, $HashMethod($InnerPad.$Data)));
     }
 
     /**
@@ -289,8 +250,8 @@ class Gdn_CookieIdentity {
         }
 
         // Create the cookie signature
-        $KeyHash = self::_hash($KeyData, $CookieHashMethod, $CookieSalt);
-        $KeyHashHash = self::_hashHMAC($CookieHashMethod, $KeyData, $KeyHash);
+        $KeyHash = hash_hmac($CookieHashMethod, $KeyData, $CookieSalt);
+        $KeyHashHash = hash_hmac($CookieHashMethod, $KeyData, $KeyHash);
         $Cookie = array($KeyData, $KeyHashHash, time());
 
         // Attach cookie payload
@@ -321,7 +282,7 @@ class Gdn_CookieIdentity {
     }
 
     /**
-     *
+     * Validate security of our cookie.
      *
      * @param $CookieName
      * @param null $CookieHashMethod
@@ -347,15 +308,16 @@ class Gdn_CookieIdentity {
             return false;
         }
 
-        list($HashKey, $CookieHash, $Time, $UserID, $PayloadExpires) = $CookieData;
-        if ($PayloadExpires < time() && $PayloadExpires != 0) {
+        list($HashKey, $CookieHash) = $CookieData;
+        list($UserID, $Expiration) = self::getCookiePayload($CookieName);
+        if ($Expiration < time()) {
             self::deleteCookie($CookieName);
             return false;
         }
-        $KeyHash = self::_hash($HashKey, $CookieHashMethod, $CookieSalt);
-        $CheckHash = self::_hashHMAC($CookieHashMethod, $HashKey, $KeyHash);
+        $KeyHash = hash_hmac($CookieHashMethod, $HashKey, $CookieSalt);
+        $CheckHash = hash_hmac($CookieHashMethod, $HashKey, $KeyHash);
 
-        if (!CompareHashDigest($CookieHash, $CheckHash)) {
+        if (!hash_equals($CheckHash, $CookieHash)) {
             self::deleteCookie($CookieName);
             return false;
         }
@@ -364,32 +326,24 @@ class Gdn_CookieIdentity {
     }
 
     /**
+     * Get the pieces that make up our cookie data.
      *
-     *
-     * @param $CookieName
-     * @param null $CookieHashMethod
-     * @param null $CookieSalt
-     * @return array|bool
+     * @param string $CookieName
+     * @return array
      */
-    public static function getCookiePayload($CookieName, $CookieHashMethod = null, $CookieSalt = null) {
-        if (!self::checkCookie($CookieName)) {
-            return false;
-        }
-
+    public static function getCookiePayload($CookieName) {
         $Payload = explode('|', $_COOKIE[$CookieName]);
-
         $Key = explode('-', $Payload[0]);
         $Expiration = array_pop($Key);
         $UserID = implode('-', $Key);
         $Payload = array_slice($Payload, 4);
-
         $Payload = array_merge(array($UserID, $Expiration), $Payload);
 
         return $Payload;
     }
 
     /**
-     *
+     * Remove a cookie.
      *
      * @param $CookieName
      */
@@ -399,7 +353,7 @@ class Gdn_CookieIdentity {
     }
 
     /**
-     *
+     * Remove a cookie.
      *
      * @param $CookieName
      * @param null $Path

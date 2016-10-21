@@ -3,7 +3,7 @@
  * ButtonBar Plugin
  *
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package ButtonBar
  */
@@ -11,7 +11,7 @@
 $PluginInfo['ButtonBar'] = array(
     'Name' => 'Button Bar',
     'Description' => 'Adds several simple buttons above comment boxes, allowing additional formatting.',
-    'Version' => '1.7',
+    'Version' => '1.7.1',
     'MobileFriendly' => true,
     'RequiredApplications' => array('Vanilla' => '2.1'),
     'RequiredTheme' => false,
@@ -58,7 +58,7 @@ class ButtonBarPlugin extends Gdn_Plugin {
         $Sender->addDefinition('ButtonBarLinkUrl', t('ButtonBar.LinkUrlText', 'Enter your URL:'));
         $Sender->addDefinition('ButtonBarImageUrl', t('ButtonBar.ImageUrlText', 'Enter image URL:'));
         $Sender->addDefinition('ButtonBarBBCodeHelpText', t('ButtonBar.BBCodeHelp', 'You can use <b><a href="http://en.wikipedia.org/wiki/BBCode" target="_new">BBCode</a></b> in your post.'));
-        $Sender->addDefinition('ButtonBarHtmlHelpText', t('ButtonBar.HtmlHelp', 'You can use <b><a href="http://htmlguide.drgrog.com/cheatsheet.php" target="_new">Simple Html</a></b> in your post.'));
+        $Sender->addDefinition('ButtonBarHtmlHelpText', t('ButtonBar.HtmlHelp', 'You can use <b><a href="http://htmlguide.drgrog.com/cheatsheet.php" target="_new">Simple HTML</a></b> in your post.'));
         $Sender->addDefinition('ButtonBarMarkdownHelpText', t('ButtonBar.MarkdownHelp', 'You can use <b><a href="http://en.wikipedia.org/wiki/Markdown" target="_new">Markdown</a></b> in your post.'));
 
         $Sender->addDefinition('InputFormat', $Formatter);

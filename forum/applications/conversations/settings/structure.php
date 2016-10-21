@@ -2,7 +2,7 @@
 /**
  * Conversations database structure.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Conversations
  * @since 2.0
@@ -13,7 +13,7 @@ if (!isset($Drop)) {
 }
 
 if (!isset($Explicit)) {
-    $Explicit = true;
+    $Explicit = false;
 }
 
 $SQL = $Database->sql();
@@ -37,14 +37,14 @@ $Construct
     ->column('Type', 'varchar(10)', true, 'index')
     ->column('ForeignID', 'varchar(40)', true)
     ->column('Subject', 'varchar(255)', null)
-    ->column('Contributors', 'varchar(255)')
+    ->column('Contributors', 'varchar(255)', true)
     ->column('FirstMessageID', 'int', true, 'key')
     ->column('InsertUserID', 'int', false, 'key')
     ->column('DateInserted', 'datetime', null, 'key')
-    ->column('InsertIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
     ->column('UpdateUserID', 'int', false, 'key')
     ->column('DateUpdated', 'datetime')
-    ->column('UpdateIPAddress', 'varchar(15)', true)
+    ->column('UpdateIPAddress', 'ipaddress', true)
     ->column('CountMessages', 'int', 0)
     ->column('CountParticipants', 'int', 0)
     ->column('LastMessageID', 'int', null)
@@ -94,7 +94,7 @@ $Construct->table('ConversationMessage')
     ->column('Format', 'varchar(20)', null)
     ->column('InsertUserID', 'int', null, 'key')
     ->column('DateInserted', 'datetime', false)
-    ->column('InsertIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
     ->set($Explicit, $Drop);
 
 if ($UpdateCountMessages) {

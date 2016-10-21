@@ -7,9 +7,8 @@ echo '<h1 class="H HomepageTitle">'.
     $this->data('Title').
     '</h1>';
 
-if ($Description = $this->Description()) {
-    echo wrap($Description, 'div', array('class' => 'P PageDescription'));
-}
+$Description = $this->data('Category.Description', $this->Description());
+echo wrapIf(Gdn_Format::htmlFilter($Description), 'div', array('class' => 'P PageDescription'));
 
 $this->fireEvent('AfterPageTitle');
 
@@ -24,6 +23,7 @@ if ($this->data('_PagerUrl'))
 echo '<div class="PageControls Top">';
 PagerModule::write($PagerOptions);
 echo Gdn_Theme::Module('NewDiscussionModule', $this->data('_NewDiscussionProperties', array('CssClass' => 'Button Action Primary')));
+$this->fireEvent('PageControls');
 echo '</div>';
 
 if ($this->DiscussionData->numRows() > 0 || (isset($this->AnnounceData) && is_object($this->AnnounceData) && $this->AnnounceData->numRows() > 0)) {

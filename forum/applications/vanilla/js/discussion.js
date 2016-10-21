@@ -15,10 +15,6 @@ jQuery(document).ready(function($) {
         if ($(this).hasClass('WriteButton')) {
             var frm = $(this).parents('.MessageForm').find('form');
             frm.trigger('WriteButtonClick', [frm]);
-
-            // Reveal the "Preview" button and hide this one
-            $(this).parents('.CommentForm').find('.PreviewButton').show();
-            $(this).addClass('Hidden');
         }
 
         resetCommentForm(this);
@@ -42,8 +38,9 @@ jQuery(document).ready(function($) {
         if (preview) {
             type = 'Preview';
             // If there is already a preview showing, kill processing.
-            if ($('div.Preview').length > 0 || jQuery.trim($(textbox).val()) == '')
+            if ($('div.Preview').length > 0) {
                 return false;
+            }
         }
         var draft = $(btn).hasClass('DraftButton');
         if (draft) {
@@ -105,8 +102,6 @@ jQuery(document).ready(function($) {
                 gdn.informError(xhr, draft);
             },
             success: function(json) {
-                json = $.postParseJson(json);
-
                 var processedTargets = false;
                 // If there are targets, process them
                 if (json.Targets && json.Targets.length > 0) {
@@ -159,8 +154,8 @@ jQuery(document).ready(function($) {
                     $(btn).hide();
                     $(parent).find('.WriteButton').removeClass('Hidden');
 
-                    $(frm).trigger('PreviewLoaded', [frm]);
                     $(frm).find('.TextBoxWrapper').hide().after(json.Data);
+                    $(frm).trigger('PreviewLoaded', [frm]);
 
                 } else if (!draft) {
                     // Clean up the form
@@ -223,11 +218,24 @@ jQuery(document).ready(function($) {
         $(parent).find('.Preview').remove();
         $(parent).find('.TextBoxWrapper').show();
         $('.TinyProgress').remove();
+
+        parent.find('.PreviewButton').show();
+        parent.find('.WriteButton').addClass('Hidden');
     }
 
     // Utility function to clear out the comment form
-    function clearCommentForm(sender) {
+    function clearCommentForm(sender, deleteDraft) {
         var container = $(sender).parents('.Editing');
+
+        // By default, we delete comment drafts, unless sender was a "Post Comment" button. Can be overriden.
+        if (typeof deleteDraft !== 'undefined') {
+            deleteDraft = !!deleteDraft;
+        } else if ($(sender).hasClass('CommentButton')) {
+            deleteDraft = false;
+        } else {
+            deleteDraft = true
+        }
+
         $(container).removeClass('Editing');
         $('div.Popup,.Overlay').remove();
         var frm = $(sender).parents('div.CommentForm, .EditCommentForm');
@@ -235,13 +243,14 @@ jQuery(document).ready(function($) {
         frm.find('input:hidden[name$=CommentID]').val('');
         // Erase any drafts
         var draftInp = frm.find('input:hidden[name$=DraftID]');
-        if (draftInp.val() != '')
+        if (deleteDraft && draftInp.val() != '') {
             $.ajax({
                 type: "POST",
                 url: gdn.url('/drafts/delete/' + draftInp.val() + '/' + gdn.definition('TransientKey')),
                 data: 'DeliveryType=BOOL&DeliveryMethod=JSON',
                 dataType: 'json'
             });
+        }
 
         draftInp.val('');
         frm.find('div.Errors').remove();
@@ -288,8 +297,6 @@ jQuery(document).ready(function($) {
                     gdn.informError(xhr);
                 },
                 success: function(json) {
-                    json = $.postParseJson(json);
-
                     $(msg).after(json.Data);
                     $(msg).hide();
                     $(document).trigger('EditCommentFormLoaded', [container]);
@@ -300,6 +307,8 @@ jQuery(document).ready(function($) {
                 }
             });
         } else {
+            resetCommentForm($(parent).find('form'));
+            clearCommentForm($(parent).find('form'));
             $(parent).find('div.EditCommentForm').remove();
             $(parent).find('span.TinyProgress').remove();
             $(msg).show();
@@ -361,8 +370,6 @@ jQuery(document).ready(function($) {
 //            gdn.informError(xhr, true);
 //         },
 //         success: function(json) {
-//            json = $.postParseJson(json);
-//
 //            if(json.Data && json.LastCommentID) {
 //               gdn.definition('LastCommentID', json.LastCommentID, true);
 //               $(json.Data).appendTo("ul.Comments")
