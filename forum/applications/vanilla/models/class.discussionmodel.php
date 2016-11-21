@@ -775,7 +775,7 @@ class DiscussionModel extends VanillaModel {
         $this->EventArguments['Wheres'] = &$Wheres;
         $this->fireEvent('BeforeGetUnread'); // @see 'BeforeGetCount' for consistency in results vs. counts
 
-        $IncludeAnnouncements = false;
+        $IncludeAnnouncements = true;
         if (strtolower(val('Announce', $Wheres)) == 'all') {
             $IncludeAnnouncements = true;
             unset($Wheres['Announce']);
@@ -810,6 +810,11 @@ class DiscussionModel extends VanillaModel {
 
         // Change discussions returned based on additional criteria
         $this->AddDiscussionColumns($Data);
+        $Result = &$Data->result();
+        foreach ($Result as $valueKey => &$Discussion) {
+            if ($Discussion->CountUnreadComments == 0)
+                unset($Result[$valueKey]);
+        }
 
         // Join in the users.
         Gdn::userModel()->joinUsers($Data, array('FirstUserID', 'LastUserID'));
@@ -1495,37 +1500,37 @@ class DiscussionModel extends VanillaModel {
             $Perms = self::CategoryPermissions();
         }
 
-        if (!$Wheres || (count($Wheres) == 1 && isset($Wheres['d.CategoryID']))) {
-            // Grab the counts from the faster category cache.
-            if (isset($Wheres['d.CategoryID'])) {
-                $CategoryIDs = (array)$Wheres['d.CategoryID'];
-                if ($Perms === false) {
-                    $CategoryIDs = array();
-                } elseif (is_array($Perms))
-                    $CategoryIDs = array_intersect($CategoryIDs, $Perms);
+        // if (!$Wheres || (count($Wheres) == 1 && isset($Wheres['d.CategoryID']))) {
+        //     // Grab the counts from the faster category cache.
+        //     if (isset($Wheres['d.CategoryID'])) {
+        //         $CategoryIDs = (array)$Wheres['d.CategoryID'];
+        //         if ($Perms === false) {
+        //             $CategoryIDs = array();
+        //         } elseif (is_array($Perms))
+        //             $CategoryIDs = array_intersect($CategoryIDs, $Perms);
 
-                if (count($CategoryIDs) == 0) {
-                    return 0;
-                } else {
-                    $Perms = $CategoryIDs;
-                }
-            }
+        //         if (count($CategoryIDs) == 0) {
+        //             return 0;
+        //         } else {
+        //             $Perms = $CategoryIDs;
+        //         }
+        //     }
 
-            $Categories = CategoryModel::categories();
-            $Count = 0;
+        //     $Categories = CategoryModel::categories();
+        //     $Count = 0;
 
-            foreach ($Categories as $Cat) {
-                if (is_array($Perms) && !in_array($Cat['CategoryID'], $Perms)) {
-                    continue;
-                }
-                $Count += (int)$Cat['CountDiscussions'];
-            }
-            return $Count;
-        }
+        //     foreach ($Categories as $Cat) {
+        //         if (is_array($Perms) && !in_array($Cat['CategoryID'], $Perms)) {
+        //             continue;
+        //         }
+        //         $Count += (int)$Cat['CountDiscussions'];
+        //     }
+        //     return $Count;
+        // }
 
-        if ($Perms !== true) {
-            $this->SQL->whereIn('c.CategoryID', $Perms);
-        }
+        //if ($Perms !== true) {
+        //    $this->SQL->whereIn('c.CategoryID', $Perms);
+        //}
 
         $this->EventArguments['Wheres'] = &$Wheres;
         $this->fireEvent('BeforeGetUnreadCount'); // @see 'BeforeGet' for consistency in count vs. results
@@ -1539,8 +1544,8 @@ class DiscussionModel extends VanillaModel {
             //->where('w.DateLastViewed', null)
             //->orWhere('d.DateLastComment >', 'w.DateLastViewed')
             //->endWhereGroup()
-            ->where('d.CountComments >', 'COALESCE(w.CountComments, 0)', true, false)
-            ->where($Wheres);
+            ->where('d.CountComments >', 'COALESCE(w.CountComments, 0)', true, false);
+            //->where($Wheres);
 
         $Result = $this->SQL
             ->get()
