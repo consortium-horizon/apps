@@ -258,26 +258,26 @@ class PostOnRegister extends Gdn_Plugin {
 
     public function userModel_afterRegister_handler($sender, $Args) {
         // Does the user wanna joind the guild ?
-        if ($sender->EventArguments['User']['iWannaJoin']!=NULL) {
+        if ($sender->EventArguments['RegisteringUser']['iWannaJoin']!=NULL) {
 
             // get generic info
-            $game = $sender->EventArguments['User']['gamelist'];
+            $game = $sender->EventArguments['RegisteringUser']['gamelist'];
             if ($game=="Autre") {
-                $game = $sender->EventArguments['User']['otherGame'];
+                $game = $sender->EventArguments['RegisteringUser']['otherGame'];
             }
-            $howDidYouFindUs = $sender->EventArguments['User']['howDidYouFindUs'];
-            $moreAboutYou = $sender->EventArguments['User']['moreAboutYou'];
-            $moreGamesCount = intval($sender->EventArguments['User']['moreGamesCount']);
+            $howDidYouFindUs = $sender->EventArguments['RegisteringUser']['howDidYouFindUs'];
+            $moreAboutYou = $sender->EventArguments['RegisteringUser']['moreAboutYou'];
+            $moreGamesCount = intval($sender->EventArguments['RegisteringUser']['moreGamesCount']);
 
             //PS2 Data
             if ($game=="Planetside 2") {
-                $ps2Username = '  ([u]Pseudo en jeu :[/u] '. $sender->EventArguments['User']['planetsideUsername'] .')';
-                $ps2Inf = $sender->EventArguments['User']['planetsideClassInf'];
-                $ps2LA = $sender->EventArguments['User']['planetsideClassLA'];
-                $ps2Medic = $sender->EventArguments['User']['planetsideClassMedic'];
-                $ps2Ing = $sender->EventArguments['User']['planetsideClassIng'];
-                $ps2HA = $sender->EventArguments['User']['planetsideClassHA'];
-                $ps2Max = $sender->EventArguments['User']['planetsideClassXAM'];
+                $ps2Username = '  ([u]Pseudo en jeu :[/u] '. $sender->EventArguments['RegisteringUser']['planetsideUsername'] .')';
+                $ps2Inf = $sender->EventArguments['RegisteringUser']['planetsideClassInf'];
+                $ps2LA = $sender->EventArguments['RegisteringUser']['planetsideClassLA'];
+                $ps2Medic = $sender->EventArguments['RegisteringUser']['planetsideClassMedic'];
+                $ps2Ing = $sender->EventArguments['RegisteringUser']['planetsideClassIng'];
+                $ps2HA = $sender->EventArguments['RegisteringUser']['planetsideClassHA'];
+                $ps2Max = $sender->EventArguments['RegisteringUser']['planetsideClassXAM'];
             }
 
             // Check if there's some other game data
@@ -287,7 +287,7 @@ class PostOnRegister extends Gdn_Plugin {
                 $otherGameNames = "";
 
                 for ($i=0; $i < $moreGamesCount; $i++) {
-                    $secondaryGame = $sender->EventArguments['User']['secondaryGame'.$i];
+                    $secondaryGame = $sender->EventArguments['RegisteringUser']['secondaryGame'.$i];
                     $otherGameNames = $otherGameNames . $secondaryGame . "; ";
                 }
                 $otherGameInfo = '
