@@ -2,7 +2,7 @@
 /**
  * Head module.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -125,15 +125,16 @@ if (!class_exists('HeadModule', false)) {
         /**
          * Adds a "script" tag to the head.
          *
-         * @param string The location of the script relative to the web root. ie. "/js/jquery.js"
-         * @param string The type of script being added. ie. "text/javascript"
-         * @param mixed Additional options to add to the tag. The following values are accepted:
+         * @param string $Src The location of the script relative to the web root. ie. "/js/jquery.js"
+         * @param string $Type The type of script being added. ie. "text/javascript"
+         * @param bool $AddVersion Whether to append version number as query string.
+         * @param mixed $Options Additional options to add to the tag. The following values are accepted:
          *  - numeric: This will be the script's sort.
          *  - string: This will hint the script (inline will inline the file in the page.
          *  - array: An array of options (ex. sort, hint, version).
          *
          */
-        public function addScript($Src, $Type = 'text/javascript', $Options = array()) {
+        public function addScript($Src, $Type = 'text/javascript', $AddVersion = true, $Options = array()) {
             if (is_numeric($Options)) {
                 $Options = array('sort' => $Options);
             } elseif (is_string($Options)) {
@@ -142,9 +143,14 @@ if (!class_exists('HeadModule', false)) {
                 $Options = array();
             }
 
+            if (is_array($AddVersion)) {
+                $Options = $AddVersion;
+                $AddVersion = true;
+            }
+
             $Attributes = array();
             if ($Src) {
-                $Attributes['src'] = Asset($Src, false, val('version', $Options));
+                $Attributes['src'] = asset($Src, false, $AddVersion);
             }
             $Attributes['type'] = $Type;
             if (isset($Options['defer'])) {
@@ -372,7 +378,7 @@ if (!class_exists('HeadModule', false)) {
                 $this->addTag('meta', array('property' => 'og:url', 'content' => $CanonicalUrl));
             }
 
-            if ($Description = $this->_Sender->Description()) {
+            if ($Description = Gdn_Format::reduceWhiteSpaces($this->_Sender->Description())) {
                 $this->addTag('meta', array('name' => 'description', 'property' => 'og:description', 'itemprop' => 'description', 'content' => $Description));
             }
 

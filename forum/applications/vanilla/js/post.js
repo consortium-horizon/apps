@@ -52,8 +52,6 @@ jQuery(document).ready(function($) {
                 $.popup({}, XMLHttpRequest.responseText);
             },
             success: function(json) {
-                json = $.postParseJson(json);
-
                 // Remove any old popups if not saving as a draft
                 if (!draft)
                     $('div.Popup').remove();
@@ -121,8 +119,6 @@ jQuery(document).ready(function($) {
                 $.popup({}, XMLHttpRequest.responseText);
             },
             success: function(json) {
-                json = $.postParseJson(json);
-
                 // Remove any old popups if not saving as a draft
                 if (!draft)
                     $('div.Popup').remove();
@@ -145,8 +141,8 @@ jQuery(document).ready(function($) {
                     $(btn).hide();
                     $(frm).find('.WriteButton').removeClass('Hidden');
 
-                    $(frm).trigger('PreviewLoaded', [frm]);
                     $(frm).find('.bodybox-wrap .TextBoxWrapper').hide().after(json.Data);
+                    $(frm).trigger('PreviewLoaded', [frm]);
                 } else if (!draft) {
                     if (json.RedirectUrl) {
                         $(frm).triggerHandler('complete');

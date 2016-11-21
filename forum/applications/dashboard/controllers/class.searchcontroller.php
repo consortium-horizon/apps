@@ -2,7 +2,7 @@
 /**
  * Manages basic searching.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -34,7 +34,6 @@ class SearchController extends Gdn_Controller {
 
         // Form prep
         $Form->Method = 'get';
-        $Form->InputPrefix = '';
         $this->Form = $Form;
     }
 
@@ -47,7 +46,6 @@ class SearchController extends Gdn_Controller {
     public function initialize() {
         $this->Head = new HeadModule($this);
         $this->addJsFile('jquery.js');
-        $this->addJsFile('jquery.livequery.js');
         $this->addJsFile('jquery.form.js');
         $this->addJsFile('jquery.popup.js');
         $this->addJsFile('jquery.gardenhandleajaxform.js');
@@ -85,7 +83,7 @@ class SearchController extends Gdn_Controller {
             $this->SearchModel->ForceSearchMode = $Mode;
         }
         try {
-            $ResultSet = $this->SearchModel->Search($Search, $Offset, $Limit);
+            $ResultSet = $this->SearchModel->search($Search, $Offset, $Limit);
         } catch (Gdn_UserException $Ex) {
             $this->Form->addError($Ex);
             $ResultSet = array();
@@ -99,7 +97,7 @@ class SearchController extends Gdn_Controller {
         // Fix up the summaries.
         $SearchTerms = explode(' ', Gdn_Format::text($Search));
         foreach ($ResultSet as &$Row) {
-            $Row['Summary'] = SearchExcerpt(Gdn_Format::plainText($Row['Summary'], $Row['Format']), $SearchTerms);
+            $Row['Summary'] = searchExcerpt(htmlspecialchars(Gdn_Format::plainText($Row['Summary'], $Row['Format'])), $SearchTerms);
             $Row['Summary'] = Emoji::instance()->translateToHtml($Row['Summary']);
             $Row['Format'] = 'Html';
         }
@@ -117,7 +115,7 @@ class SearchController extends Gdn_Controller {
 
         // Build a pager
         $PagerFactory = new Gdn_PagerFactory();
-        $this->Pager = $PagerFactory->GetPager('MorePager', $this);
+        $this->Pager = $PagerFactory->getPager('MorePager', $this);
         $this->Pager->MoreCode = 'More Results';
         $this->Pager->LessCode = 'Previous Results';
         $this->Pager->ClientID = 'Pager';

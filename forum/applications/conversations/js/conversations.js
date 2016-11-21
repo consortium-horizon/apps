@@ -1,10 +1,5 @@
-// This file contains javascript that is specific to the dashboard/profile controller.
+// This file contains javascript that is specific to the /profile controller.
 jQuery(document).ready(function($) {
-
-   $('a.ClearConversation').popup({
-      confirm: true,
-      followConfirm: false
-   });
 
    // Hijack "add message" clicks and handle via ajax...
    $.fn.handleMessageForm = function() {
@@ -33,8 +28,6 @@ jQuery(document).ready(function($) {
                gdn.informError(xhr);
             },
             success: function(json) {
-               json = $.postParseJson(json);
-
                // Remove any old errors from the form
                $(frm).find('div.Errors').remove();
 

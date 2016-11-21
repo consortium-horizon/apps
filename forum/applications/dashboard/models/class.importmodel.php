@@ -2,7 +2,7 @@
 /**
  * Object for importing files created with VanillaPorter.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -1087,6 +1087,7 @@ class ImportModel extends Gdn_Model {
         $CurrentUser = $this->SQL->getWhere('User', array('UserID' => Gdn::session()->UserID))->firstRow(DATASET_TYPE_ARRAY);
         $CurrentPassword = $CurrentUser['Password'];
         $CurrentHashMethod = $CurrentUser['HashMethod'];
+        $CurrentTransientKey = gdn::session()->transientKey();
 
         // Delete the current user table.
         $this->SQL->Truncate('User');
@@ -1132,6 +1133,7 @@ class ImportModel extends Gdn_Model {
         }
 
         Gdn::session()->start(val('UserID', $User), true);
+        gdn::session()->transientKey($CurrentTransientKey);
 
         return true;
     }
@@ -1300,7 +1302,7 @@ class ImportModel extends Gdn_Model {
      */
     protected function _LoadTableWithInsert($Tablename, $Path) {
         // This option could take a while so set the timeout.
-        set_time_limit(60 * 5);
+        increaseMaxExecutionTime(60 * 10);
 
         // Get the column count of the table.
         $St = Gdn::structure();
@@ -1546,7 +1548,7 @@ class ImportModel extends Gdn_Model {
      */
     public function processImportFile() {
         // This one step can take a while so give it more time.
-        set_time_limit(60 * 5);
+        increaseMaxExecutionTime(60 * 10);
 
         $Path = $this->ImportPath;
         $BasePath = dirname($Path).DS.'import';
@@ -1932,7 +1934,7 @@ class ImportModel extends Gdn_Model {
      */
     public function updateCounts() {
         // This option could take a while so set the timeout.
-        set_time_limit(60 * 5);
+        increaseMaxExecutionTime(60 * 10);
 
         // Define the necessary SQL.
         $Sqls = array();

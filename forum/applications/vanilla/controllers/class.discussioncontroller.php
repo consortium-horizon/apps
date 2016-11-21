@@ -2,7 +2,7 @@
 /**
  * Discussion controller
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Vanilla
  * @since 2.0
@@ -18,6 +18,9 @@ class DiscussionController extends VanillaController {
 
     /** @var array Unique identifier. */
     public $CategoryID;
+
+    /**  @var CommentModel */
+    public $CommentModel;
 
     /** @var DiscussionModel */
     public $DiscussionModel;
@@ -55,6 +58,14 @@ class DiscussionController extends VanillaController {
         $this->addJsFile('jquery.autosize.min.js');
         $this->addJsFile('autosave.js');
         $this->addJsFile('discussion.js');
+
+        // Spoilers assets
+        $this->addJsFile('spoilers.js', 'dashboard');
+        $this->addCssFile('spoilers.css', 'dashboard');
+        $this->addDefinition('Spoiler', t('Spoiler'));
+        $this->addDefinition('show', t('show'));
+        $this->addDefinition('hide', t('hide'));
+
         Gdn_Theme::section('Discussion');
 
         // Load the discussion record
@@ -64,6 +75,8 @@ class DiscussionController extends VanillaController {
         }
 
         if (!is_object($this->Discussion)) {
+            $this->EventArguments['DiscussionID'] = $DiscussionID;
+            $this->fireEvent('DiscussionNotFound');
             throw notFoundException('Discussion');
         }
 
@@ -133,6 +146,9 @@ class DiscussionController extends VanillaController {
             $LatestItem = 0;
         } elseif ($LatestItem < $this->Discussion->CountComments) {
             $LatestItem += 1;
+        } elseif ($LatestItem > $this->Discussion->CountComments) {
+            // If ever the CountCommentWatch is greater than the actual number of comments.
+            $LatestItem = $this->Discussion->CountComments;
         }
 
         $this->setData('_LatestItem', $LatestItem);
@@ -143,7 +159,7 @@ class DiscussionController extends VanillaController {
 //      url(ConcatSep('/', 'discussion/'.$this->Discussion->DiscussionID.'/'. Gdn_Format::url($this->Discussion->Name), PageNumber($this->Offset, $Limit, TRUE, Gdn::session()->UserID != 0)), true), Gdn::session()->UserID == 0);
 
         // Load the comments
-        $this->setData('Comments', $this->CommentModel->get($DiscussionID, $Limit, $this->Offset));
+        $this->setData('Comments', $this->CommentModel->getByDiscussion($DiscussionID, $Limit, $this->Offset));
 
         $PageNumber = PageNumber($this->Offset, $Limit);
         $this->setData('Page', $PageNumber);
@@ -179,8 +195,10 @@ class DiscussionController extends VanillaController {
             $this->addDefinition('NotifyNewDiscussion', 1);
         }
 
-        // Make sure to set the user's discussion watch records
-        $this->CommentModel->SetWatch($this->Discussion, $Limit, $this->Offset, $this->Discussion->CountComments);
+        // Make sure to set the user's discussion watch records if this is not an API request.
+        if ($this->deliveryType() !== DELIVERY_TYPE_DATA) {
+            $this->CommentModel->SetWatch($this->Discussion, $Limit, $this->Offset, $this->Discussion->CountComments);
+        }
 
         // Build a pager
         $PagerFactory = new Gdn_PagerFactory();
@@ -209,13 +227,14 @@ class DiscussionController extends VanillaController {
         // Look in the session stash for a comment
         $StashComment = $Session->getPublicStash('CommentForDiscussionID_'.$this->Discussion->DiscussionID);
         if ($StashComment) {
+            $this->Form->setValue('Body', $StashComment);
             $this->Form->setFormValue('Body', $StashComment);
         }
 
         // Retrieve & apply the draft if there is one:
         if (Gdn::session()->UserID) {
             $DraftModel = new DraftModel();
-            $Draft = $DraftModel->get($Session->UserID, 0, 1, $this->Discussion->DiscussionID)->firstRow();
+            $Draft = $DraftModel->getByUser($Session->UserID, 0, 1, $this->Discussion->DiscussionID)->firstRow();
             $this->Form->addHidden('DraftID', $Draft ? $Draft->DraftID : '');
             if ($Draft && !$this->Form->isPostBack()) {
                 $this->Form->setValue('Body', $Draft->Body);
@@ -537,16 +556,12 @@ class DiscussionController extends VanillaController {
     /**
      *
      *
-     * @param $Discussion
+     * @param $discussion
      * @throws Exception
      */
-    public function sendOptions($Discussion) {
+    public function sendOptions($discussion) {
         require_once $this->fetchViewLocation('helper_functions', 'Discussion');
-        ob_start();
-        writeDiscussionOptions($Discussion);
-        $Options = ob_get_clean();
-
-        $this->jsonTarget("#Discussion_{$Discussion->DiscussionID} .OptionsMenu,.Section-Discussion .Discussion .OptionsMenu", $Options, 'ReplaceWith');
+        $this->jsonTarget("#Discussion_{$discussion->DiscussionID} .OptionsMenu,.Section-Discussion .Discussion .OptionsMenu", getDiscussionOptionsDropdown($discussion)->toString(), 'ReplaceWith');
     }
 
     /**
@@ -668,7 +683,7 @@ class DiscussionController extends VanillaController {
         $this->permission('Vanilla.Discussions.Delete', true, 'Category', $Discussion->PermissionCategoryID);
 
         if ($this->Form->authenticatedPostBack()) {
-            if (!$this->DiscussionModel->delete($DiscussionID)) {
+            if (!$this->DiscussionModel->deleteID($DiscussionID)) {
                 $this->Form->addError('Failed to delete discussion');
             }
 
@@ -731,7 +746,7 @@ class DiscussionController extends VanillaController {
                 }
 
                 // Delete the comment
-                if (!$this->CommentModel->delete($CommentID)) {
+                if (!$this->CommentModel->deleteID($CommentID)) {
                     $this->Form->addError('Failed to delete comment');
                 }
             } else {
@@ -870,7 +885,7 @@ body { background: transparent !important; }
             if (stringBeginsWith(GetValueR('0.0', $CurrentOrderBy), 'c.DateInserted')) {
                 $this->CommentModel->orderBy('c.DateInserted '.$SortComments); // allow custom sort
             }
-            $this->setData('Comments', $this->CommentModel->get($Discussion->DiscussionID, $Limit, $this->Offset), true);
+            $this->setData('Comments', $this->CommentModel->getByDiscussion($Discussion->DiscussionID, $Limit, $this->Offset), true);
 
             if (count($this->CommentModel->where()) > 0) {
                 $ActualResponses = false;
@@ -924,7 +939,7 @@ body { background: transparent !important; }
         $Draft = false;
         if (Gdn::session()->UserID && $Discussion) {
             $DraftModel = new DraftModel();
-            $Draft = $DraftModel->get(Gdn::session()->UserID, 0, 1, $Discussion->DiscussionID)->firstRow();
+            $Draft = $DraftModel->getByUser(Gdn::session()->UserID, 0, 1, $Discussion->DiscussionID)->firstRow();
             $this->Form->addHidden('DraftID', $Draft ? $Draft->DraftID : '');
         }
 

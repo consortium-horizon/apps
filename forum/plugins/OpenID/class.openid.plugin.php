@@ -2,7 +2,7 @@
 /**
  * OpenID Plugin.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package OpenID
  */
@@ -62,12 +62,6 @@ class OpenIDPlugin extends Gdn_Plugin {
      * @return LightOpenID
      */
     public function getOpenID() {
-        if (get_magic_quotes_gpc()) {
-            foreach ($_GET as $Name => $Value) {
-                $_GET[$Name] = stripslashes($Value);
-            }
-        }
-
         $OpenID = new LightOpenID();
 
         if ($url = Gdn::request()->get('url')) {
@@ -195,13 +189,11 @@ class OpenIDPlugin extends Gdn_Plugin {
      */
     public function entryController_openID_create($Sender, $Args) {
         $this->EventArguments = $Args;
-        $Sender->Form->InputPrefix = '';
 
         try {
             $OpenID = $this->getOpenID();
         } catch (Gdn_UserException $ex) {
             $Sender->Form->addError('@'.$ex->getMessage());
-            $Sender->render('Url', '', 'plugins/OpenID');
         }
 
         $Mode = $Sender->Request->get('openid_mode');

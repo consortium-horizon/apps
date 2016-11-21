@@ -8,7 +8,7 @@
  *
  * @author Mark O'Sullivan <mark@vanillaforums.com>
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0
@@ -75,7 +75,7 @@ class Gdn_PasswordAuthenticator extends Gdn_Authenticator {
             if ($SignInPermission === false && !$UserData->Banned) {
                 $PermissionModel = Gdn::Authenticator()->GetPermissionModel();
                 foreach ($PermissionModel->GetUserPermissions($UserID) as $Permissions) {
-                    $SignInPermission |= ArrayValue('Garden.SignIn.Allow', $Permissions, false);
+                    $SignInPermission |= val('Garden.SignIn.Allow', $Permissions, false);
                 }
             }
 

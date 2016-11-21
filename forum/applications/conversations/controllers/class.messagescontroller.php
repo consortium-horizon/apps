@@ -2,7 +2,7 @@
 /**
  * Messages controller.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Conversations
  * @since 2.0
@@ -18,6 +18,9 @@ class MessagesController extends ConversationsController {
 
     /**  @var ConversationModel */
     public $ConversationModel;
+
+    /** @var Gdn_Form $Form */
+    public $Form;
 
     /** @var object A dataset of users taking part in this discussion. Used by $this->Index. */
     public $RecipientData;
@@ -40,6 +43,13 @@ class MessagesController extends ConversationsController {
 //      $this->addModule('MeModule');
         $this->addModule('SignedInModule');
 
+        // Spoilers assets
+        $this->addJsFile('spoilers.js', 'dashboard');
+        $this->addCssFile('spoilers.css', 'dashboard');
+        $this->addDefinition('Spoiler', t('Spoiler'));
+        $this->addDefinition('show', t('show'));
+        $this->addDefinition('hide', t('hide'));
+
         if (checkPermission('Conversations.Conversations.Add')) {
             $this->addModule('NewConversationModule');
         }
@@ -52,8 +62,9 @@ class MessagesController extends ConversationsController {
      * @access public
      *
      * @param string $Recipient Username of the recipient.
+     * @param string $Subject Subject of the message.
      */
-    public function add($Recipient = '') {
+    public function add($Recipient = '', $Subject = '') {
         $this->permission('Conversations.Conversations.Add');
         $this->Form->setModel($this->ConversationModel);
 
@@ -93,19 +104,40 @@ class MessagesController extends ConversationsController {
             $this->fireEvent('BeforeAddConversation');
 
             $this->Form->setFormValue('RecipientUserID', $RecipientUserIDs);
-            $ConversationID = $this->Form->save($this->ConversationMessageModel);
+            $ConversationID = $this->Form->save();
             if ($ConversationID !== false) {
                 $Target = $this->Form->getFormValue('Target', 'messages/'.$ConversationID);
                 $this->RedirectUrl = url($Target);
 
-                $Conversation = $this->ConversationModel->getID($ConversationID, Gdn::session()->UserID);
+                $Conversation = $this->ConversationModel->getID(
+                    $ConversationID,
+                    false,
+                    ['viewingUserID' => Gdn::session()->UserID]
+                );
                 $NewMessageID = val('FirstMessageID', $Conversation);
                 $this->EventArguments['MessageID'] = $NewMessageID;
                 $this->fireEvent('AfterConversationSave');
             }
         } else {
             if ($Recipient != '') {
-                $this->Form->setValue('To', $Recipient);
+                if (!Gdn::userModel()->getByUsername($Recipient)) {
+                    $this->Form->setValidationResults(
+                        array(
+                            'RecipientUserID' => array(
+                                sprintf(
+                                    '"%s" is an unknown username.',
+                                    $Recipient
+                                )
+                            )
+                        )
+                    );
+                    $Recipient = '';
+                } else {
+                    $this->Form->setValue('To', $Recipient);
+                }
+            }
+            if ($Subject != '') {
+                $this->Form->setValue('Subject', $Subject);
             }
         }
         if ($Target = Gdn::request()->get('Target')) {
@@ -118,6 +150,9 @@ class MessagesController extends ConversationsController {
             array('Name' => t('Inbox'), 'Url' => '/messages/inbox'),
             array('Name' => $this->data('Title'), 'Url' => 'messages/add')
         ));
+
+        $this->CssClass = 'NoPanel';
+
         $this->render();
     }
 
@@ -148,7 +183,11 @@ class MessagesController extends ConversationsController {
                 }
             }
 
-            $Conversation = $this->ConversationModel->getID($ConversationID, Gdn::session()->UserID);
+            $Conversation = $this->ConversationModel->getID(
+                $ConversationID,
+                false,
+                ['viewingUserID' => Gdn::session()->UserID]
+            );
 
             $this->EventArguments['Conversation'] = $Conversation;
             $this->EventArguments['ConversationID'] = $ConversationID;
@@ -255,6 +294,7 @@ class MessagesController extends ConversationsController {
      * @param int $ConversationID Unique ID of conversation to clear.
      */
     public function clear($ConversationID = false, $TransientKey = '') {
+        deprecated('/messages/clear', '/messages/leave');
         $Session = Gdn::session();
 
         // Yes/No response
@@ -270,6 +310,35 @@ class MessagesController extends ConversationsController {
             $this->RedirectUrl = url('/messages/all');
         }
 
+        $this->render();
+    }
+
+    /**
+     * Leave a conversation that a user is participating in.
+     *
+     * @param int $conversationID The ID of the conversation to leave.
+     */
+    public function leave($conversationID) {
+        if (!Gdn::session()->UserID) {
+            throw new Gdn_UserException('You must be signed in.', 403);
+        }
+
+        // Make sure the user has participated in the conversation before.
+        $row = Gdn::sql()->getWhere(
+            'UserConversation',
+            ['ConversationID' => $conversationID, 'UserID' => Gdn::session()->UserID]
+        )->firstRow();
+
+        if (!$row) {
+            throw notFoundException('Conversation');
+        }
+
+        if ($this->Form->authenticatedPostBack(true)) {
+            $this->ConversationModel->clear($conversationID, Gdn::session()->UserID);
+            $this->RedirectUrl = url('/messages/all');
+        }
+
+        $this->title(t('Leave Conversation'));
         $this->render();
     }
 
@@ -335,7 +404,7 @@ class MessagesController extends ConversationsController {
             }
 
             // (((67 comments / 10 perpage) = 6.7) rounded down = 6) * 10 perpage = offset 60;
-            $this->Offset = floor($CountReadMessages / $Limit) * $Limit;
+            $this->Offset = floor(($CountReadMessages - 1) / $Limit) * $Limit;
 
             // Send the hash link in.
             if ($CountReadMessages > 1) {
@@ -344,12 +413,15 @@ class MessagesController extends ConversationsController {
         }
 
         // Fetch message data
-        $this->MessageData = $this->ConversationMessageModel->get(
+        $this->MessageData = $this->ConversationMessageModel->getRecent(
             $ConversationID,
             $Session->UserID,
             $this->Offset,
             $Limit
         );
+
+        $this->EventArguments['MessageData'] = $this->MessageData;
+        $this->fireEvent('beforeMessages');
 
         $this->setData('Messages', $this->MessageData);
 
@@ -390,7 +462,7 @@ class MessagesController extends ConversationsController {
         $this->addModule($ClearHistoryModule);
 
         $InThisConversationModule = new InThisConversationModule($this);
-        $InThisConversationModule->setData($this->Conversation->Participants);
+        $InThisConversationModule->setData('Participants', $this->Conversation->Participants);
         $this->addModule($InThisConversationModule);
 
         // Doesn't make sense for people who can't even start conversations to be adding people
@@ -459,7 +531,7 @@ class MessagesController extends ConversationsController {
         // Fetch message data
         $this->setData(
             'MessageData',
-            $this->ConversationMessageModel->get(
+            $this->ConversationMessageModel->getRecent(
                 $ConversationID,
                 Gdn::session()->UserID,
                 0,

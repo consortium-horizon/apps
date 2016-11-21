@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package EmojiExtender
  */
@@ -136,7 +136,6 @@ class EmojiExtenderPlugin extends Gdn_Plugin {
                 $this->addEmojiSet('little', PATH_ROOT."$root/little/manifest.php", "$root/little");
                 $this->addEmojiSet('rice', PATH_ROOT."$root/rice/manifest.php", "$root/rice");
                 $this->addEmojiSet('yahoo', PATH_ROOT."$root/yahoo/manifest.php", "$root/yahoo");
-                $this->addEmojiSet('rice-yellow', PATH_ROOT."$root/rice-yellow/manifest.php", "$root/rice-yellow");
 
                 $this->fireEvent('Init');
 

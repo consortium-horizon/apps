@@ -2,7 +2,7 @@
 /**
  * Drafts controller
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Vanilla
  * @since 2.0
@@ -42,8 +42,8 @@ class DraftsController extends VanillaController {
         $Limit = Gdn::config('Vanilla.Discussions.PerPage', 30);
         $Session = Gdn::session();
         $Wheres = array('d.InsertUserID' => $Session->UserID);
-        $this->DraftData = $this->DraftModel->get($Session->UserID, $Offset, $Limit);
-        $CountDrafts = $this->DraftModel->getCount($Session->UserID);
+        $this->DraftData = $this->DraftModel->getByUser($Session->UserID, $Offset, $Limit);
+        $CountDrafts = $this->DraftModel->getCountByUser($Session->UserID);
 
         // Build a pager
         $PagerFactory = new Gdn_PagerFactory();
@@ -89,19 +89,22 @@ class DraftsController extends VanillaController {
     public function delete($DraftID = '', $TransientKey = '') {
         $Form = Gdn::Factory('Form');
         $Session = Gdn::session();
-        if (is_numeric($DraftID)
-            && $DraftID > 0
-            && $Session->UserID > 0
-            && $Session->validateTransientKey($TransientKey)
-        ) {
-            // Delete the draft
+        if (is_numeric($DraftID) && $DraftID > 0) {
             $Draft = $this->DraftModel->getID($DraftID);
-            if ($Draft && !$this->DraftModel->delete($DraftID)) {
-                $Form->addError('Failed to delete discussion');
+        }
+        if ($Draft) {
+            if ($Session->validateTransientKey($TransientKey)
+                && ((val('InsertUserID', $Draft) == $Session->UserID) || checkPermission('Garden.Community.Manage'))
+            ) {
+                // Delete the draft
+                if (!$this->DraftModel->deleteID($DraftID)) {
+                    $Form->addError('Failed to delete draft');
+                }
+            } else {
+                throw permissionException('Garden.Community.Manage');
             }
         } else {
-            // Log an error
-            $Form->addError('ErrPermission');
+            throw notFoundException('Draft');
         }
 
         // Redirect

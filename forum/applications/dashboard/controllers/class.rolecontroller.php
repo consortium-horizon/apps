@@ -2,7 +2,7 @@
 /**
  * RBAC (Role Based Access Control) system.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -92,7 +92,7 @@ class RoleController extends DashboardController {
             }
             if ($this->Form->errorCount() == 0) {
                 // Go ahead and delete the Role
-                $this->RoleModel->delete($RoleID, $this->Form->getValue('ReplacementRoleID'));
+                $this->RoleModel->deleteAndReplace($RoleID, $this->Form->getValue('ReplacementRoleID'));
                 $this->RedirectUrl = url('dashboard/role');
                 $this->informMessage(t('Deleting role...'));
             }
@@ -161,9 +161,20 @@ class RoleController extends DashboardController {
         } else {
             $this->removeRankPermissions();
 
+            // Make sure the role's checkbox has a false value so that the role model can handle a sparse update of
+            // column from other places.
+            if (!$this->Form->getFormValue('PersonalInfo')) {
+                $this->Form->setFormValue('PersonalInfo', false);
+            }
+
             // If the form has been posted back...
             // 2. Save the data (validation occurs within):
             if ($RoleID = $this->Form->save()) {
+                if ($this->deliveryType() === DELIVERY_TYPE_DATA) {
+                    $this->index($RoleID);
+                    return;
+                }
+
                 $this->informMessage(t('Your changes have been saved.'));
                 $this->RedirectUrl = url('dashboard/role');
                 // Reload the permission data.
@@ -182,37 +193,51 @@ class RoleController extends DashboardController {
      * @since 2.0.0
      * @access public
      */
-    public function index($RoleID = null) {
+    public function index($roleID = null) {
         $this->_permission();
 
         $this->addSideMenu('dashboard/role');
         $this->addJsFile('jquery.tablednd.js');
-        $this->addJsFile('jquery-ui.js');
         $this->title(t('Roles & Permissions'));
 
-        if (!$RoleID) {
-            $RoleData = $this->RoleModel->getWithRankPermissions()->resultArray();
+        if (!$roleID) {
+            $roles = $this->RoleModel->getWithRankPermissions()->resultArray();
 
             // Check to see which roles can be modified.
-            foreach ($RoleData as &$Row) {
-                $CanModify = true;
+            foreach ($roles as &$row) {
+                $canModify = true;
 
                 if (!Gdn::session()->checkPermission('Garden.Settings.Manage')) {
-                    foreach ($this->RoleModel->RankPermissions as $Permission) {
-                        if ($Row[$Permission] && !Gdn::session()->checkPermission($Permission)) {
-                            $CanModify = false;
+                    foreach ($this->RoleModel->RankPermissions as $permission) {
+                        if ($row[$permission] && !Gdn::session()->checkPermission($permission)) {
+                            $canModify = false;
                             break;
                         }
                     }
                 }
-                $Row['CanModify'] = $CanModify;
+                $row['CanModify'] = $canModify;
             }
+            $this->setData('Roles', $roles);
+        } elseif ($this->deliveryType() === DELIVERY_TYPE_DATA) {
+            // This is an API request. Get the role in a nicer format.
+            $role = $this->RoleModel->getID($roleID, DATASET_TYPE_ARRAY);
+
+            // Get the global permissions.
+            $permissions = Gdn::permissionModel()->getGlobalPermissions($roleID);
+            unset($permissions['PermissionID']);
+
+            // Get the per-category permissions.
+            $permissions['Category'] = $this->RoleModel->getCategoryPermissions($roleID);
+
+            $role['Permissions'] = $permissions;
+
+            $this->setData('Role', $role);
+            saveToConfig('Api.Clean', false, false);
         } else {
-            $Role = $this->RoleModel->getID($RoleID);
-            $RoleData = array($Role);
+            $Role = $this->RoleModel->getID($roleID);
+            $this->setData('Roles', [$Role]);
         }
 
-        $this->setData('Roles', $RoleData);
         $this->render();
     }
 

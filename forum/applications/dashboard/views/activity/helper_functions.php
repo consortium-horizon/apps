@@ -51,7 +51,7 @@ function writeActivity($Activity, &$Sender, &$Session) {
 <li id="Activity_<?php echo $Activity->ActivityID; ?>" class="<?php echo $CssClass; ?>">
    <?php
     if (ActivityModel::canDelete($Activity)) {
-        echo '<div class="Options">'.anchor('×', 'dashboard/activity/delete/'.$Activity->ActivityID.'/'.$Session->TransientKey().'?Target='.urlencode($Sender->SelfUrl), 'Delete').'</div>';
+        echo '<div class="Options">'.anchor('&times;', 'dashboard/activity/delete/'.$Activity->ActivityID.'/'.$Session->TransientKey().'?Target='.urlencode($Sender->SelfUrl), 'Delete').'</div>';
     }
     if ($PhotoAnchor != '') {
         ?>
@@ -82,15 +82,15 @@ function writeActivity($Activity, &$Sender, &$Session) {
     $AllowComments = $Activity->NotifyUserID < 0 || $SharedString;
 
 
-    if ($AllowComments && $Session->checkPermission('Garden.Profiles.Edit'))
+    if ($AllowComments && $Session->checkPermission('Garden.Profiles.Edit')) {
         echo '<span class="MItem AddComment">'
-            .anchor(t('Activity.Comment', 'Comment'), '#CommentForm_'.$Activity->ActivityID, 'CommentOption');
+            .anchor(t('Activity.Comment', 'Comment'), '#CommentForm_'.$Activity->ActivityID, 'CommentOption')
+            .'</span>';
+    }
 
     if ($SharedString) {
         echo ' <span class="MItem"><i>'.$SharedString.'</i></span>';
     }
-
-    echo '</span>';
 
     $Sender->fireEvent('AfterMeta');
     ?>

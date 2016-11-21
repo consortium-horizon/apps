@@ -2,7 +2,7 @@
 /**
  * GooglePlus Plugin.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package GooglePlus
  */
@@ -21,7 +21,8 @@ $PluginInfo['GooglePlus'] = array(
     'SettingsPermission' => 'Garden.Settings.Manage',
     'Hidden' => false,
     'SocialConnect' => true,
-    'RequiresRegistration' => false
+    'RequiresRegistration' => false,
+    'Icon' => 'google.svg'
 );
 
 /**
@@ -231,7 +232,9 @@ class GooglePlusPlugin extends Gdn_Plugin {
      *
      */
     public function structure() {
-        Gdn::sql()->put('UserAuthenticationProvider', array('AuthenticationSchemeAlias' => self::ProviderKey), array('AuthenticationSchemeAlias' => 'Google+'));
+        if (Gdn::sql()->getWhere('UserAuthenticationProvider', array('AuthenticationSchemeAlias' => 'Google+'))->firstRow()) {
+            Gdn::sql()->put('UserAuthenticationProvider', array('AuthenticationSchemeAlias' => self::ProviderKey), array('AuthenticationSchemeAlias' => 'Google+'));
+        }
 
         // Save the google+ provider type.
         Gdn::sql()->replace(
@@ -453,6 +456,9 @@ class GooglePlusPlugin extends Gdn_Plugin {
      */
     public function entryController_signIn_handler($Sender, $Args) {
 //      if (!$this->IsEnabled()) return;
+        if (!$this->isConfigured()) {
+            return;
+        }
 
         if (isset($Sender->Data['Methods'])) {
             $Url = $this->authorizeUri();

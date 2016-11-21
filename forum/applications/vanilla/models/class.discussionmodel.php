@@ -2,7 +2,7 @@
 /**
  * Discussion model
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Vanilla
  * @since 2.0
@@ -13,8 +13,16 @@
  */
 class DiscussionModel extends VanillaModel {
 
+    use StaticInitializer;
+
     /** Cache key. */
     const CACHE_DISCUSSIONVIEWS = 'discussion.%s.countviews';
+
+    /** @var string Default column to order by. */
+    const DEFAULT_ORDER_BY_FIELD = 'DateLastComment';
+
+    /** @var string The filter key for clearing-type filters. */
+    const EMPTY_FILTER_KEY = 'none';
 
     /** @var array */
     protected static $_CategoryPermissions = null;
@@ -25,8 +33,50 @@ class DiscussionModel extends VanillaModel {
     /** @var bool */
     public $Watching = false;
 
-    /** @var array Column names to allow sorting by. */
-    protected static $AllowedSortFields = array('d.DateLastComment', 'd.DateInserted', 'd.DiscussionID');
+    /** @var array Discussion Permissions */
+    protected $permissionTypes = array('Add', 'Announce', 'Close', 'Delete', 'Edit', 'Sink', 'View');
+
+    /**
+     * @var array The sorts that are accessible via GET. Each sort corresponds with an order by clause.
+     *
+     * Each sort in the array has the following properties:
+     * - **key**: string - The key name of the sort. Appears in the query string, should be url-friendly.
+     * - **name**: string - The display name of the sort.
+     * - **orderBy**: string - An array indicating order by fields and their directions in the format: array('field1' => 'direction', 'field2' => 'direction')
+     */
+    protected static $allowedSorts = array(
+        'hot' => array('key' => 'hot', 'name' => 'Hot', 'orderBy' => array('DateLastComment' => 'desc')),
+        'top' => array('key' => 'top', 'name' => 'Top', 'orderBy' => array('Score' => 'desc', 'DateInserted' => 'desc')),
+        'new' => array('key' => 'new', 'name' => 'New', 'orderBy' => array('DateInserted' => 'desc'))
+    );
+
+    /**
+     * @var array The filters that are accessible via GET. Each filter corresponds with a where clause. You can have multiple
+     * filter sets. Every filter must be added to a filter set.
+     *
+     * Each filter set has the following properties:
+     * - **key**: string - The key name of the filter set. Appears in the query string, should be url-friendly.
+     * - **name**: string - The display name of the filter set. Usually appears in the UI.
+     * - **filters**: array - The filters in the set.
+     *
+     * Each filter in the array has the following properties:
+     * - **key**: string - The key name of the filter. Appears in the query string, should be url-friendly.
+     * - **setKey**: string - The key name of the filter set.
+     * - **name**: string - The display name of the filter. Usually appears as an option in the UI.
+     * - **where**: string - The where array query to execute for the filter. Uses
+     * - **group**: string - (optional) The dropdown module can group together any items with the same group name.
+     */
+    protected static $allowedFilters = [];
+
+    /**
+     * @var string The sort key of the order by we apply in the query.
+     */
+    protected $sort = '';
+
+    /**
+     * @var string The filter keys of the wheres we apply in the query.
+     */
+    protected $filters = [];
 
     /**
      * Class constructor. Defines the related database table name.
@@ -36,6 +86,82 @@ class DiscussionModel extends VanillaModel {
      */
     public function __construct() {
         parent::__construct('Discussion');
+    }
+
+    /**
+     * @return array The current sort array.
+     */
+    public static function getAllowedSorts() {
+        self::initStatic();
+        return self::$allowedSorts;
+    }
+
+    /**
+     * Get the registered filters.
+     *
+     * This method must never be called before plugins initialisation.
+     *
+     * @return array The current filter array.
+     */
+    public static function getAllowedFilters() {
+        self::initStatic();
+        return self::$allowedFilters;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSort() {
+        return $this->sort;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilters() {
+        return $this->filters;
+    }
+
+    /**
+     * The sort property is a string. This setter also accepts an array and checks if the sort key exists
+     * on the array. Will only set the sort property if it exists in the allowed sorts array.
+     *
+     * @param string|array $sort The prospective sort to set.
+     */
+    public function setSort($sort) {
+        if (is_array($sort)) {
+            $safeSort = $this->getSortFromArray($sort);
+            $this->sort = $safeSort;
+        } elseif (is_string($sort)) {
+            $safeSort = $this->getSortFromString($sort);
+            $this->sort = $safeSort;
+        }
+    }
+
+    /**
+     * Will only set the filters property if the passed filters exist in the allowed filters array.
+     *
+     * @param array $filters The prospective filters to set.
+     */
+    public function setFilters($filters) {
+        if (is_array($filters)) {
+            $safeFilters = $this->getFiltersFromArray($filters);
+            $this->filters = $safeFilters;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultSortKey() {
+        $orderBy = self::getDefaultOrderBy(); // check config
+
+        // Try to find a matching sort.
+        foreach (self::getAllowedSorts() as $sort) {
+            if (val('orderBy', $sort, []) == $orderBy) {
+                return val('key', $sort, '');
+            }
+        }
     }
 
     /**
@@ -61,6 +187,17 @@ class DiscussionModel extends VanillaModel {
             return false;
         }
 
+        return self::editContentTimeout($discussion, $timeLeft);
+    }
+
+    /**
+     * Checks whether the time frame when a discussion can be edited has passed.
+     *
+     * @param object|array $discussion The discussion to examine.
+     * @param int $timeLeft Sets the time left to edit or 0 if not applicable.
+     * @return bool Whether the time to edit the discussion has passed.
+     */
+    public static function editContentTimeout($discussion, &$timeLeft = 0) {
         // Determine if we still have time to edit.
         $timeInserted = strtotime(val('DateInserted', $discussion));
         $editContentTimeout = c('Garden.EditContentTimeout', -1);
@@ -214,7 +351,7 @@ class DiscussionModel extends VanillaModel {
             ));
 
 
-            Gdn::pluginManager()->EventArguments['Types'] =& $DiscussionTypes;
+            Gdn::pluginManager()->EventArguments['Types'] = & $DiscussionTypes;
             Gdn::pluginManager()->FireAs('DiscussionModel')->fireEvent('DiscussionTypes');
             self::$_DiscussionTypes = $DiscussionTypes;
             unset(Gdn::pluginManager()->EventArguments['Types']);
@@ -264,6 +401,7 @@ class DiscussionModel extends VanillaModel {
                 ->select('0', '', 'Bookmarked')
                 ->select('0', '', 'CountCommentWatch')
                 ->select('0', '', 'Participated')
+                ->select('0', '', 'Read')
                 ->select('d.Announce', '', 'IsAnnounce');
         }
 
@@ -274,10 +412,9 @@ class DiscussionModel extends VanillaModel {
         }
 
         // Get preferred sort order
-        $SortField = self::GetSortField();
+        $orderBy = $this->getOrderBy();
 
-        $this->EventArguments['SortField'] = &$SortField;
-        $this->EventArguments['SortDirection'] = c('Vanilla.Discussions.SortDirection', 'desc');
+        $this->EventArguments['OrderFields'] = &$orderBy;
         $this->EventArguments['Wheres'] = &$Wheres;
         $this->fireEvent('BeforeGet'); // @see 'BeforeGetCount' for consistency in results vs. counts
 
@@ -291,17 +428,9 @@ class DiscussionModel extends VanillaModel {
             $this->SQL->where($Wheres);
         }
 
-        // Whitelist sorting options
-        if (!in_array($SortField, array('d.DiscussionID', 'd.DateLastComment', 'd.DateInserted'))) {
-            trigger_error("You are sorting discussions by a possibly sub-optimal column.", E_USER_NOTICE);
+        foreach ($orderBy as $orderField => $direction) {
+            $this->SQL->orderBy($this->addFieldPrefix($orderField), $direction);
         }
-
-        $SortDirection = $this->EventArguments['SortDirection'];
-        if ($SortDirection != 'asc') {
-            $SortDirection = 'desc';
-        }
-
-        $this->SQL->orderBy($SortField, $SortDirection);
 
         // Set range and fetch
         $Data = $this->SQL->get();
@@ -313,12 +442,12 @@ class DiscussionModel extends VanillaModel {
             }
         }
 
+        // Change discussions returned based on additional criteria
+        $this->AddDiscussionColumns($Data);
+
         // Join in the users.
         Gdn::userModel()->joinUsers($Data, array('FirstUserID', 'LastUserID'));
         CategoryModel::JoinCategories($Data);
-
-        // Change discussions returned based on additional criteria
-        $this->AddDiscussionColumns($Data);
 
         if (c('Vanilla.Views.Denormalize', false)) {
             $this->AddDenormalizedViews($Data);
@@ -331,9 +460,137 @@ class DiscussionModel extends VanillaModel {
         return $Data;
     }
 
-    public function getWhere($Where = array(), $Offset = 0, $Limit = false) {
-        if (!$Limit) {
+    /**
+     * Get a list of the most recent discussions.
+     *
+     * @param array|false $Where The where condition of the get.
+     * @param bool|false|int $Limit The number of discussion to return.
+     * @param int|false $Offset The offset within the total set.
+     * @return Gdn_DataSet Returns a <a href='psi_element://Gdn_DataSet'>Gdn_DataSet</a> of discussions.
+     * of discussions.
+     */
+    public function getWhereRecent($Where = array(), $Limit = false, $Offset = false) {
+        $result = $this->getWhere($Where, '', '', $Limit, $Offset);
+        return $result;
+    }
+
+    /**
+     * Returns an array in the format [field => direction]. You can safely use return values from this function
+     * in the orderBy() SQL function.
+     *
+     * @since 2.3
+     * @return array An array of field => direction values.
+     */
+    protected function getOrderBy() {
+        if ($key = self::getSort()) {
+            $orderBy = val('orderBy', $this->getSortFromKey($key));
+        } else {
+            $orderBy = self::getDefaultOrderBy();
+        }
+        return $orderBy;
+    }
+
+    /**
+     * Returns an array of field => direction for the order by clause on the Discussion table.
+     * Attempts to get ordering fields from the config before settling on DEFAULT_ORDER_BY_FIELD.
+     *
+     * @return array The default order by fields
+     */
+    public static function getDefaultOrderBy() {
+        $orderField = c('Vanilla.Discussions.SortField', self::DEFAULT_ORDER_BY_FIELD);
+        $orderDirection = c('Vanilla.Discussions.SortDirection', 'desc');
+
+        // Normalize any prefixed fields
+        if (strpos($orderField, 'd.') === 0) {
+            $orderField = substr($orderField, 2);
+        }
+
+        return [$orderField => $orderDirection];
+    }
+
+    /**
+     * Checks for any set filters and if they exist, returns the where clauses from the filters.
+     *
+     * @param array $categoryIDs The category IDs from the where clause.
+     * @return array The where clauses from the filters.
+     * @throws Exception
+     */
+    protected function getWheres($categoryIDs = []) {
+        $wheres = [];
+        $filters = $this->getFiltersFromKeys($this->getFilters());
+
+        foreach ($filters as $filter) {
+
+            if ($categoryIDs) {
+                $setKey = val('setKey', $filter);
+                $filterSetCategories = val('categories', val($setKey, self::getAllowedFilters()));
+
+                if (!empty($filterSetCategories) and array_diff($categoryIDs, $filterSetCategories)) {
+                    $filter['wheres'] = [];
+                }
+            }
+            $wheres = $this->combineWheres(val('wheres', $filter, []), $wheres);
+        }
+        return $wheres;
+    }
+
+    /**
+     * Combines two arrays of where clauses.
+     *
+     * @param array $newWheres The clauses we're adding.
+     * @param array $wheres The where clauses to add new clauses to.
+     * @return array A set of where clauses, array form.
+     */
+    protected function combineWheres($newWheres, $wheres) {
+        foreach ($newWheres as $field => $value) {
+            // Combine all our where clauses.
+            if (!array_key_exists($field, $wheres)) {
+                // Add a new where field to the list.
+                $wheres[$field] = $value;
+            } elseif (is_array($wheres[$field])) {
+                if (!in_array($value, $wheres[$field])) {
+                    // Add a new where value.
+                    $wheres[$field][] = $value;
+                }
+            }
+        }
+        return $wheres;
+    }
+
+    /**
+     * Get a list of discussions.
+     *
+     * This method call will remove announcements and may not return exactly {@link $Limit} records for optimization.
+     * You can set `$Where['d.Announce'] = 'all'` to return announcements.
+     *
+     * @param array|false $Where The where condition of the get.
+     * @param string $OrderFields The field to order the discussions by.
+     * @param string $OrderDirection The order, either **asc** or **desc**.
+     * @param int|false $Limit The number of discussion to return.
+     * @param int|false $Offset The offset within the total set.
+     * @return Gdn_DataSet Returns a {@link Gdn_DataSet} of discussions.
+     */
+    public function getWhere($Where = false, $OrderFields = '', $OrderDirection = '', $Limit = false, $Offset = false) {
+        // Add backwards compatibility for the old way getWhere() was called.
+        if (is_numeric($OrderFields)) {
+            deprecated('DiscussionModel->getWhere($where, $limit, ...)', 'DiscussionModel->getWhereRecent()');
+            $Limit = $OrderFields;
+            $OrderFields = '';
+        }
+        if (is_numeric($OrderDirection)) {
+            deprecated('DiscussionModel->getWhere($where, $limit, $offset)', 'DiscussionModel->getWhereRecent()');
+            $Offset = $OrderDirection;
+            $OrderDirection = '';
+        }
+
+        if ($Limit === 0) {
+            trigger_error("You should not supply 0 to for $Limit in DiscussionModel->getWhere()", E_USER_NOTICE);
+        }
+        if (empty($Limit)) {
             $Limit = c('Vanilla.Discussions.PerPage', 30);
+        }
+        if (empty($Offset)) {
+            $Offset = 0;
         }
 
         if (!is_array($Where)) {
@@ -350,30 +607,30 @@ class DiscussionModel extends VanillaModel {
             }
         }
 
-        // Get preferred sort order
-        $SortField = self::GetSortField();
+        $Where = $this->combineWheres($this->getWheres(), $Where);
 
-        $this->EventArguments['SortField'] = &$SortField;
-        $this->EventArguments['SortDirection'] = c('Vanilla.Discussions.SortDirection', 'desc');
-        $this->EventArguments['Wheres'] =& $Where;
+        if (empty($OrderFields)) {
+            $orderBy = $this->getOrderBy();
+        } elseif (is_string($OrderFields)) {
+            if ($OrderDirection != 'asc') {
+                $OrderDirection = 'desc';
+            }
+            $orderBy = [$OrderFields => $OrderDirection];
+        }
+
+        $this->EventArguments['OrderBy'] = &$orderBy;
+        $this->EventArguments['Wheres'] = &$Where;
         $this->fireEvent('BeforeGet');
-
-        // Whitelist sorting options
-        if (!in_array($SortField, self::AllowedSortFields())) {
-            $SortField = 'd.DateLastComment';
-        }
-
-        $SortDirection = $this->EventArguments['SortDirection'];
-        if ($SortDirection != 'asc') {
-            $SortDirection = 'desc';
-        }
 
         // Build up the base query. Self-join for optimization.
         $Sql->select('d2.*')
             ->from('Discussion d')
             ->join('Discussion d2', 'd.DiscussionID = d2.DiscussionID')
-            ->orderBy($SortField, $SortDirection)
             ->limit($Limit, $Offset);
+
+        foreach ($orderBy as $field => $direction) {
+            $Sql->orderBy($this->addFieldPrefix($field), $direction);
+        }
 
         // Verify permissions (restricting by category if necessary)
         $Perms = self::CategoryPermissions();
@@ -398,14 +655,11 @@ class DiscussionModel extends VanillaModel {
         }
 
         // Make sure there aren't any ambiguous discussion references.
+        $safeWheres = [];
         foreach ($Where as $Key => $Value) {
-            if (strpos($Key, '.') === false) {
-                $Where['d.'.$Key] = $Value;
-                unset($Where[$Key]);
-            }
+            $safeWheres[$this->addFieldPrefix($Key)] = $Value;
         }
-
-        $Sql->where($Where);
+        $Sql->where($safeWheres);
 
         // Add the UserDiscussion query.
         if (($UserID = Gdn::session()->UserID) > 0) {
@@ -441,6 +695,21 @@ class DiscussionModel extends VanillaModel {
         $this->fireEvent('AfterAddColumns');
 
         return $Data;
+    }
+
+    /**
+     * Adds a prefix to the field name if the field doesn't already have one.
+     *
+     * @param string $fieldName The name of the field.
+     * @param string $prefix
+     * @return string The fieldname with the prefix if one does not exist.
+     */
+    public function addFieldPrefix($fieldName, $prefix = 'd') {
+        // Make sure there aren't any ambiguous discussion references.
+        if (strpos($fieldName, '.') === false) {
+            $fieldName = $prefix.'.'.$fieldName;
+        }
+        return $fieldName;
     }
 
     /**
@@ -506,7 +775,7 @@ class DiscussionModel extends VanillaModel {
         $this->EventArguments['Wheres'] = &$Wheres;
         $this->fireEvent('BeforeGetUnread'); // @see 'BeforeGetCount' for consistency in results vs. counts
 
-        $IncludeAnnouncements = true;
+        $IncludeAnnouncements = false;
         if (strtolower(val('Announce', $Wheres)) == 'all') {
             $IncludeAnnouncements = true;
             unset($Wheres['Announce']);
@@ -527,7 +796,7 @@ class DiscussionModel extends VanillaModel {
             $SortDirection = 'desc';
         }
 
-        $this->SQL->orderBy($SortField, $SortDirection);
+        $this->SQL->orderBy($this->addFieldPrefix($SortField), $SortDirection);
 
         // Set range and fetch
         $Data = $this->SQL->get();
@@ -541,11 +810,6 @@ class DiscussionModel extends VanillaModel {
 
         // Change discussions returned based on additional criteria
         $this->AddDiscussionColumns($Data);
-        $Result = &$Data->result();
-        foreach ($Result as $valueKey => &$Discussion) {
-            if ($Discussion->CountUnreadComments == 0)
-                unset($Result[$valueKey]);
-        }
 
         // Join in the users.
         Gdn::userModel()->joinUsers($Data, array('FirstUserID', 'LastUserID'));
@@ -726,7 +990,7 @@ class DiscussionModel extends VanillaModel {
             $Discussion->LastDate = $Discussion->DateInserted;
         }
 
-        $this->EventArguments['Discussion'] = $Discussion;
+        $this->EventArguments['Discussion'] = &$Discussion;
         $this->fireEvent('SetCalculatedFields');
     }
 
@@ -763,6 +1027,7 @@ class DiscussionModel extends VanillaModel {
      * @return object SQL result.
      */
     public function getAnnouncements($Wheres = '') {
+        $Wheres = $this->combineWheres($this->getWheres(), $Wheres);
         $Session = Gdn::session();
         $Limit = Gdn::config('Vanilla.Discussions.PerPage', 50);
         $Offset = 0;
@@ -789,11 +1054,10 @@ class DiscussionModel extends VanillaModel {
         }
 
         $AnnouncementIDs = $this->SQL->get()->resultArray();
-        $AnnouncementIDs = array_column($AnnouncementIDs, 'DiscussionID');
+        $AnnouncementIDs = consolidateArrayValuesByKey($AnnouncementIDs, 'DiscussionID');
 
         // Short circuit querying when there are no announcements.
         if (count($AnnouncementIDs) == 0) {
-            $this->_AnnouncementIDs = $AnnouncementIDs;
             return new Gdn_DataSet();
         }
 
@@ -836,9 +1100,12 @@ class DiscussionModel extends VanillaModel {
                 ->where('coalesce(w.Dismissed, \'0\')', '0', false);
         }
 
-        $this->SQL
-            ->orderBy(self::GetSortField(), 'desc')
-            ->limit($Limit, $Offset);
+        $this->SQL->limit($Limit, $Offset);
+
+        $orderBy = $this->getOrderBy();
+        foreach ($orderBy as $field => $direction) {
+            $this->SQL->orderBy($this->addFieldPrefix($field), $direction);
+        }
 
         $Data = $this->SQL->get();
 
@@ -1075,7 +1342,7 @@ class DiscussionModel extends VanillaModel {
     }
 
     public function fetchPageInfo($Url, $ThrowError = false) {
-        $PageInfo = FetchPageInfo($Url, 3, $ThrowError);
+        $PageInfo = fetchPageInfo($Url, 3, $ThrowError);
 
         $Title = val('Title', $PageInfo, '');
         if ($Title == '') {
@@ -1129,6 +1396,7 @@ class DiscussionModel extends VanillaModel {
      * @return int Number of discussions.
      */
     public function getCount($Wheres = '', $ForceNoAnnouncements = false) {
+        $Wheres = $this->combineWheres($this->getWheres(), $Wheres);
         if (is_array($Wheres) && count($Wheres) == 0) {
             $Wheres = '';
         }
@@ -1363,18 +1631,18 @@ class DiscussionModel extends VanillaModel {
             return $Discussion;
         }
 
+        $this->Calculate($Discussion);
+
         // Join in the users.
         $Discussion = array($Discussion);
         Gdn::userModel()->joinUsers($Discussion, array('LastUserID', 'InsertUserID'));
         $Discussion = $Discussion[0];
 
-        $this->Calculate($Discussion);
-
         if (c('Vanilla.Views.Denormalize', false)) {
             $this->AddDenormalizedViews($Discussion);
         }
 
-        return $Discussion;
+        return $DataSetType == DATASET_TYPE_ARRAY ? (array)$Discussion : $Discussion;
     }
 
     /**
@@ -1425,6 +1693,7 @@ class DiscussionModel extends VanillaModel {
      * @return string Column name.
      */
     public static function getSortField() {
+        deprecated("getSortField", "getOrderBy");
         $SortField = c('Vanilla.Discussions.SortField', 'd.DateLastComment');
         if (c('Vanilla.Discussions.UserSortField')) {
             $SortField = Gdn::session()->GetPreference('Discussions.SortField', $SortField);
@@ -1433,8 +1702,13 @@ class DiscussionModel extends VanillaModel {
         return $SortField;
     }
 
+    /**
+     *
+     *
+     * @param $DiscussionID
+     * @return mixed|null
+     */
     public static function getViewsFallback($DiscussionID) {
-
         // Not found. Check main table.
         $Views = val('CountViews', Gdn::sql()
             ->select('CountViews')
@@ -1513,7 +1787,11 @@ class DiscussionModel extends VanillaModel {
         }
 
         $this->EventArguments['DiscussionID'] = $RowID;
-        $this->EventArguments['SetField'] = $Property;
+        if (!is_array($Property)) {
+            $this->EventArguments['SetField'] = array($Property => $Value);
+        } else {
+            $this->EventArguments['SetField'] = $Property;
+        }
 
         parent::SetField($RowID, $Property, $Value);
         $this->fireEvent('AfterSetField');
@@ -1522,15 +1800,16 @@ class DiscussionModel extends VanillaModel {
     /**
      * Inserts or updates the discussion via form values.
      *
-     * Events: BeforeSaveDiscussion, AfterSaveDiscussion.
+     * Events: BeforeSaveDiscussion, AfterValidateDiscussion, AfterSaveDiscussion.
      *
      * @since 2.0.0
      * @access public
      *
      * @param array $FormPostValues Data sent from the form model.
+     * @param array $Settings Currently unused.
      * @return int $DiscussionID Unique ID of the discussion.
      */
-    public function save($FormPostValues) {
+    public function save($FormPostValues, $Settings = false) {
         $Session = Gdn::session();
 
         // Define the primary key in this model's table.
@@ -1556,7 +1835,7 @@ class DiscussionModel extends VanillaModel {
         }
 
         // Get the DiscussionID from the form so we know if we are inserting or updating.
-        $DiscussionID = arrayValue('DiscussionID', $FormPostValues, '');
+        $DiscussionID = val('DiscussionID', $FormPostValues, '');
 
         // See if there is a source ID.
         if (val('SourceID', $FormPostValues)) {
@@ -1578,13 +1857,13 @@ class DiscussionModel extends VanillaModel {
             unset($FormPostValues['DiscussionID']);
             // If no categoryid is defined, grab the first available.
             if (!val('CategoryID', $FormPostValues) && !c('Vanilla.Categories.Use')) {
-                $FormPostValues['CategoryID'] = val('CategoryID', CategoryModel::DefaultCategory(), -1);
+                $FormPostValues['CategoryID'] = val('CategoryID', CategoryModel::defaultCategory(), -1);
             }
 
-            $this->AddInsertFields($FormPostValues);
+            $this->addInsertFields($FormPostValues);
 
             // The UpdateUserID used to be required. Just add it if it still is.
-            if (!$this->Schema->GetProperty('UpdateUserID', 'AllowNull', true)) {
+            if (!$this->Schema->getProperty('UpdateUserID', 'AllowNull', true)) {
                 $FormPostValues['UpdateUserID'] = $FormPostValues['InsertUserID'];
             }
 
@@ -1592,19 +1871,19 @@ class DiscussionModel extends VanillaModel {
             $FormPostValues['DateLastComment'] = $FormPostValues['DateInserted'];
         } else {
             // Add the update fields.
-            $this->AddUpdateFields($FormPostValues);
+            $this->addUpdateFields($FormPostValues);
         }
 
         // Set checkbox values to zero if they were unchecked
-        if (ArrayValue('Announce', $FormPostValues, '') === false) {
+        if (val('Announce', $FormPostValues, '') === false) {
             $FormPostValues['Announce'] = 0;
         }
 
-        if (ArrayValue('Closed', $FormPostValues, '') === false) {
+        if (val('Closed', $FormPostValues, '') === false) {
             $FormPostValues['Closed'] = 0;
         }
 
-        if (ArrayValue('Sink', $FormPostValues, '') === false) {
+        if (val('Sink', $FormPostValues, '') === false) {
             $FormPostValues['Sink'] = 0;
         }
 
@@ -1625,9 +1904,15 @@ class DiscussionModel extends VanillaModel {
 
         if (count($ValidationResults) == 0) {
             // If the post is new and it validates, make sure the user isn't spamming
-            if (!$Insert || !$this->CheckForSpam('Discussion')) {
+            if (!$Insert || !$this->checkForSpam('Discussion')) {
                 // Get all fields on the form that relate to the schema
-                $Fields = $this->Validation->SchemaValidationFields();
+                $Fields = $this->Validation->schemaValidationFields();
+
+                // Check for spam.
+                $spam = SpamModel::isSpam('Discussion', $Fields);
+                if ($spam) {
+                    return SPAM;
+                }
 
                 // Get DiscussionID if one was sent
                 $DiscussionID = intval(val('DiscussionID', $Fields, 0));
@@ -1645,24 +1930,35 @@ class DiscussionModel extends VanillaModel {
                         unset($Fields['Format']);
                     }
 
+                    $isValid = true;
+                    $invalidReturnType = false;
+                    $this->EventArguments['DiscussionData'] = array_merge($Fields, array('DiscussionID' => $DiscussionID));
+                    $this->EventArguments['IsValid'] = &$isValid;
+                    $this->EventArguments['InvalidReturnType'] = &$invalidReturnType;
+                    $this->fireEvent('AfterValidateDiscussion');
+
+                    if (!$isValid) {
+                        return $invalidReturnType;
+                    }
+
                     // Clear the cache if necessary.
                     $CacheKeys = array();
                     if (val('Announce', $Stored) != val('Announce', $Fields)) {
-                        $CacheKeys[] = $this->GetAnnouncementCacheKey();
-                        $CacheKeys[] = $this->GetAnnouncementCacheKey(val('CategoryID', $Stored));
+                        $CacheKeys[] = $this->getAnnouncementCacheKey();
+                        $CacheKeys[] = $this->getAnnouncementCacheKey(val('CategoryID', $Stored));
                     }
                     if (val('CategoryID', $Stored) != val('CategoryID', $Fields)) {
-                        $CacheKeys[] = $this->GetAnnouncementCacheKey(val('CategoryID', $Fields));
+                        $CacheKeys[] = $this->getAnnouncementCacheKey(val('CategoryID', $Fields));
                     }
                     foreach ($CacheKeys as $CacheKey) {
-                        Gdn::cache()->Remove($CacheKey);
+                        Gdn::cache()->remove($CacheKey);
                     }
 
-                    self::SerializeRow($Fields);
+                    self::serializeRow($Fields);
                     $this->SQL->put($this->Name, $Fields, array($this->PrimaryKey => $DiscussionID));
 
                     setValue('DiscussionID', $Fields, $DiscussionID);
-                    LogModel::LogChange('Edit', 'Discussion', (array)$Fields, $Stored);
+                    LogModel::logChange('Edit', 'Discussion', (array)$Fields, $Stored);
 
                     if (val('CategoryID', $Stored) != val('CategoryID', $Fields)) {
                         $StoredCategoryID = val('CategoryID', $Stored);
@@ -1678,21 +1974,26 @@ class DiscussionModel extends VanillaModel {
                         $Fields['Notified'] = ActivityModel::SENT_PENDING;
                     }
 
-                    // Check for spam.
-                    $Spam = SpamModel::IsSpam('Discussion', $Fields);
-                    if ($Spam) {
-                        return SPAM;
-                    }
-
                     // Check for approval
-                    $ApprovalRequired = CheckRestriction('Vanilla.Approval.Require');
+                    $ApprovalRequired = checkRestriction('Vanilla.Approval.Require');
                     if ($ApprovalRequired && !val('Verified', Gdn::session()->User)) {
                         LogModel::insert('Pending', 'Discussion', $Fields);
                         return UNAPPROVED;
                     }
 
+                    $isValid = true;
+                    $invalidReturnType = false;
+                    $this->EventArguments['DiscussionData'] = $Fields;
+                    $this->EventArguments['IsValid'] = &$isValid;
+                    $this->EventArguments['InvalidReturnType'] = &$invalidReturnType;
+                    $this->fireEvent('AfterValidateDiscussion');
+
+                    if (!$isValid) {
+                        return $invalidReturnType;
+                    }
+
                     // Create discussion
-                    $this->SerializeRow($Fields);
+                    $this->serializeRow($Fields);
                     $DiscussionID = $this->SQL->insert($this->Name, $Fields);
                     $Fields['DiscussionID'] = $DiscussionID;
 
@@ -1706,22 +2007,26 @@ class DiscussionModel extends VanillaModel {
                             'LastDateInserted' => $Fields['DateInserted'],
                             'LastUrl' => DiscussionUrl($Fields)
                         );
-                        CategoryModel::SetCache($Fields['CategoryID'], $CategoryCache);
+                        CategoryModel::setCache($Fields['CategoryID'], $CategoryCache);
 
                         // Clear the cache if necessary.
                         if (val('Announce', $Fields)) {
-                            Gdn::cache()->Remove($this->GetAnnouncementCacheKey(val('CategoryID', $Fields)));
+                            Gdn::cache()->remove($this->getAnnouncementCacheKey(val('CategoryID', $Fields)));
+
+                            if (val('Announce', $Fields) == 1) {
+                                Gdn::cache()->remove($this->getAnnouncementCacheKey());
+                            }
                         }
                     }
 
                     // Update the user's discussion count.
                     $InsertUser = Gdn::userModel()->getID($Fields['InsertUserID']);
-                    $this->UpdateUserDiscussionCount($Fields['InsertUserID'], val('CountDiscussions', $InsertUser, 0) > 100);
+                    $this->updateUserDiscussionCount($Fields['InsertUserID'], val('CountDiscussions', $InsertUser, 0) > 100);
 
-                    // Mark the user as participated.
+                    // Mark the user as participated and update DateLastViewed.
                     $this->SQL->replace(
                         'UserDiscussion',
-                        array('Participated' => 1),
+                        array('Participated' => 1, 'DateLastViewed' => Gdn_Format::toDateTime()),
                         array('DiscussionID' => $DiscussionID, 'UserID' => val('InsertUserID', $Fields))
                     );
 
@@ -1730,8 +2035,8 @@ class DiscussionModel extends VanillaModel {
                     $FormPostValues['DiscussionID'] = $DiscussionID;
 
                     // Do data prep.
-                    $DiscussionName = arrayValue('Name', $Fields, '');
-                    $Story = arrayValue('Body', $Fields, '');
+                    $DiscussionName = val('Name', $Fields, '');
+                    $Story = val('Body', $Fields, '');
                     $NotifiedUsers = array();
 
                     $UserModel = Gdn::userModel();
@@ -1764,8 +2069,7 @@ class DiscussionModel extends VanillaModel {
                     }
 
                     // Notify all of the users that were mentioned in the discussion.
-                    $Usernames = GetMentions($DiscussionName.' '.$Story);
-                    $Usernames = array_unique($Usernames);
+                    $Usernames = getMentions($DiscussionName.' '.$Story);
 
                     // Use our generic Activity for events, not mentions
                     $this->EventArguments['Activity'] = $Activity;
@@ -1774,7 +2078,7 @@ class DiscussionModel extends VanillaModel {
                     if (!c('Vanilla.QueueNotifications')) {
                         try {
                             $Fields['DiscussionID'] = $DiscussionID;
-                            $this->NotifyNewDiscussion($Fields, $ActivityModel, $Activity);
+                            $this->notifyNewDiscussion($Fields, $ActivityModel, $Activity);
                         } catch (Exception $Ex) {
                             throw $Ex;
                         }
@@ -1782,20 +2086,20 @@ class DiscussionModel extends VanillaModel {
 
                     // Notifications for mentions
                     foreach ($Usernames as $Username) {
-                        $User = $UserModel->GetByUsername($Username);
+                        $User = $UserModel->getByUsername($Username);
                         if (!$User) {
                             continue;
                         }
 
                         // Check user can still see the discussion.
-                        if (!$UserModel->GetCategoryViewPermission($User->UserID, val('CategoryID', $Fields))) {
+                        if (!$this->canView($Fields, $User->UserID)) {
                             continue;
                         }
 
                         $Activity['HeadlineFormat'] = t('HeadlineFormat.Mention', '{ActivityUserID,user} mentioned you in <a href="{Url,html}">{Data.Name,text}</a>');
 
                         $Activity['NotifyUserID'] = val('UserID', $User);
-                        $ActivityModel->Queue($Activity, 'Mention');
+                        $ActivityModel->queue($Activity, 'Mention');
                     }
 
                     // Throw an event for users to add their own events.
@@ -1806,7 +2110,7 @@ class DiscussionModel extends VanillaModel {
                     $this->fireEvent('BeforeNotification');
 
                     // Send all notifications.
-                    $ActivityModel->SaveQueue();
+                    $ActivityModel->saveQueue();
                 }
 
                 // Get CategoryID of this discussion
@@ -1816,11 +2120,11 @@ class DiscussionModel extends VanillaModel {
 
                 // Update discussion counter for affected categories.
                 if ($Insert || $StoredCategoryID) {
-                    $this->IncrementNewDiscussion($Discussion);
+                    $this->incrementNewDiscussion($Discussion);
                 }
 
                 if ($StoredCategoryID) {
-                    $this->UpdateDiscussionCount($StoredCategoryID);
+                    $this->updateDiscussionCount($StoredCategoryID);
                 }
 
                 // Fire an event that the discussion was saved.
@@ -1878,7 +2182,7 @@ class DiscussionModel extends VanillaModel {
 
             $UserID = $Row['UserID'];
             // Check user can still see the discussion.
-            if (!Gdn::userModel()->GetCategoryViewPermission($UserID, $Category['CategoryID'])) {
+            if (!$this->canView($Discussion, $UserID)) {
                 continue;
             }
 
@@ -2346,24 +2650,39 @@ class DiscussionModel extends VanillaModel {
     }
 
     /**
+     * Delete a discussion.
+     *
+     * {@inheritdoc}
+     */
+    public function delete($where = [], $options = []) {
+        if (is_numeric($where)) {
+            deprecated('DiscussionModel->delete(int)', 'DiscussionModel->deleteID(int)');
+
+            $result = $this->deleteID($where, $options);
+            return $result;
+        }
+
+        throw new \BadMethodCallException("DiscussionModel->delete() is not supported.", 400);
+    }
+
+    /**
      * Delete a discussion. Update and/or delete all related data.
      *
      * Events: DeleteDiscussion.
      *
-     * @since 2.0.0
-     * @access public
-     *
-     * @param int $DiscussionID Unique ID of discussion to delete.
+     * @param int $discussionID Unique ID of discussion to delete.
+     * @param array $options Additional options to control the delete behavior. Not used for discussions.
      * @return bool Always returns TRUE.
+     * @since 2.0.0
      */
-    public function delete($DiscussionID, $Options = array()) {
+    public function deleteID($discussionID, $options = array()) {
         // Retrieve the users who have bookmarked this discussion.
-        $BookmarkData = $this->GetBookmarkUsers($DiscussionID);
+        $BookmarkData = $this->GetBookmarkUsers($discussionID);
 
         $Data = $this->SQL
             ->select('*')
             ->from('Discussion')
-            ->where('DiscussionID', $DiscussionID)
+            ->where('DiscussionID', $discussionID)
             ->get()->firstRow(DATASET_TYPE_ARRAY);
 
         $UserID = false;
@@ -2374,15 +2693,15 @@ class DiscussionModel extends VanillaModel {
         }
 
         // Prep and fire event
-        $this->EventArguments['DiscussionID'] = $DiscussionID;
+        $this->EventArguments['DiscussionID'] = $discussionID;
         $this->EventArguments['Discussion'] = $Data;
         $this->fireEvent('DeleteDiscussion');
 
         // Execute deletion of discussion and related bits
-        $this->SQL->delete('Draft', array('DiscussionID' => $DiscussionID));
+        $this->SQL->delete('Draft', array('DiscussionID' => $discussionID));
 
-        $Log = val('Log', $Options, true);
-        $LogOptions = val('LogOptions', $Options, array());
+        $Log = val('Log', $options, true);
+        $LogOptions = val('LogOptions', $options, array());
         if ($Log === true) {
             $Log = 'Delete';
         }
@@ -2390,7 +2709,7 @@ class DiscussionModel extends VanillaModel {
         LogModel::BeginTransaction();
 
         // Log all of the comment deletes.
-        $Comments = $this->SQL->getWhere('Comment', array('DiscussionID' => $DiscussionID))->resultArray();
+        $Comments = $this->SQL->getWhere('Comment', array('DiscussionID' => $discussionID))->resultArray();
 
         if (count($Comments) > 0 && count($Comments) < 50) {
             // A smaller number of comments should just be stored with the record.
@@ -2405,10 +2724,10 @@ class DiscussionModel extends VanillaModel {
 
         LogModel::EndTransaction();
 
-        $this->SQL->delete('Comment', array('DiscussionID' => $DiscussionID));
-        $this->SQL->delete('Discussion', array('DiscussionID' => $DiscussionID));
+        $this->SQL->delete('Comment', array('DiscussionID' => $discussionID));
+        $this->SQL->delete('Discussion', array('DiscussionID' => $discussionID));
 
-        $this->SQL->delete('UserDiscussion', array('DiscussionID' => $DiscussionID));
+        $this->SQL->delete('UserDiscussion', array('DiscussionID' => $discussionID));
         $this->UpdateDiscussionCount($CategoryID);
 
         // Get the user's discussion count.
@@ -2453,13 +2772,345 @@ class DiscussionModel extends VanillaModel {
     }
 
     /**
-     * Getter/setter for protected $AllowedSortFields array.
+     * We don't use this functionality anymore. Previously, you had to register any sorting field before sorting with it.
      */
     public static function allowedSortFields($Allowed = null) {
-        if (is_array($Allowed)) {
-            self::$AllowedSortFields = $Allowed;
+        deprecated("allowedSortFields");
+    }
+
+    /**
+     * Tests whether a user has permission to view a specific discussion.
+     *
+     * @param object|array|integer $discussion The discussion ID or the discussion to test.
+     * @param integer $userID The ID of the user to test permission for. If empty, it defaults to Session user.
+     * @return bool Whether the user can view the discussion.
+     * @throws Exception
+     */
+    public function canView($discussion, $userID = 0) {
+        $canView = $this->checkPermission($discussion, 'Vanilla.Discussions.View', $userID);
+        return $canView;
+    }
+
+    /**
+     * Tests whether a user has permission for a discussion by checking category-specific permissions.
+     * Fires an event that can override the calculated permission.
+     *
+     * @param object|array|integer $discussion The discussion ID or the discussion to test.
+     * @param string $permission The category permission to test against the user.
+     * @param integer $userID The ID of the user to test permission for. If empty, it defaults to Session user.
+     * @return bool Whether the user has the specified permission privileges to the discussion.
+     * @throws Exception
+     */
+    public function checkPermission($discussion, $permission, $userID = 0) {
+        // Either the permission string is a full permission, or we prepend 'Vanilla.Discussions.' to the permission.
+        if (strpos($permission, '.') === false) {
+            $permission = ucfirst(strtolower($permission));
+            if (in_array($permission, $this->permissionTypes)) {
+                $permission = 'Vanilla.Discussions.'.$permission;
+            } else {
+                throw new Exception(t('Unexpected discussion permission.'));
+            }
+        }
+        // Default to session user.
+        if (!$userID) {
+            $userID = Gdn::session()->UserID;
+        }
+        // Fetch discussion.
+        if (is_numeric($discussion)) {
+            $discussion = $this->getID($discussion);
+        }
+        $userModel = Gdn::userModel();
+        // Get category permission.
+        $hasPermission = $userID && $userModel->getCategoryViewPermission($userID, val('CategoryID', $discussion), $permission);
+        // Check if we've timed out.
+        if (strpos(strtolower($permission), 'edit' !== false)) {
+            $hasPermission &= self::editContentTimeout($discussion);
+        }
+        // Fire event to override permission ruling.
+        $this->EventArguments['Discussion'] = $discussion;
+        $this->EventArguments['UserID'] = $userID;
+        $this->EventArguments['Permission'] = $permission;
+        $this->EventArguments['HasPermission'] = &$hasPermission;
+        $this->fireEvent('checkPermission');
+
+        return $hasPermission;
+    }
+
+    /** SORT/FILTER */
+
+
+    /**
+     * Retrieves valid set key and filter keys pairs from an array, and returns the setKey => filterKey values.
+     * Works real well with unfiltered request arguments. (i.e., Gdn::request()->get()) Will only return safe
+     * set key and filter key pairs from the filters array or an empty array if not found.
+     *
+     * @param array $array The array to get the filters from.
+     * @return array The valid filters from the passed array or an empty array.
+     */
+    protected function getFiltersFromArray($array) {
+        $filterKeys = [];
+        foreach (self::getAllowedFilters() as $filterSet) {
+            $filterSetKey = val('key', $filterSet);
+            // Check if any of our filters are in the array. Filter key value is unsafe.
+            if ($filterKey = val($filterSetKey, $array)) {
+                // Check that value is in filter array to ensure safety.
+                if (val($filterKey, val('filters', $filterSet))) {
+                    // Value is safe.
+                    $filterKeys[$filterSetKey] = $filterKey;
+                } else {
+                    Logger::log(
+                        Logger::NOTICE, 'Filter: '.$filterSetKey.' => '.htmlentities($filterKey)
+                        .' does not exist in the DiscussionModel\'s allowed filters array.'
+                    );
+                }
+            }
+        }
+        return $filterKeys;
+    }
+
+    /**
+     * Retrieves the sort key from an array and if the value is valid, returns it. Works real well with unfiltered
+     * request arguments. (i.e., Gdn::request()->get()) Will only return a safe sort key from the sort array or an
+     * empty string if not found.
+     *
+     * @param array $array The array to get the sort from.
+     * @return string The valid sort from the passed array or an empty string.
+     */
+    protected function getSortFromArray($array) {
+        $unsafeSortKey = val('sort', $array);
+        foreach (self::getAllowedSorts() as $sort) {
+            if ($unsafeSortKey == val('key', $sort)) {
+                // Sort key is valid.
+                return val('key', $sort);
+            }
+        }
+        if ($unsafeSortKey) {
+            Logger::log(
+                Logger::NOTICE, 'Sort: '.htmlentities($unsafeSortKey)
+                .' does not exist in the DiscussionModel\'s allowed sorts array.'
+            );
+        }
+        return '';
+    }
+
+    /**
+     * Checks the allowed sorts array for the string and it is valid, returns it the string. If not, returns an empty
+     * string. Will only return a safe sort key from the sort array or an empty string if not found.
+     *
+     * @param array $string The string to get the sort from.
+     * @return string A valid sort key or an empty string.
+     */
+    protected function getSortFromString($string) {
+        if (val($string, self::$allowedSorts)) {
+            // Sort key is valid.
+            return $string;
+        }
+        else {
+            Logger::log(
+                Logger::NOTICE, 'Sort: '.htmlentities($string)
+                .' does not exist in the DiscussionModel\'s allowed sorts array.'
+            );
+        }
+        return '';
+    }
+
+    /**
+     * Takes a collection of filters and returns the corresponding filter key/value array [setKey => filterKey].
+     *
+     * @param array $filters The filters to get the keys for.
+     * @return array The filter key array.
+     */
+    protected function getKeysFromFilters($filters) {
+        $filterKeyValues = [];
+        foreach ($filters as $filter) {
+            if (isset($filter['setKey']) && isset($filter['key'])) {
+                $filterKeyValues[val('setKey', $filter)] = val('key', $filter);
+            }
+        }
+        return $filterKeyValues;
+    }
+
+
+    /**
+     * Takes an array of filter key/values [setKey => filterKey] and returns a collection of filters.
+     *
+     * @param array $filterKeyValues The filters key array to get the filter for.
+     * @return array An array of filters.
+     */
+    protected function getFiltersFromKeys($filterKeyValues) {
+        $filters = [];
+        foreach ($filterKeyValues as $key => $value) {
+            $allFilters = self::getAllowedFilters();
+            foreach ($filterKeyValues as $key => $value) {
+                if (isset($allFilters[$key]['filters'][$value])) {
+                    $filters[] = $allFilters[$key]['filters'][$value];
+                }
+            }
+        }
+        return $filters;
+    }
+
+    /**
+     * @param $sortKey
+     * @return bool|mixed
+     */
+    protected function getSortFromKey($sortKey) {
+        return val($sortKey, self::getAllowedSorts(), []);
+    }
+
+    /**
+     * Get the current sort/filter query string by passing no parameters or pass either a new filter key or sort key
+     * to build a new query string, leaving the other properties intact.
+     *
+     * @param string $selectedSort
+     * @param array $selectedFilters
+     * @param string $sortKeyToSet The key name of the sort in the sorts array.
+     * @param array $filterKeysToSet An array of filters, where the key is the key of the filterSet
+     *      in the filters array and the value is the key of the filter.
+     * @return string The current or amended query string for sort and filter.
+     */
+    public static function getSortFilterQueryString($selectedSort, $selectedFilters, $sortKeyToSet = '', $filterKeysToSet = []) {
+        $filterString = '';
+        $filterKeys = array_merge($selectedFilters, $filterKeysToSet);
+
+        // Build the sort query string
+        foreach ($filterKeys as $setKey => $filterKey) {
+            // If the preference is none, don't show it.
+            if ($filterKey != self::EMPTY_FILTER_KEY) {
+                if (!empty($filterString)) {
+                    $filterString .= '&';
+                }
+                $filterString .= $setKey.'='.$filterKey;
+            }
         }
 
-        return self::$AllowedSortFields;
+        $sortString = '';
+        if (!$sortKeyToSet) {
+            $sort = $selectedSort;
+            if ($sort) {
+                $sortString = 'sort='.$sort;
+            }
+        } else {
+            $sortString = 'sort='.$sortKeyToSet;
+        }
+
+        $queryString = '';
+        if (!empty($sortString) && !empty($filterString)) {
+            $queryString = '?'.$sortString.'&'.$filterString;
+        } elseif (!empty($sortString)) {
+            $queryString = '?'.$sortString;
+        } elseif (!empty($filterString)) {
+            $queryString = '?'.$filterString;
+        }
+
+        return $queryString;
+    }
+
+    /**
+     * Add a sort to the allowed sorts array.
+     *
+     * @param string $key The key name of the sort. Appears in the query string, should be url-friendly.
+     * @param string $name The display name of the sort.
+     * @param string|array $orderBy An array indicating order by fields and their directions in the format:
+     *      array('field1' => 'direction', 'field2' => 'direction')
+     * @param array $categoryIDs The IDs of the categories that this sort will work on. If empty, sort is global.
+     */
+    public static function addSort($key, $name, $orderBy, $categoryIDs = []) {
+        self::$allowedSorts[$key] = array('key' => $key, 'name' => $name, 'orderBy' => $orderBy, 'categories' => $categoryIDs);
+    }
+
+    /**
+     * Add a filter to the allowed filters array.
+     *
+     * @param string $key The key name of the filter. Appears in the query string, should be url-friendly.
+     * @param string $name The display name of the filter. Usually appears as an option in the UI.
+     * @param array $wheres The where array query to execute for the filter. Uses
+     * @param string $group (optional) The nav module will group together any items with the same group name.
+     * @param string $setKey The key name of the filter set.
+     */
+    public static function addFilter($key, $name, $wheres, $group = '', $setKey = 'filter') {
+        if (!val($setKey, self::getAllowedFilters())) {
+            self::addFilterSet($setKey);
+        }
+        self::$allowedFilters[$setKey]['filters'][$key] = array('key' => $key, 'setKey' => $setKey, 'name' => $name, 'wheres' => $wheres);
+        if ($group) {
+            self::$allowedFilters[$setKey]['filters'][$key]['group'] = $group;
+        }
+    }
+
+    /**
+     * Adds a filter set to the allowed filters array.
+     *
+     * @param string $setKey The key name of the filter set.
+     * @param string $setName The name of the filter set. Appears in the UI.
+     * @param array $categoryIDs The IDs of the categories that this filter will work on. If empty, filter is global.
+     */
+    public static function addFilterSet($setKey, $setName = '', $categoryIDs = []) {
+        if (!$setName) {
+            $setName = sprintf(t('All %s'), t('Discussions'));
+        }
+        self::$allowedFilters[$setKey]['key'] = $setKey;
+        self::$allowedFilters[$setKey]['name'] = $setName;
+        self::$allowedFilters[$setKey]['categories'] = $categoryIDs;
+
+        // Add a way to let users clear any filters they've added.
+        self::addClearFilter($setKey, $setName);
+    }
+
+    /**
+     * If you don't want to use any of the default sorts, use this little buddy.
+     */
+    public static function clearSorts() {
+        self::$allowedSorts = array();
+    }
+
+    /**
+     * Removes a sort from the allowed sort array with the passed key.
+     *
+     * @param string $key The key of the sort to remove.
+     */
+    public static function removeSort($key) {
+        if (val($key, self::$allowedSorts)) {
+            unset(self::$allowedSorts[$key]);
+        }
+    }
+
+    /**
+     * Removes a filters from the allowed filter array with the passed filter key/values.
+     *
+     * @param array $filterKeys The key/value pairs of the filters to remove.
+     */
+    public static function removeFilter($filterKeys) {
+        foreach ($filterKeys as $setKey => $filterKey) {
+            if (isset(self::$allowedFilters[$setKey]['filters'][$filterKey])) {
+                unset(self::$allowedFilters[$setKey]['filters'][$filterKey]);
+            }
+        }
+    }
+
+    /**
+     * Removes a filter set from the allowed filter array with the passed set key.
+     *
+     * @param string $setKey The key of the filter to remove.
+     */
+    public static function removeFilterSet($setKey) {
+        if (val($setKey, self::$allowedFilters)) {
+            unset(self::$allowedFilters[$setKey]);
+        }
+    }
+
+    /**
+     * Adds an option to a filter set filters array to clear any existing filters on the data.
+     *
+     * @param string $setKey The key name of the filter set to add the option to.
+     * @param string $setName The display name of the option. Usually the human-readable set name.
+     */
+    protected static function addClearFilter($setKey, $setName = '') {
+        self::$allowedFilters[$setKey]['filters'][self::EMPTY_FILTER_KEY] = array(
+            'key' => self::EMPTY_FILTER_KEY,
+            'setKey' => $setKey,
+            'name' => sprintf(t('Clear %s'), $setName),
+            'wheres' => array(), 'group' => 'default'
+        );
     }
 }

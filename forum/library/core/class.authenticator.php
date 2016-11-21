@@ -3,7 +3,7 @@
  * Authenticator Module: Base Class
  *
  * @author Tim Gunter <tim@vanillaforums.com>
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Core
  * @since 2.0.10
@@ -162,7 +162,7 @@ abstract class Gdn_Authenticator extends Gdn_Pluggable {
 
         if ($DataSource == $this) {
             foreach ($this->_DataHooks as $DataTarget => $DataHook) {
-                $this->_DataHooks[$DataTarget]['value'] = arrayValue($DataTarget, $DirectSupplied);
+                $this->_DataHooks[$DataTarget]['value'] = val($DataTarget, $DirectSupplied);
             }
 
             return;

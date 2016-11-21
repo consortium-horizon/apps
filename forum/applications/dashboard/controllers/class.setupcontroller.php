@@ -2,7 +2,7 @@
 /**
  * Manages installation of Dashboard.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -15,6 +15,9 @@ class SetupController extends DashboardController {
 
     /** @var array Models to automatically instantiate. */
     public $Uses = array('Form', 'Database');
+
+    /** @var  Gdn_Form $Form */
+    public $Form;
 
     /**
      * Add CSS & module, set error master view. Automatically run on every use.
@@ -45,12 +48,10 @@ class SetupController extends DashboardController {
         // Fatal error if Garden has already been installed.
         $Installed = c('Garden.Installed');
         if ($Installed) {
-            $this->View = "AlreadyInstalled";
-            $this->render();
-            return;
+            throw new Gdn_UserException('Vanilla is installed!', 409);
         }
 
-        if (!$this->_CheckPrerequisites()) {
+        if (!$this->_checkPrerequisites()) {
             $this->View = 'prerequisites';
         } else {
             $this->View = 'configure';
@@ -85,12 +86,25 @@ class SetupController extends DashboardController {
                     // Now that the application is installed, select a more user friendly error page.
                     $Config = array('Garden.Installed' => true);
                     saveToConfig($Config);
+                    $this->setData('Installed', true);
+                    $this->fireAs('UpdateModel')->fireEvent('AfterStructure');
                     $this->fireEvent('Installed');
 
-                    PermissionModel::ResetAllRoles();
+                    // Go to the dashboard.
+                    if ($this->deliveryType() === DELIVERY_TYPE_ALL) {
+                        redirect('/settings/gettingstarted');
+                    }
+                } elseif ($this->deliveryType() === DELIVERY_TYPE_DATA) {
+                    $maxCode = 0;
+                    $messages = array();
 
-                    // Go to the dashboard
-                    redirect('/settings/gettingstarted');
+                    foreach ($this->Form->errors() as $row) {
+                        list($code, $message) = $row;
+                        $maxCode = max($maxCode, $code);
+                        $messages[] = $message;
+                    }
+
+                    throw new Gdn_UserException(implode(' ', $messages), $maxCode);
                 }
             }
         }
@@ -234,7 +248,7 @@ class SetupController extends DashboardController {
                 $Disconnected = !(bool)@fsockopen('ajax.googleapis.com', 80);
 
                 saveToConfig(array(
-                    'Garden.Version' => arrayValue('Version', val('Dashboard', $ApplicationInfo, array()), 'Undefined'),
+                    'Garden.Version' => val('Version', val('Dashboard', $ApplicationInfo, array()), 'Undefined'),
                     'Garden.Cdns.Disable' => $Disconnected,
                     'Garden.CanProcessImages' => function_exists('gd_info'),
                     'EnabledPlugins.GettingStarted' => 'GettingStarted', // Make sure the getting started plugin is enabled
@@ -252,7 +266,7 @@ class SetupController extends DashboardController {
      * @access private
      * @return bool Whether platform passes requirement check.
      */
-    private function _CheckPrerequisites() {
+    private function _checkPrerequisites() {
         // Make sure we are running at least PHP 5.1
         if (version_compare(phpversion(), ENVIRONMENT_PHP_VERSION) < 0) {
             $this->Form->addError(sprintf(t('You are running PHP version %1$s. Vanilla requires PHP %2$s or greater. You must upgrade PHP before you can continue.'), phpversion(), ENVIRONMENT_PHP_VERSION));
@@ -267,51 +281,59 @@ class SetupController extends DashboardController {
             $this->Form->addError(t('You must have the MySQL driver for PDO enabled in order for Vanilla to connect to your database.'));
         }
 
-        // Make sure that the correct filesystem permissions are in place
+        // Make sure that the correct filesystem permissions are in place.
         $PermissionProblem = false;
 
-        // Make sure the appropriate folders are writeable.
+        // Make sure the appropriate folders are writable.
         $ProblemDirectories = array();
-        if (!is_readable(PATH_CONF) || !IsWritable(PATH_CONF)) {
+        if (!is_readable(PATH_CONF) || !isWritable(PATH_CONF)) {
             $ProblemDirectories[] = PATH_CONF;
         }
 
-        if (!is_readable(PATH_UPLOADS) || !IsWritable(PATH_UPLOADS)) {
+        if (!is_readable(PATH_UPLOADS) || !isWritable(PATH_UPLOADS)) {
             $ProblemDirectories[] = PATH_UPLOADS;
         }
 
-        if (!is_readable(PATH_CACHE) || !IsWritable(PATH_CACHE)) {
+        if (!is_readable(PATH_CACHE) || !isWritable(PATH_CACHE)) {
             $ProblemDirectories[] = PATH_CACHE;
         }
 
+        if (file_exists(PATH_CACHE.'/Smarty/compile') && (!is_readable(PATH_CACHE.'/Smarty/compile') || !isWritable(PATH_CACHE.'/Smarty/compile'))) {
+            $ProblemDirectories[] = PATH_CACHE.'/Smarty/compile';
+        }
+
+        // Display our permission errors.
         if (count($ProblemDirectories) > 0) {
             $PermissionProblem = true;
-
             $PermissionError = t(
                 'Some folders don\'t have correct permissions.',
-                '<p>Some of your folders do not have the correct permissions.</p><p>Using your ftp client, or via command line, make sure that the following permissions are set for your vanilla installation:</p>'
+                '<p>These folders must be readable and writable by the web server:</p>'
             );
-
-            $PermissionHelp = '<pre>chmod -R 777 '.implode("\nchmod -R 777 ", $ProblemDirectories).'</pre>';
+            $PermissionHelp = '<pre>'.implode("\n", $ProblemDirectories).'</pre>';
 
             $this->Form->addError($PermissionError.$PermissionHelp);
         }
 
-        // Make sure the config folder is writeable
+        // Make sure the config folder is writable.
         if (!$PermissionProblem) {
-            $ConfigFile = Gdn::config()->DefaultPath();
-            if (!file_exists($ConfigFile)) {
-                file_put_contents($ConfigFile, '');
-            }
+            $ConfigFile = Gdn::config()->defaultPath();
 
-            // Make sure the config file is writeable
-            if (!is_readable($ConfigFile) || !IsWritable($ConfigFile)) {
-                $this->Form->addError(sprintf(t('Your configuration file does not have the correct permissions. PHP needs to be able to read and write to this file: <code>%s</code>'), $ConfigFile));
-                $PermissionProblem = true;
+            if (file_exists($ConfigFile)) {
+                // Make sure the config file is writable.
+                if (!is_readable($ConfigFile) || !isWritable($ConfigFile)) {
+                    $this->Form->addError(sprintf(t('Your configuration file does not have the correct permissions. PHP needs to be able to read and write to this file: <code>%s</code>'), $ConfigFile));
+                    $PermissionProblem = true;
+                }
+            } else {
+                // Make sure the config file can be created.
+                if (!is_writeable(dirname($ConfigFile))) {
+                    $this->Form->addError(sprintf(t('Your configuration file cannot be created. PHP needs to be able to create this file: <code>%s</code>'), $ConfigFile));
+                    $PermissionProblem = true;
+                }
             }
         }
 
-        // Make sure the cache folder is writeable
+        // Make sure the cache folder is writable
         if (!$PermissionProblem) {
             if (!file_exists(PATH_CACHE.'/Smarty')) {
                 mkdir(PATH_CACHE.'/Smarty');
@@ -325,9 +347,5 @@ class SetupController extends DashboardController {
         }
 
         return $this->Form->errorCount() == 0 ? true : false;
-    }
-
-    public function testUrlRewrites() {
-        die('ok');
     }
 }

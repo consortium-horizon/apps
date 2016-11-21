@@ -4,7 +4,7 @@
 /**
  * Dashboard database structure.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -15,7 +15,7 @@ if (!isset($Drop)) {
 }
 
 if (!isset($Explicit)) {
-    $Explicit = true;
+    $Explicit = false;
 }
 
 $Database = Gdn::database();
@@ -87,12 +87,12 @@ $Construct
     ->column('DateOfBirth', 'datetime', true)
     ->column('DateFirstVisit', 'datetime', true)
     ->column('DateLastActive', 'datetime', true, 'index')
-    ->column('LastIPAddress', 'varchar(15)', true)
+    ->column('LastIPAddress', 'ipaddress', true)
     ->column('AllIPAddresses', 'varchar(100)', true)
     ->column('DateInserted', 'datetime', false, 'index')
-    ->column('InsertIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
     ->column('DateUpdated', 'datetime', true)
-    ->column('UpdateIPAddress', 'varchar(15)', true)
+    ->column('UpdateIPAddress', 'ipaddress', true)
     ->column('HourOffset', 'int', '0')
     ->column('Score', 'float', null)
     ->column('Admin', 'tinyint(1)', '0')
@@ -105,9 +105,8 @@ $Construct
 
 // Modify all users with ConfirmEmail role to be unconfirmed
 if ($UserExists && !$ConfirmedExists) {
-    $ConfirmEmail = c('Garden.Registration.ConfirmEmail', false);
     $ConfirmEmailRoleID = RoleModel::getDefaultRoles(RoleModel::TYPE_UNCONFIRMED);
-    if ($ConfirmEmail && !empty($ConfirmEmailRoleID)) {
+    if (UserModel::requireConfirmEmail() && !empty($ConfirmEmailRoleID)) {
         // Select unconfirmed users
         $Users = Gdn::sql()->select('UserID')->from('UserRole')->where('RoleID', $ConfirmEmailRoleID)->get();
         $UserIDs = array();
@@ -334,18 +333,6 @@ $PermissionModel->undefine(array(
     'Garden.Messages.Manage'
 ));
 
-//// Photo Table
-//$Construct->table('Photo');
-//
-//$PhotoTableExists = $Construct->TableExists('Photo');
-//
-//$Construct
-//	->PrimaryKey('PhotoID')
-//   ->column('Name', 'varchar(255)')
-//   ->column('InsertUserID', 'int', TRUE, 'key')
-//   ->column('DateInserted', 'datetime')
-//   ->set($Explicit, $Drop);
-
 // Invitation Table
 $Construct->table('Invitation')
     ->primaryKey('InvitationID')
@@ -359,7 +346,7 @@ $Construct->table('Invitation')
     ->column('DateExpires', 'datetime', true)
     ->set($Explicit, $Drop);
 
-// Fix negative invitation expiry dates..
+// Fix negative invitation expiry dates.
 $InviteExpiry = c('Garden.Registration.InviteExpiration');
 if ($InviteExpiry && substr($InviteExpiry, 0, 1) === '-') {
     $InviteExpiry = substr($InviteExpiry, 1);
@@ -412,7 +399,7 @@ $Construct
 //   ->column('CountComments', 'int', '0')
     ->column('InsertUserID', 'int', true, 'key')
     ->column('DateInserted', 'datetime')
-    ->column('InsertIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
     ->column('DateUpdated', 'datetime', !$DateUpdatedExists, array('index', 'index.Recent', 'index.Feed'))
     ->column('Notified', 'tinyint(1)', 0, 'index.Notify')
     ->column('Emailed', 'tinyint(1)', 0)
@@ -473,7 +460,7 @@ $Construct
     ->column('Format', 'varchar(20)')
     ->column('InsertUserID', 'int')
     ->column('DateInserted', 'datetime')
-    ->column('InsertIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
     ->set($Explicit, $Drop);
 
 // Move activity comments to the activity comment table.
@@ -644,7 +631,7 @@ if (!$FullNameColumnExists) {
         ->put();
 
     $Construct->table('Tag')
-        ->column('FullName', 'varchar(255)', false, 'index')
+        ->column('FullName', 'varchar(100)', false, 'index')
         ->set();
 }
 
@@ -656,10 +643,10 @@ $Construct->table('Log')
     ->column('RecordID', 'int', null, 'index')
     ->column('RecordUserID', 'int', null, 'index')// user responsible for the record; indexed for user deletion
     ->column('RecordDate', 'datetime')
-    ->column('RecordIPAddress', 'varchar(15)', null, 'index')
+    ->column('RecordIPAddress', 'ipaddress', null, 'index')
     ->column('InsertUserID', 'int')// user that put record in the log
     ->column('DateInserted', 'datetime', false, 'index')// date item added to log
-    ->column('InsertIPAddress', 'varchar(15)', null)
+    ->column('InsertIPAddress', 'ipaddress', null)
     ->column('OtherUserIDs', 'varchar(255)', null)
     ->column('DateUpdated', 'datetime', null)
     ->column('ParentRecordID', 'int', null, 'index')
@@ -694,10 +681,10 @@ $Construct->table('Ban')
     ->column('CountBlockedRegistrations', 'uint', 0)
     ->column('InsertUserID', 'int')
     ->column('DateInserted', 'datetime')
-    ->column('InsertIPAddress', 'varchar(15)', true)
+    ->column('InsertIPAddress', 'ipaddress', true)
     ->column('UpdateUserID', 'int', true)
     ->column('DateUpdated', 'datetime', true)
-    ->column('UpdateIPAddress', 'varchar(15)', true)
+    ->column('UpdateIPAddress', 'ipaddress', true)
     ->engine('InnoDB')
     ->set($Explicit, $Drop);
 
@@ -720,7 +707,6 @@ $Construct
     ->column('ForeignTable', 'varchar(24)', true, 'index.Foreign')
     ->column('ImageWidth', 'usmallint', null)
     ->column('ImageHeight', 'usmallint', null)
-//   ->column('StorageMethod', 'varchar(24)')
     ->column('ThumbWidth', 'usmallint', null)
     ->column('ThumbHeight', 'usmallint', null)
     ->column('ThumbPath', 'varchar(255)', null)
@@ -761,15 +747,17 @@ $Construct
     ->column('Attributes', 'text', true)
     ->column('DateInserted', 'datetime')
     ->column('InsertUserID', 'int', false, 'key')
-    ->column('InsertIPAddress', 'varchar(64)')
+    ->column('InsertIPAddress', 'ipaddress')
     ->column('DateUpdated', 'datetime', true)
     ->column('UpdateUserID', 'int', true)
-    ->column('UpdateIPAddress', 'varchar(15)', true)
+    ->column('UpdateIPAddress', 'ipaddress', true)
     ->set($Explicit, $Drop);
 
 // Save the current input formatter to the user's config.
 // This will allow us to change the default later and grandfather existing forums in.
 saveToConfig('Garden.InputFormatter', c('Garden.InputFormatter'));
+
+touchConfig('Garden.Email.Format', 'text');
 
 // Make sure the default locale is in its canonical form.
 $currentLocale = c('Garden.Locale');

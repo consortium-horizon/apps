@@ -2,7 +2,7 @@
 /**
  * StopForumSpam plugin.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package StopForumSpam
  */
@@ -16,7 +16,8 @@ $PluginInfo['StopForumSpam'] = array(
     'Author' => 'Todd Burry',
     'AuthorEmail' => 'todd@vanillaforums.com',
     'AuthorUrl' => 'http://www.vanillaforums.org/profile/todd',
-    'SettingsUrl' => '/settings/stopforumspam'
+    'SettingsUrl' => '/settings/stopforumspam',
+    'Icon' => 'sfs.svg'
 );
 
 /**
@@ -201,7 +202,7 @@ class StopForumSpamPlugin extends Gdn_Plugin {
         ));
 
         $Sender->addSideMenu('dashboard/settings/plugins');
-        $Sender->setData('Title', t('Stop Forum Spam Settings'));
+        $Sender->setData('Title', sprintf(t('%s Settings'), 'Stop Forum Spam'));
         $Sender->ConfigurationModule = $Conf;
         $Conf->renderAll();
     }

@@ -2,7 +2,7 @@
 /**
  * Invitation model.
  *
- * @copyright 2009-2015 Vanilla Forums Inc.
+ * @copyright 2009-2016 Vanilla Forums Inc.
  * @license http://www.opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @package Dashboard
  * @since 2.0
@@ -104,7 +104,7 @@ class InvitationModel extends Gdn_Model {
         // Validate the form posted values
         if ($this->validate($FormPostValues, true) === true) {
             $Fields = $this->Validation->ValidationFields(); // All fields on the form that need to be validated
-            $Email = arrayValue('Email', $Fields, '');
+            $Email = val('Email', $Fields, '');
 
             // Make sure this user has a spare invitation to send.
             $InviteCount = $UserModel->GetInvitationCount($UserID);
@@ -184,14 +184,15 @@ class InvitationModel extends Gdn_Model {
             $Email = new Gdn_Email();
             $Email->subject(sprintf(t('[%s] Invitation'), $AppTitle));
             $Email->to($Invitation->Email);
-            $Email->message(
-                sprintf(
-                    t('EmailInvitation'),
-                    $Invitation->SenderName,
-                    $AppTitle,
-                    $RegistrationUrl
-                )
-            );
+
+            $emailTemplate = $Email->getEmailTemplate();
+            $message = t('Hello!').' '.sprintf(t('%s has invited you to join %s.'), $Invitation->SenderName, $AppTitle);
+
+            $emailTemplate->setButton($RegistrationUrl, t('Join this Community Now'))
+                ->setMessage($message)
+                ->setTitle(sprintf(t('Join %s'), $AppTitle));
+
+            $Email->setEmailTemplate($emailTemplate);
             $Email->send();
         }
     }
