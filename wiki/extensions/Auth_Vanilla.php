@@ -104,7 +104,7 @@ class AuthPlugin_Vanilla extends AuthPlugin {
         // Create a persistent DB connection
         var $vanilla_database;
 
-        function AuthPlugin_Vanilla($host, $username, $password, $dbname, $prefix) {
+        function __construct($host, $username, $password, $dbname, $prefix) {
                 global $wgHooks;
                 $this->vanilla_database = new mysqli($host, $username, $password, $dbname);
                 // if (!$this->vanilla_database)
