@@ -1,4 +1,4 @@
-<?php if (!defined('APPLICATION')) exit;
+<?php
 
 /**
  * Users API
@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2013-2015 Kasper Kronborg Isager
  * @license   http://opensource.org/licenses/MIT MIT
  */
-class UsersAPI extends APIMapper
+final class UsersAPI extends APIMapper
 {
     /**
      * Register API endpoints
@@ -22,39 +22,38 @@ class UsersAPI extends APIMapper
      */
     public static function register($data)
     {
-        static::get('/', [
-            'controller'   => 'User',
-            'authenticate' => true,
-            'arguments'    => [
-                'Page' => val('Page', $data)
+        static::get("/", [
+            "controller" => "User",
+            "authenticate" => true,
+            "arguments" => [
+                "Page" => val("Page", $data)
             ]
         ]);
 
-        static::get('/[i:UserID]', [
-            'controller' => 'Profile',
-            'method'     => 'get'
+        static::get("/[i:UserID]", [
+            "controller" => "Profile"
         ]);
 
-        static::get('/summary', [
-            'controller' => 'User',
-            'method'     => 'summary'
+        static::get("/summary", [
+            "controller" => "User",
+            "method" => "summary"
         ]);
 
-        static::post('/', [
-            'controller' => 'User',
-            'method'     => 'add'
+        static::post("/", [
+            "controller" => "User",
+            "method" => "add"
         ]);
 
-        static::put('/[i:UserID]', [
-            'controller' => 'User',
-            'method'     => 'edit'
+        static::put("/[i:UserID]", [
+            "controller" => "User",
+            "method" => "edit"
         ]);
 
-        static::delete('/[i:UserID]', [
-            'controller' => 'User',
-            'method'     => 'delete',
-            'arguments'  => [
-                'Method' => val('Method', $data)
+        static::delete("/[i:UserID]", [
+            "controller" => "User",
+            "method" => "delete",
+            "arguments" => [
+                "Method" => val("Method", $data)
             ]
         ]);
     }
