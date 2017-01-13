@@ -7,14 +7,14 @@ echo $this->Form->Errors();
 
 echo Wrap(
         Wrap(
-                $this->Form->Label(T('Afficher les résultats'), 'Plugins.DiscussionPolls.EnableShowResults') .
+                $this->Form->Label(T('Show Results'), 'Plugins.DiscussionPolls.EnableShowResults') .
                 Wrap($this->Form->CheckBox('Plugins.DiscussionPolls.EnableShowResults') .
-                        T('Autoriser les utilisateurs à voir les résultats sans avoir voté'), 'div', array('class' => 'Info'), 'li') .
-                $this->Form->Label(T('Titre du sondage'), 'Plugins.DiscussionPolls.DisablePollTitle') .
+                        T('Allow users to view results without voting'), 'div', array('class' => 'Info'), 'li') .
+                $this->Form->Label(T('Poll Title'), 'Plugins.DiscussionPolls.DisablePollTitle') .
                 Wrap($this->Form->CheckBox('Plugins.DiscussionPolls.DisablePollTitle') .
-                        T('Désactiver les titres de sondage'), 'div', array('class' => 'Info')), 'li'), 'ul');
+                        T('Disable poll titles'), 'div', array('class' => 'Info')), 'li'), 'ul');
 
-echo $this->Form->Close("Enregistrer");
+echo $this->Form->Close("Save");
 ?>
 <div class="Footer">
 <?php

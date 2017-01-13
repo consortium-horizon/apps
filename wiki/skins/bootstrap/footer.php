@@ -1,16 +1,7 @@
-<!--	<div class="buttons-whitespace-social text-center">
-    <a href="http://www.twitter.com/share?url=http://www.mediawikibootstrapskin.co.uk/&amp;text=Mediawiki%20BootStrap%20Skin" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=600');return false;"><button type="button" class="btn btn-cyanide btn-social"><i class="fa fa-twitter-square"></i></button></a>
-	
-    <a href="https://www.facebook.com/sharer/sharer.php?u=http://www.mediawikibootstrapskin.co.uk/" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=600');return false;"><button type="button" class="btn btn-info btn-social"><i class="fa fa-facebook-square"></i></button></a>
-	
-	<a href="https://plus.google.com/share?url=http://www.mediawikibootstrapskin.co.uk/" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=600');return false;"><button type="button" class="btn btn-berry btn-social"><i class="fa fa-google-plus-square"></i></button></a>
-	
-    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://www.mediawikibootstrapskin.co.uk/&amp;title=Mediawiki%20BootStrap%20|Skin&amp;summary=Mediawiki%20BootStrap%20Skin&amp;source=http://www.mediawikibootstrapskin.co.uk/" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=600');return false;"><button type="button" class="btn btn-cyanide btn-social"><i class="fa fa-linkedin-square"></i></button></a>
-		
-    <a href="http://www.tumblr.com/share?v=3&amp;u=http%3A//www.mediawikibootstrapskin.co.uk/" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=600');return false;"><button type="button" class="btn btn-info btn-social"><i class="fa fa-tumblr-square"></i></button></a>	
-    </div>
--->
+
 	<div id="footer" class="footer container-fluid"<?php $this->html( 'userlangattributes' ) ?>>
+
+    <!--
     <div class="row">
 	<?php
       $footerLinks = $this->getFooterLinks();
@@ -52,19 +43,10 @@
               endforeach; 
             }
           ?>
-	</div>
+	</div>-->
+
 	</div>	
 	
     <footer>
-      <ul id="footer-icons" class="noprint text-center">
-        <li id="footer-poweredbyico">
-        <a href="//www.mediawiki.org/">
-          Powered by MediaWiki
-        </a> 
-        <a href="http://www.mediawikibootstrapskin.co.uk/">
-          Powered by BootStrapSkin
-        </a>
-      </ul>
-      <p class="text-center no-margins push-up">
-      <a href="#" class="color-hover-white">Le Consortium Horizon</a> &copy; Tous Droits Réservés</p>
+
     </footer>

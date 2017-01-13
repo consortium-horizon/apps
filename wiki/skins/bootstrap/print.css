@@ -1,0 +1,94 @@
+#userbar {
+    display: none;
+}
+
+body {
+    padding: 10px;
+}
+
+#toc {
+    background: none !important;
+    border: 0 !important;
+    padding-top: 0;
+    margin-bottom: 15px;
+}
+
+#footer {
+    display: none;
+}
+
+table { page-break-after:auto; page-break-before: avoid; }
+tr    { page-break-inside:avoid; page-break-after:auto; }
+td    { page-break-inside:avoid; page-break-after:auto; }
+thead { display:table-header-group }
+tfoot { display:table-footer-group }
+
+/* ----------------------------------------------------------- */
+
+#innerbodycontent {counter-reset: h2}
+#innerbodycontent h2 {counter-reset: h3}
+#innerbodycontent h3 {counter-reset: h4}
+#innerbodycontent h4 {counter-reset: h5}
+#innerbodycontent h5 {counter-reset: h6}
+#innerbodycontent h2:before {counter-increment: h2; content: counter(h2) ". "}
+#innerbodycontent h3:before {counter-increment: h3; content: counter(h2) "." counter(h3) ". "}
+#innerbodycontent h4:before {counter-increment: h4; content: counter(h2) "." counter(h3) "." counter(h4) ". "}
+#innerbodycontent h5:before {counter-increment: h5; content: " (" counter(h5, lower-alpha) ") "}
+#innerbodycontent h6:before {counter-increment: h6; content: " (" counter(h6, lower-roman) ") "}
+/* To disable counters */
+#innerbodycontent h2.nocount:before,
+#innerbodycontent h3.nocount:before,
+#innerbodycontent h4.nocount:before,
+#innerbodycontent h5.nocount:before,
+#innerbodycontent h6.nocount:before {content: ""; counter-increment: none}
+/* Indentations */
+#innerbodycontent h4 { text-indent: 40px; }
+#innerbodycontent h5 { text-indent: 80px; }
+#innerbodycontent h6 { text-indent: 120px; }
+#innerbodycontent h4 ~ *:not(h4):not(h3):not(h2):not(h5):not(h6):not(h1) {
+    padding-left: 40px;
+}
+#innerbodycontent h5 ~ *:not(h5):not(h3):not(h2):not(h4):not(h6):not(h1) {
+    padding-left: 80px;
+}
+#innerbodycontent h6 ~ *:not(h6):not(h3):not(h2):not(h4):not(h6):not(h1) {
+    padding-left: 120px;
+}
+/* Some spacing fix */
+#innerbodycontent h6 { margin: 15px 0; }
+/* Sized fix */
+#innerbodycontent h4 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 15px 0;
+    line-height: 22px;
+}
+#innerbodycontent h5 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 15px 0;
+    line-height: 22px;
+}
+#innerbodycontent h6 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 15px 0;
+    line-height: 22px;
+}
+
+#toctitle > h2 {
+    counter-reset: h2 !important;
+}
+#toctitle > h2::before {
+    content: "" !important;
+    counter-increment: none !important;
+}
+/* ---------------------------------------------- */
+
+#firstHeading {
+    margin-left: 5px !important;
+    font-size: 36px;
+    margin-top: 5px;
+    margin-bottom: 0;
+    counter-reset: h1 !important;
+}

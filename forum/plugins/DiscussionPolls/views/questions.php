@@ -3,10 +3,10 @@
 function DPRenderQuestionForm($PollForm, $DiscussionPoll, $Disabled, $Closed) {
   echo '<div class="P" id="DP_Form">';
   if(!C('Plugins.DiscussionPolls.DisablePollTitle', FALSE)) {
-    echo $PollForm->Label('Intitulé du sondage', 'DP_Title');
+    echo $PollForm->Label('Discussion Poll Title', 'DP_Title');
     echo Wrap($PollForm->TextBox('DP_Title', array_merge($Disabled, array('maxlength' => 100, 'class' => 'InputBox BigInput'))), 'div', array('class' => 'TextBoxWrapper'));
   }
-  echo Anchor(' ', '/plugin/discussionpolls/', array('id' => 'DP_PreviousQuestion', 'title' => T('Question précédente')));
+  echo Anchor(' ', '/plugin/discussionpolls/', array('id' => 'DP_PreviousQuestion', 'title' => T('Previous Question')));
 
   $QuestionCount = 0;
   // set and the form data for existing questions and render a form
@@ -22,11 +22,11 @@ function DPRenderQuestionForm($PollForm, $DiscussionPoll, $Disabled, $Closed) {
 
   // the end of the form
   if(!$Closed) {
-    echo Anchor(T('Ajouter une question'), '/plugin/discussionpolls/addquestion/', array('id' => 'DP_NextQuestion', 'title' => T('Ajouter une question')));
-    echo Anchor(T('Ajouter une option'), '/plugin/discussionpolls/addoption', array('id' => 'DP_AddOption', 'title' => T('Ajouter une option')));
+    echo Anchor(T('Add a Question'), '/plugin/discussionpolls/addquestion/', array('id' => 'DP_NextQuestion', 'title' => T('Add a Question')));
+    echo Anchor(T('Add an Option'), '/plugin/discussionpolls/addoption', array('id' => 'DP_AddOption', 'title' => T('Add an Option')));
   }
   else if($QuestionCount > 1) {
-    echo Anchor(T('Question suivante'), '/plugin/discussionpolls/addquestion/', array('id' => 'DP_NextQuestion', 'title' => T('Question suivante')));
+    echo Anchor(T('Next Question'), '/plugin/discussionpolls/addquestion/', array('id' => 'DP_NextQuestion', 'title' => T('Next Question')));
   }
   echo '</div>';
 }
@@ -63,7 +63,7 @@ function DPRenderQuestionField($PollForm, $Index = 0, $Question = NULL, $Disable
         $j++;
       }
     }
-
+    
   echo '</fieldset>';
 }
 

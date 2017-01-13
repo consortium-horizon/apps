@@ -1,3 +1,381 @@
 /* Add your custom theme overrides here */
 
+#searchform {
+    position: relative;
+    top: 10px;
+}
 
+#right-nav > li {
+    float: right !important;
+}
+
+#pt-anonuserpage, #pt-anontalk {
+    display: none;
+}
+
+#p-logo a {
+    background-color: transparent !important;
+}
+
+.oo-ui-window-content {
+    font-size: 0.9em;
+}
+
+#tabs-default-lighter a.dropdown-toggle {
+    font-weight: bold !important;
+}
+
+.oo-ui-processDialog-location {
+    height: 2.875em !important;
+}
+
+div.ve-ui-toolbar {
+    box-sizing: initial !important;
+    -webkit-box-sizing: initial !important;
+}
+div.ve-ui-toolbar div, div.ve-ui-toolbar span, div.ve-ui-toolbar a {
+    box-sizing: inherit !important;
+    -webkit-box-sizing: inherit !important;
+}
+
+footer {
+    padding-top: 100px;
+}
+
+/*
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: #f9f9f9;
+}
+
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: #236b9b;
+    color: #ffffff;
+}
+
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: #4da0d7;
+    color: #ffffff;
+}
+
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: #2c88c5;
+    color: #ffffff;
+}
+
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: #1a4e71;
+    color: #ffffff;
+}
+
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: #103248;
+    color: #ffffff;
+}
+
+.wikitable > tbody > tr:nth-child(odd) > td,
+.wikitable > tbody > tr:nth-child(odd) > th {
+    background-color: rgba(189, 189, 189, 0.51);
+    color: #ffffff;
+}
+
+.wikitable > thead > tr > td.active,
+.wikitable > tbody > tr > td.active,
+.wikitable > tfoot > tr > td.active,
+.wikitable > thead > tr > th.active,
+.wikitable > tbody > tr > th.active,
+.wikitable > tfoot > tr > th.active,
+.wikitable > thead > tr.active > td,
+.wikitable > tbody > tr.active > td,
+.wikitable > tfoot > tr.active > td,
+.wikitable > thead > tr.active > th,
+.wikitable > tbody > tr.active > th,
+.wikitable > tfoot > tr.active > th {
+    background-color: #f5f5f5;
+}
+
+.wikitable > thead > tr > td.active,
+.wikitable > tbody > tr > td.active,
+.wikitable > tfoot > tr > td.active,
+.wikitable > thead > tr > th.active,
+.wikitable > tbody > tr > th.active,
+.wikitable > tfoot > tr > th.active,
+.wikitable > thead > tr.active > td,
+.wikitable > tbody > tr.active > td,
+.wikitable > tfoot > tr.active > td,
+.wikitable > thead > tr.active > th,
+.wikitable > tbody > tr.active > th,
+.wikitable > tfoot > tr.active > th {
+    color: #697060;
+    background-color: #f5f5f5 !important;
+}
+
+.wikitable > thead > tr > th {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.wikitable {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.wikitable > thead > tr > th,
+.wikitable > tbody > tr > th,
+.wikitable > tfoot > tr > th,
+.wikitable > thead > tr > td,
+.wikitable > tbody > tr > td,
+.wikitable > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.25;
+    vertical-align: top;
+    border-top: 1px solid #697060;
+}
+.wikitable > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #697060;
+}
+.wikitable > caption + thead > tr:first-child > th,
+.wikitable > colgroup + thead > tr:first-child > th,
+.wikitable > thead:first-child > tr:first-child > th,
+.wikitable > caption + thead > tr:first-child > td,
+.wikitable > colgroup + thead > tr:first-child > td,
+.wikitable > thead:first-child > tr:first-child > td {
+    border-top: 0;
+}
+.wikitable > tbody + tbody {
+    border-top: 2px solid #697060;
+}
+.wikitable .wikitable {
+    background-color: #f7f7f7;
+}*/
+
+/* Table code from bootstrap */
+
+table {
+    background-color: transparent;
+}
+
+.wikitable {
+    border-collapse: collapse !important;
+    border: 0 !important;
+}
+
+.wikitable tr {
+    background-color: #fff;
+    border: 0 !important;
+}
+
+.wikitable th {
+    text-align: left !important;
+    border: 0 !important;
+}
+
+.wikitable td {
+    border: 0 !important;
+}
+
+.wikitable>tbody>tr:first-child th {
+    border-top: 0 !important;
+}
+
+.wikitable>tbody>tr:first-child th {
+    border-top: 0 !important;
+    vertical-align: bottom !important;
+    border-bottom: 2px solid #ddd !important;
+}
+
+.wikitable tbody tr td {
+    vertical-align: top;
+    border-bottom: 1px solid #ddd !important;
+}
+
+.wikitable {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+.wikitable > thead > tr > th,
+.wikitable > tbody > tr > th,
+.wikitable > tfoot > tr > th,
+.wikitable > thead > tr > td,
+.wikitable > tbody > tr > td,
+.wikitable > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+.wikitable > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+}
+.wikitable > caption + thead > tr:first-child > th,
+.wikitable > colgroup + thead > tr:first-child > th,
+.wikitable > thead:first-child > tr:first-child > th,
+.wikitable > caption + thead > tr:first-child > td,
+.wikitable > colgroup + thead > tr:first-child > td,
+.wikitable > thead:first-child > tr:first-child > td {
+    border-top: 0;
+}
+.wikitable > tbody + tbody {
+    border-top: 2px solid #ddd;
+}
+
+.wikitable > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9 !important;
+}
+
+table col[class*="col-"] {
+    position: static;
+    display: table-column;
+    float: none;
+}
+table td[class*="col-"],
+table th[class*="col-"] {
+    position: static;
+    display: table-cell;
+    float: none;
+}
+.wikitable > thead > tr > td.active,
+.wikitable > tbody > tr > td.active,
+.wikitable > tfoot > tr > td.active,
+.wikitable > thead > tr > th.active,
+.wikitable > tbody > tr > th.active,
+.wikitable > tfoot > tr > th.active,
+.wikitable > thead > tr.active > td,
+.wikitable > tbody > tr.active > td,
+.wikitable > tfoot > tr.active > td,
+.wikitable > thead > tr.active > th,
+.wikitable > tbody > tr.active > th,
+.wikitable > tfoot > tr.active > th {
+    background-color: #f5f5f5;
+}
+
+.wikitable > thead > tr > td.success,
+.wikitable > tbody > tr > td.success,
+.wikitable > tfoot > tr > td.success,
+.wikitable > thead > tr > th.success,
+.wikitable > tbody > tr > th.success,
+.wikitable > tfoot > tr > th.success,
+.wikitable > thead > tr.success > td,
+.wikitable > tbody > tr.success > td,
+.wikitable > tfoot > tr.success > td,
+.wikitable > thead > tr.success > th,
+.wikitable > tbody > tr.success > th,
+.wikitable > tfoot > tr.success > th {
+    background-color: #dff0d8;
+}
+
+.wikitable > thead > tr > td.info,
+.wikitable > tbody > tr > td.info,
+.wikitable > tfoot > tr > td.info,
+.wikitable > thead > tr > th.info,
+.wikitable > tbody > tr > th.info,
+.wikitable > tfoot > tr > th.info,
+.wikitable > thead > tr.info > td,
+.wikitable > tbody > tr.info > td,
+.wikitable > tfoot > tr.info > td,
+.wikitable > thead > tr.info > th,
+.wikitable > tbody > tr.info > th,
+.wikitable > tfoot > tr.info > th {
+    background-color: #d9edf7;
+}
+
+.wikitable > thead > tr > td.warning,
+.wikitable > tbody > tr > td.warning,
+.wikitable > tfoot > tr > td.warning,
+.wikitable > thead > tr > th.warning,
+.wikitable > tbody > tr > th.warning,
+.wikitable > tfoot > tr > th.warning,
+.wikitable > thead > tr.warning > td,
+.wikitable > tbody > tr.warning > td,
+.wikitable > tfoot > tr.warning > td,
+.wikitable > thead > tr.warning > th,
+.wikitable > tbody > tr.warning > th,
+.wikitable > tfoot > tr.warning > th {
+    background-color: #fcf8e3;
+}
+
+.wikitable > thead > tr > td.danger,
+.wikitable > tbody > tr > td.danger,
+.wikitable > tfoot > tr > td.danger,
+.wikitable > thead > tr > th.danger,
+.wikitable > tbody > tr > th.danger,
+.wikitable > tfoot > tr > th.danger,
+.wikitable > thead > tr.danger > td,
+.wikitable > tbody > tr.danger > td,
+.wikitable > tfoot > tr.danger > td,
+.wikitable > thead > tr.danger > th,
+.wikitable > tbody > tr.danger > th,
+.wikitable > tfoot > tr.danger > th {
+    background-color: #f2dede;
+}
+
+p, ul, ol {
+    font-size: 18px;
+    color: #353c2c;
+    line-height: 1.5;
+}
+
+h2, h3, h4, h5 {
+    margin-top: 40px;
+}
+
+h1 {
+    font-size: 44px;
+}
+
+h2 {
+    font-size: 38px;
+}
+
+h3 {
+    font-size: 28px;
+}
+
+h4 {
+    font-size: 24px;
+}
+
+h5 {
+
+}
+
+.mw-editsection-bracket {
+    display: none;
+}
+
+.mw-editsection {
+    font-size: 12px;
+    color: gray;
+}
+
+.mw-editsection a {
+    color: darkgray;
+}
+
+.mw-editsection-divider {
+    padding: 0 3px 0 3px;
+}
+
+li.new-menu-separator {
+    text-align: center;
+}
+
+li.new-menu-separator:after {
+    width: 90%;
+    margin: 0;
+    height: 2px;
+    background-color: #2b82bc;
+    display: inline-block;
+    content: "";
+}
+
+.subpages {
+    display: block;
+}
