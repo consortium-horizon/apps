@@ -240,14 +240,20 @@ class PostOnRegister extends Gdn_Plugin {
         echo '</div>';
 
         // Other games list
-        echo '<label for="gamelist">A quels jeux jouez vous également ? <div id="addGame">+</div> <div id="removeGame">-</div></label>';
-        echo '<div id="moreGames"></div>';
-        echo '<input type="text" name="moreGamesCount" id="moreGamesCount" value="0" style="display: none;">';
+        echo '<div id="gamelistSection">';
+        echo '<label for="gamelist">A quels jeux jouez-vous également ?';
+        //echo '<label for="gamelist">A quels jeux jouez-vous également ? <div id="addGame">+</div> <div id="removeGame">-</div></label>';
+        //echo '<div id="moreGames"></div>';
+        //echo '<input type="text" name="moreGamesCount" id="moreGamesCount" value="0" style="display: none;">';
+        echo '<input class="otherCustomField" type="text" name="gamelist"'; if (isset($_POST['gamelist'])) echo ' value="'.$_POST['gamelist'].'"'; echo '>';
+        //echo '<textarea id="gamelist" name="gamelist">'; if (isset($_POST['gamelist'])) echo $_POST['gamelist']; echo '</textarea>';
+        echo '</div>';
+
 
         // More about you
         echo '<div id="moreAboutYouSection">';
         echo '<label for="moreAboutYou">Dites-nous en plus sur vous (c\'est important !)</label>';
-        echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required"></textarea>';
+        echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required">'; if (isset($_POST['moreAboutYou'])) echo $_POST['moreAboutYou']; echo '</textarea>';
         echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
         echo '</div>';
