@@ -9,6 +9,7 @@ $Definition['New Discussion'] = 'Nouveau sujet';
 $Definition['Decline'] = 'Supprimer le compte';
 $Definition['Refuse'] = 'Refuser';
 $Definition['Email'] = 'Adresse e-mail';
+$Definition['Name'] = 'Pseudo';
 $Definition['Username'] = 'Pseudo (doit être le même qu\'en jeu)';
 $Definition['Why do you want to join?'] = 'Pourquoi voulez-vous vous inscrire ?';
 $Definition['Name Unavailable'] = 'Ce pseudo n\'est pas disponible';
