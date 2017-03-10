@@ -128,7 +128,7 @@ class PostOnRegister extends Gdn_Plugin {
                 $Sender->informMessage(t('FUCK'));
         }
         $Sender->applicants();
-    }    
+    }
 
     public function settingsController_PostOnRegister_create($Sender) {
         $Sender->permission('Garden.Settings.Manage');
@@ -184,7 +184,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // Some instructions
         echo '<div class="registerNotification mainNotification info">
-        <h2>Remplissez attentivement les champs demandés !</h2>
+        <h2>Remplissez attentivement les champs demandés !!</h2>
         <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
         <p>Les informations seront utilisées pour créer votre post de candidature automatiquement.</p>
         <p><b>ATTENTION :</b> en créant un post de candidature, vous certifiez avoir lu et accepté <a href="/forum/page/presentation-de-la-guilde" target="_blank">la Charte du Consortium Horizon</a>.</p>
@@ -383,7 +383,7 @@ class PostOnRegister extends Gdn_Plugin {
 
             [b]Dites-en un peu plus sur vous :[/b]
             '
-            . $moreAboutYou . 
+            . $moreAboutYou .
             '
 
 
@@ -449,7 +449,7 @@ class PostOnRegister extends Gdn_Plugin {
                         $Email = new Gdn_Email();
                         $UserModel = new UserModel();
                         $Result = $UserModel->Approve($UserID, $Email);
-                        
+
                     }
                     if ($Action == t('Refuse') ) {
                         PostOnRegister::declineUser($UserID);
@@ -487,7 +487,7 @@ class PostOnRegister extends Gdn_Plugin {
 
             if ($isapplicant)
             {
-                
+
                 $Sender->ApplicantForm->AddHidden('DiscussionID', $Sender->DiscussionID);
                 $Sender->ApplicantForm->AddHidden('UserID', $DiscussionUserID);
                 echo $Sender->ApplicantForm->open(array('action' => url(Gdn::controller()->SelfUrl )));
