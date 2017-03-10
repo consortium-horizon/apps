@@ -69,8 +69,8 @@
             <?php $this->fireEvent('ExtendedRegistrationFields'); ?>
             <li>
                 <?php
-                echo $this->Form->label('Why do you want to join?', 'DiscoveryText');
-                echo $this->Form->textBox('DiscoveryText', array('MultiLine' => true, 'Wrap' => TRUE));
+                //echo $this->Form->label('Why do you want to join?', 'DiscoveryText');
+                //echo $this->Form->textBox('DiscoveryText', array('MultiLine' => true, 'Wrap' => TRUE));
                 ?>
             </li>
             <li class="CaptchaInput">
