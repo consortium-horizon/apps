@@ -98,14 +98,14 @@ class EditorPlugin extends Gdn_Plugin {
             'strike' => true,
             'orderedlist' => true,
             'unorderedlist' => true,
-            'indent' => false,
-            'outdent' => false,
+            'indent' => true,
+            'outdent' => true,
 
             'sep-format' => true, // separator
-            'color' => false,
-            'highlightcolor' => false, // Dependent on color. TODO add multidim support.
+            'color' => true,
+            'highlightcolor' => true, // Dependent on color. TODO add multidim support.
             'format' => true,
-            'fontfamily' => false,
+            'fontfamily' => true,
 
 
             'sep-media' => true, // separator
