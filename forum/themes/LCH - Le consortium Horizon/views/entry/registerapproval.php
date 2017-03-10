@@ -30,6 +30,22 @@
                 ?>
             </li>
             <?php $this->fireEvent('RegisterBeforePassword'); ?>
+
+
+
+            <li>
+              <?php
+                echo '<label for="Form_DiscoveryText">Pourquoi voulez-vous vous inscrire ?</label>';
+                echo '<div class="TextBoxWrapper">';
+                echo '<textarea id="Form_DiscoveryText" name="DiscoveryText" rows="6" cols="100" class="TextBox"></textarea>';
+                echo '</div>';
+              ?>
+            </li>
+
+
+
+
+
             <li>
                 <?php
                 echo $this->Form->label('Password', 'Password');
