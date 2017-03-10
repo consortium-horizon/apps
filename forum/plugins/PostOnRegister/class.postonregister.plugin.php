@@ -193,7 +193,8 @@ class PostOnRegister extends Gdn_Plugin {
         // How did you find us ?
         echo '<div id="howDidYouFindUs">';
         echo '<label for="howDidYouFindUs">Comment avez vous découvert Le Consortium Horizon ?</label>';
-        echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"'; if (isset($_POST['howDidYouFindUs'])) echo 'value="'.$_POST['howDidYouFindUs'].'"'; echo '></textarea>';    
+        //echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"'; if (isset($_POST['howDidYouFindUs'])) echo 'value="'.$_POST['howDidYouFindUs'].'"'; echo '></textarea>';
+        echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required">'; if (isset($_POST['howDidYouFindUs'])) echo $_POST['howDidYouFindUs']; echo '</textarea>';   
         echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Besoin d\'aide ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
         echo '<div id="howDidYouFindUsOK" class="registerNotification success" style="display: none;">On apprécie toutes ces informations !</div>';
         echo '</div>';
