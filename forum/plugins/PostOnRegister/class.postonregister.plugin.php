@@ -246,7 +246,7 @@ class PostOnRegister extends Gdn_Plugin {
         // More about you
         echo '<div id="moreAboutYouSection">';
         echo '<label for="moreAboutYou">Dites-nous en plus sur vous (c\'est important !)</label>';
-        //echo $this->Form->textBox('moreAboutYouInput', array('MultiLine' => true, 'Wrap' => TRUE));
+        echo '<textarea id="Form_Test" name="Test" rows="6" cols="100" class="TextBox"></textarea>';
         echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required"></textarea>';
         echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
