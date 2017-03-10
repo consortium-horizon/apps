@@ -4,7 +4,7 @@ $PluginInfo['PostOnRegister'] = array(
     'Name' => 'Post on register',
     'Description' => 'Create a new post each time a new user registers',
     'Version' => '0.1',
-    'Author' => 'Vladvonvidden',
+    'Author' => 'Vladvonvidden, Z',
     'SettingsUrl' => '/dashboard/settings/postonregister',
     'SettingsPermission' => 'Garden.Settings.Manage',
 );
@@ -128,7 +128,7 @@ class PostOnRegister extends Gdn_Plugin {
                 $Sender->informMessage(t('FUCK'));
         }
         $Sender->applicants();
-    }    
+    }
 
     public function settingsController_PostOnRegister_create($Sender) {
         $Sender->permission('Garden.Settings.Manage');
@@ -184,7 +184,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // Some instructions
         echo '<div class="registerNotification mainNotification info">
-        <h2>Remplissez attentivement les champs demandés !</h2>
+        <h2>Remplissez attentivement les champs demandés !!</h2>
         <p>Notre communauté est constituée de personnes matures et responsables, toute faute de français, description attive ou manque de rigueur peut donc vous être préjudiciable.</p>
         <p>Les informations seront utilisées pour créer votre post de candidature automatiquement.</p>
         <p><b>ATTENTION :</b> en créant un post de candidature, vous certifiez avoir lu et accepté <a href="/forum/page/presentation-de-la-guilde" target="_blank">la Charte du Consortium Horizon</a>.</p>
@@ -192,8 +192,9 @@ class PostOnRegister extends Gdn_Plugin {
 
         // How did you find us ?
         echo '<div id="howDidYouFindUs">';
-        echo '<label for="howDidYouFindUs">Comment avez vous découvert Le Consortium Horizon ?</label>';
-        echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"></textarea>';
+        echo '<label for="howDidYouFindUs">Comment avez-vous découvert Le Consortium Horizon ?</label>';
+        //echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"'; if (isset($_POST['howDidYouFindUs'])) echo 'value="'.$_POST['howDidYouFindUs'].'"'; echo '></textarea>';
+        echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required">'; if (isset($_POST['howDidYouFindUs'])) echo $_POST['howDidYouFindUs']; echo '</textarea>';
         echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Besoin d\'aide ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
         echo '<div id="howDidYouFindUsOK" class="registerNotification success" style="display: none;">On apprécie toutes ces informations !</div>';
         echo '</div>';
@@ -210,43 +211,45 @@ class PostOnRegister extends Gdn_Plugin {
                 ORDER BY GDN_Category.Name ASC');
             $SectionNameResultArray = $SQLSectionName->resultArray();
             foreach ($SectionNameResultArray as $value) {
-                echo '<option value="'.$value[Name].'">'.$value[Name].'</option>';
+                echo '<option value="'.$value[Name].'"'; if (isset($_POST['gamelist']) && $_POST['gamelist'] == $value[Name]) echo ' selected="selected"'; echo '>'.$value[Name].'</option>';
             }
-        echo '<option value="Diplomatie">Diplomatie</option>
-          <option value="Autre">Autre</option>';
+        echo '<option value="Diplomatie"'; if (isset($_POST['gamelist']) && $_POST['gamelist'] == 'Diplomatie') echo ' selected="selected"'; echo '>Diplomatie</option>';
+        echo '<option value="Autre"'; if (isset($_POST['gamelist']) && $_POST['gamelist'] == 'Autre') echo ' selected="selected"'; echo '>Autre</option>';
         echo '</select>';
 
         // Section autre
-        echo '<div id="otherRegistrationSection" class="registrationSection" style="display: none;">';
-        echo '<label for="otherGame">Merci de préciser</label>';
-        echo '<input class="otherCustomField" type="text" name="otherGame">';
+        echo '<div id="otherRegistrationSection" class="registrationSection"'; if (!isset($_POST['gamelist']) || $_POST['gamelist'] != 'Autre') echo ' style="display: none;"'; echo '>';
+        echo '<label for="otherGame">Merci de préciser :</label>';
+        echo '<input class="otherCustomField" type="text" name="otherGame"'; if (isset($_POST['otherGame'])) echo ' value="'.$_POST['otherGame'].'"'; echo '>';
         echo '</div>';
 
         // Section planetside ($wag)
-        echo '<div id="planetsideRegistrationSection" class="registrationSection" style="display: none;">';
-        echo '<div class="planetside sectionPic"></div>';
-        // Ask the in-game pseudo
-        echo '<label for="planetsideUsername">Nom de l\'avatar en jeu</label>';
-        echo '<input class="planetsideCustomField" type="text" name="planetsideUsername">';
-        // Ask the favourite class
-        echo '<label for="planetsideClass">Votre (ou vos) classe(s) de prédilection</label>';
-        echo '<input type="checkbox" name="planetsideClassInf" value="Infiltrateur"> Infiltrateur';
-        echo '<input type="checkbox" name="planetsideClassLA" value="Assaut léger"> Assaut léger';
-        echo '<input type="checkbox" name="planetsideClassMedic" value="Médic"> Médic';
-        echo '<input type="checkbox" name="planetsideClassIng" value="Ingénieur"> Ingénieur';
-        echo '<input type="checkbox" name="planetsideClassHA" value="Assaut lourd"> Assaut lourd';
-        echo '<input type="checkbox" name="planetsideClassXAM" value="Max"> Max';
-        echo '</div>';
+          echo '<div id="planetsideRegistrationSection" class="registrationSection" style="display: none;">';
+          echo '<div class="planetside sectionPic"></div>';
+          // Ask the in-game pseudo
+          echo '<label for="planetsideUsername">Nom de l\'avatar en jeu</label>';
+          echo '<input class="planetsideCustomField" type="text" name="planetsideUsername">';
+          // Ask the favourite class
+          echo '<label for="planetsideClass">Votre (ou vos) classe(s) de prédilection</label>';
+          echo '<input type="checkbox" name="planetsideClassInf" value="Infiltrateur"> Infiltrateur';
+          echo '<input type="checkbox" name="planetsideClassLA" value="Assaut léger"> Assaut léger';
+          echo '<input type="checkbox" name="planetsideClassMedic" value="Médic"> Médic';
+          echo '<input type="checkbox" name="planetsideClassIng" value="Ingénieur"> Ingénieur';
+          echo '<input type="checkbox" name="planetsideClassHA" value="Assaut lourd"> Assaut lourd';
+          echo '<input type="checkbox" name="planetsideClassXAM" value="Max"> Max';
+          echo '</div>';
 
         // Other games list
-        echo '<label for="gamelist">A quels jeux jouez vous également ? <div id="addGame">+</div> <div id="removeGame">-</div></label>';
-        echo '<div id="moreGames"></div>';
-        echo '<input type="text" name="moreGamesCount" id="moreGamesCount" value="0" style="display: none;">';
+        echo '<div id="OtherGamesListSection">';
+        echo '<label for="OtherGamesList">A quels autres jeux jouez-vous également ?';
+        echo '<input type="text" name="OtherGamesList"'; if (isset($_POST['OtherGamesList'])) echo ' value="'.$_POST['OtherGamesList'].'"'; echo '>';
+        echo '</div>';
+
 
         // More about you
         echo '<div id="moreAboutYouSection">';
-        echo '<label for="moreAboutYou">Dites-nous en plus sur vous (c\'est important !)</label>';
-        echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required"></textarea>';
+        echo '<label for="moreAboutYou">Dites-en plus sur vous (c\'est important !)</label>';
+        echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required">'; if (isset($_POST['moreAboutYou'])) echo $_POST['moreAboutYou']; echo '</textarea>';
         echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
         echo '</div>';
@@ -267,7 +270,6 @@ class PostOnRegister extends Gdn_Plugin {
             }
             $howDidYouFindUs = $sender->EventArguments['RegisteringUser']['howDidYouFindUs'];
             $moreAboutYou = $sender->EventArguments['RegisteringUser']['moreAboutYou'];
-            $moreGamesCount = intval($sender->EventArguments['RegisteringUser']['moreGamesCount']);
 
             //PS2 Data
             if ($game=="Planetside 2") {
@@ -281,22 +283,14 @@ class PostOnRegister extends Gdn_Plugin {
             }
 
             // Check if there's some other game data
-            $otherGameInfo ="";
-            if ($moreGamesCount > 0) {
+            $OtherGamesList = $sender->EventArguments['RegisteringUser']['OtherGamesList'];
+            if (!empty($OtherGamesList)) {
+              $otherGameInfo = '
 
-                $otherGameNames = "";
+              [b]A quels autres jeux jouez-vous également ?[/b]
 
-                for ($i=0; $i < $moreGamesCount; $i++) {
-                    $secondaryGame = $sender->EventArguments['RegisteringUser']['secondaryGame'.$i];
-                    $otherGameNames = $otherGameNames . $secondaryGame . "; ";
-                }
-                $otherGameInfo = '
-
-                [b]A quels autres jeux jouez-vous également ?[/b]
-
-                '. $otherGameNames;
-
-            }
+              '. $OtherGamesList;
+            } else { $otherGameInfo =""; }
 
             // Get user ID from sender
             $userID = $sender->EventArguments['UserID'];
@@ -383,7 +377,7 @@ class PostOnRegister extends Gdn_Plugin {
 
             [b]Dites-en un peu plus sur vous :[/b]
             '
-            . $moreAboutYou . 
+            . $moreAboutYou .
             '
 
 
@@ -449,7 +443,7 @@ class PostOnRegister extends Gdn_Plugin {
                         $Email = new Gdn_Email();
                         $UserModel = new UserModel();
                         $Result = $UserModel->Approve($UserID, $Email);
-                        
+
                     }
                     if ($Action == t('Refuse') ) {
                         PostOnRegister::declineUser($UserID);
@@ -487,7 +481,7 @@ class PostOnRegister extends Gdn_Plugin {
 
             if ($isapplicant)
             {
-                
+
                 $Sender->ApplicantForm->AddHidden('DiscussionID', $Sender->DiscussionID);
                 $Sender->ApplicantForm->AddHidden('UserID', $DiscussionUserID);
                 echo $Sender->ApplicantForm->open(array('action' => url(Gdn::controller()->SelfUrl )));
