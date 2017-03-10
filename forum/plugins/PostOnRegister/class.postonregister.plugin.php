@@ -245,7 +245,7 @@ class PostOnRegister extends Gdn_Plugin {
         //echo '<label for="gamelist">A quels jeux jouez-vous également ? <div id="addGame">+</div> <div id="removeGame">-</div></label>';
         //echo '<div id="moreGames"></div>';
         //echo '<input type="text" name="moreGamesCount" id="moreGamesCount" value="0" style="display: none;">';
-        echo '<input class="otherCustomField" type="text" name="gamelist"'; if (isset($_POST['gamelist'])) echo ' value="'.$_POST['gamelist'].'"'; echo '>';
+        echo '<input type="text" name="gamelist"'; if (isset($_POST['gamelist'])) echo ' value="'.$_POST['gamelist'].'"'; echo '>';
         //echo '<textarea id="gamelist" name="gamelist">'; if (isset($_POST['gamelist'])) echo $_POST['gamelist']; echo '</textarea>';
         echo '</div>';
 
