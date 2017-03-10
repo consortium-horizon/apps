@@ -51,26 +51,10 @@
                 ?>
             </li>
             <?php $this->fireEvent('ExtendedRegistrationFields'); ?>
-
-
-
-
-            <li>
-              <?php
-                echo '<label for="Form_DiscoveryText">Pourquoi voulez-vous vous inscrire ?</label>';
-                echo '<div class="TextBoxWrapper">';
-                echo '<textarea id="Form_DiscoveryText" name="DiscoveryText" rows="6" cols="100" class="TextBox"></textarea>';
-                echo '</div>';
-              ?>
-            </li>
-
-
-
-
             <li>
                 <?php
-                //echo $this->Form->label('Why do you want to join?', 'DiscoveryText');
-                //echo $this->Form->textBox('DiscoveryText', array('MultiLine' => true, 'Wrap' => TRUE));
+                echo $this->Form->label('Why do you want to join?', 'DiscoveryText');
+                echo $this->Form->textBox('DiscoveryText', array('MultiLine' => true, 'Wrap' => TRUE));
                 ?>
             </li>
             <li class="CaptchaInput">
