@@ -192,7 +192,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // How did you find us ?
         echo '<div id="howDidYouFindUs">';
-        echo '<label for="howDidYouFindUs">Comment avez vous découvert Le Consortium Horizon ?</label>';
+        echo '<label for="howDidYouFindUs">Comment avez-vous découvert Le Consortium Horizon ?</label>';
         //echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required"'; if (isset($_POST['howDidYouFindUs'])) echo 'value="'.$_POST['howDidYouFindUs'].'"'; echo '></textarea>';
         echo '<textarea id="howDidYouFindUsInput" name="howDidYouFindUs" class="required">'; if (isset($_POST['howDidYouFindUs'])) echo $_POST['howDidYouFindUs']; echo '</textarea>';
         echo '<div id="howDidYouFindUsKO" class="registerNotification danger" style="display: none;">Besoin d\'aide ? Le média par lequel vous nous avez connu était il bien écrit/réalisé ? Connaissez vous des joueurs du Consortium ? Comment vous ont ils présenté la guilde ?!</div>';
@@ -224,35 +224,34 @@ class PostOnRegister extends Gdn_Plugin {
         echo '</div>';
 
         // Section planetside ($wag)
-        echo '<div id="planetsideRegistrationSection" class="registrationSection" style="display: none;">';
-        echo '<div class="planetside sectionPic"></div>';
-        // Ask the in-game pseudo
-        echo '<label for="planetsideUsername">Nom de l\'avatar en jeu</label>';
-        echo '<input class="planetsideCustomField" type="text" name="planetsideUsername">';
-        // Ask the favourite class
-        echo '<label for="planetsideClass">Votre (ou vos) classe(s) de prédilection</label>';
-        echo '<input type="checkbox" name="planetsideClassInf" value="Infiltrateur"> Infiltrateur';
-        echo '<input type="checkbox" name="planetsideClassLA" value="Assaut léger"> Assaut léger';
-        echo '<input type="checkbox" name="planetsideClassMedic" value="Médic"> Médic';
-        echo '<input type="checkbox" name="planetsideClassIng" value="Ingénieur"> Ingénieur';
-        echo '<input type="checkbox" name="planetsideClassHA" value="Assaut lourd"> Assaut lourd';
-        echo '<input type="checkbox" name="planetsideClassXAM" value="Max"> Max';
-        echo '</div>';
+          echo '<div id="planetsideRegistrationSection" class="registrationSection" style="display: none;">';
+          echo '<div class="planetside sectionPic"></div>';
+          // Ask the in-game pseudo
+          echo '<label for="planetsideUsername">Nom de l\'avatar en jeu</label>';
+          echo '<input class="planetsideCustomField" type="text" name="planetsideUsername">';
+          // Ask the favourite class
+          echo '<label for="planetsideClass">Votre (ou vos) classe(s) de prédilection</label>';
+          echo '<input type="checkbox" name="planetsideClassInf" value="Infiltrateur"> Infiltrateur';
+          echo '<input type="checkbox" name="planetsideClassLA" value="Assaut léger"> Assaut léger';
+          echo '<input type="checkbox" name="planetsideClassMedic" value="Médic"> Médic';
+          echo '<input type="checkbox" name="planetsideClassIng" value="Ingénieur"> Ingénieur';
+          echo '<input type="checkbox" name="planetsideClassHA" value="Assaut lourd"> Assaut lourd';
+          echo '<input type="checkbox" name="planetsideClassXAM" value="Max"> Max';
+          echo '</div>';
 
         // Other games list
-        echo '<div id="gamelistSection">';
-        echo '<label for="gamelist">A quels jeux jouez-vous également ?';
+        echo '<div id="OtherGamesListSection">';
+        echo '<label for="OtherGamesList">A quels jeux jouez-vous également ?';
         //echo '<label for="gamelist">A quels jeux jouez-vous également ? <div id="addGame">+</div> <div id="removeGame">-</div></label>';
         //echo '<div id="moreGames"></div>';
         //echo '<input type="text" name="moreGamesCount" id="moreGamesCount" value="0" style="display: none;">';
-        echo '<input type="text" name="gamelist"'; if (isset($_POST['gamelist'])) echo ' value="'.$_POST['gamelist'].'"'; echo '>';
-        //echo '<textarea id="gamelist" name="gamelist">'; if (isset($_POST['gamelist'])) echo $_POST['gamelist']; echo '</textarea>';
+        echo '<input type="text" name="OtherGamesList"'; if (isset($_POST['OtherGamesList'])) echo ' value="'.$_POST['OtherGamesList'].'"'; echo '>';
         echo '</div>';
 
 
         // More about you
         echo '<div id="moreAboutYouSection">';
-        echo '<label for="moreAboutYou">Dites-nous en plus sur vous (c\'est important !)</label>';
+        echo '<label for="moreAboutYou">Dites-en plus sur vous (c\'est important !)</label>';
         echo '<textarea id="moreAboutYouInput" name="moreAboutYou" class="required">'; if (isset($_POST['moreAboutYou'])) echo $_POST['moreAboutYou']; echo '</textarea>';
         echo '<div id="descriptionKO" class="registerNotification danger" style="display: none;">Cette description est bien succinte ! N\'y a t\'il rien d\'intéressant à ajouter ?</div>';
         echo '<div id="descriptionOK" class="registerNotification success" style="display: none;">Belle présentation ! Merci d\'avoir pris le temps !</div>';
