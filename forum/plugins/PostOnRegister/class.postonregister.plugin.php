@@ -273,7 +273,7 @@ class PostOnRegister extends Gdn_Plugin {
             }
             $howDidYouFindUs = $sender->EventArguments['RegisteringUser']['howDidYouFindUs'];
             $moreAboutYou = $sender->EventArguments['RegisteringUser']['moreAboutYou'];
-            $moreGamesCount = intval($sender->EventArguments['RegisteringUser']['moreGamesCount']);
+            //$moreGamesCount = intval($sender->EventArguments['RegisteringUser']['moreGamesCount']);
 
             //PS2 Data
             if ($game=="Planetside 2") {
@@ -287,7 +287,8 @@ class PostOnRegister extends Gdn_Plugin {
             }
 
             // Check if there's some other game data
-            $otherGameInfo ="";
+            /*$otherGameInfo ="";
+
             if ($moreGamesCount > 0) {
 
                 $otherGameNames = "";
@@ -302,7 +303,15 @@ class PostOnRegister extends Gdn_Plugin {
 
                 '. $otherGameNames;
 
-            }
+            }*/
+            $OtherGamesList = $sender->EventArguments['RegisteringUser']['OtherGamesList'];
+            if (!empty($OtherGamesList)) {
+              $otherGameInfo = '
+
+              [b]A quels autres jeux jouez-vous également ?[/b]
+
+              '. $OtherGamesList;
+            } else { $otherGameInfo =""; }
 
             // Get user ID from sender
             $userID = $sender->EventArguments['UserID'];
