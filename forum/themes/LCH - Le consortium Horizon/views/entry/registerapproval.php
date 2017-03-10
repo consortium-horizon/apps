@@ -69,7 +69,7 @@
                 ?>
             </li>
             <li class="Buttons">
-                <?php echo $this->Form->button('Apply for Membership', array('class' => 'Button Primary')); ?>
+                <?php echo $this->Form->button('Apply for Membership', array('class' => 'Button Primary', 'style' => 'background-color:#2196F3; border:1px solid #1976D2; color:white; padding:8px 14px; border-radius:3px; font-size:16px;')); ?>
             </li>
         </ul>
         <?php echo $this->Form->close(); ?>

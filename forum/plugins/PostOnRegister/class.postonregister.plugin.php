@@ -4,7 +4,7 @@ $PluginInfo['PostOnRegister'] = array(
     'Name' => 'Post on register',
     'Description' => 'Create a new post each time a new user registers',
     'Version' => '0.1',
-    'Author' => 'Vladvonvidden',
+    'Author' => 'Vladvonvidden, Z',
     'SettingsUrl' => '/dashboard/settings/postonregister',
     'SettingsPermission' => 'Garden.Settings.Manage',
 );
