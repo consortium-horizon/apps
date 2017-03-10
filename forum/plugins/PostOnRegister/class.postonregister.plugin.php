@@ -218,9 +218,9 @@ class PostOnRegister extends Gdn_Plugin {
         echo '</select>';
 
         // Section autre
-        echo '<div id="otherRegistrationSection" class="registrationSection" style="display: none;">';
+        echo '<div id="otherRegistrationSection" class="registrationSection"'; if (!isset($_POST['otherGame'])) echo ' style="display: none;">';
         echo '<label for="otherGame">Merci de préciser</label>';
-        echo '<input class="otherCustomField" type="text" name="otherGame">';
+        echo '<input class="otherCustomField" type="text" name="otherGame"'; if (isset($_POST['otherGame'])) echo ' value="'.$_POST['otherGame'].'"'; echo '>';
         echo '</div>';
 
         // Section planetside ($wag)
