@@ -219,7 +219,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // Section autre
         echo '<div id="otherRegistrationSection" class="registrationSection"'; if (!isset($_POST['gamelist']) || $_POST['gamelist'] != 'Autre') echo ' style="display: none;"'; echo '>';
-        echo '<label for="otherGame">Merci de préciser</label>';
+        echo '<label for="otherGame">Merci de préciser :</label>';
         echo '<input class="otherCustomField" type="text" name="otherGame"'; if (isset($_POST['otherGame'])) echo ' value="'.$_POST['otherGame'].'"'; echo '>';
         echo '</div>';
 
@@ -241,7 +241,7 @@ class PostOnRegister extends Gdn_Plugin {
 
         // Other games list
         echo '<div id="OtherGamesListSection">';
-        echo '<label for="OtherGamesList">A quels jeux jouez-vous également ?';
+        echo '<label for="OtherGamesList">A quels autres jeux jouez-vous également ?';
         //echo '<label for="gamelist">A quels jeux jouez-vous également ? <div id="addGame">+</div> <div id="removeGame">-</div></label>';
         //echo '<div id="moreGames"></div>';
         //echo '<input type="text" name="moreGamesCount" id="moreGamesCount" value="0" style="display: none;">';
