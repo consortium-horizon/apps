@@ -54,28 +54,17 @@
   <div id="Head">
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
-      <div>test</div>
-      <!-- {module name="MeModule"} -->
+      <!--<div>test</div>-->
+      <div class="SiteSearch" style="margin-right:20px;">{module name="MeModule"}</div>
       <ul class="SiteMenu">
         <li class="dropdown">
           Forum
           <ul>
             <li><a href="{link path="/"}">Accueil du forum</a></li>
             <li><a href="{link path="/discussions"}">Sujets récents</a></li>
+            {activity_link}
             {custom_menu}
             {dashboard_link}
-            
-            {discussions_link}
-            {activity_link}
-            {inbox_link}
-            {profile_link}
-            {signinout_link}
-
-            <!-- {discussions_link} -->
-            <!-- {activity_link} -->
-            <!-- {inbox_link} -->
-            <!-- {profile_link} -->
-            <!-- {signinout_link} -->
           </ul>
         </li>
         <li><a href="https://www.consortium-horizon.com/wiki/Accueil" target="_blank">Wiki</a></li>
@@ -104,7 +93,7 @@
           Mon profil
           <ul>
             {profile_link}
-            <li><a href="{link path="/messages/inbox"}">Messagerie</a></li>
+            {inbox_link}
             {signinout_link}
           </ul>
         </li>
