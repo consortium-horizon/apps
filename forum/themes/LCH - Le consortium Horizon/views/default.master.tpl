@@ -54,6 +54,7 @@
   <div id="Head">
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
+      {module name="MeModule"}
       <ul class="SiteMenu">
         <li class="dropdown">
           Forum
