@@ -30,7 +30,6 @@
       <div class="TopMenu">
         <!--
         You can add more of your top-level navigation links like this:
-
         <a href="#">Store</a>
         <a href="#">Blog</a>
         <a href="#">Contact Us</a>
@@ -54,6 +53,9 @@
   <div id="Head">
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
+      {module name="MeModule"}
+      {module name="NewDiscussionModule"}
+      <ul class="SiteMenu">
       <ul class="SiteMenu">
         <li class="dropdown">
           Forum
