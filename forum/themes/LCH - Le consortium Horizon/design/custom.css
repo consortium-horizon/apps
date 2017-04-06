@@ -564,11 +564,14 @@ body {
   padding-right: 25px;
 }
 #Head .BoxNewDiscussion .Button {
-  border-radius: 2px;
   border-color: #666666;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
 }
 #Head .BoxNewDiscussion a {
   color: black;
+  font-weight: bold;
 }
 /* /NewDiscussionModule override */
 
@@ -605,7 +608,7 @@ body {
 }
 
 #Head .MeBox .MeMenu a {
-  color: #2877d0;
+  color: #2e5db9;
 }
 #Head .MeBox .MeMenu a:hover {
   color: #00baff;
