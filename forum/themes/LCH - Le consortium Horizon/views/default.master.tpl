@@ -118,11 +118,7 @@
   <div id="Body">
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
-      {if !InSection("DiscussionList")&& !InSection("CategoryList")}
-        <div class="Column PanelColumn" id="Panel">
-        {asset name="Panel"}
-        </div>
-      {/if}
+
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
