@@ -554,7 +554,7 @@ body {
 
 /* NewDiscussionModule override */
 #Head .BoxNewDiscussion {
-  width: 200px;
+  width: 220px;
   margin-top: -5px;
   float: right;
 }
@@ -578,7 +578,7 @@ body {
 
 /* MeModule override */
 #Head .MeBox {
-  width: 200px;
+  width: 190px;
   float: right;
   margin-top: 4px;
 }

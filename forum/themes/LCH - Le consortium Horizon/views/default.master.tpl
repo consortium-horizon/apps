@@ -119,8 +119,10 @@
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
       <div class="Column PanelColumn" id="Panel">
-         {module name="MeModule"}
-         {asset name="Panel"}
+        {module name="MeModule"}
+        {if !InSection("DiscussionList")&& !InSection("CategoryList")}
+          {asset name="Panel"}
+        {/if}
       </div>
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
