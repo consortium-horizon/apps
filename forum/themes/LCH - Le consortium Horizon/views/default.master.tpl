@@ -72,6 +72,8 @@
             <li><hr></li>
             {custom_menu}
             {dashboard_link}
+            {discussions_link}
+            {categories_link}
           </ul>
         </li>
         <li><a href="https://www.consortium-horizon.com/wiki/Accueil" target="_blank">Wiki</a></li>
