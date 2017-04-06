@@ -114,7 +114,7 @@
         CategoryDiscussionList : 
         Comments : 
         Conversation : 
-        ConversationList : 
+        ConversationList : messagerie
         Dashboard :
         Dicussion : 
         DiscussionList : dans un forum particulier
@@ -126,7 +126,7 @@
         Profile : 
         SearchResults : 
       -->
-      {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion")}
+      {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
         <div class="Column PanelColumn" id="Panel">
         {module name="MeModule"}
         {asset name="Panel"}
