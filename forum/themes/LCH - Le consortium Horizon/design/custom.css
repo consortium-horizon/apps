@@ -386,9 +386,9 @@ ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-
   display: block;
 }
 
-.BoxNewDiscussion .ButtonGroup + .Button {
-  padding-left:25px;
-  padding-right:25px;
+.BoxNewDiscussion .ButtonGroup + .BoxNewDiscussion .Button {
+  padding-left: 25px;
+  padding-right: 25px;
 }
 /*
 #Content .BoxNewDiscussion .ButtonGroup .Primary .Handle {
