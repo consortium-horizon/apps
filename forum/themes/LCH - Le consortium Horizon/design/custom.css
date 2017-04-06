@@ -390,6 +390,13 @@ ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-
   padding-left: 25px;
   padding-right: 25px;
 }
+
+.ButtonGroup.Multi > .NavButton:first-child,
+.ButtonGroup.Multi > .Button:first-child {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
 /*
 #Content .BoxNewDiscussion .ButtonGroup .Primary .Handle {
   padding:10px 10px; font-size:15px;
