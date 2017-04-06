@@ -106,7 +106,27 @@
   <div id="Body">
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
-      {if !InSection("CategoryList") && !InSection("DiscussionList")}
+      <!-- liste des sections (appelées par Gdn_Theme::section
+        ActivityList : 
+        ArticleList : 
+        CategoryList : page forum
+        CategoryArticleList : 
+        CategoryDiscussionList : 
+        Comments : 
+        Conversation : 
+        ConversationList : 
+        Dashboard :
+        Dicussion : 
+        DiscussionList : dans un forum particulier
+        Entry : 
+        Error : 
+        EditProfile : 
+        PostConversation : 
+        PostDiscussion : 
+        Profile : 
+        SearchResults : 
+      -->
+      {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion")}
         <div class="Column PanelColumn" id="Panel">
         {module name="MeModule"}
         {asset name="Panel"}
