@@ -385,10 +385,12 @@ ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-
 #Content .BoxNewDiscussion {
   display: block;
 }
-/*
-#Content .BoxNewDiscussion .ButtonGroup .Primary {
-  padding:10px 25px; font-size:15px;
+
+.BoxNewDiscussion .ButtonGroup + .Button {
+  padding-left:25px;
+  padding-right:25px;
 }
+/*
 #Content .BoxNewDiscussion .ButtonGroup .Primary .Handle {
   padding:10px 10px; font-size:15px;
 }
