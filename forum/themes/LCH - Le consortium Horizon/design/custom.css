@@ -536,28 +536,34 @@ body {
   color: #e3e3e3;
 }
 
+/* MeModule override */
 #Head .MeBox {
   width: 200px;
   float: right;
   margin-top: 4px;
 }
-
 #Head .MeBox .SpNotifications,
 #Head .MeBox .SpGlobe {
-  background-position: -32px -276px;
+  background-position: -32px -212px;
 }
-
 #Head .MeBox .SpInbox,
 #Head .MeBox .SpEnvelope {
-  background-position: 0 -292px;
+  background-position: 0 -228px;
 }
 #Head .MeBox .SpBookmarks,
 #Head .MeBox .SpStar {
-  background-position: -80px -308px;
+  background-position: -80px -244px;
 }
-#Head .MeBox .SpSettings {
-  background-position: -16px -276px;
+#Head .MeBox .SpDashboard,
+#Head .MeBox .SpOptions,
+#Head .MeBox .SpCog {
+  background-position: 0 -148px;
 }
+/* /MeModule override */
+
+
+
+
 
 /* --------------- */
 /* Navigation tree */
