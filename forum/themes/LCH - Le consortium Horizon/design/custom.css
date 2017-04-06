@@ -465,6 +465,9 @@ body {
 #Head {
   background: none;
 }
+#Head a{
+  font-weight: normal;
+}
 #Head .Row {
   padding: 0px 10px;
   background: #2877d0;
@@ -554,6 +557,15 @@ body {
   width: 200px;
   margin-top: -5px;
   float: right;
+}
+#Head .ButtonGroup.Multi > .NavButton:first-child,
+#Head .ButtonGroup.Multi > .Button:first-child {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+#Head .BoxNewDiscussion .Button {
+  border-radius: 2px;
+  border-color: #666666;
 }
 #Head .BoxNewDiscussion a {
   color: black;
