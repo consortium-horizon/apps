@@ -30,7 +30,6 @@
       <div class="TopMenu">
         <!--
         You can add more of your top-level navigation links like this:
-
         <a href="#">Store</a>
         <a href="#">Blog</a>
         <a href="#">Contact Us</a>
@@ -118,31 +117,11 @@
   <div id="Body">
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
-      <!-- liste des sections (appelées par Gdn_Theme::section
-        ActivityList : 
-        ArticleList : 
-        CategoryList : page forum
-        CategoryArticleList : 
-        CategoryDiscussionList : 
-        Comments : 
-        Conversation : 
-        ConversationList : 
-        Dashboard :
-        Dicussion : 
-        DiscussionList : dans un forum particulier
-        Entry : 
-        Error : 
-        EditProfile : 
-        PostConversation : 
-        PostDiscussion : 
-        Profile : 
-        SearchResults : 
-      -->
-      {if !InSection("CategoryList") && !InSection("DiscussionList")}
-        <div class="Column PanelColumn" id="Panel">
-        {asset name="Panel"}
-        </div>
-      {/if}
+      <div class="Column PanelColumn" id="Panel">
+        {if !InSection("DiscussionList")&& !InSection("CategoryList")}
+          {asset name="Panel"}
+        {/if}
+      </div>
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
