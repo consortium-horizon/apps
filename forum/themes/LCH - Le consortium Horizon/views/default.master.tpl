@@ -4,22 +4,22 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="manifest" href="manifest.json">
   <!-- NProgress Stylesheet -->
-<!-- <link rel="stylesheet" type="text/css" href="//rawgithub.com/rstacruz/nprogress/master/nprogress.css"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="//rawgithub.com/rstacruz/nprogress/master/nprogress.css"> -->
 
-<!-- jQuery -->
-<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+  <!-- jQuery -->
+  <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 
-<!-- jQuery ScrollTo Plugin -->
-<!-- <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script> -->
+  <!-- jQuery ScrollTo Plugin -->
+  <!-- <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script> -->
 
-<!-- jQuery NProgress Plugin -->
-<!-- <script src="//rawgithub.com/rstacruz/nprogress/master/nprogress.js"></script> -->
+  <!-- jQuery NProgress Plugin -->
+  <!-- <script src="//rawgithub.com/rstacruz/nprogress/master/nprogress.js"></script> -->
 
-<!-- History.js -->
-<!-- <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script> -->
+  <!-- History.js -->
+  <!-- <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script> -->
 
-<!-- Ajaxify -->
-<!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
+  <!-- Ajaxify -->
+  <!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
 <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2" type="text/javascript"></script> -->
   {asset name="Head"}
 </head>
@@ -117,9 +117,31 @@
   <div id="Body">
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
-      <div class="Column PanelColumn" id="Panel">
-      {asset name="Panel"}
-      </div>
+      <!-- liste des sections (appelées par Gdn_Theme::section
+        ActivityList : 
+        ArticleList : 
+        CategoryList : page forum
+        CategoryArticleList : 
+        CategoryDiscussionList : 
+        Comments : 
+        Conversation : 
+        ConversationList : messagerie
+        Dashboard :
+        Dicussion : 
+        DiscussionList : dans un forum particulier
+        Entry : 
+        Error : 
+        EditProfile : 
+        PostConversation : 
+        PostDiscussion : 
+        Profile : 
+        SearchResults : 
+      -->
+      {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
+        <div class="Column PanelColumn" id="Panel">
+        {asset name="Panel"}
+        </div>
+      {/if}
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
