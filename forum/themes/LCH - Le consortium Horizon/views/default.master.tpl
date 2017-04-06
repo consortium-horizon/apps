@@ -56,12 +56,19 @@
       {module name="MeModule"}
       {module name="NewDiscussionModule"}
       <ul class="SiteMenu">
-      <ul class="SiteMenu">
         <li class="dropdown">
           Forum
           <ul>
             <li><a href="{link path="/"}">Accueil du forum</a></li>
             <li><a href="{link path="/discussions"}">Sujets récents</a></li>
+            <li><a href="{link path="/discussions/unread"}">Sujets non lus</a></li>
+            <li><a href="{link path="/discussions/unanswered"}">Sujets sans réponse</a></li>
+            {activity_link}
+            <li><a href="{link path="/best"}">Meilleur contenu</a></li>
+            <li><hr></li>
+            <li><a href="{link path="/discussions/mine"}">Mes sujets</a></li>
+            <li><a href="{link path="/drafts"}">Mes brouillons</a></li>
+            <li><hr></li>
             {custom_menu}
             {dashboard_link}
           </ul>
@@ -88,14 +95,16 @@
         <li>
           <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
         </li>
-        <li class="dropdown">
-          Mon profil
-          <ul>
-            {profile_link}
-            <li><a href="{link path="/messages/inbox"}">Messagerie</a></li>
-            {signinout_link}
-          </ul>
-        </li>
+        <!--
+          <li class="dropdown">
+            Mon profil
+            <ul>
+              {profile_link}
+              {inbox_link}
+              {signinout_link}
+            </ul>
+          </li>
+        -->
       </ul>
     </div>
   </div>
@@ -130,7 +139,6 @@
       -->
       {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
         <div class="Column PanelColumn" id="Panel">
-        {module name="MeModule"}
         {asset name="Panel"}
         </div>
       {/if}
