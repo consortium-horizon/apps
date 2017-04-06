@@ -118,7 +118,7 @@
   <div id="Body">
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
-      {if !InSection("DiscussionList") && !InSection("CategoryList") && !InSection("ArticleCategories") && !InSection("Best") && !InSection("Members")}
+      {if !InSection("DiscussionList") && !InSection("CategoryList") && !InSection("SubCategoryList") && !InSection("Best") && !InSection("Members")}
         <div class="Column PanelColumn" id="Panel">
         {asset name="Panel"}
         </div>
