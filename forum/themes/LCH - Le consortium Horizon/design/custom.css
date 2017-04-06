@@ -566,10 +566,10 @@ body {
   background-position: 0 -212px;
 }
 
-#Head .MeBox a {
+#Head .MeBox .MeMenu a {
   color: #2877d0;
 }
-#Head .MeBox a:hover {
+#Head .MeBox .MeMenu a:hover {
   color: #00baff;
 }
 /* /MeModule override */
