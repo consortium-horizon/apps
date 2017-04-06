@@ -542,6 +542,12 @@ body {
   float: right;
   margin-top: 4px;
 }
+#Head .MeBox .ProfilePhoto {
+  height: 24px;
+  width: 24px;
+  vertical-align: bottom;
+}
+
 #Head .MeBox .SpNotifications,
 #Head .MeBox .SpGlobe {
   background-position: -32px -212px;
