@@ -536,6 +536,12 @@ body {
   color: #e3e3e3;
 }
 
+#Head .MeBox {
+  width: 200px;
+  float: right;
+  margin-top: 4px;
+}
+
 /* --------------- */
 /* Navigation tree */
 /* --------------- */
