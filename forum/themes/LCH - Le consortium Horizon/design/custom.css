@@ -543,9 +543,10 @@ body {
   margin-top: 4px;
 }
 #Head .MeBox .ProfilePhoto {
-  height: 44px;
-  width: 44px;
-  vertical-align: bottom;
+  height: 34px;
+  width: 34px;
+  margin-top: 5px;
+  vertical-align: middle;
 }
 
 #Head .MeBox .SpNotifications,

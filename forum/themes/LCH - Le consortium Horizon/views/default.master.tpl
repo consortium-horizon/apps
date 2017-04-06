@@ -62,7 +62,11 @@
           <ul>
             <li><a href="{link path="/"}">Accueil du forum</a></li>
             <li><a href="{link path="/discussions"}">Sujets récents</a></li>
+            <li><a href="{link path="/discussions/unread"}">Sujets non lus</a></li>
             {activity_link}
+            <li><a href="{link path="/discussions/mine"}">Mes sujets</a></li>
+            <li><a href="{link path="/best"}">Meilleur contenu</a></li>
+            <li><a href="{link path="/discussions/unanswered"}">Sans réponse</a></li>
             {custom_menu}
             {dashboard_link}
           </ul>
