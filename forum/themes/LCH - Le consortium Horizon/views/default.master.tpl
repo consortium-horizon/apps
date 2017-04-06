@@ -72,8 +72,6 @@
             <li><hr></li>
             {custom_menu}
             {dashboard_link}
-            {discussions_link}
-            {categories_link}
           </ul>
         </li>
         <li><a href="https://www.consortium-horizon.com/wiki/Accueil" target="_blank">Wiki</a></li>
@@ -120,11 +118,11 @@
   <div id="Body">
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
-      <div class="Column PanelColumn" id="Panel">
-        {if !InSection("DiscussionList")&& !InSection("CategoryList")}
-          {asset name="Panel"}
-        {/if}
-      </div>
+      {if !InSection("DiscussionList") && !InSection("CategoryList") && !InSection("SubCategoryList") && !InSection("Best") && !InSection("Members")}
+        <div class="Column PanelColumn" id="Panel">
+        {asset name="Panel"}
+        </div>
+      {/if}
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
