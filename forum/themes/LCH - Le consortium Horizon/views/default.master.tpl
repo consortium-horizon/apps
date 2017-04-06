@@ -54,9 +54,8 @@
   <div id="Head">
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
-      <!--<div>test</div>-->
-      {module name="NewDiscussionModule"}
       {module name="MeModule"}
+      {module name="NewDiscussionModule"}
       <ul class="SiteMenu">
         <li class="dropdown">
           Forum
