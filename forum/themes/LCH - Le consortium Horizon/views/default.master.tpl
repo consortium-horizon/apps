@@ -56,7 +56,7 @@
       <div class="SiteSearch">{searchbox}</div>
       {module name="MeModule"}
       {module name="NewDiscussionModule"}
-      <ul class="SiteMenu">
+      <ul class="SiteMenu"> 
         <li class="dropdown">
           Forum
           <ul>
