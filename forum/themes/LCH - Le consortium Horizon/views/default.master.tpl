@@ -55,7 +55,7 @@
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
       <!--<div>test</div>-->
-      {module name="NewDiscussion"}
+      {module name="NewDiscussionModule"}
       {module name="MeModule"}
       <ul class="SiteMenu">
         <li class="dropdown">
@@ -64,11 +64,13 @@
             <li><a href="{link path="/"}">Accueil du forum</a></li>
             <li><a href="{link path="/discussions"}">Sujets récents</a></li>
             <li><a href="{link path="/discussions/unread"}">Sujets non lus</a></li>
+            <li><a href="{link path="/discussions/unanswered"}">Sujets sans réponse</a></li>
             {activity_link}
+            <li><a href="{link path="/best"}">Meilleur contenu</a></li>
+            <li><hr></li>
             <li><a href="{link path="/discussions/mine"}">Mes sujets</a></li>
             <li><a href="{link path="/drafts"}">Mes brouillons</a></li>
-            <li><a href="{link path="/best"}">Meilleur contenu</a></li>
-            <li><a href="{link path="/discussions/unanswered"}">Sans réponse</a></li>
+            <li><hr></li>
             {custom_menu}
             {dashboard_link}
           </ul>
