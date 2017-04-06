@@ -55,6 +55,7 @@
     <div class="Row">
       <div class="SiteSearch">{searchbox}</div>
       <!--<div>test</div>-->
+      {module name="NewDiscussion"}
       {module name="MeModule"}
       <ul class="SiteMenu">
         <li class="dropdown">
@@ -65,6 +66,7 @@
             <li><a href="{link path="/discussions/unread"}">Sujets non lus</a></li>
             {activity_link}
             <li><a href="{link path="/discussions/mine"}">Mes sujets</a></li>
+            <li><a href="{link path="/drafts"}">Mes brouillons</a></li>
             <li><a href="{link path="/best"}">Meilleur contenu</a></li>
             <li><a href="{link path="/discussions/unanswered"}">Sans réponse</a></li>
             {custom_menu}
@@ -93,14 +95,16 @@
         <li>
           <a href="#" onClick="MyWindow=window.open('http://www.consortium-horizon.com/chat/','MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1000,height=600,left=300,top=300'); return false;">Chat</a>
         </li>
-        <li class="dropdown">
-          Mon profil
-          <ul>
-            {profile_link}
-            {inbox_link}
-            {signinout_link}
-          </ul>
-        </li>
+        <!--
+          <li class="dropdown">
+            Mon profil
+            <ul>
+              {profile_link}
+              {inbox_link}
+              {signinout_link}
+            </ul>
+          </li>
+        -->
       </ul>
     </div>
   </div>
