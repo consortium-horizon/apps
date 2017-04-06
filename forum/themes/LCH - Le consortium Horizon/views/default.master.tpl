@@ -119,7 +119,6 @@
     <div class="Row">
       {module name="DiscussionEventModule" Limit=4}
       <div class="Column PanelColumn" id="Panel">
-        {module name="MeModule"}
         {if !InSection("DiscussionList")&& !InSection("CategoryList")}
           {asset name="Panel"}
         {/if}
