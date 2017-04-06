@@ -543,8 +543,8 @@ body {
   margin-top: 4px;
 }
 #Head .MeBox .ProfilePhoto {
-  height: 24px;
-  width: 24px;
+  height: 44px;
+  width: 44px;
   vertical-align: bottom;
 }
 
@@ -563,7 +563,14 @@ body {
 #Head .MeBox .SpDashboard,
 #Head .MeBox .SpOptions,
 #Head .MeBox .SpCog {
-  background-position: 0 -148px;
+  background-position: 0 -212px;
+}
+
+#Head .MeBox a {
+  color: #2877d0;
+}
+#Head .MeBox a:hover {
+  color: #00baff;
 }
 /* /MeModule override */
 
