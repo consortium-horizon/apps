@@ -142,7 +142,7 @@
         {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
           {asset name="Panel"}
         {else}
-          <p>fenêtre de chat</p>
+          <p>future fenêtre de chat (en cours...)</p>
         {/if}
       </div>
 
