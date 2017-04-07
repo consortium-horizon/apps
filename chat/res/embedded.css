@@ -1,0 +1,94 @@
+#candy #chat-tabs li {
+  margin: 0;
+  float: left;
+  position: relative;
+  /*white-space: nowrap;*/
+  margin: 0 0 0 3px;
+}
+
+#candy .roster-pane .user {
+  cursor: pointer;
+  padding: 7px 10px;
+  font-size: 12px;
+  opacity: 0;
+  display: none;
+  color: #ccc;
+  clear: both;
+  height: 14px;
+  border-bottom: 1px solid black;
+  box-shadow: 0 1px 0 0 #555;
+}
+
+#candy .roster-pane .user:hover {
+  background-color: #222;
+}
+
+#candy .roster-pane .user.status-ignored {
+  cursor: default;
+}
+
+#candy .roster-pane .user.me {
+  font-weight: bold;
+  cursor: default;
+}
+
+#candy .roster-pane .user.me:hover {
+  background-color: transparent;
+}
+
+#candy .roster-pane .label {
+  float: left;
+  width: 110px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-shadow: 1px 1px black;
+}
+
+#candy .roster-pane li {
+  width: 16px;
+  height: 16px;
+  float: right;
+  display: block;
+  margin-left: 3px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#candy .roster-pane li.role {
+  cursor: default;
+  display: none;
+}
+
+#candy .roster-pane li.role-moderator {
+  background-image: url(img/roster/role-moderator.png);
+  display: block;
+}
+
+#candy .roster-pane li.affiliation-owner {
+  background-image: url(img/roster/affiliation-owner.png);
+  display: block;
+}
+
+#candy .roster-pane li.ignore {
+  background-image: url(img/roster/ignore.png);
+  display: none;
+}
+
+#candy .roster-pane .status-ignored li.ignore {
+  display: block;
+}
+
+#candy .roster-pane li.context {
+  color: #999;
+  text-align: center;
+  cursor: pointer;
+}
+
+#candy .roster-pane li.context:hover {
+  background-color: #666;
+  border-radius: 4px;
+}
+
+#candy .roster-pane .me li.context {
+  display: none;
+}
