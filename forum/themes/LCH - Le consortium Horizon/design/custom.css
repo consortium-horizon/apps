@@ -555,7 +555,7 @@ body {
 /* NewDiscussionModule override */
 #Head .BoxNewDiscussion {
   width: 220px;
-  margin-top: -5px;
+  margin-top: -4px;
   float: right;
 }
 #Head .ButtonGroup.Multi > .NavButton:first-child,
