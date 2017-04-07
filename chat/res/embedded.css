@@ -6,6 +6,15 @@
   margin: 0 0 0 3px;
 }
 
+
+
+
+
+
+
+
+
+
 #candy .roster-pane .user {
   cursor: pointer;
   padding: 7px 10px;
@@ -91,4 +100,118 @@
 
 #candy .roster-pane .me li.context {
   display: none;
+}
+
+
+
+
+
+
+
+
+
+#candy #tooltip {
+  position: absolute;
+  z-index: 10;
+  display: none;
+  margin: 13px -18px -3px -2px;
+  color: #333;
+  font-size: 11px;
+  padding: 5px 0;
+}
+
+#candy #tooltip div {
+  background-color: #f7f7f7;
+  padding: 2px 5px;
+  zoom: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .75);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#context-menu {
+  position: absolute;
+  z-index: 10;
+  display: none;
+  padding: 5px 10px;
+  margin: 13px -28px -3px -12px;
+}
+
+#context-menu ul {
+  background-color: #f7f7f7;
+  color: #333;
+  font-size: 12px;
+  padding: 2px;
+  zoom: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .75);
+}
+
+#context-menu li {
+  padding: 3px 5px 3px 20px;
+  line-height: 12px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  background: 1px no-repeat;
+  white-space: nowrap;
+}
+
+#context-menu li:hover {
+  background-color: #ccc;
+}
+
+#context-menu li:last-child {
+  margin-bottom: 0;
+}
+
+#context-menu .private {
+  background-image: url(img/action/private.png);
+}
+
+#context-menu .ignore {
+  background-image: url(img/action/ignore.png);
+}
+
+#context-menu .unignore {
+  background-image: url(img/action/unignore.png);
+}
+
+#context-menu .kick {
+  background-image: url(img/action/kick.png);
+}
+
+#context-menu .ban {
+  background-image: url(img/action/ban.png);
+}
+
+#context-menu .subject {
+  background-image: url(img/action/subject.png);
+}
+
+#context-menu .emoticons {
+  padding-left: 5px;
+  width: 85px;
+  white-space: normal;
+}
+
+#context-menu .emoticons:hover {
+  background-color: transparent;
+}
+
+#context-menu .emoticons img {
+  cursor: pointer;
+  margin: 3px;
+  height: 15px;
+  width: 15px;
 }
