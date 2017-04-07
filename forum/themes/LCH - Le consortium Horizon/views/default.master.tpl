@@ -143,7 +143,7 @@
           {asset name="Panel"}
         {else}
           <p>future fenêtre de chat (en cours...)</p>
-          {include_file name="candyEmbedded"}
+          {include_file name="candyEmbedded.html"}
           <div id="candy"></div>
         {/if}
       </div>
