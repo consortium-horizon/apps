@@ -87,7 +87,7 @@
             roomCacheTime: 60
         });
 
-        Candy.Core.attach(jid, sid, rid);
+        //Candy.Core.attach(jid, sid, rid);
       });
     });
   </script>
