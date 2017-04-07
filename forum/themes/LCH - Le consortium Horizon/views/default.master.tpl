@@ -149,12 +149,14 @@
       -->
       
       <div class="Column PanelColumn" id="Panel">
-        {module name="MeModule"}
-        {asset name="Panel"}
-        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults") && !$User.SignedIn}
+        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
           {asset name="Panel"}
         {else}
-          {include_file name="candyEmbedded.html"}
+          {if $User.SignedIn}
+            {include_file name="candyEmbedded.html"}
+          {else}
+            {asset name="Panel"}
+          {/if}
         {/if}
       </div>
 
