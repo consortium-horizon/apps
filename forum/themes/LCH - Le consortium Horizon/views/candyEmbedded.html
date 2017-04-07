@@ -1,6 +1,6 @@
   <script type="text/javascript">
     $(document).ready(function() {
-      Candy.init('https://www.consortium-horizon.com/http-bind/', {
+      Candy.init('http://www.consortium-horizon.com/http-bind/', {
         core: {
           // only set this to true if developing / debugging errors
           debug: false,
@@ -14,7 +14,7 @@
         view: { assets: '/chat/res/' }
       });
 
-      $.getJSON( "https://www.consortium-horizon.com/forum/xmpp", function( data ) {
+      $.getJSON( "http://www.consortium-horizon.com/forum/xmpp", function( data ) {
         var jid = data['jid'];
         var sid = data['sid'];
         var rid = data['rid'];
