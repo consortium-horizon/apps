@@ -52,7 +52,7 @@
   </div>
   <div id="Head">
     <div class="Row">
-      <div class="SiteSearch">{searchbox}</div>
+      <div class="SiteSearch">{searchbox}</div> <!-- DON'T active searchbox_advanced -->
       {module name="MeModule"}
       {module name="NewDiscussionModule"}
       <ul class="SiteMenu">
@@ -137,11 +137,15 @@
         Profile : 
         SearchResults : 
       -->
-      {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
-        <div class="Column PanelColumn" id="Panel">
-        {asset name="Panel"}
-        </div>
-      {/if}
+      
+      <div class="Column PanelColumn" id="Panel">
+        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
+          {asset name="Panel"}
+        {else}
+          <p>fenêtre de chat</p>
+        {/if}
+      </div>
+
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
