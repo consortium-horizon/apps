@@ -7,7 +7,7 @@
   /*background-color: #444;*/
   color: #333;
   /*overflow: hidden;*/
-  height: 700px;
+  height: 715px;
 }
 
 #candy ul {
@@ -45,7 +45,7 @@
 }
 
 #candy #chat-tabs a {
-  padding: 4px 50px 4px 10px;
+  padding: 4px 30px 4px 10px;
   display: inline-block;
   color: #ccc;
   height: 20px;
@@ -104,7 +104,9 @@
   text-decoration: line-through;
 }
 
-
+#candy #roomPanel-tab a {
+  padding: 4px 7px;
+}
 
 
 
@@ -126,7 +128,7 @@
   color: #2e5db9;
   clear: both;
   height: 14px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #666;
   /*box-shadow: 0 1px 0 0 #555;*/
 }
 
@@ -214,8 +216,50 @@
 
 #candy .message-pane-wrapper {
   height: 400px;
+  margin: 15px 0;
   overflow-y: scroll;
 }
+
+#candy .message-pane .subject, .message-pane .subject .label {
+  color: #a00;
+  font-weight: bold;
+}
+
+#candy .message-pane .adminmessage {
+  color: #a00;
+  font-weight: bold;
+}
+
+#candy .message-pane .infomessage {
+  color: #888;
+  font-style: italic;
+}
+
+
+
+
+
+
+
+
+#candy .message-form input.submit {
+  cursor: pointer;
+  background-color: #ccc;
+  color: #666;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 3px 203px 3px 3px;
+  padding: 5px 7px;
+  width: auto;
+  font-size: 12px;
+  line-height: 12px;
+  height: 25px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+
 
 
 
@@ -328,4 +372,130 @@
   margin: 3px;
   height: 15px;
   width: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#chat-modal.modal-common {
+  background: #eee;
+  width: 300px;
+  padding: 20px 5px;
+  color: #333;
+  font-size: 16px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin-left: -160px;
+  margin-top: -45px;
+  text-align: center;
+  display: none;
+  z-index: 100;
+  border: 5px solid #888;
+  border-radius: 5px;
+  box-shadow: 0 0 5px black;
+}
+
+#chat-modal-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background-image: url(img/overlay.png);
+}
+
+#chat-modal.modal-login {
+  display: block;
+  margin-top: -100px;
+}
+
+#chat-modal-spinner {
+  display: none;
+  margin-left: 15px;
+}
+
+#chat-modal form {
+  margin: 15px 0;
+}
+
+#chat-modal label, #chat-modal input, #chat-modal select {
+  display: block;
+  float: left;
+  line-height: 26px;
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+#chat-modal input, #chat-modal select {
+  padding: 2px;
+  line-height: 16px;
+  width: 150px;
+}
+
+#chat-modal input[type='text'],
+#chat-modal input[type='password'] {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+#chat-modal.login-with-domains {
+  width: 650px;
+  margin-left: -330px;
+}
+
+#chat-modal span.at-symbol {
+  float: left;
+  padding: 6px;
+  font-size: 14px;
+}
+
+#chat-modal select[name=domain] {
+  width: 320px;
+}
+
+#chat-modal label {
+   text-align: right;
+   padding-right: 1em;
+   clear: both;
+   width: 100px;
+}
+
+#chat-modal input.button {
+  float: none;
+  display: block;
+  margin: 5px auto;
+  clear: both;
+  position: relative;
+  top: 10px;
+  width: 200px;
+}
+
+#chat-modal .close {
+  position: absolute;
+  right: 0;
+  display: none;
+  padding: 0 5px;
+  margin: -17px 3px 0 0;
+  color: #999;
+  border-radius: 3px;
+}
+
+#chat-modal .close:hover {
+  color: #333;
+  background-color: #aaa;
 }
