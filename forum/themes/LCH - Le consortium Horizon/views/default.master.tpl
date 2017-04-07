@@ -143,7 +143,7 @@
           {asset name="Panel"}
         {else}
           <p>future fenêtre de chat (en cours...)</p>
-          {candy_embedded}
+          
           <div id="candy"></div>
         {/if}
       </div>
