@@ -25,8 +25,8 @@
 
 
 
-  <link rel="stylesheet" type="text/css" href="./res/default.css" />
-  <link rel="stylesheet" type="text/css" href="roomPanel/default.css" />
+  <link rel="stylesheet" type="text/css" href="/chat/res/default.css" />
+  <link rel="stylesheet" type="text/css" href="/chat/roomPanel/default.css" />
 
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script type="text/javascript" src="/chat/libs.min.js"></script>
@@ -46,7 +46,7 @@
           //     -> array of rooms to join after connecting
           autojoin: ['bar@chat.consortium-horizon.com']
         },
-        view: { assets: './res/' }
+        view: { assets: '/chat/res/' }
       });
 
       $.getJSON( "http://www.consortium-horizon.com/forum/xmpp", function( data ) {
