@@ -34,62 +34,7 @@
   <script type="text/javascript" src="/chat/roomPanel/roomPanel.js"></script>
 
   <script type="text/javascript">
-    $(document).ready(function() {
-      Candy.init('http://www.consortium-horizon.com/http-bind/', {
-        core: {
-          // only set this to true if developing / debugging errors
-          debug: true,
-          // autojoin is a *required* parameter if you don't have a plugin (e.g. roomPanel) for it
-          //   true
-          //     -> fetch info from server (NOTE: does only work with openfire server)
-          //   ['test@conference.example.com']
-          //     -> array of rooms to join after connecting
-          autojoin: ['bar@chat.consortium-horizon.com']
-        },
-        view: { assets: '/chat/res/' }
-      });
 
-      $.getJSON( "http://www.consortium-horizon.com/forum/xmpp", function( data ) {
-        var jid = data['jid'];
-        var sid = data['sid'];
-        var rid = data['rid'];
-        // enable RoomPanel plugin
-        CandyShop.RoomPanel.init({
-            // domain that hosts the muc rooms, only required if autoDetectRooms is enabled
-            mucDomain: 'chat.consortium-horizon.com',
-
-            // allow you to force a list of rooms, only required if autoDetectRoom is disabled
-            // roomList: [
-            //     {
-            //         name: 'my room',
-            //         jid:  'my-room@conference.example.com'
-            //     },
-            //     {
-            //         name: 'other room',
-            //         jid:  'other-room@conference.example.com'
-            //     }
-            // ],
-
-            // show room list if all rooms are closed, default value is true. [optional]
-            showIfAllTabClosed: true,
-
-            // show '+' at the end of the room tabs
-            showTab: true,
-
-            // show icon in toolbar to show room list
-            showToolbarIcon: true,
-
-
-            // detect rooms before showing list, default value is true. [optional]
-            autoDetectRooms: true,
-
-            // how long in seconds before refreshing room list, default value is 600. [optional]
-            roomCacheTime: 60
-        });
-
-        //Candy.Core.attach(jid, sid, rid);
-      });
-    });
   </script>
 
 
