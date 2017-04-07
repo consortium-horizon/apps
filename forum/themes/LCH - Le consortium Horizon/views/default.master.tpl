@@ -149,7 +149,7 @@
       -->
       
       <div class="Column PanelColumn" id="Panel">
-        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
+        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults") && !$User.SignedIn}
           {asset name="Panel"}
         {else}
           {include_file name="candyEmbedded.html"}
