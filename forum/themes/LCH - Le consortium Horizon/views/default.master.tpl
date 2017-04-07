@@ -24,20 +24,7 @@
   {asset name="Head"}
 
 
-  <script type="text/javascript">
-    $(document).ready(function() {
-      Candy.init('http-bind/', {
-        core: {
-          debug: false,
-          autojoin: true
-        },
-        view: {
-          assets: '../res/'
-        }
-      });
-      Candy.Core.connect();
-    });
-  </script>
+
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
 <div id="Frame">
