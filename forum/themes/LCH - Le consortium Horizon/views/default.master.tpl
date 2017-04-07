@@ -26,6 +26,7 @@
 
   <!--<link rel="stylesheet" type="text/css" href="/chat/res/default.css" />-->
   <link rel="stylesheet" type="text/css" href="/chat/roomPanel/default.css" />
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script type="text/javascript" src="/chat/libs.min.js"></script>
   <script type="text/javascript" src="/chat/candy.min.js"></script>
   <script type="text/javascript" src="/chat/roomPanel/roomPanel.js"></script>
