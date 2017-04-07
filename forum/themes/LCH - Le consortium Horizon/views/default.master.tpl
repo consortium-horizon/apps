@@ -149,6 +149,8 @@
       -->
       
       <div class="Column PanelColumn" id="Panel">
+        {module name="MeModule"}
+        {asset name="Panel"}
         {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults") && !$User.SignedIn}
           {asset name="Panel"}
         {else}
