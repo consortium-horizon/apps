@@ -1,3 +1,5 @@
+<!--  /!\   NO JAVASCRIPT IN THIS PAGE   /!\  -->
+
 <!DOCTYPE html>
 <html>
 <head>
