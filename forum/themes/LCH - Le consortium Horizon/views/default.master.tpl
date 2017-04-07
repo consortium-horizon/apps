@@ -29,9 +29,9 @@
   <link rel="stylesheet" type="text/css" href="roomPanel/default.css" />
 
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script type="text/javascript" src="./libs.min.js"></script>
-  <script type="text/javascript" src="./candy.min.js"></script>
-  <script type="text/javascript" src="roomPanel/roomPanel.js"></script>
+  <script type="text/javascript" src="/chat/libs.min.js"></script>
+  <script type="text/javascript" src="/chat/candy.min.js"></script>
+  <script type="text/javascript" src="/chat/roomPanel/roomPanel.js"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
