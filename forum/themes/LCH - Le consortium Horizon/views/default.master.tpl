@@ -143,8 +143,12 @@
           {asset name="Panel"}
         {else}
           <p>future fenêtre de chat (en cours...)</p>
+            <script type="text/javascript">
+    $(document).ready(function() {
+      alert("Yolo");
+    });
+  </script>
           {include_file name="candyEmbedded.html"}
-          <div id="candy"></div>
         {/if}
       </div>
 
