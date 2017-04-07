@@ -47,15 +47,15 @@
 #candy #chat-tabs a {
   padding: 4px 30px 4px 10px;
   display: inline-block;
-  color: #ccc;
   height: 20px;
-  background-color: #666;
+  background-color: #eee;
+  color: black;
   border-radius: 3px 3px 0 0;
 }
 
 #candy #chat-tabs .active a {
-  background-color: #eee;
-  color: black;
+  color: #ccc;
+  background-color: #666;
 }
 
 #candy #chat-tabs .transition {
@@ -107,6 +107,11 @@
 #candy #roomPanel-tab a {
   padding: 4px 7px;
 }
+
+
+
+
+
 
 
 
@@ -240,26 +245,34 @@
 
 
 
-
+#candy .message-form input {
+  width: 100%;
+  height: 25px;
+  display: block;
+}
 
 #candy .message-form input.submit {
   cursor: pointer;
   background-color: #ccc;
   color: #666;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  margin: 3px 203px 3px 3px;
+  /*position: fixed;*/
+  /*bottom: 0;*/
+  /*right: 0;*/
+  margin: 5px 0 0 0;
   padding: 5px 7px;
   width: auto;
   font-size: 12px;
   line-height: 12px;
-  height: 25px;
+  height: 30px;
   font-weight: bold;
-  border-radius: 3px;
+  border-radius: 2px;
+  border: 0 none;
 }
 
-
+#candy .message-form input.submit:hover {
+  color: black;
+  background-color: #bbb;
+}
 
 
 
@@ -387,7 +400,7 @@
 
 
 
-#chat-modal.modal-common {
+#candy #chat-modal.modal-common {
   background: #eee;
   width: 300px;
   padding: 20px 5px;
@@ -406,7 +419,7 @@
   box-shadow: 0 0 5px black;
 }
 
-#chat-modal-overlay {
+#candy #chat-modal-overlay {
   position: absolute;
   left: 0;
   top: 0;
@@ -416,21 +429,21 @@
   background-image: url(img/overlay.png);
 }
 
-#chat-modal.modal-login {
+#candy #chat-modal.modal-login {
   display: block;
   margin-top: -100px;
 }
 
-#chat-modal-spinner {
+#candy #chat-modal-spinner {
   display: none;
   margin-left: 15px;
 }
 
-#chat-modal form {
+#candy #chat-modal form {
   margin: 15px 0;
 }
 
-#chat-modal label, #chat-modal input, #chat-modal select {
+#candy #chat-modal label, #chat-modal input, #chat-modal select {
   display: block;
   float: left;
   line-height: 26px;
@@ -438,14 +451,14 @@
   margin: 5px 0;
 }
 
-#chat-modal input, #chat-modal select {
+#candy #chat-modal input, #chat-modal select {
   padding: 2px;
   line-height: 16px;
   width: 150px;
 }
 
-#chat-modal input[type='text'],
-#chat-modal input[type='password'] {
+#candy #chat-modal input[type='text'],
+#candy #chat-modal input[type='password'] {
   background-color: white;
   border: 1px solid #ccc;
   padding: 4px;
@@ -453,29 +466,29 @@
   color: #333;
 }
 
-#chat-modal.login-with-domains {
+#candy #chat-modal.login-with-domains {
   width: 650px;
   margin-left: -330px;
 }
 
-#chat-modal span.at-symbol {
+#candy #chat-modal span.at-symbol {
   float: left;
   padding: 6px;
   font-size: 14px;
 }
 
-#chat-modal select[name=domain] {
+#candy #chat-modal select[name=domain] {
   width: 320px;
 }
 
-#chat-modal label {
+#candy #chat-modal label {
    text-align: right;
    padding-right: 1em;
    clear: both;
    width: 100px;
 }
 
-#chat-modal input.button {
+#candy #chat-modal input.button {
   float: none;
   display: block;
   margin: 5px auto;
@@ -485,7 +498,7 @@
   width: 200px;
 }
 
-#chat-modal .close {
+#candy #chat-modal .close {
   position: absolute;
   right: 0;
   display: none;
@@ -495,7 +508,7 @@
   border-radius: 3px;
 }
 
-#chat-modal .close:hover {
+#candy #chat-modal .close:hover {
   color: #333;
   background-color: #aaa;
 }
