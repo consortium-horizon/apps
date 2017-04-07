@@ -22,9 +22,6 @@
   <!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
 <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2" type="text/javascript"></script> -->
   {asset name="Head"}
-
-
-
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
 <div id="Frame">
@@ -146,6 +143,25 @@
           {asset name="Panel"}
         {else}
           <p>future fenêtre de chat (en cours...)</p>
+          
+
+          <script type="text/javascript">
+            $(document).ready(function() {
+              Candy.init('http-bind/', {
+                core: {
+                  debug: false,
+                  autojoin: true
+                },
+                view: {
+                  assets: '../res/'
+                }
+              });
+              Candy.Core.connect();
+            });
+          </script>
+          <div id="candy"></div>
+
+
           
         {/if}
       </div>
