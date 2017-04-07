@@ -5,16 +5,13 @@
 	<title>Candy - Chats are not dead yet</title>
 	<link rel="shortcut icon" href="../res/img/favicon.png" type="image/gif" />
 	<link rel="stylesheet" type="text/css" href="../res/default.css" />
-	<link rel="stylesheet" type="text/css" href="../roomPanel/default.css" />
 
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="../libs.min.js"></script>
 	<script type="text/javascript" src="../candy.min.js"></script>
-	<script type="text/javascript" src="../roomPanel/roomPanel.js"></script>
-
 	<script type="text/javascript">
 		$(document).ready(function() {
-			Candy.init('http://www.consortium-horizon.com/http-bind/', {
+			Candy.init('http-bind/', {
 				core: {
 					// only set this to true if developing / debugging errors
 					debug: false,
@@ -23,54 +20,26 @@
 					//     -> fetch info from server (NOTE: does only work with openfire server)
 					//   ['test@conference.example.com']
 					//     -> array of rooms to join after connecting
-					autojoin: ['bar@chat.consortium-horizon.com']
+					autojoin: true
 				},
 				view: { assets: '../res/' }
 			});
 
+			Candy.Core.connect();
 
-			$.getJSON( "http://www.consortium-horizon.com/forum/xmpp", function( data ) {
-				var jid = data['jid'];
-				var sid = data['sid'];
-				var rid = data['rid'];
-				// enable RoomPanel plugin
-				CandyShop.RoomPanel.init({
-				    // domain that hosts the muc rooms, only required if autoDetectRooms is enabled
-				    mucDomain: 'chat.consortium-horizon.com',
-
-				    // allow you to force a list of rooms, only required if autoDetectRoom is disabled
-				    // roomList: [
-				    //     {
-				    //         name: 'my room',
-				    //         jid:  'my-room@conference.example.com'
-				    //     },
-				    //     {
-				    //         name: 'other room',
-				    //         jid:  'other-room@conference.example.com'
-				    //     }
-				    // ],
-
-				    // show room list if all rooms are closed, default value is true. [optional]
-				    showIfAllTabClosed: true,
-
-				    // show '+' at the end of the room tabs
-				    showTab: true,
-
-				    // show icon in toolbar to show room list
-				    showToolbarIcon: true,
-
-
-				    // detect rooms before showing list, default value is true. [optional]
-				    autoDetectRooms: true,
-
-				    // how long in seconds before refreshing room list, default value is 600. [optional]
-				    roomCacheTime: 60
-				});
-
-				Candy.Core.attach(jid, sid, rid);
-			});
-
-			//Candy.Core.connect();
+			/**
+			 * Thanks for trying Candy!
+			 *
+			 * If you need more information, please see here:
+			 *   - Setup instructions & config params: http://candy-chat.github.io/candy/#setup
+			 *   - FAQ & more: https://github.com/candy-chat/candy/wiki
+			 *
+			 * Mailinglist for questions:
+			 *   - http://groups.google.com/group/candy-chat
+			 *
+			 * Github issues for bugs:
+			 *   - https://github.com/candy-chat/candy/issues
+			 */
 		});
 	</script>
 </head>

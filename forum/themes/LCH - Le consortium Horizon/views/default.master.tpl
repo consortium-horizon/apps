@@ -22,23 +22,6 @@
   <!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
 <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2" type="text/javascript"></script> -->
   {asset name="Head"}
-
-
-
-
-
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script type="text/javascript" src="/chat/libs.min.js"></script>
-  <script type="text/javascript" src="/chat/candy.min.js"></script>
-  <script type="text/javascript" src="/chat/roomPanel/roomPanel.js"></script>
-
-  <script type="text/javascript">
-
-  </script>
-
-
-
-
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
 <div id="Frame">
@@ -160,6 +143,7 @@
           {asset name="Panel"}
         {else}
           <p>future fenêtre de chat (en cours...)</p>
+          {candy_embedded}
           <div id="candy"></div>
         {/if}
       </div>
