@@ -52,7 +52,7 @@
   </div>
   <div id="Head">
     <div class="Row">
-      <div class="SiteSearch">{searchbox}</div>
+      <div class="SiteSearch">{searchbox_advanced}</div>
       {module name="MeModule"}
       {module name="NewDiscussionModule"}
       <ul class="SiteMenu">
