@@ -386,6 +386,18 @@ ul.Conversations li:last-child, ul.Discussions li:last-child, ul.Drafts li:last-
   display: block;
 }
 
+#Content .ButtonGroup.Multi > .NavButton:first-child,
+#Content .ButtonGroup.Multi > .Button:first-child {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+/*
+#Content .BoxNewDiscussion .ButtonGroup .Primary .Handle {
+  padding:10px 10px; font-size:15px;
+}
+*/
+
 .Item.Read {
   background: none;
 }
@@ -452,6 +464,9 @@ body {
 /* ------ */
 #Head {
   background: none;
+}
+#Head a{
+  font-weight: normal;
 }
 #Head .Row {
   padding: 0px 10px;
@@ -535,6 +550,74 @@ body {
 #Head .dropdown ul li a {
   color: #e3e3e3;
 }
+
+
+/* NewDiscussionModule override */
+#Head .BoxNewDiscussion {
+  width: 220px;
+  margin-top: -5px;
+  float: right;
+}
+#Head .ButtonGroup.Multi > .NavButton:first-child,
+#Head .ButtonGroup.Multi > .Button:first-child {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+#Head .BoxNewDiscussion .Button {
+  border-color: #666666;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+}
+#Head .BoxNewDiscussion a {
+  color: black;
+  font-weight: bold;
+}
+/* /NewDiscussionModule override */
+
+
+/* MeModule override */
+#Head .MeBox {
+  width: 190px;
+  float: right;
+  margin-top: 4px;
+}
+#Head .MeBox .ProfilePhoto {
+  height: 34px;
+  width: 34px;
+  margin-top: 5px;
+  vertical-align: middle;
+}
+
+#Head .MeBox .SpNotifications,
+#Head .MeBox .SpGlobe {
+  background-position: -32px -212px;
+}
+#Head .MeBox .SpInbox,
+#Head .MeBox .SpEnvelope {
+  background-position: 0 -228px;
+}
+#Head .MeBox .SpBookmarks,
+#Head .MeBox .SpStar {
+  background-position: -80px -244px;
+}
+#Head .MeBox .SpDashboard,
+#Head .MeBox .SpOptions,
+#Head .MeBox .SpCog {
+  background-position: 0 -212px;
+}
+
+#Head .MeBox .MeMenu a {
+  color: #2e5db9;
+}
+#Head .MeBox .MeMenu a:hover {
+  color: #00baff;
+}
+/* /MeModule override */
+
+
+
+
 
 /* --------------- */
 /* Navigation tree */
