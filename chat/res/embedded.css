@@ -63,7 +63,7 @@
   top: 0;
   right: 0;
   padding: 0;
-  width: 35px;
+  /*width: 35px;*/
   height: 30px;
   /*background: url(img/tab-transitions.png) repeat-y left;*/
   border-radius: 0 3px 0 0;
@@ -89,7 +89,7 @@
 }
 
 #candy #chat-tabs .close:hover, #candy #chat-tabs .active .close:hover {
-  color: #2e5db9;
+  color: #000;
 }
 
 #candy #chat-tabs .unread {
@@ -251,7 +251,7 @@
 
 #candy .message-form input {
   width: 100%;
-  height: 25px;
+  height: 30px;
   display: block;
 }
 
@@ -277,6 +277,49 @@
   color: black;
   background-color: #bbb;
 }
+
+
+
+
+
+
+
+
+
+
+#candy .arrow {
+  background: url(img/tooltip-arrows.gif) no-repeat left bottom;
+  height: 5px;
+  display: block;
+  position: relative;
+  z-index: 11;
+}
+
+#candy .right-bottom .arrow-bottom {
+  background-position: right bottom;
+}
+
+#candy .arrow-top {
+  display: none;
+  background-position: left top;
+}
+
+#candy .right-top .arrow-top {
+  display: block;
+  background-position: right top;
+}
+
+#candy .left-top .arrow-top {
+  display: block;
+}
+
+
+#candy .left-top .arrow-bottom,
+#candy .right-top .arrow-bottom {
+  display: none;
+}
+
+
 
 
 
