@@ -143,26 +143,7 @@
           {asset name="Panel"}
         {else}
           <p>future fenêtre de chat (en cours...)</p>
-          
-
-          <script type="text/javascript">
-            $(document).ready(function() {
-              Candy.init('http-bind/', {
-                core: {
-                  debug: false,
-                  autojoin: true
-                },
-                view: {
-                  assets: '../res/'
-                }
-              });
-              Candy.Core.connect();
-            });
-          </script>
           <div id="candy"></div>
-
-
-          
         {/if}
       </div>
 
