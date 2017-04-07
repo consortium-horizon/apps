@@ -11,7 +11,10 @@
           //     -> array of rooms to join after connecting
           autojoin: ['bar@chat.consortium-horizon.com']
         },
-        view: { assets: '/chat/res/' }
+        view: {
+          assets: '/chat/res/',
+          language: 'fr'
+        }
       });
 
       $.getJSON( "https://www.consortium-horizon.com/forum/xmpp", function( data ) {
