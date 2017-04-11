@@ -112,6 +112,7 @@
 				url = State.url,
 				relativeUrl = url.replace(rootUrl,'');
 
+			console.log(State);
 			alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);  // LCH 'for debuging url'
 
 			// Set Loading
