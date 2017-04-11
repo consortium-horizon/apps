@@ -6,8 +6,12 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="manifest" href="manifest.json">
 
-  <!-- jQuery -->
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <!-- jQuery : link for lastest version here https://code.jquery.com/ -->
+  <script
+    src="https://code.jquery.com/jquery-1.12.4.min.js"
+    integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+    crossorigin="anonymous">
+  </script>
 
   <!-- Ajaxify activation -->
     <!-- NProgress Stylesheet -->
@@ -27,7 +31,7 @@
 
     <!-- Ajaxify -->
     <!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
-    <script src="./js/ajaxify-html5.js?v=2.2" type="text/javascript"></script>
+    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2" type="text/javascript"></script>
   <!-- / Ajaxify activation -->
 
   <!-- Candy activation -->
