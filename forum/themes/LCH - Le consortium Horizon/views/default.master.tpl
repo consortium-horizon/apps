@@ -6,12 +6,15 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="manifest" href="manifest.json">
 
+  <!-- jQuery -->
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
   <!-- Ajaxify activation -->
     <!-- NProgress Stylesheet -->
     <link rel="stylesheet" type="text/css" href="//rawgithub.com/rstacruz/nprogress/master/nprogress.css">
 
     <!-- jQuery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 
     <!-- jQuery ScrollTo Plugin -->
     <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
@@ -30,7 +33,7 @@
   <!-- Candy activation -->
     <link rel="stylesheet" type="text/css" href="/chat/res/embedded.css" />
     <link rel="stylesheet" type="text/css" href="/chat/roomPanel/default.css" />
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
     <script type="text/javascript" src="/chat/libs.min.js"></script>
     <script type="text/javascript" src="/chat/candy.min.js"></script>
     <script type="text/javascript" src="/chat/roomPanel/roomPanel.js"></script>
