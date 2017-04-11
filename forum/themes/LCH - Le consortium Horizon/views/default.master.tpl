@@ -15,7 +15,7 @@
 
   <!-- Ajaxify activation -->
     <!-- NProgress Stylesheet -->
-    <link rel="stylesheet" type="text/css" href="//rawgithub.com/rstacruz/nprogress/master/nprogress.css">
+    <link rel="stylesheet" type="text/css" href="/forum/themes/LCH - Le consortium Horizon/design/nprogress.css">
 
     <!-- jQuery -->
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
@@ -24,7 +24,7 @@
     <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
 
     <!-- jQuery NProgress Plugin -->
-    <script src="//rawgithub.com/rstacruz/nprogress/master/nprogress.js"></script>
+    <script src="/forum/themes/LCH - Le consortium Horizon/js/nprogress.js"></script>
 
     <!-- History.js -->
     <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>
