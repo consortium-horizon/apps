@@ -109,12 +109,15 @@
 			// Prepare Variables
 			var
 				State = History.getState(),
-				//url = State.url,
-				url = State.hash,
+				url = State.url,
+				//url = State.hash,
 				relativeUrl = url.replace(rootUrl,'');
 
+
+			// LCH 'for debuging url'
 			console.log(State);
-			alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);  // LCH 'for debuging url'
+			alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);
+
 
 			// Set Loading
 			$body.addClass('loading');
