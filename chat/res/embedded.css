@@ -88,7 +88,8 @@
   /*background: url(img/tab-transitions.png) repeat-y -50px;*/
 }
 
-#candy #chat-tabs .close:hover, #candy #chat-tabs .active .close:hover {
+#candy #chat-tabs .close:hover,
+#candy #chat-tabs .active .close:hover {
   color: #000;
 }
 
@@ -228,23 +229,45 @@
   margin: 15px 0;
   overflow-y: scroll;
 }
-
-#candy .message-pane .subject, .message-pane .subject .label {
+#candy .message-pane .subject,
+#candy .message-pane .subject .label {
   color: #a00;
   font-weight: bold;
 }
-
 #candy .message-pane .adminmessage {
   color: #a00;
   font-weight: bold;
 }
-
 #candy .message-pane .infomessage {
   color: #888;
   font-style: italic;
+  background-color: transparent;
 }
+#candy .message-pane li>div {
+  background-color: #f7f7f7;
+  border-radius: 2px;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-right: 7px;
+}
+#candy .message-pane .label {
+  font-weight: bold;
 
-
+}
+#candy .message-pane li>small {
+  font-size: 10px;
+  /*display: none;*/
+  color: #a00;
+  position: absolute;
+  /*background-color: #f7f7f7;*/
+  line-height: 20px;
+  margin: 4px 0;
+  padding: 0 5px;
+  right: 5px;
+}
+#candy .message-pane li:hover small {
+  /*display: block;*/
+}
 
 
 
