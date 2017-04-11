@@ -260,16 +260,17 @@
   font-weight: bold;
 
 }
-#candy .message-pane li>small {
-  font-size: 10px;
-  /*display: none;*/
-  color: #a00;
-  /*position: absolute;*/
-  /*background-color: #f7f7f7;*/
-  line-height: 20px;
-  margin: 4px 0;
-  padding: 0 5px;
-  right: 5px;
+#candy .message-pane li > small {
+  color: #2e5db9;
+  font-size: 9px;
+  margin: 7px 7px -5px 0;
+  padding-right: 5px;
+  text-align: right;
+  display: block;
+  background-color: #f7f7f7;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 #candy .message-pane li:hover small {
   /*display: block;*/
