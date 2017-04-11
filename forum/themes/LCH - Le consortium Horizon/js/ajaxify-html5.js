@@ -112,6 +112,8 @@
 				url = State.url,
 				relativeUrl = url.replace(rootUrl,'');
 
+			alert (relativeUrl);
+
 			// Set Loading
 			$body.addClass('loading');
 			if (NProgress != undefined) NProgress.start();
