@@ -112,7 +112,7 @@
 				url = State.url,
 				relativeUrl = url.replace(rootUrl,'');
 
-			console.log ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nurl='+url);
+			alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nurl='+url);
 
 			// Set Loading
 			$body.addClass('loading');
