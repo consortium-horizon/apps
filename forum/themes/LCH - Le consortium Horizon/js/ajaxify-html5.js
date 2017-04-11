@@ -19,15 +19,17 @@
 		// Prepare Variables
 		var
 			/* Application Specific Variables */
-			// contentSelector = '#content,article:first,.article:first,.post:first',
-			contentSelector = '#Body',
+			// contentSelector = '#content,article:first,.article:first,.post:first',  // Original
+			contentSelector = '#Body',  // LCH
 			$content = $(contentSelector).filter(':first'),
 			contentNode = $content.get(0),
-			// $menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu
-			$menu = $('.FilterMenu').filter(':first'),
-			activeClass = 'Active',
-			//activeId = 'active',
-			activeSelector = '.Active',
+			// $menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu  // Original
+			$menu = $('.FilterMenu').filter(':first'),  // LCH
+			// activeClass = 'active selected current youarehere',  // Original
+			activeClass = 'Active',  // LCH
+			// activeId = 'active',  // Original
+			// activeSelector = '.active,#active,.selected,.current,.youarehere',  // Original
+			activeSelector = '.Active',  // LCH
 			menuChildrenSelector = '> li,> ul > li',
 			completedEventName = 'statechangecomplete',
 			/* Application Generic Variables */
@@ -147,10 +149,11 @@
 					$menuChildren = $menu.find(menuChildrenSelector);
 					$menuChildren.filter(activeSelector).removeClass(activeClass);
 					$menuChildren.filter(activeSelector).attr('id','deselected');
-					$menuChildren = $menuChildren.has('a[href="'+relativeUrl+'"],a[href="/'+relativeUrl+'"],a[href="'+url+'"]');
+					$menuChildren = $menuChildren.has('a[href^="'+relativeUrl+'"],a[href^="/'+relativeUrl+'"],a[href^="'+url+'"]');  // Original
+					// $menuChildren = $menuChildren.has('a[href="'+relativeUrl+'"],a[href="/'+relativeUrl+'"],a[href="'+url+'"]');  // LCH
 					if ( $menuChildren.length === 1 ) { 
-						$menuChildren.addClass(activeClass); 
-						//$menuChildren.attr('id','active');
+						$menuChildren.addClass(activeClass);  // LCH
+						//$menuChildren.attr('id','active');  // Original
 					}
 
 					// Update the content
@@ -177,9 +180,12 @@
 					
 					if(NProgress) NProgress.done();
 
+					// if((DISQUS != undefined) && ($content.find('#disqus_thread').length != 0)) {DISQUS.next.host.loader.loadEmbed();console.log('DISQUS Detected')}  // Original
+
 
 					// Complete the change
-					//if ( $content.ScrollTo||false ) { $content.ScrollTo(scrollOptions); } /* http://balupton.com/projects/jquery-scrollto */
+					// if ( $body.ScrollTo||false ) { $body.ScrollTo(scrollOptions); } /* http://balupton.com/projects/jquery-scrollto */  // Original
+					// if ( $content.ScrollTo||false ) { $content.ScrollTo(scrollOptions); } /* http://balupton.com/projects/jquery-scrollto */  // LCH
 					$body.removeClass('loading');
 					$window.trigger(completedEventName);
 	
