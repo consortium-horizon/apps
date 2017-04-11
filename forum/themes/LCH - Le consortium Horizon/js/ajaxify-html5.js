@@ -112,7 +112,7 @@
 				url = State.url,
 				relativeUrl = url.replace(rootUrl,'');
 
-			alert (relativeUrl);
+			alert ('debug : relativeURL='+relativeUrl+'\nrootURL='+rootUrl);
 
 			// Set Loading
 			$body.addClass('loading');
