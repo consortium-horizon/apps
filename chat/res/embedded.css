@@ -237,6 +237,7 @@
 #candy .message-pane .subject .label {
   color: #a00;
   font-weight: bold;
+  background-color: transparent;
 }
 #candy .message-pane .adminmessage {
   color: #a00;
@@ -247,7 +248,7 @@
   font-style: italic;
   background-color: transparent;
 }
-#candy .message-pane li>div {
+#candy .message-pane li > div {
   background-color: #f7f7f7;
   border-radius: 2px;
   -moz-border-radius: 2px;
