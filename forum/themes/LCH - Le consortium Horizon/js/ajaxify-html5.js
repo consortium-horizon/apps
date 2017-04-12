@@ -86,6 +86,7 @@
 				var
 					$this = $(this),
 					url = $this.attr('href'),
+					url = url.replace('www.consortium-horizon.com/',''),  // LCH
 					title = $this.attr('title')||null;
 
 				
@@ -112,10 +113,9 @@
 			console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);
 			var
 				State = History.getState(),
-				//url = State.url,  // Original
-				url = State.url.replace('https://www.consortium-horizon.com/www.consortium-horizon.com/',rootUrl),  // LCH
+				url = State.url,  // Original
+				//url = State.url.replace('https://www.consortium-horizon.com/www.consortium-horizon.com/',rootUrl),  // LCH
 				relativeUrl = url.replace(rootUrl,'');  // Original
-				//relativeUrl = url.replace(rootUrl+'www.consortium-horizon.com/','');  // LCH
 
 
 
