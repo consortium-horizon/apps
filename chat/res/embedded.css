@@ -237,7 +237,10 @@
 #candy .message-pane .subject .label {
   color: #a00;
   font-weight: bold;
-  background-color: transparent;
+  background-color: #fff2f2;
+}
+#candy .message-pane li .subjectDate {
+  background-color: #fff2f2;
 }
 #candy .message-pane .adminmessage {
   color: #a00;
@@ -246,7 +249,10 @@
 #candy .message-pane .infomessage {
   color: #888;
   font-style: italic;
-  background-color: transparent;
+  background-color: #f2f2ff;
+}
+#candy .message-pane li .infomessageDate {
+  background-color: #f2f2ff;
 }
 #candy .message-pane .label {
   font-weight: bold;
@@ -278,9 +284,8 @@
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
 }
-#candy .message-pane li:hover small {
-  /*display: block;*/
-}
+
+
 
 
 

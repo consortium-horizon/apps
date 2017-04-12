@@ -111,11 +111,13 @@
       </ul>
     </div>
   </div>
+  <!--
   <div id="Breadcrumbs" class="BreadcrumbsWrapper">
     <div class="Row">
      {breadcrumbs}
     </div>
   </div>
+  -->
 
   <div id="Body">
     <div class="Row">
@@ -154,6 +156,11 @@
       </div>
 
       <div class="Column ContentColumn" id="Content">
+        <div id="Breadcrumbs" class="BreadcrumbsWrapper">
+          <div class="Row">
+           {breadcrumbs}
+          </div>
+        </div>
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
             {planetside_online}
