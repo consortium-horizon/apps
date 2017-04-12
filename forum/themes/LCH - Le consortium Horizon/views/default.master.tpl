@@ -31,7 +31,7 @@
 
     <!-- Ajaxify -->
     <!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
-    <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2"></script> -->
+    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2"></script>
   <!-- / Ajaxify activation -->
 
   <!-- Candy activation -->
