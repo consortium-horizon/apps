@@ -111,14 +111,12 @@
 			var
 				State = History.getState(),
 				url = State.url,
-				relativeUrl = url.replace(rootUrl,'')
-				url = "toto";
+				relativeUrl = url.replace(rootUrl,'');
+				//url = "toto";
 
 
 
 			// LCH 'for debuging url'
-			//console.log(State);
-			//alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);
 			console.log(State);
 			console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);
 			
