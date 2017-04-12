@@ -112,7 +112,6 @@
 				State = History.getState(),
 				url = State.url,
 				relativeUrl = url.replace(rootUrl,'');
-				//url = "toto";
 
 
 
@@ -151,7 +150,7 @@
 					// Fetch the content
 					contentHtml = $dataContent.html()||$data.html();
 					if ( !contentHtml ) {
-						document.location.href = url;
+						document.location.href = "toto";
 						return false;
 					}
 					
