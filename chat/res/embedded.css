@@ -243,22 +243,22 @@
 #candy .message-pane .subject .label {
   color: #a00;
   font-weight: bold;
-  background-color: #fff2f2;
+  background-color: #fff8f8;
 }
 #candy .message-pane li .subjectDate {
-  background-color: #fff2f2;
+  background-color: #fff8f8;
 }
 #candy .message-pane .adminmessage {
   color: #a00;
   font-weight: bold;
 }
 #candy .message-pane .infomessage {
-  color: #888;
+  color: #5555cc;
   font-style: italic;
-  background-color: #f2f2ff;
+  background-color: #f8f8ff;
 }
 #candy .message-pane li .infomessageDate {
-  background-color: #f2f2ff;
+  background-color: #f8f8ff;
 }
 #candy .message-pane .label {
   font-weight: bold;
