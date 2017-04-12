@@ -1,8 +1,9 @@
 $(document).ready(function() {
 
-    jQuery('#Body').ajaxify({
-      scrolltop : true,
-      prefetch : false,
+    $('#Body').ajaxify({
+      aniTime: 400,
+      scrolltop: true,
+      prefetch: false,
     });
 
 });
