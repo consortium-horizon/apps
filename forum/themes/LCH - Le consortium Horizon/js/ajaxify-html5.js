@@ -140,6 +140,8 @@
 						$dataBody = $data.find('.document-body:first'),
 						$dataContent = $dataBody.find(contentSelector).filter(':first'),
 						$menuChildren, contentHtml, $scripts;
+
+					console.log('data = '+$data+'\ndataBody = '+$dataBody+'\ndataContent = '+$dataContent);
 					
 					// Fetch the scripts
 					$scripts = $dataContent.find('.document-script');
