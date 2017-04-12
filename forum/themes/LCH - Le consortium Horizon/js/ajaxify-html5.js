@@ -93,7 +93,7 @@
 				if ( event.which == 2 || event.metaKey ) { return true; }
 				
 				// Ajaxify this link
-				console.log('title = '+title+'\nurl = '+url);  // LCH 'for debuging url'
+				console.log('url = '+url+'\ntitle = '+title);  // LCH 'for debuging url'
 				History.pushState(null,title,url);
 				event.preventDefault();
 				return false;
