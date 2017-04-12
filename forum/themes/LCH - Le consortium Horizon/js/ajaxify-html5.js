@@ -118,8 +118,9 @@
 			// LCH 'for debuging url'
 			//console.log(State);
 			//alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);
-			console.log('relativeURL = '+relativeUrl+'\nrootURL = '+rootUrl+'\nurl = '+url);
 			console.log(State);
+			console.log('relativeURL = '+relativeUrl+'\nrootURL = '+rootUrl+'\nurl = '+url);
+			
 
 
 			// Set Loading
@@ -151,7 +152,7 @@
 					// Fetch the content
 					contentHtml = $dataContent.html()||$data.html();
 					if ( !contentHtml ) {
-						document.location.href = url;
+						document.location.href = relativeUrl;
 						return false;
 					}
 					
