@@ -13,28 +13,9 @@
     crossorigin="anonymous">
   </script>
 
-  <!-- Ajaxify activation -->
-    <!-- NProgress Stylesheet -->
-    <!-- <link rel="stylesheet" type="text/css" href="/forum/themes/LCH - Le consortium Horizon/design/nprogress.css">  -->
-
-    <!-- jQuery -->
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
-
-    <!-- jQuery ScrollTo Plugin -->
-    <!-- <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>  -->
-
-    <!-- jQuery NProgress Plugin -->
-    <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/nprogress.js"></script>  -->
-
-    <!-- History.js -->
-    <!-- <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>  -->
-
-    <!-- Ajaxify -->
-    <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2"></script>  -->
-  <!-- / Ajaxify activation -->
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajaxify/6.7.0/ajaxify.min.js" type="text/javascript"></script>
+    <script src="http://4nf.org/ajaxify.min.js" type="text/javascript"></script>
   <!-- / Ajaxify activation -->
 
   <!-- Candy activation -->
