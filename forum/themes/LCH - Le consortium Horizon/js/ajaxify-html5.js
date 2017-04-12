@@ -107,19 +107,19 @@
 		// Hook into State Changes
 		$window.bind('statechange',function(){
 			// Prepare Variables
+			console.log(url);
 			var
 				State = History.getState(),
 				url = State.url,
-				//url = State.hash,
-				//relativeUrl = url.replace(rootUrl,'');
-				relativeUrl = "forum/categories/actualites";
+				relativeUrl = url.replace(rootUrl,'');
 
 
 
 			// LCH 'for debuging url'
 			//console.log(State);
 			//alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);
-			console.log('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\n\nState='+State+'\n\nurl='+url);
+			console.log('relativeURL = '+relativeUrl+'\nrootURL = '+rootUrl+'\nurl = '+url);
+			console.log(State);
 
 
 			// Set Loading
@@ -159,8 +159,8 @@
 					$menuChildren = $menu.find(menuChildrenSelector);
 					$menuChildren.filter(activeSelector).removeClass(activeClass);
 					$menuChildren.filter(activeSelector).attr('id','deselected');
-					// $menuChildren = $menuChildren.has('a[href^="'+relativeUrl+'"],a[href^="/'+relativeUrl+'"],a[href^="'+url+'"]');  // Original
-					$menuChildren = $menuChildren.has('a[href="'+relativeUrl+'"],a[href="/'+relativeUrl+'"],a[href="'+url+'"]');  // LCH
+					$menuChildren = $menuChildren.has('a[href^="'+relativeUrl+'"],a[href^="/'+relativeUrl+'"],a[href^="'+url+'"]');  // Original
+					// $menuChildren = $menuChildren.has('a[href="'+relativeUrl+'"],a[href="/'+relativeUrl+'"],a[href="'+url+'"]');  // LCH
 					if ( $menuChildren.length === 1 ) { 
 						$menuChildren.addClass(activeClass);  // LCH
 						//$menuChildren.attr('id','active');  // Original
