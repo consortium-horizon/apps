@@ -111,6 +111,12 @@
   text-decoration: line-through;
 }
 
+#candy #roomPanel-tab {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 #candy #roomPanel-tab a {
   padding: 4px 7px;
 }
@@ -288,12 +294,6 @@
 
 
 
-
-#candy #roomPanel-tab {
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 20px;
-}
 
 
 
