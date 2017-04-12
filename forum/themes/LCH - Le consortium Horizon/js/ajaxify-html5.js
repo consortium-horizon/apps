@@ -111,7 +111,8 @@
 			var
 				State = History.getState(),
 				url = State.url,
-				relativeUrl = url.replace(rootUrl,'');
+				relativeUrl = url.replace(rootUrl,'')
+				url = relativeUrl;
 
 
 
@@ -152,7 +153,7 @@
 					// Fetch the content
 					contentHtml = $dataContent.html()||$data.html();
 					if ( !contentHtml ) {
-						document.location.href = relativeUrl;
+						document.location.href = url;
 						return false;
 					}
 					
