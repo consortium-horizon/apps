@@ -7,15 +7,11 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- jQuery : link for lastest version here https://code.jquery.com/ -->
-  <script
-    src="https://code.jquery.com/jquery-1.12.4.min.js"
-    integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-    crossorigin="anonymous">
-  </script>
+  <script src="/forum/themes/LCH - Le consortium Horizon/js/jquery-1.12.4.min.js"></script>
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
-    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.min.js"></script>
-  <!-- / Ajaxify activation -->
+  <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.min.js"></script>
+  <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
 
   <!-- Candy activation -->
     <link rel="stylesheet" type="text/css" href="/chat/res/embedded.css" />
@@ -28,8 +24,6 @@
 
   {asset name="Head"}
 
-  <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
-  
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
 <div id="Frame">
