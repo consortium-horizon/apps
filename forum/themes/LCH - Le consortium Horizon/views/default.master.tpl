@@ -13,7 +13,8 @@
     crossorigin="anonymous">
   </script>
 
-
+  {asset name="Head"}
+  
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
     <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.js"></script>
     <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
@@ -28,7 +29,7 @@
     <script type="text/javascript" src="/chat/roomPanel/roomPanel.js"></script>
   <!-- Candy activation -->
 
-  {asset name="Head"}
+
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
 <div id="Frame">
