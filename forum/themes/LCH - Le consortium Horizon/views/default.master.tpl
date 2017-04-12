@@ -15,7 +15,6 @@
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
     <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.min.js"></script>
-    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
   <!-- / Ajaxify activation -->
 
   <!-- Candy activation -->
@@ -28,6 +27,9 @@
   <!-- Candy activation -->
 
   {asset name="Head"}
+
+  <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
+  
 </head>
 <body id="{$BodyID}" class="{$BodyClass}">
 <div id="Frame">
