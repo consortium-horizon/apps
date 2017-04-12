@@ -87,11 +87,13 @@
 					$this = $(this),
 					url = $this.attr('href'),
 					title = $this.attr('title')||null;
+
 				
 				// Continue as normal for cmd clicks etc
 				if ( event.which == 2 || event.metaKey ) { return true; }
 				
 				// Ajaxify this link
+				console.log('title = '+title+'\nurl = '+url);  // LCH 'for debuging url'
 				History.pushState(null,title,url);
 				event.preventDefault();
 				return false;
@@ -142,11 +144,6 @@
 						$dataBody = $data.find('.document-body:first'),
 						$dataContent = $dataBody.find(contentSelector).filter(':first'),
 						$menuChildren, contentHtml, $scripts;
-
-					console.log($data);
-					console.log($dataBody);
-					console.log($dataContent);
-
 					
 					// Fetch the scripts
 					$scripts = $dataContent.find('.document-script');
