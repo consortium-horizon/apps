@@ -111,7 +111,9 @@
 				State = History.getState(),
 				url = State.url,
 				//url = State.hash,
-				relativeUrl = url.replace(rootUrl,'');
+				//relativeUrl = url.replace(rootUrl,'');
+				relativeUrl = "forum/categories/actualites";
+
 
 
 			// LCH 'for debuging url'
