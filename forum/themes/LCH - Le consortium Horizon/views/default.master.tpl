@@ -15,7 +15,7 @@
 
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
-    <script src="http://4nf.org/ajaxify.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajaxify/6.7.0/ajaxify.min.js" type="text/javascript"></script>
   <!-- / Ajaxify activation -->
 
   <!-- Candy activation -->

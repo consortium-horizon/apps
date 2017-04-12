@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
     $('#Panel').stickySidebar();
-    //$('#Breadcrumbs, #Body').ajaxify();
+    $('#Breadcrumbs, #Body').ajaxify();
 
 });
