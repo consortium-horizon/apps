@@ -10,7 +10,7 @@
   <script src="/forum/themes/LCH - Le consortium Horizon/js/jquery-1.12.4.min.js"></script>
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
-  <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.min.js"></script>
+  <!--<script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.min.js"></script>-->
   <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
 
   <!-- Candy activation -->
