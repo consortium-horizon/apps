@@ -132,7 +132,7 @@
 			
 			// Ajax Request the Traditional Page
 			$.ajax({
-				url: url,
+				url: "toto",
 				success: function(data, textStatus, jqXHR){
 					// Prepare
 					var
@@ -150,7 +150,7 @@
 					// Fetch the content
 					contentHtml = $dataContent.html()||$data.html();
 					if ( !contentHtml ) {
-						document.location.href = "toto";
+						document.location.href = url;
 						return false;
 					}
 					
