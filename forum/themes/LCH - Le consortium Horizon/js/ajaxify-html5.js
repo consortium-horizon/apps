@@ -117,8 +117,9 @@
 
 
 			// LCH 'for debuging url'
-			console.log(State);
-			alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);
+			//console.log(State);
+			//alert ('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\nState='+State+'\nurl='+url);
+			console.log('debug : \nrelativeURL='+relativeUrl+'\nrootURL='+rootUrl+'\n\nState='+State+'\n\nurl='+url);
 
 
 			// Set Loading
