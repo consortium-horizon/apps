@@ -20,7 +20,7 @@
 		var
 			/* Application Specific Variables */
 			// contentSelector = '#content,article:first,.article:first,.post:first',  // Original
-			contentSelector = '#Content',  // LCH
+			contentSelector = '#Content,.BreadcrumbsWrapper:first',  // LCH
 			$content = $(contentSelector).filter(':first'),
 			contentNode = $content.get(0),
 			// $menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu  // Original
