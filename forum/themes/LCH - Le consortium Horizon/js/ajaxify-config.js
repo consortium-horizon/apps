@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    jQuery('#Breadcrumbs, #Body').ajaxify({
+    jQuery('#Body').ajaxify({
       scrolltop : true,
       prefetch : false,
     });
