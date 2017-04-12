@@ -107,7 +107,7 @@
 		// Hook into State Changes
 		$window.bind('statechange',function(){
 			// Prepare Variables
-			console.log(url);
+			console.log('relativeURL = '+relativeUrl+'\nrootURL = '+rootUrl+'\nurl = '+url);
 			var
 				State = History.getState(),
 				url = State.url,
