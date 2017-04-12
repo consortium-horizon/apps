@@ -15,7 +15,8 @@
 
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajaxify/6.7.0/ajaxify.min.js" type="text/javascript"></script>
+    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.js"></script>
+    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script>
   <!-- / Ajaxify activation -->
 
   <!-- Candy activation -->
