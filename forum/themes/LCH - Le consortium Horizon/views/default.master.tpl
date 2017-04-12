@@ -15,24 +15,25 @@
 
   <!-- Ajaxify activation -->
     <!-- NProgress Stylesheet -->
-    <link rel="stylesheet" type="text/css" href="/forum/themes/LCH - Le consortium Horizon/design/nprogress.css">
+    <!-- <link rel="stylesheet" type="text/css" href="/forum/themes/LCH - Le consortium Horizon/design/nprogress.css">  -->
 
     <!-- jQuery -->
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 
     <!-- jQuery ScrollTo Plugin -->
-    <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
+    <!-- <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>  -->
 
     <!-- jQuery NProgress Plugin -->
-    <script src="/forum/themes/LCH - Le consortium Horizon/js/nprogress.js"></script>
+    <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/nprogress.js"></script>  -->
 
     <!-- History.js -->
-    <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>
+    <!-- <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>  -->
 
     <!-- Ajaxify -->
-    <!-- <script src="//raw.githubusercontent.com/TjWallas/ajaxify/master/ajaxify-html5.js"></script> -->
-    <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2"></script>
+    <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2"></script>  -->
   <!-- / Ajaxify activation -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajaxify/6.7.0/ajaxify.min.js" type="text/javascript"></script>
 
   <!-- Candy activation -->
     <link rel="stylesheet" type="text/css" href="/chat/res/embedded.css" />
@@ -130,7 +131,7 @@
       </ul>
     </div>
   </div>
-  <div class="BreadcrumbsWrapper">
+  <div id="Breadcrumbs" class="BreadcrumbsWrapper">
     <div class="Row">
      {breadcrumbs}
     </div>
