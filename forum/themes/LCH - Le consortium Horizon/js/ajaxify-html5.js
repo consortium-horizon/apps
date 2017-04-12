@@ -23,13 +23,13 @@
 			contentSelector = '#Body',  // LCH
 			$content = $(contentSelector).filter(':first'),
 			contentNode = $content.get(0),
-			// $menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu  // Original
-			$menu = $('.FilterMenu').filter(':first'),  // LCH
-			// activeClass = 'active selected current youarehere',  // Original
-			activeClass = 'Active',  // LCH
-			// activeId = 'active',  // Original
-			// activeSelector = '.active,#active,.selected,.current,.youarehere',  // Original
-			activeSelector = '.Active',  // LCH
+			$menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu  // Original
+			// $menu = $('.FilterMenu').filter(':first'),  // LCH
+			activeClass = 'active selected current youarehere',  // Original
+			// activeClass = 'Active',  // LCH
+			activeId = 'active',  // Original
+			activeSelector = '.active,#active,.selected,.current,.youarehere',  // Original
+			// activeSelector = '.Active',  // LCH
 			menuChildrenSelector = '> li,> ul > li',
 			completedEventName = 'statechangecomplete',
 			/* Application Generic Variables */
@@ -94,7 +94,7 @@
 				if ( event.which == 2 || event.metaKey ) { return true; }
 				
 				// Ajaxify this link
-				console.log('url = '+url+'\ntitle = '+title);  // LCH 'for debuging url'
+				//console.log('url = '+url+'\ntitle = '+title);  // LCH 'for debuging url'
 				History.pushState(null,title,url);
 				event.preventDefault();
 				return false;
@@ -110,7 +110,7 @@
 		// Hook into State Changes
 		$window.bind('statechange',function(){
 			// Prepare Variables
-			console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);
+			// console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);  // LCH 'for debuging url'
 			var
 				State = History.getState(),
 				url = State.url,  // Original
@@ -120,8 +120,8 @@
 
 
 			// LCH 'for debuging url'
-			console.log(State);
-			console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);
+			//console.log(State);
+			//console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);
 			
 
 
