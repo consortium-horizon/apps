@@ -111,7 +111,8 @@
 			var
 				State = History.getState(),
 				url = State.url,
-				relativeUrl = url.replace(rootUrl,'');
+				url = url.replace('https://www.consortium-horizon.com/www.consortium-horizon.com/',rootUrl),
+				relativeUrl = url.replace(rootUrl+'www.consortium-horizon.com/','');
 
 
 
@@ -132,7 +133,7 @@
 			
 			// Ajax Request the Traditional Page
 			$.ajax({
-				url: "toto",
+				url: url,
 				success: function(data, textStatus, jqXHR){
 					// Prepare
 					var
