@@ -110,9 +110,10 @@
 			console.log('url = '+url+'\nrelativeUrl = '+relativeUrl+'\nrootURL = '+rootUrl);
 			var
 				State = History.getState(),
-				url = State.url,
-				url = url.replace('https://www.consortium-horizon.com/www.consortium-horizon.com/',rootUrl),
-				relativeUrl = url.replace(rootUrl+'www.consortium-horizon.com/','');
+				//url = State.url,  // Original
+				url = State.url.replace('https://www.consortium-horizon.com/www.consortium-horizon.com/',rootUrl),  // LCH
+				//relativeUrl = url.replace(rootUrl,'');  // Original
+				relativeUrl = url.replace(rootUrl+'www.consortium-horizon.com/','');  // LCH
 
 
 
@@ -142,7 +143,10 @@
 						$dataContent = $dataBody.find(contentSelector).filter(':first'),
 						$menuChildren, contentHtml, $scripts;
 
-					console.log('data = '+$data+'\ndataBody = '+$dataBody+'\ndataContent = '+$dataContent);
+					console.log($data);
+					console.log($dataBody);
+					console.log($dataContent);
+
 					
 					// Fetch the scripts
 					$scripts = $dataContent.find('.document-script');
