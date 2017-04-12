@@ -20,16 +20,16 @@
 		var
 			/* Application Specific Variables */
 			// contentSelector = '#content,article:first,.article:first,.post:first',  // Original
-			contentSelector = '#Body',  // LCH
+			contentSelector = '#Content',  // LCH
 			$content = $(contentSelector).filter(':first'),
 			contentNode = $content.get(0),
-			$menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu  // Original
-			// $menu = $('.FilterMenu').filter(':first'),  // LCH
-			activeClass = 'active selected current youarehere',  // Original
-			// activeClass = 'Active',  // LCH
-			activeId = 'active',  // Original
-			activeSelector = '.active,#active,.selected,.current,.youarehere',  // Original
-			// activeSelector = '.Active',  // LCH
+			// $menu = $('#menu,#nav,#topnav,#nav:first,.nav:first').filter(':first'),  ,#Panel,.SiteMenu  // Original
+			$menu = $('.FilterMenu').filter(':first'),  // LCH
+			// activeClass = 'active selected current youarehere',  // Original
+			activeClass = 'Active',  // LCH
+			// activeId = 'active',  // Original
+			// activeSelector = '.active,#active,.selected,.current,.youarehere',  // Original
+			activeSelector = '.Active',  // LCH
 			menuChildrenSelector = '> li,> ul > li',
 			completedEventName = 'statechangecomplete',
 			/* Application Generic Variables */
