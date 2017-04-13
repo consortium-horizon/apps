@@ -976,7 +976,7 @@ class ActivityModel extends Gdn_Model {
 
         $emailTemplate = $Email->getEmailTemplate()
             //->setButton($url, val('ActionText', $Activity, t('Check it out')))
-            ->setButton($url, val('ActionText', $Activity, mb_detect_encoding($EmailSubject)+" et sujet : "+$EmailSubject))
+            ->setButton($url, val('ActionText', $Activity, mb_detect_encoding($EmailSubject)))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {
