@@ -960,18 +960,20 @@ class ActivityModel extends Gdn_Model {
         // Build the email to send.
         $Email = new Gdn_Email();
         //$Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));
-        
-        $TestMessage = "Nouveau message privé";
-        $TestSubject = utf8_decode($TestMessage);
-        $TestSubject = mb_encode_mimeheader($TestMessage,"UTF-8");
-
-        $Email->subject($TestSubject);
+        $EmailSubject = sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline']));
+        //mb_internal_encoding('UTF-8');
+        //$TestMessage = "Nouveau message privé";
+        $EmailSubject = utf8_decode($EmailSubject);
+        $EmailSubject = mb_encode_mimeheader($EmailSubject,"UTF-8");
+        $Email->subject($EmailSubject);
+        //$Email->subject($TestSubject);
         $Email->to($User);
 
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
         $emailTemplate = $Email->getEmailTemplate()
             ->setButton($url, val('ActionText', $Activity, t('Refuse')))
+            //->setButton($url, val('ActionText', $Activity, mb_internal_encoding()))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {
