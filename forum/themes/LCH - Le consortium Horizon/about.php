@@ -15,7 +15,7 @@ $ThemeInfo['LCH'] = array(
    'Name' => 'LCH - le consortium Horizon',
    'Description' => "Custom theme created for 'Le consortium horizon' gaming community",
    'Version' => APPLICATION_VERSION,
-   'Author' => "vladvonvidden",
+   'Author' => "vladvonvidden, ZFiRE",
    'AuthorEmail' => 'vladvonvidden@gmail.com',
    'AuthorUrl' => 'to be added'
 );

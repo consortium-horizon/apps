@@ -965,7 +965,7 @@ class ActivityModel extends Gdn_Model {
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
         $emailTemplate = $Email->getEmailTemplate()
-            ->setButton($url, val('ActionText', $Activity, t('Name')))
+            ->setButton($url, val('ActionText', $Activity, t('Decline')))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {

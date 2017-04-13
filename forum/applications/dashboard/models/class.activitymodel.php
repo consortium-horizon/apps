@@ -959,13 +959,14 @@ class ActivityModel extends Gdn_Model {
 
         // Build the email to send.
         $Email = new Gdn_Email();
-        $Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));
+        //$Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));
+        $Email->subject("Nouveau message privé");
         $Email->to($User);
 
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
         $emailTemplate = $Email->getEmailTemplate()
-            ->setButton($url, val('ActionText', $Activity, t('Check it out')))
+            ->setButton($url, val('ActionText', $Activity, t('Refuse')))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {
