@@ -1,5 +1,5 @@
 <?php
-
+$Definition['Check it out'] = 'Voir sur le site';
 $Definition['Birthday'] = 'Date de naissance (seul votre âge est public)';
 $Definition['Post Discussion'] = 'Publier';
 $Definition['Post Comment'] = 'Publier';
