@@ -34,15 +34,15 @@
                                         {if $email.image.source != ''}
                                         <img class="center" src="{$email.image.source}" alt="{$email.image.alt}" style="margin: 0;padding: 0;box-sizing: border-box;font-size: 100%;max-width: 75%;border: 0;text-align: center">
                                         {elseif $email.image.alt != ''}
-                                        <h1 class="center h1" style='Margin-bottom: 18px;margin: 0;padding: 0;box-sizing: border-box;font-size: 36px;color: {$email.textColor};font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;font-weight: 200;text-align: center;line-height: 1.2;margin-top: 20px;margin-bottom: 5px;word-break: normal'>{$email.image.alt}</h1>
+                                        <h1 class="center h1" style='Margin-bottom: 18px;margin: 0;padding: 0;box-sizing: border-box;font-size: 26px;color: {$email.textColor};font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;font-weight: 200;text-align: center;line-height: 1.2;margin-top: 20px;margin-bottom: 5px;word-break: normal'>{$email.image.alt}</h1>
                                         {/if}
                                         {if $email.image.link}
                                     </a>
                                     {/if}
                                 </div>
-                                <hr style="margin: 0;padding: 0;box-sizing: border-box;font-size: 100%;border-style: solid;background-color: {$email.textColor};border-color: {$email.textColor}">
+
                                 {/if}
-                                {if $email.title}<h1 class="center" style='Margin-bottom: 18px;margin: 0;padding: 0;box-sizing: border-box;font-size: 36px;color: {$email.textColor};font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;font-weight: 200;text-align: center;line-height: 1.2;margin-top: 20px;margin-bottom: 5px;word-break: normal'>{$email.title}</h1>{/if}
+                                {if $email.title}<h1 class="center" style='Margin-bottom: 18px;margin: 0;padding: 0;box-sizing: border-box;font-size: 26px;color: {$email.textColor};font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;font-weight: 200;text-align: center;line-height: 1.2;margin-top: 20px;margin-bottom: 5px;word-break: normal'>{$email.title}</h1>{/if}
                                 {if $email.lead}<p class="lead center" style='margin: 0;Margin-bottom: 10px;font-size: 20px;padding: 0;box-sizing: border-box;color: {$email.textColor};font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;font-weight: 300;text-align: center;line-height: 1.2;margin-bottom: 15px'>{$email.lead}</p>{/if}
                                 <p class="message" style='margin: 0;Margin-bottom: 10px;font-size: 100%;padding: 0;box-sizing: border-box;color: {$email.textColor};font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;font-weight: 300;text-align: left;line-height: 1.4;margin-top: 10px;margin-bottom: 15px'>{$email.message}</p>
                                 {if $email.button}
