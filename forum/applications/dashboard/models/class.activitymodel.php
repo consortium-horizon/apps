@@ -963,8 +963,9 @@ class ActivityModel extends Gdn_Model {
         // Fix LCH
             $EmailSubject = sprintf(t('%1$s'), Gdn_Format::plainText($Activity['Headline']));
             //mb_internal_encoding('UTF-8');
-            $EmailSubject = utf8_decode($EmailSubject); // convert utf8 to iso-latin
-            //$EmailSubject = mb_encode_mimeheader($EmailSubject,"UTF-8"); // convert and escape iso-latin to utf8
+            $EmailSubject = utf8_encode($EmailSubject); // convert ISO-8859-1 to UTF-8
+            //$EmailSubject = utf8_decode($EmailSubject); // convert UTF-8 to ISO-8859-1
+            //$EmailSubject = mb_encode_mimeheader($EmailSubject,"UTF-8"); // convert and escape to UTF-8
             $Email->subject($EmailSubject);
         // Fix LCH
 
@@ -973,8 +974,7 @@ class ActivityModel extends Gdn_Model {
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
         $emailTemplate = $Email->getEmailTemplate()
-            //->setButton($url, val('ActionText', $Activity, t('Check it out')))
-            ->setButton($url, val('ActionText', $Activity, mb_internal_encoding()))
+            ->setButton($url, val('ActionText', $Activity, t('Check it out')))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {
