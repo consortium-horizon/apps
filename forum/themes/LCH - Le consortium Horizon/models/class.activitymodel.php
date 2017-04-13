@@ -867,12 +867,12 @@ class ActivityModel extends Gdn_Model {
             if ($Preference) {
                 $ActivityHeadline = Gdn_Format::text(Gdn_Format::activityHeadline($Activity, $Activity->ActivityUserID, $Activity->RegardingUserID), false);
                 $Email = new Gdn_Email();
-                $Email->subject("toto");
+                $Email->subject(sprintf(t('[%1$s] %2$s'), Gdn::config('Garden.Title'), $ActivityHeadline));
                 $Email->to($User);
 
                 $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
                 $emailTemplate = $Email->getEmailTemplate()
-                    ->setButton($url, val('ActionText', $Activity, t('Check it out')))
+                    ->setButton($url, val('ActionText', $Activity, t('Decline')))
                     ->setTitle($ActivityHeadline);
 
                 if ($message = val('Story', $Activity)) {
@@ -959,13 +959,13 @@ class ActivityModel extends Gdn_Model {
 
         // Build the email to send.
         $Email = new Gdn_Email();
-        $Email->subject("tutu");
+        $Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));
         $Email->to($User);
 
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
         $emailTemplate = $Email->getEmailTemplate()
-            ->setButton($url, val('ActionText', $Activity, t('Check it out')))
+            ->setButton($url, val('ActionText', $Activity, t('Refuse')))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {
@@ -1223,12 +1223,12 @@ class ActivityModel extends Gdn_Model {
             if ($Preference) {
                 $ActivityHeadline = Gdn_Format::text(Gdn_Format::activityHeadline($Activity, $Activity->ActivityUserID, $Activity->RegardingUserID), false);
                 $Email = new Gdn_Email();
-                $Email->subject("titi");
+                $Email->subject(sprintf(t('[%1$s] %2$s'), Gdn::config('Garden.Title'), $ActivityHeadline));
                 $Email->to($User);
                 $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
                 $emailTemplate = $Email->getEmailTemplate()
-                    ->setButton($url, val('ActionText', $Activity, t('Check it out')))
+                    ->setButton($url, val('ActionText', $Activity, t('Email')))
                     ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
                 if ($message = val('Story', $Activity)) {
                     $prefix = c('Garden.Email.Prefix', '');
