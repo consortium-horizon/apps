@@ -959,7 +959,9 @@ class ActivityModel extends Gdn_Model {
 
         // Build the email to send.
         $Email = new Gdn_Email();
-        $Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));
+        //$Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));  // Original
+        mb_internal_encoding('UTF-8');  // LCH
+        $Email->subject(mb_encode_mimeheader(sprintf(t('%1$s'), Gdn_Format::plainText($Activity['Headline'])),"UTF-8"));  // LCH
         $Email->to($User);
 
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
