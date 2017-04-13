@@ -962,7 +962,7 @@ class ActivityModel extends Gdn_Model {
         //$Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));  // Original
         // Fix LCH
             $EmailSubject = sprintf(t('%1$s'), Gdn_Format::plainText($Activity['Headline']));
-            $EmailSubject = base64_encode($EmailSubject);
+            $EmailSubject = '=?utf-8?B?'.base64_encode($EmailSubject).'?=';
             //mb_detect_encoding($EmailSubject); // detect encodage
 
             //$EmailSubjectUTF8 = utf8_encode($EmailSubject); // convert ISO-8859-1 to UTF-8
