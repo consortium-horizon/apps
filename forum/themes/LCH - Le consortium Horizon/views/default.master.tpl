@@ -160,35 +160,37 @@
         SearchResults : 
       -->
 
-      <div class="Column PanelColumn" id="Panel">
-        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
-          {asset name="Panel"}
-        {else}
-          {if $User.SignedIn}
-            {include_file name="candyEmbedded.html"}
-          {else}
-            {asset name="Panel"}
-          {/if}
-        {/if}
-      </div>
-
-      <div class="Column ContentColumn" id="Content">
-        <!--
-        <div id="Breadcrumbs" class="BreadcrumbsWrapper">
-          <div class="Row">
-           {breadcrumbs}
+      <div class="columnsContainer">
+        <div class="Column ContentColumn" id="Content">
+          <!--
+          <div id="Breadcrumbs" class="BreadcrumbsWrapper">
+            <div class="Row">
+             {breadcrumbs}
+            </div>
           </div>
+          -->
+          <!-- Planetside 2 module -->
+          {if $Path=='categories/planetside-2'}
+              {planetside_online}
+          {/if}
+          {asset name="Content"}
         </div>
-        -->
-        <!-- Planetside 2 module -->
-        {if $Path=='categories/planetside-2'}
-            {planetside_online}
-        {/if}
-        {asset name="Content"}
-      </div>
 
-      <!-- Fix for container height -->
-      <div style="clear: both"></div>
+        <div class="Column PanelColumn" id="Panel">
+          {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
+            {asset name="Panel"}
+          {else}
+            {if $User.SignedIn}
+              {include_file name="candyEmbedded.html"}
+            {else}
+              {asset name="Panel"}
+            {/if}
+          {/if}
+        </div>
+
+        <!-- Fix for container height -->
+        <div style="clear: both"></div>
+      </div>
     </div>
   </div>
   <div id="Foot">
