@@ -960,7 +960,12 @@ class ActivityModel extends Gdn_Model {
         // Build the email to send.
         $Email = new Gdn_Email();
         //$Email->subject(sprintf(t('[%1$s] %2$s'), c('Garden.Title'), Gdn_Format::plainText($Activity['Headline'])));
-        $Email->subject(utf8_decode("Nouveau message privé"));
+        
+        $TestMessage = "Nouveau message privé";
+        $TestSubject = utf8_decode($TestMessage);
+        $TestSubject = mb_encode_mimeheader($TestMessage,"UTF-8");
+
+        $Email->subject($TestSubject);
         $Email->to($User);
 
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
