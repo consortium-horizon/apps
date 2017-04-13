@@ -160,6 +160,18 @@
         SearchResults : 
       -->
 
+      <div class="Column PanelColumn" id="Panel">
+        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
+          {asset name="Panel"}
+        {else}
+          {if $User.SignedIn}
+            {include_file name="candyEmbedded.html"}
+          {else}
+            {asset name="Panel"}
+          {/if}
+        {/if}
+      </div>
+
       <div class="Column ContentColumn" id="Content">
         <!--
         <div id="Breadcrumbs" class="BreadcrumbsWrapper">
@@ -173,18 +185,6 @@
             {planetside_online}
         {/if}
         {asset name="Content"}
-      </div>
-
-      <div class="Column PanelColumn" id="Panel">
-        {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
-          {asset name="Panel"}
-        {else}
-          {if $User.SignedIn}
-            {include_file name="candyEmbedded.html"}
-          {else}
-            {asset name="Panel"}
-          {/if}
-        {/if}
       </div>
 
       <!-- Fix for container height -->
