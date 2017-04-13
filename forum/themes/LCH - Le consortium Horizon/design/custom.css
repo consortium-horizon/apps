@@ -644,6 +644,8 @@ body {
 /* Pannel Column (infos and quick links) */
 /* ------------------------------------- */
 #Panel {
+  width: 300px;
+  float: right;
   background: white;
   margin: 15px 0 0 10px;
   padding: 10px;
@@ -656,14 +658,14 @@ body {
   position: fixed;
   top: 20px;
   z-index: 6;
-  left: auto;
+  right: auto;
 }
 
 /* ------------------------------ */
 /* Content Column (Forum content) */
 /* ------------------------------ */
 #Content {
-  margin: 15px 0 0 260px !important;
+  margin: 15px 340px 0 11px !important;
 }
 #Content img {
   max-width: 100%;
