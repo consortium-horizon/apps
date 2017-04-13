@@ -727,7 +727,7 @@ class SettingsController extends DashboardController {
 
         $email->setMessage($message)
             ->setTitle(t('Test Email'))
-            ->setButton(externalUrl('/'), t('Check it out'));
+            ->setButton(externalUrl('/'), t('Decline'));
         $emailer->setEmailTemplate($email);
         return $emailer;
     }
@@ -1830,7 +1830,7 @@ class SettingsController extends DashboardController {
                 $Email->subject(t('Check out my new community!'));
                 $emailTemplate = $Email->getEmailTemplate();
                 $emailTemplate->setMessage($Message, true)
-                    ->setButton(externalUrl('/'), t('Check it out'));
+                    ->setButton(externalUrl('/'), t('Refuse'));
                 $Email->setEmailTemplate($emailTemplate);
                 foreach ($Recipients as $Recipient) {
                     if (trim($Recipient) != '') {

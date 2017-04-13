@@ -872,7 +872,7 @@ class ActivityModel extends Gdn_Model {
 
                 $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
                 $emailTemplate = $Email->getEmailTemplate()
-                    ->setButton($url, val('ActionText', $Activity, t('Decline')))
+                    ->setButton($url, val('ActionText', $Activity, t('Check it out')))
                     ->setTitle($ActivityHeadline);
 
                 if ($message = val('Story', $Activity)) {
@@ -965,7 +965,7 @@ class ActivityModel extends Gdn_Model {
         $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
         $emailTemplate = $Email->getEmailTemplate()
-            ->setButton($url, val('ActionText', $Activity, t('Refuse')))
+            ->setButton($url, val('ActionText', $Activity, t('Check it out')))
             ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
 
         if ($message = val('Story', $Activity)) {
@@ -1228,7 +1228,7 @@ class ActivityModel extends Gdn_Model {
                 $url = externalUrl(val('Route', $Activity) == '' ? '/' : val('Route', $Activity));
 
                 $emailTemplate = $Email->getEmailTemplate()
-                    ->setButton($url, val('ActionText', $Activity, t('Email')))
+                    ->setButton($url, val('ActionText', $Activity, t('Check it out')))
                     ->setTitle(Gdn_Format::plainText(val('Headline', $Activity)));
                 if ($message = val('Story', $Activity)) {
                     $prefix = c('Garden.Email.Prefix', '');
