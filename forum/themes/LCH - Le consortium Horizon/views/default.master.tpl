@@ -137,11 +137,9 @@
         Profile : 
         SearchResults : 
       -->
-      {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
-        <div class="Column PanelColumn" id="Panel">
+      <div class="Column PanelColumn" id="Panel">
         {asset name="Panel"}
-        </div>
-      {/if}
+      </div>
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
         {if $Path=='categories/planetside-2'}
