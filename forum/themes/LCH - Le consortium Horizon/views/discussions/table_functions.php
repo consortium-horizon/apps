@@ -38,8 +38,8 @@ if (!function_exists('WriteDiscussionRow')):
         $CssClass = CssClass($Discussion);
         $DiscussionUrl = $Discussion->Url;
 
-        //if ($Session->UserID)
-            //$DiscussionUrl .= '#latest';
+        if ($Session->UserID)
+            $DiscussionUrl .= '#latest';
 
         $Sender->EventArguments['DiscussionUrl'] = &$DiscussionUrl;
         $Sender->EventArguments['Discussion'] = &$Discussion;
