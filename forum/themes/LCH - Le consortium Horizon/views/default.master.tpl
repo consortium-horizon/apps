@@ -173,15 +173,7 @@
         </div>
 
         <div class="Column PanelColumn" id="Panel">
-          {if !InSection("CategoryList") && !InSection("DiscussionList") && !InSection("Discussion") && !InSection("ConversationList") && !InSection("SearchResults")}
-            {asset name="Panel"}
-          {else}
-            {if $User.SignedIn}
-              {include_file name="candyEmbedded.html"}
-            {else}
-              {asset name="Panel"}
-            {/if}
-          {/if}
+          {asset name="Panel"}
         </div>
 
         <!-- Fix for container height -->
