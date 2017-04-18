@@ -153,7 +153,7 @@
         Profile : 
         SearchResults : 
 
-        syntax : {if InSection("CategoryList")}
+        syntax : if InSection("CategoryList")
       -->
 
       <div class="columnsContainer">
