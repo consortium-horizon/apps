@@ -14,13 +14,13 @@
   <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-config.js"></script> -->
 
   <!-- Ajaxify activation -->
-  
+  <!--
     <link rel="stylesheet" type="text/css" href="/forum/themes/LCH - Le consortium Horizon/design/nprogress.css">
     <script src="//balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script>
     <script src="/forum/themes/LCH - Le consortium Horizon/js/nprogress.js"></script>
     <script src="//browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script>
     <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify-html5.js?v=2.2"></script>
-  
+  -->
   <!-- / Ajaxify activation -->
 
 
