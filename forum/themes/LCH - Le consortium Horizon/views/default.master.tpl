@@ -152,6 +152,8 @@
         PostDiscussion : 
         Profile : 
         SearchResults : 
+
+        syntax : {if InSection("CategoryList")}
       -->
 
       <div class="columnsContainer">
