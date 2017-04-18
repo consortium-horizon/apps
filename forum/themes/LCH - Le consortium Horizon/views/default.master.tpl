@@ -141,7 +141,6 @@
         {asset name="Panel"}
         {asset name="Van2Shout"}
         {module name="Van2Shout"}
-        {plugin name="Van2Shout"}
       </div>
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
