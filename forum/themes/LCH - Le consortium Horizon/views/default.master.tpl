@@ -139,7 +139,9 @@
       -->
       <div class="Column PanelColumn" id="Panel">
         {asset name="Panel"}
-        {module name="Van2ShoutDiscussionsModule"}
+        {if InSection("CategoryList")}
+          {module name="Van2ShoutDiscussionsModule"}
+        {/if}
       </div>
       <div class="Column ContentColumn" id="Content">
         <!-- Planetside 2 module -->
