@@ -1,0 +1,16 @@
+<h1>Firebase Security Rules</h1>
+Login in to your firebase and open the <b>Security</b> tab.<br />
+Copy & Paste these rules and hit save:
+<pre>
+{
+  "rules": {
+    "broadcast": {
+      ".read": "auth != null",
+      "$key": {
+        ".write": "auth != null && (!data.exists() || auth.delete == true) && auth.post == true",
+        ".validate": "newData.child('colour').val() == auth.colour && auth.id == newData.child('uname').val()"
+      }
+    }
+  }
+}
+</pre>
