@@ -1,4 +1,4 @@
-$(document).ready(function() {
+/*$(document).ready(function() {
 
     $('#Body').ajaxify({
       aniTime: 400,
@@ -7,3 +7,4 @@ $(document).ready(function() {
     });
 
 });
+*/
