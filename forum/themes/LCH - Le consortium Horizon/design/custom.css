@@ -672,6 +672,10 @@ body {
 #Content img {
   max-width: 100%;
 }
+.Pager{
+  z-index: 10;
+  position: relative;
+}
 #Content .PageContent {
   padding: 10px 20px;
   -webkit-box-shadow: 0 0 3px #d5d5d5;
