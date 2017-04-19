@@ -6,8 +6,8 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="manifest" href="manifest.json">
 
-  <!-- jQuery : link for lastest version here https://code.jquery.com/ -->
-  <script src="/forum/themes/LCH - Le consortium Horizon/js/jquery-1.12.4.min.js"></script>
+  <!-- jQuery : link for lastest version here https://code.jquery.com/
+  <script src="/forum/themes/LCH - Le consortium Horizon/js/jquery-1.12.4.min.js"></script> -->
 
   <!-- Ajaxify activation : https://github.com/arvgta/ajaxify -->
   <!-- <script src="/forum/themes/LCH - Le consortium Horizon/js/ajaxify.min.js"></script> -->
@@ -155,30 +155,21 @@
 
         syntax : if InSection("CategoryList")
       -->
+      <div class="Column PanelColumn" id="Panel">
+        {asset name="Panel"}
+      </div>
+      <div class="Column ContentColumn" id="Content">
+        <!-- Planetside 2 module -->
+        {if $Path=='categories/planetside-2'}
+            {planetside_online}
+        {/if}
+        {asset name="Content"}
+      </div>
 
-      <div class="columnsContainer">
-        <div class="Column ContentColumn" id="Content">
-          <!--
-          <div id="Breadcrumbs" class="BreadcrumbsWrapper">
-            <div class="Row">
-             {breadcrumbs}
-            </div>
-          </div>
-          -->
-          <!-- Planetside 2 module -->
-          {if $Path=='categories/planetside-2'}
-              {planetside_online}
-          {/if}
-          {asset name="Content"}
-        </div>
 
-        <div class="Column PanelColumn" id="Panel">
-          {asset name="Panel"}
-        </div>
 
         <!-- Fix for container height -->
         <div style="clear: both"></div>
-      </div>
     </div>
   </div>
   <div id="Foot">

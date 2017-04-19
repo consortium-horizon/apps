@@ -648,16 +648,12 @@ body {
 /* Pannel Column (infos and quick links) */
 /* ------------------------------------- */
 #Panel {
-  width: 300px;
   background: white;
-  margin: 0 0 0 10px;
+  margin: 15px 0 0 10px;
   padding: 10px;
   -webkit-box-shadow: 0 0 3px #d5d5d5;
   -moz-box-shadow: 0 0 3px #d5d5d5;
   box-shadow: 0 0 3px #d5d5d5;
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 #Panel.sticky {
   float: none;
@@ -671,7 +667,7 @@ body {
 /* Content Column (Forum content) */
 /* ------------------------------ */
 #Content {
-  margin: 15px 340px 0 11px !important;
+  margin: 15px 0 0 260px !important;
 }
 #Content img {
   max-width: 100%;
