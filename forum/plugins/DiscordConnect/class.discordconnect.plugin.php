@@ -144,6 +144,7 @@ class DiscordConnectPlugin extends Gdn_Plugin {
         if (!$Session->IsValid())
             return;
         $UserID = $Session->UserID;
+        $Username = $Session->User->Name;
 
         $Action = 'Nothing';
         if ($Sender->Form->authenticatedPostBack() === true) {
@@ -232,6 +233,13 @@ class DiscordConnectPlugin extends Gdn_Plugin {
                     $this->botapi('/guilds/'.$GuildId.'/members/'.$userProfile->{'identifier'}.'/roles/'.$discordrole['id'], NULL, 'PUT');
                 }
             }
+
+            // Update Nick
+            {
+                $NickParams = array('nick' => $Username );
+                $this->botapi('/guilds/'.$GuildId.'/members/'.$userProfile->{'identifier'}, $NickParams, 'PATCH');
+            }
+
         }
 
         // View
