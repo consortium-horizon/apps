@@ -18,7 +18,7 @@ echo $this->Form->Errors();
     <li>
     <?php echo $this->Form->Label(T('BotToken'), 'Plugins.DiscordConnect.BotToken'); ?>
     <p>BotToken found at https://discordapp.com/developers/applications/me (App bot user section)</p>
-    <?php echo $this->Form->TextBox('Plugins.DiscordConnect.ApplicationID', array('placeholder' => 'BotToken')); ?>
+    <?php echo $this->Form->TextBox('Plugins.DiscordConnect.BotToken', array('placeholder' => 'BotToken')); ?>
     </li>
     <li>
     <?php echo $this->Form->Label(T('GuildId'), 'Plugins.DiscordConnect.GuildId'); ?>
