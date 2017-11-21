@@ -1,0 +1,12 @@
+/* Copyright 2017 YayPaul (Paul West) */
+/**
+ * View
+ * @desc Common view styles for discord widget.
+ *
+ * @package DiscordWidget
+ * @author <a href="http://yaypaul.com">YayPaul (Paul West)</a>
+ * @copyright 2017 Paul West.
+ * @license MIT
+ */
+
+ .DiscordWidget__iframe{ margin: 0 0 18px; padding: 0; border: 0; }

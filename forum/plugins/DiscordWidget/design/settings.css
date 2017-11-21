@@ -1,0 +1,15 @@
+/* Copyright 2017 YayPaul (Paul West) */
+/**
+ * Settings
+ *
+ * Setup settings page CSS
+ *
+ * @package DiscordWidget
+ * @author <a href="http://yaypaul.com">YayPaul (Paul West)</a>
+ * @copyright 2017 Paul West.
+ * @license MIT
+ */
+
+ .DiscordWidget__footer{ margin-top: 20px; }
+
+ .DiscordWidget__info{ padding: 10px; margin: 10px; font-size: 14px; line-height: 1.4; }
