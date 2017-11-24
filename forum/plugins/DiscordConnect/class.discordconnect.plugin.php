@@ -142,7 +142,7 @@ class DiscordConnectPlugin extends Gdn_Plugin {
         $Session = Gdn::Session();
 
         if (!$Session->IsValid())
-            return;
+            redirect(url('/entry/signin',true));
         $UserID = $Session->UserID;
         $Username = $Session->User->Name;
 
