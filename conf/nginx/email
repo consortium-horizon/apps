@@ -7,7 +7,7 @@ server {
   root /var/www/webapps/current/email/public_html;
   index index.php index.html index.htm;
 
-  access_log /var/www/webapps/shared/log/email/nginx.access.log main;
+  access_log /var/www/webapps/shared/log/email/nginx.access.log;
   error_log /var/www/webapps/shared/log/email/nginx.error.log;
   rewrite_log on;
 
